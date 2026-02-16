@@ -1,0 +1,3117 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../system-requirements/">
+      
+      
+        <link rel="next" href="../asar2/">
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>ONTAP cDOT - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prepare-ontap-cdot-cluster" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ONTAP cDOT
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-ontap-cdot-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prepare ONTAP cDOT cluster
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prepare ONTAP cDOT cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ontap-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP CLI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONTAP CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      REST least-privilege role
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zapi-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zapi least-privilege role
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Zapi least-privilege role">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#associate-the-zapi-role-with-the-harvest-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      Associate the ZAPI role with the harvest user
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ontap-910-volume-performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP 9.10+ volume performance metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statperf-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      StatPerf least-privilege role
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-mode-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      7-Mode CLI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Manager
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-certificate-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Certificate Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Certificate Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-self-signed-subject-alternate-name-certificates-for-ontap" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create Self-Signed Subject Alternate Name Certificates for ONTAP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Self-Signed Subject Alternate Name Certificates for ONTAP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview of steps to create a self-signed SAN certificate and make ONTAP use it
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview of steps to create a self-signed SAN certificate and make ONTAP use it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a root key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-certificate-authority-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a root certificate authority certificate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-san-certificate-for-your-ontap-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a SAN certificate for your ONTAP cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-root-ca-certificate-on-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Root CA Certificate On Cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-the-admin-svm-to-use-the-new-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modify the admin SVM to use the new certificate
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-client-certificates-for-password-less-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create Client Certificates for Password-less Login
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-client-certificates-on-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Client Certificates on Cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-harvestyml-to-use-client-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Harvest.yml to use client certificates
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Update Harvest.yml to use client certificates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#macos" class="md-nav__link">
+    <span class="md-ellipsis">
+      macOS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-ontap-cdot-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prepare ONTAP cDOT cluster
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prepare ONTAP cDOT cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ontap-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP CLI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONTAP CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      REST least-privilege role
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zapi-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zapi least-privilege role
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Zapi least-privilege role">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#associate-the-zapi-role-with-the-harvest-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      Associate the ZAPI role with the harvest user
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ontap-910-volume-performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP 9.10+ volume performance metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statperf-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      StatPerf least-privilege role
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-mode-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      7-Mode CLI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Manager
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-certificate-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Certificate Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Certificate Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-self-signed-subject-alternate-name-certificates-for-ontap" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create Self-Signed Subject Alternate Name Certificates for ONTAP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Self-Signed Subject Alternate Name Certificates for ONTAP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview of steps to create a self-signed SAN certificate and make ONTAP use it
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview of steps to create a self-signed SAN certificate and make ONTAP use it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a root key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-root-certificate-authority-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a root certificate authority certificate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-san-certificate-for-your-ontap-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a SAN certificate for your ONTAP cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-root-ca-certificate-on-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Root CA Certificate On Cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-the-admin-svm-to-use-the-new-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modify the admin SVM to use the new certificate
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-client-certificates-for-password-less-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create Client Certificates for Password-less Login
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-client-certificates-on-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Client Certificates on Cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-harvestyml-to-use-client-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Harvest.yml to use client certificates
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Update Harvest.yml to use client certificates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#macos" class="md-nav__link">
+    <span class="md-ellipsis">
+      macOS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h2 id="prepare-ontap-cdot-cluster">Prepare ONTAP cDOT cluster<a class="headerlink" href="#prepare-ontap-cdot-cluster" title="Permanent link">&para;</a></h2>
+<p>NetApp Harvest requires login credentials to access monitored hosts.
+Although a generic admin account can be used, it is better to create a dedicated read-only monitoring account.</p>
+<p>In the examples below, the user, group, roles, etc., use a naming convention of <code>netapp-harvest</code>.
+These can be modified as needed to match your organizational needs.</p>
+<p>There are a few steps required to prepare each system for monitoring.
+Harvest supports
+two <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#authentication">authentication styles</a>
+(<code>auth_style</code>) to connect to ONTAP clusters: <code>basic_auth</code> and <code>certificate_auth</code>.
+Both work well, but if you're starting fresh, the recommendation is to create a read-only harvest user on your ONTAP
+server and use <a href="#using-certificate-authentication">certificate-based</a> TLS authentication.</p>
+<p>Here's a summary of what we're going to do</p>
+<ol>
+<li>Create a read-only ONTAP <strong>role</strong> with the necessary capabilities that Harvest will use to auth and collect data</li>
+<li>Create a <strong>user account</strong> using the role created in step #1</li>
+<li>Update the <code>harvest.yml</code> file to use the user account and password created in step #2 and start Harvest.</li>
+</ol>
+<p>There are two ways to create a read-only ONTAP role. Pick the one that best fits your needs.</p>
+<ul>
+<li>Create a role with read-only access to all API objects via <a href="#system-manager">System Manager</a>.</li>
+<li>Create a role with read-only access to the limited set of APIs Harvest collects via <a href="#ontap-cli">ONTAP's command line interface (CLI)</a>.</li>
+</ul>
+<h3 id="ontap-cli">ONTAP CLI<a class="headerlink" href="#ontap-cli" title="Permanent link">&para;</a></h3>
+<p>We are going to:</p>
+<ol>
+<li>create a Harvest role with read-only access to a <a href="#least-privilege-approach">limited set of objects</a></li>
+<li><a href="#create-harvest-user-and-associate-with-the-harvest-role">create a Harvest user</a> and assign it to that role</li>
+<li>Depending on which collectors you want to use, add permissions for one or all of the <a href="#rest-least-privilege-role">Rest</a>, <a href="#zapi-least-privilege-role">Zapi</a>, <a href="#statperf-least-privilege-role">StatPerf</a> collectors.</li>
+</ol>
+<p>Login to the CLI of your cDOT ONTAP system using SSH.</p>
+<h4 id="rest-least-privilege-role">REST least-privilege role<a class="headerlink" href="#rest-least-privilege-role" title="Permanent link">&para;</a></h4>
+<p>Verify there are no errors when you copy/paste these.
+Warnings are fine.</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cloud/targets
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/counter/tables
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/mediators
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/metrocluster/diagnostics
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/nodes
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/ntp/servers
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/peers
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/sensors
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/name-services/ldap
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/name-services/nis
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/network/ethernet/ports
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/network/ethernet/switch/ports
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/network/fc/ports
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/network/ip/interfaces
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/network/ip/routes
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols/cifs/services
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols/cifs/sessions
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols/cifs/shares
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols/locks
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols/ndmp/sessions
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols/nfs/connected-clients
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols/nfs/export-policies
+<span class="c1"># s3 is buggy in 9.15, use protocols endpoint instead. See https://mysupport.netapp.com/site/bugs-online/product/ONTAP/JiraNgage/CONTAP-210232</span>
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/protocols
+<span class="c1"># security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/s3/buckets</span>
+<span class="c1"># security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/s3/services</span>
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/security
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/security/accounts
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/security/audit/destinations
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/security/certificates
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/security/login/messages
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/security/ssh
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/snapmirror/relationships
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/snapmirror/policies
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/aggregates
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/disks
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/flexcache/flexcaches
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/luns
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/namespaces
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/qtrees
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/qos/policies
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/qos/workloads
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/quota/reports
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/shelves
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/snapshot-policies
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/volumes
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/support/auto-update
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/support/autosupport
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/support/ems/destinations
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/support/ems/events
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/support/ems/messages
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/svm/peers
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/svm/svms
+
+<span class="c1"># Private CLI endpoints</span>
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/support/alerts
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/aggr
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/cluster/date
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/disk
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/vserver/export-policy/rule
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/security/certificate
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/security/ssl
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/network/connections/active
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/network/interface
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/network/port
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/network/port/ifgrp
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/node
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/qos/adaptive-policy-group
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/qos/policy-group
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/qos/workload
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/qtree
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/snapmirror
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/storage/failover
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/storage/shelf
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/system/chassis/fru
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/system/controller/fru
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/system/health/subsystem
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/system/node/environment/sensors
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/volume
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/vserver
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/vserver/cifs/share
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/vserver/object-store-server/bucket/policy
+</code></pre></div>
+<p>See <a href="https://github.com/NetApp/harvest/issues/2991">#2991</a> for more information.</p>
+<p><strong>Associate the REST role with the harvest user</strong></p>
+<p>Using password authentication</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+<details class="failure">
+<summary>If you get an error <code>command failed: duplicate entry</code> when running the previous command</summary>
+<p>Remove the previous entry and recreate like so:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>delete<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>*
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+</details>
+<p>Using certificate authentication</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+</code></pre></div>
+<details class="failure">
+<summary>If you get an error <code>command failed: duplicate entry</code> when running the previous command</summary>
+<p>Remove the previous entry and recreate like so:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>delete<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>*
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+</code></pre></div>
+</details>
+<h4 id="zapi-least-privilege-role">Zapi least-privilege role<a class="headerlink" href="#zapi-least-privilege-role" title="Permanent link">&para;</a></h4>
+<p>Verify there are no errors when you copy/paste these.
+Warnings are fine.</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;cluster&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event log&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event catalog show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;lun&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;metrocluster configuration-settings mediator add&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;metrocluster&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network connections active show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network fcp adapter show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network interface&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network port show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network port ifgrp show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network route show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos adaptive-policy-group&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos policy-group&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos workload show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;security&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;snapmirror&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;statistics&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage aggregate&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage disk&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage encryption disk&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage failover show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage iscsi-initiator show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage shelf&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system chassis fru show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system controller fru show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health alert show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health status show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health subsystem show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system license show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node environment sensors show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system service-processor show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;version&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;volume&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;vserver&quot;</span>
+</code></pre></div>
+<h5 class="prominent-subsection" id="associate-the-zapi-role-with-the-harvest-user">Associate the ZAPI role with the harvest user<a class="headerlink" href="#associate-the-zapi-role-with-the-harvest-user" title="Permanent link">&para;</a></h5>
+<p>Use this for password authentication</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># If the harvest2 user does not exist, you will be prompted to enter a password</span>
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+<p>Or this for certificate authentication</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+</code></pre></div>
+<p>Verify that the harvest2-role role has web access by running the following commands.</p>
+<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi
+</code></pre></div>
+<p>If there are no matching entries, enable access by running the following.</p>
+<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>
+</code></pre></div>
+<h5 class="prominent-subsection" id="ontap-910-volume-performance-metrics">ONTAP 9.10+ volume performance metrics<a class="headerlink" href="#ontap-910-volume-performance-metrics" title="Permanent link">&para;</a></h5>
+<p>Starting with ONTAP 9.10 the Zapi based collection needs a REST read permission on the volumes endpoint so Harvest can
+look up volume data required to collect performance metrics. If you already created the full <a href="#rest-least-privilege-role">REST least-privilege role</a>,
+you already have this (<code>/api/storage/volumes</code>) and can skip the commands below. Otherwise add just this minimal permission and associate the HTTP application
+with the REST role:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/volumes
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+<p>Use <code>-authentication-method cert</code> instead of <code>password</code> if using certificate auth.</p>
+<h4 id="statperf-least-privilege-role">StatPerf least-privilege role<a class="headerlink" href="#statperf-least-privilege-role" title="Permanent link">&para;</a></h4>
+<p>Verify there are no errors when you copy/paste these.
+Warnings are fine.</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span>all<span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;set&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;statistics&quot;</span>
+
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span>read_create<span class="w"> </span>-api<span class="w"> </span>/api/private/cli
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ssh<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-role
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role
+</code></pre></div>
+<p><strong>Note:</strong> StatPerf Collector is not supported for FSx systems.</p>
+<h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
+<p>Login to the CLI of your 7-Mode ONTAP system (e.g., using SSH).
+First, we create a user role.
+If you want to give the
+user readonly access to <strong>all</strong> API objects, type in the following command:</p>
+<div class="highlight"><pre><span></span><code>useradmin<span class="w"> </span>role<span class="w"> </span>modify<span class="w"> </span>harvest2-role<span class="w"> </span>-a<span class="w"> </span>login-http-admin,api-system-get-version,<span class="w"> </span><span class="se">\</span>
+api-system-get-info,api-perf-object-*,api-ems-autosupport-log,api-diagnosis-status-get,<span class="w"> </span><span class="se">\</span>
+api-lun-list-info,api-diagnosis-subsystem-config-get-iter,api-disk-list-info,<span class="w"> </span><span class="se">\</span>
+api-diagnosis-config-get-iter,api-aggr-list-info,api-volume-list-info,<span class="w"> </span><span class="se">\</span>
+api-storage-shelf-environment-list-info,api-qtree-list,api-quota-report
+</code></pre></div>
+<h3 id="system-manager">System Manager<a class="headerlink" href="#system-manager" title="Permanent link">&para;</a></h3>
+<p>Open System Manager. Click on <em>CLUSTER</em> in the left menu bar, <em>Settings</em> and <em>Users and Roles</em>.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_0.png" /></p>
+<p>In the right column, under <em>Roles</em>, click on <em>Add</em> to add a new role.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_1.png" /></p>
+<p>Choose a role name (e.g. <em>harvest2-role</em>). In the <em>REST API PATH</em> field, type <em>/api</em> and select <em>Read-Only</em> for
+<em>ACCESS</em>. Click on <em>Save</em>.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_2.png" /></p>
+<p>In the left column, under <em>Users</em>, click on <em>Add</em> to create a new user. Choose a username. Under <em>Role</em>, select the role
+that we just created. Under <em>User Login Methods</em> select <em>ONTAPI</em>, and one of the two authentication methods.
+Press the <code>Add</code> button and select <em>HTTP</em> and one of the authentication methods.
+Type in a password if you chose <em>Password</em>. Click on <em>Save</em></p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_3.png" /></p>
+<p>If you chose <em>Password</em>, you can add the username and password to the Harvest configuration file and start Harvest. If
+you chose <em>Certificate</em> jump to <a href="#using-certificate-authentication">Using Certificate Authentication</a> to generate
+certificates files.</p>
+<details>
+<summary>System Manager Classic interface</summary>
+<p>Open System Manager. Click on the Settings icon in the top-right corner of the window.</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_0.png" /></p>
+<p>Click on <em>Roles</em> in the left menu bar and click <em>Add</em>. Choose a role name (e.g. <em>harvest2-role</em>).</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_1.png" /></p>
+<p>Under <em>Role Attributes</em> click on <em>Add</em>, under <em>Command</em> type <em>DEFAULT</em>, leave <em>Query</em> empty, select <em>readonly</em> under <em>Access Level</em>, click on <em>OK</em> and <em>Add</em>.</p>
+<p>After you click on <em>Add</em>, this is what you should see:</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_2.png" /></p>
+<p>Now we need to create a user. Click on <em>Users</em> in the left menu bar and <em>Add</em>. Choose a username and password. Under
+<em>User Login Methods</em> click on <em>Add</em>, select <em>ontapi</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
+Repeat by clicking on <em>Add</em>, select <em>http</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
+Click on <em>Add</em> in the pop-up window to save.</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_3.png" /></p>
+</details>
+<h1 id="using-certificate-authentication">Using Certificate Authentication<a class="headerlink" href="#using-certificate-authentication" title="Permanent link">&para;</a></h1>
+<p>See <a href="https://github.com/NetApp/harvest/issues/314#issuecomment-882120238">comments here for troubleshooting</a> client
+certificate authentication.</p>
+<p>Client certificate authentication allows you to authenticate with your ONTAP cluster without including
+username/passwords in your <code>harvest.yml</code> file. The process to set up client certificates is straightforward, although
+self-signed certificates introduce more work as does Go's strict treatment of common names.</p>
+<p>Unless you've installed production certificates on your ONTAP cluster, you'll need to replace your cluster's
+common-name-based self-signed certificates with a subject alternative name-based certificate. After that step is
+completed, we'll create client certificates and add those for passwordless login.</p>
+<p>If you can't or don't want to replace your ONTAP cluster certificates, there are some workarounds. You can</p>
+<ul>
+<li>Use <code>use_insecure_tls: true</code> in your <code>harvest.yml</code> to disable certificate verification</li>
+<li>Change your <code>harvest.yml</code> to connect via hostname instead of IP address</li>
+</ul>
+<h2 id="create-self-signed-subject-alternate-name-certificates-for-ontap">Create Self-Signed Subject Alternate Name Certificates for ONTAP<a class="headerlink" href="#create-self-signed-subject-alternate-name-certificates-for-ontap" title="Permanent link">&para;</a></h2>
+<p>Subject alternate name (SAN) certificates allow multiple hostnames in a single certificate. Starting with Go 1.3, when
+connecting to a cluster via its IP address, the CN field in the server certificate is ignored. This often causes errors
+like this:
+<code>x509: cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs</code></p>
+<h3 id="overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it">Overview of steps to create a self-signed SAN certificate and make ONTAP use it<a class="headerlink" href="#overview-of-steps-to-create-a-self-signed-san-certificate-and-make-ontap-use-it" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create a root key</li>
+<li>Create a root certificate authority certificate</li>
+<li>Create a SAN certificate for your ONTAP cluster, using #2 to create it</li>
+<li>Install root ca certificate created in step #2 on cluster</li>
+<li>Install SAN certificate created in step #3 on your cluster</li>
+<li>Modify your cluster/SVM to use the new certificate installed at step #5</li>
+</ol>
+<h4 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code># create a place to store the certificate authority files, adjust as needed
+mkdir -p ca/{private,certs}
+</code></pre></div>
+<h4 id="create-a-root-key">Create a root key<a class="headerlink" href="#create-a-root-key" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>cd ca
+# generate a private key that we will use to create our self-signed certificate authority
+openssl genrsa -out private/ca.key.pem 4096
+chmod 400 private/ca.key.pem
+</code></pre></div>
+<h4 id="create-a-root-certificate-authority-certificate">Create a root certificate authority certificate<a class="headerlink" href="#create-a-root-certificate-authority-certificate" title="Permanent link">&para;</a></h4>
+<p>Download the sample <a href="https://github.com/NetApp/harvest/blob/main/pkg/docs/samples/openssl.cnf">openssl.cnf</a> file and put
+it in the directory we created in <a href="#setup">setup</a>. Edit line 9,
+changing <code>dir</code> to point to your <code>ca</code> directory created in <a href="#setup">setup</a>.</p>
+<div class="highlight"><pre><span></span><code>openssl req -config openssl.cnf -key private/ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca -out certs/ca.cert.pem
+
+# Verify
+openssl x509 -noout -text -in certs/ca.cert.pem
+
+# Make sure these are present
+    Signature Algorithm: sha256WithRSAEncryption               &lt;======== Signature Algorithm can not be sha-1
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                --removed
+            X509v3 Authority Key Identifier: 
+                --removed
+
+            X509v3 Basic Constraints: critical
+                CA:TRUE                                        &lt;======== CA must be true
+            X509v3 Key Usage: critical
+                Digital Signature, Certificate Sign, CRL Sign  &lt;======== Digital and certificate signature
+</code></pre></div>
+<h4 id="create-a-san-certificate-for-your-ontap-cluster">Create a SAN certificate for your ONTAP cluster<a class="headerlink" href="#create-a-san-certificate-for-your-ontap-cluster" title="Permanent link">&para;</a></h4>
+<p>First, we'll create the certificate signing request and then the certificate. In this example, the ONTAP cluster is
+named <code>umeng-aff300-05-06</code>, update accordingly.</p>
+<p>Download the sample <a href="https://github.com/NetApp/harvest/blob/main/pkg/docs/samples/server_cert.cnf">server_cert.cnf</a> file
+and put it in the directory we created in <a href="#setup">setup</a>. Edit lines
+18-21 to include your ONTAP cluster hostnames and IP addresses. Edit lines 6-11 with new names as needed.</p>
+<div class="highlight"><pre><span></span><code>openssl req -new -newkey rsa:4096 -nodes -sha256 -subj &quot;/&quot; -config server_cert.cnf -outform pem -out umeng-aff300-05-06.csr -keyout umeng-aff300-05-06.key
+
+# Verify
+openssl req -text -noout -in umeng-aff300-05-06.csr
+
+# Make sure these are present
+        Attributes:
+        Requested Extensions:
+            X509v3 Subject Alternative Name:         &lt;======== Section that lists alternate DNS and IP names
+                DNS:umeng-aff300-05-06-cm.rtp.openenglab.netapp.com, DNS:umeng-aff300-05-06, IP Address:10.193.48.11, IP Address:10.193.48.11
+    Signature Algorithm: sha256WithRSAEncryption     &lt;======== Signature Algorithm can not be sha-1
+</code></pre></div>
+<p>We'll now use the certificate signing request and the recently created certificate authority to create a new SAN
+certificate for our cluster.</p>
+<div class="highlight"><pre><span></span><code>openssl x509 -req -sha256 -days 30 -in umeng-aff300-05-06.csr -CA certs/ca.cert.pem -CAkey private/ca.key.pem -CAcreateserial -out umeng-aff300-05-06.crt -extensions req_ext -extfile server_cert.cnf
+
+# Verify
+openssl x509 -text -noout -in umeng-aff300-05-06.crt
+
+# Make sure these are present
+X509v3 extensions:
+            X509v3 Subject Alternative Name:       &lt;======== Section that lists alternate DNS and IP names
+                DNS:umeng-aff300-05-06-cm.rtp.openenglab.netapp.com, DNS:umeng-aff300-05-06, IP Address:10.193.48.11, IP Address:10.193.48.11
+    Signature Algorithm: sha256WithRSAEncryption   &lt;======== Signature Algorithm can not be sha-1
+</code></pre></div>
+<h4 id="install-root-ca-certificate-on-cluster">Install Root CA Certificate On Cluster<a class="headerlink" href="#install-root-ca-certificate-on-cluster" title="Permanent link">&para;</a></h4>
+<p>Login to your cluster with admin credentials and install the server certificate authority. Copy from <code>ca/certs/ca.cert.pem</code></p>
+<div class="highlight"><pre><span></span><code>ssh admin@IP
+umeng-aff300-05-06::*&gt; security certificate install -type server-ca
+
+Please enter Certificate: Press &lt;Enter&gt; when done
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+
+You should keep a copy of the CA-signed digital certificate for future reference.
+
+The installed certificate&#39;s CA and serial number for reference:
+CA: ntap
+Serial: 46AFFC7A3A9999999E8FB2FEB0
+
+The certificate&#39;s generated name for reference: ntap
+</code></pre></div>
+<p>Now install the server certificate we created above with SAN. Copy certificate from <code>ca/umeng-aff300-05-06.crt</code> and private key from <code>ca/umeng-aff300-05-06.key</code></p>
+<div class="highlight"><pre><span></span><code>umeng-aff300-05-06::*&gt; security certificate install -type server
+
+Please enter Certificate: Press &lt;Enter&gt; when done
+-----BEGIN CERTIFICATE-----
+..
+-----END CERTIFICATE-----
+
+Please enter Private Key: Press &lt;Enter&gt; when done
+-----BEGIN PRIVATE KEY-----
+...
+-----END PRIVATE KEY-----
+
+Please enter certificates of Certification Authorities (CA) which form the certificate chain of the server certificate. This starts with the issuing CA certificate of the server certificate and can range up to the root CA certificate.
+
+Do you want to continue entering root and/or intermediate certificates {y|n}: n
+</code></pre></div>
+<p>If ONTAP tells you the provided certificate does not have a common name in the subject field, type the hostname of the
+cluster like this:</p>
+<div class="highlight"><pre><span></span><code>The provided certificate does not have a common name in the subject field.
+
+Enter a valid common name to continue installation of the certificate:
+
+Enter a valid common name to continue installation of the certificate: umeng-aff300-05-06-cm.rtp.openenglab.netapp.com
+
+You should keep a copy of the private key and the CA-signed digital certificate for future reference.
+
+The installed certificate&#39;s CA and serial number for reference:
+CA: ntap
+Serial: 67A94AA25B229A68AC5BABACA8939A835AA998A58
+
+The certificate&#39;s generated name for reference: umeng-aff300-05-06-cm.rtp.openenglab.netapp.com
+</code></pre></div>
+<h4 id="modify-the-admin-svm-to-use-the-new-certificate">Modify the admin SVM to use the new certificate<a class="headerlink" href="#modify-the-admin-svm-to-use-the-new-certificate" title="Permanent link">&para;</a></h4>
+<p>We'll modify the cluster's admin SVM to use the just installed server certificate and certificate authority.</p>
+<div class="highlight"><pre><span></span><code>vserver show -type admin -fields vserver,type
+vserver            type
+------------------ -----
+umeng-aff300-05-06 admin
+
+umeng-aff300-05-06::*&gt; ssl modify -vserver umeng-aff300-05-06 -server-enabled true -serial 67A94AA25B229A68AC5BABACA8939A835AA998A58 -ca ntap
+  (security ssl modify)
+</code></pre></div>
+<p>You can verify the certificate(s) are installed and working by using <code>openssl</code> like so:</p>
+<div class="highlight"><pre><span></span><code>openssl s_client -CAfile certs/ca.cert.pem -showcerts -servername server -connect umeng-aff300-05-06-cm.rtp.openenglab.netapp.com:443
+
+CONNECTED(00000005)
+depth=1 C = US, ST = NC, L = RTP, O = ntap, OU = ntap
+verify return:1
+depth=0 
+verify return:1
+...
+</code></pre></div>
+<p>without the <code>-CAfile</code>, <code>openssl</code> will report</p>
+<div class="highlight"><pre><span></span><code>CONNECTED(00000005)
+depth=0 
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 
+verify error:num=21:unable to verify the first certificate
+verify return:1
+---
+</code></pre></div>
+<h2 id="create-client-certificates-for-password-less-login">Create Client Certificates for Password-less Login<a class="headerlink" href="#create-client-certificates-for-password-less-login" title="Permanent link">&para;</a></h2>
+<p>Copy the server certificate we created above into the Harvest install directory.</p>
+<div class="highlight"><pre><span></span><code>cp ca/umeng-aff300-05-06.crt /opt/harvest
+cd /opt/harvest
+</code></pre></div>
+<p>Create a self-signed client key and certificate with the same name as the hostname where Harvest is running. It's not
+required to name the key/cert pair after the hostname, but if you do, Harvest will load them automatically when you
+specify <code>auth_style: certificate_auth</code> otherwise you can point to them directly.
+See <a href="https://github.com/NetApp/harvest#pollers">Pollers</a> for details.</p>
+<p>Change the common name to the ONTAP user you set up with the harvest role above. e.g <code>harvest2</code></p>
+<div class="highlight"><pre><span></span><code>cd /opt/harvest
+mkdir cert
+openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout cert/$(hostname).key -out cert/$(hostname).pem -subj &quot;/CN=harvest2&quot;
+</code></pre></div>
+<h2 id="install-client-certificates-on-cluster">Install Client Certificates on Cluster<a class="headerlink" href="#install-client-certificates-on-cluster" title="Permanent link">&para;</a></h2>
+<p>Login to your cluster with admin credentials and install the client certificate. Copy from <code>cert/$(hostname).pem</code></p>
+<div class="highlight"><pre><span></span><code>ssh admin@IP
+umeng-aff300-05-06::*&gt;  security certificate install -type client-ca -vserver umeng-aff300-05-06
+
+Please enter Certificate: Press &lt;Enter&gt; when done
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+
+You should keep a copy of the CA-signed digital certificate for future reference.
+
+The installed certificate&#39;s CA and serial number for reference:
+CA: cbg
+Serial: B77B59444444CCCC
+
+The certificate&#39;s generated name for reference: cbg_B77B59444444CCCC
+</code></pre></div>
+<p>Now that the client certificate is installed, let's enable it.</p>
+<div class="highlight"><pre><span></span><code>umeng-aff300-05-06::*&gt; ssl modify -vserver umeng-aff300-05-06 -client-enabled true
+  (security ssl modify)
+</code></pre></div>
+<p>Verify with a recent version of <code>curl</code>. If you are running on a Mac <a href="#macos">see below</a>.</p>
+<div class="highlight"><pre><span></span><code>curl --cacert umeng-aff300-05-06.crt --key cert/$(hostname).key --cert cert/$(hostname).pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+</code></pre></div>
+<h2 id="update-harvestyml-to-use-client-certificates">Update Harvest.yml to use client certificates<a class="headerlink" href="#update-harvestyml-to-use-client-certificates" title="Permanent link">&para;</a></h2>
+<p>Update the poller section with <code>auth_style: certificate_auth</code> like this:</p>
+<div class="highlight"><pre><span></span><code>  u2-cert: 
+    auth_style: certificate_auth
+    addr: umeng-aff300-05-06-cm.rtp.openenglab.netapp.com
+</code></pre></div>
+<p>Restart your poller and enjoy your password-less life-style.</p>
+<h3 id="macos">macOS<a class="headerlink" href="#macos" title="Permanent link">&para;</a></h3>
+<p>The version of <code>curl</code> installed on macOS up through Monterey is not recent enough to work with self-signed SAN certs.
+You will need to install a newer version of <code>curl</code> via Homebrew, MacPorts, source, etc.</p>
+<p>Example of failure when running with an older version of <code>curl</code> - you will see this
+in <a href="#install-client-certificates-on-cluster">client auth</a> test step above.</p>
+<div class="highlight"><pre><span></span><code>curl --version
+curl 7.64.1 (x86_64-apple-darwin20.0) libcurl/7.64.1 (SecureTransport) LibreSSL/2.8.3 zlib/1.2.11 nghttp2/1.41.0
+
+curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/cgrindst-mac-0.pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+
+curl: (60) SSL certificate problem: unable to get local issuer certificate
+</code></pre></div>
+<p>Let's install <code>curl</code> via Homebrew. Make sure you don't miss the message that Homebrew prints about your path.</p>
+<div class="highlight"><pre><span></span><code>If you need to have curl first in your PATH, run:
+  echo &#39;export PATH=&quot;/usr/local/opt/curl/bin:$PATH&quot;&#39; &gt;&gt; /Users/cgrindst/.bash_profile
+</code></pre></div>
+<p>Now when we make a client auth request with our self-signed certificate, it works! <code>\o/</code></p>
+<div class="highlight"><pre><span></span><code>brew install curl
+
+curl --version
+curl 7.80.0 (x86_64-apple-darwin20.6.0) libcurl/7.80.0 (SecureTransport) OpenSSL/1.1.1l zlib/1.2.11 brotli/1.0.9 zstd/1.5.0 libidn2/2.3.2 libssh2/1.10.0 nghttp2/1.46.0 librtmp/2.3 OpenLDAP/2.6.0
+Release-Date: 2021-11-10
+Protocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp 
+Features: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz MultiSSL NTLM NTLM_WB SPNEGO SSL TLS-SRP UnixSockets zstd
+
+curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/cgrindst-mac-0.pem https://umeng-aff300-05-06-cm.rtp.openenglab.netapp.com/api/storage/disks
+
+{
+  &quot;records&quot;: [
+    {
+      &quot;name&quot;: &quot;1.1.22&quot;,
+      &quot;_links&quot;: {
+        &quot;self&quot;: {
+          &quot;href&quot;: &quot;/api/storage/disks/1.1.22&quot;
+        }
+      }
+    }
+  ]
+}
+</code></pre></div>
+<hr />
+<p>Change directory to your Harvest home directory (replace <code>/opt/harvest/</code> if this is not the default):</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/opt/harvest/
+</code></pre></div>
+<p>Generate an SSL cert and key pair with the following command. Note that it's preferred to generate these files using the
+hostname of the local machine. The command below assumes <code>debian8</code> as our hostname name and <code>harvest2</code> as the user we
+created in the previous step:</p>
+<div class="highlight"><pre><span></span><code>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span><span class="m">1095</span><span class="w"> </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span>-keyout<span class="w"> </span>cert/debian8.key<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-out<span class="w"> </span>cert/debian8.pem<span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=harvest2&quot;</span>
+</code></pre></div>
+<p>Next, open the public key (<code>debian8.pem</code> in our example) and copy all of its content. Login into your ONTAP CLI and run
+this command by replacing <strong>CLUSTER</strong> with the name of your cluster.</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>certificate<span class="w"> </span>install<span class="w"> </span>-type<span class="w"> </span>client-ca<span class="w"> </span>-vserver<span class="w"> </span>CLUSTER
+</code></pre></div>
+<p>Paste the public key content and hit enter. Output should be similar to this:</p>
+<div class="highlight"><pre><span></span><code>jamaica::&gt;<span class="w"> </span>security<span class="w"> </span>certificate<span class="w"> </span>install<span class="w"> </span>-type<span class="w"> </span>client-ca<span class="w"> </span>-vserver<span class="w"> </span>jamaica<span class="w"> </span>
+
+Please<span class="w"> </span>enter<span class="w"> </span>Certificate:<span class="w"> </span>Press<span class="w"> </span>&lt;Enter&gt;<span class="w"> </span>when<span class="w"> </span><span class="k">done</span>
+-----BEGIN<span class="w"> </span>CERTIFICATE-----<span class="w">                       </span>
+MIIDETCCAfmgAwIBAgIUP9EUXyl2BDSUOkNEcDU0yqbJ29IwDQYJKoZIhvcNAQEL
+BQAwGDEWMBQGA1UEAwwNaGFydmVzdDItY2xpMzAeFw0yMDEwMDkxMjA0MDhaFw0y
+MzEwMDktcGFueSBMdGQxFzAVBgNVBAMlc3QyLWNsaTMwggEiMA0tcGFueSBGCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCVVy25BeCRoGCJWFOlyUL7Ddkze4Hl2/6u
+qye/3mk5vBNsGuXUrtad5XfBB70Ez9hWl5sraLiY68ro6MyX1icjiUTeaYDvS/76
+Iw7HeXJ5Pyb/fWth1nePunytoLyG/vaTCySINkIV5nlxC+k0X3wWFJdfJzhloPtt
+1Vdm7aCF2q6a2oZRnUEBGQb6t5KyF0/Xh65mvfgB0pl/AS2HY5Gz+~L54Xyvs+BY
+V7UmTop7WBYl0L3QXLieERpHXnyOXmtwlm1vG5g4n/0DVBNTBXjEdvc6oRh8sxBN
+ZlQWRApE7pa/I1bLD7G2AiS4UcPmR4cEpPRVEsOFOaAN3Z3YskvnAgMBAAGjUzBR
+MB0GA1UdDgQWBBQr4syV6TCcgO/5EcU/F8L2YYF15jAfBgNVHSMEGDAWgBQr4syV
+6TCcgO/5EcU/F8L2YYF15jAPBgNVHRMdfdfwerH/MA0GCSqGSIb^ECd3DQEBCwUA
+A4IBAQBjP1BVhClRKkO/M3zlWa2L9Ztce6SuGwSnm6Ebmbs+iMc7o2N9p3RmV6Xl
+h6NcdXRzzPAVrUoK8ewhnBzdghgIPoCI6inAf1CUhcCX2xcnE/osO+CfvKuFnPYE
+WQ7UNLsdfka0a9kTK13r3GMs09z/VsDs0gD8UhPjoeO7LQhdU9tJ/qOaSP3s48pv
+sYzZurHUgKmVOaOE4t9DAdevSECEWCETRETA<span class="nv">$Vbn</span>%@@@%%rcdrctru65ryFaByb+
+hTtGhDnoHwzt/cAGvLGV/RyWdGFAbu7Fb1rV94ceggE7nh1FqbdLH9siot6LlnQN
+MhEWp5PYgndOW49dDYUxoauCCkiA
+-----END<span class="w"> </span>CERTIFICATE-----
+
+
+You<span class="w"> </span>should<span class="w"> </span>keep<span class="w"> </span>a<span class="w"> </span>copy<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>CA-signed<span class="w"> </span>digital<span class="w"> </span>certificate<span class="w"> </span><span class="k">for</span><span class="w"> </span>future<span class="w"> </span>reference.
+
+The<span class="w"> </span>installed<span class="w"> </span>certificate<span class="s1">&#39;s CA and serial number for reference:</span>
+<span class="s1">CA: harvest2</span>
+<span class="s1">Serial: 3FD1145F2976043012213d3009095534CCRDBD2</span>
+
+<span class="s1">The certificate&#39;</span>s<span class="w"> </span>generated<span class="w"> </span>name<span class="w"> </span><span class="k">for</span><span class="w"> </span>reference:<span class="w"> </span>harvest2
+</code></pre></div>
+<p>Finally, we need to enable SSL authentication with the following command (replace <strong>CLUSTER</strong> with the name of your
+cluster):</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>ssl<span class="w"> </span>modify<span class="w"> </span>-client-enabled<span class="w"> </span><span class="nb">true</span><span class="w"> </span>-vserver<span class="w"> </span>CLUSTER
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>

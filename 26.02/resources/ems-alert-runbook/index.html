@@ -1,0 +1,4245 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../help/config-collection/">
+      
+      
+        <link rel="next" href="../matrix/">
+      
+      
+      <link rel="icon" href="../../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>EMS Alert Runbook - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#aws-credentials-not-initialized" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              EMS Alert Runbook
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#aws-credentials-not-initialized" class="md-nav__link">
+    <span class="md-ellipsis">
+      AWS Credentials Not Initialized
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#antivirus-server-busy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Antivirus Server Busy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-tier-unreachable" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cloud Tier Unreachable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directory size is approaching the maximum directory size (maxdirsize) limit
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-out-of-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Out of Service
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-shelf-power-supply-discovered" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Shelf Power Supply Discovered
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-shelves-power-supply-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Shelves Power Supply Removed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fc-target-port-commands-exceeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      FC Target Port Commands Exceeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fabricpool-mirror-replication-resync-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      FabricPool Mirror Replication Resync Completed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fabricpool-space-usage-limit-nearly-reached" class="md-nav__link">
+    <span class="md-ellipsis">
+      FabricPool Space Usage Limit Nearly Reached
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fabricpool-space-usage-limit-reached" class="md-nav__link">
+    <span class="md-ellipsis">
+      FabricPool Space Usage Limit Reached
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fanout-snapmirror-relationship-common-snapshot-deleted" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fanout SnapMirror Relationship Common Snapshot Deleted
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#giveback-of-storage-pool-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Giveback of Storage Pool Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ha-interconnect-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      HA Interconnect Down
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lun-destroyed" class="md-nav__link">
+    <span class="md-ellipsis">
+      LUN Destroyed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lun-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      LUN Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-unit-fan-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Unit Fan Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-unit-fan-in-warning-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Unit Fan in Warning State
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#max-sessions-per-user-exceeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Max Sessions Per User Exceeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#max-times-open-per-file-exceeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Max Times Open Per File Exceeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrocluster-automatic-unplanned-switchover-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetroCluster Automatic Unplanned Switchover Disabled
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrocluster-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetroCluster Monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nfsv4-store-pool-exhausted" class="md-nav__link">
+    <span class="md-ellipsis">
+      NFSv4 Store Pool Exhausted
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-namespace-destroyed" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe Namespace Destroyed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-namespace-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe Namespace Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-namespace-online" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe Namespace Online
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-of-license-grace-period-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe-oF License Grace Period Active
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-of-license-grace-period-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe-oF License Grace Period Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-of-license-grace-period-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe-oF License Grace Period Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvram-battery-low" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVRAM Battery Low
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#netbios-name-conflict" class="md-nav__link">
+    <span class="md-ellipsis">
+      NetBIOS Name Conflict
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-registered-scan-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      No Registered Scan Engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-vscan-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      No Vscan Connection
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#node-panic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Node Panic
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#node-root-volume-space-low" class="md-nav__link">
+    <span class="md-ellipsis">
+      Node Root Volume Space Low
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#non-responsive-antivirus-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-responsive AntiVirus Server
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nonexistent-admin-share" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nonexistent Admin Share
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-added" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Added
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-ca-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator CA Certificate Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-ca-certificate-expiring" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator CA Certificate Expiring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-client-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Client Certificate Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-client-certificate-expiring" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Client Certificate Expiring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-not-accessible" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Not Accessible
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Removed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-server-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Server Certificate Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-server-certificate-expiring" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Server Certificate Expiring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-unreachable" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Unreachable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-store-host-unresolvable" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Store Host Unresolvable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-store-intercluster-lif-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Store Intercluster LIF Down
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-store-signature-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Store Signature Mismatch
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qos-monitor-memory-maxed-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      QoS Monitor Memory Maxed Out
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readdir-timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      READDIR Timeout
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ransomware-activity-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ransomware Activity Detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relocation-of-storage-pool-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relocation of Storage Pool Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#san-active-active-state-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SAN "active-active" State Changed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sfp-in-fc-target-adapter-receiving-low-power" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFP in FC target adapter receiving low power
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sfp-in-fc-target-adapter-transmitting-low-power" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFP in FC target adapter transmitting low power
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-heartbeat-missed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Heartbeat Missed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-heartbeat-stopped" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Heartbeat Stopped
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-not-configured" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Not Configured
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shadow-copy-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shadow Copy Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shelf-fan-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shelf Fan Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-common-snapshot-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Common Snapshot Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-initialization-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Initialization Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-out-of-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Out of Sync
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-resync-attempt-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Resync Attempt Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-snapshot-is-not-replicated" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Snapshot is not Replicated
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-automatic-unplanned-failover-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Automatic Unplanned Failover Completed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-automatic-unplanned-failover-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Automatic Unplanned Failover Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-planned-failover-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Planned Failover Completed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-planned-failover-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Planned Failover Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-relationship-out-of-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Relationship Out of Sync
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-switch-power-supplies-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage Switch Power Supplies Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-vm-anti-ransomware-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage VM Anti-ransomware Monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-vm-stop-succeeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage VM Stop Succeeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#system-cannot-operate-due-to-main-unit-fan-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Cannot Operate Due to Main Unit Fan Failure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#too-many-cifs-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Too Many CIFS Authentication
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unassigned-disks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unassigned Disks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unauthorized-user-access-to-admin-share" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unauthorized User Access to Admin Share
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#virus-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Virus Detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-anti-ransomware-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Anti-ransomware Monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-automatic-resizing-succeeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Automatic Resizing Succeeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-restricted" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Restricted
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#aws-credentials-not-initialized" class="md-nav__link">
+    <span class="md-ellipsis">
+      AWS Credentials Not Initialized
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#antivirus-server-busy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Antivirus Server Busy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-tier-unreachable" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cloud Tier Unreachable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directory size is approaching the maximum directory size (maxdirsize) limit
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-out-of-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Out of Service
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-shelf-power-supply-discovered" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Shelf Power Supply Discovered
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-shelves-power-supply-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Shelves Power Supply Removed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fc-target-port-commands-exceeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      FC Target Port Commands Exceeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fabricpool-mirror-replication-resync-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      FabricPool Mirror Replication Resync Completed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fabricpool-space-usage-limit-nearly-reached" class="md-nav__link">
+    <span class="md-ellipsis">
+      FabricPool Space Usage Limit Nearly Reached
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fabricpool-space-usage-limit-reached" class="md-nav__link">
+    <span class="md-ellipsis">
+      FabricPool Space Usage Limit Reached
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fanout-snapmirror-relationship-common-snapshot-deleted" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fanout SnapMirror Relationship Common Snapshot Deleted
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#giveback-of-storage-pool-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Giveback of Storage Pool Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ha-interconnect-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      HA Interconnect Down
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lun-destroyed" class="md-nav__link">
+    <span class="md-ellipsis">
+      LUN Destroyed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lun-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      LUN Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-unit-fan-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Unit Fan Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-unit-fan-in-warning-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Unit Fan in Warning State
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#max-sessions-per-user-exceeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Max Sessions Per User Exceeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#max-times-open-per-file-exceeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Max Times Open Per File Exceeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrocluster-automatic-unplanned-switchover-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetroCluster Automatic Unplanned Switchover Disabled
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrocluster-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetroCluster Monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nfsv4-store-pool-exhausted" class="md-nav__link">
+    <span class="md-ellipsis">
+      NFSv4 Store Pool Exhausted
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-namespace-destroyed" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe Namespace Destroyed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-namespace-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe Namespace Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-namespace-online" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe Namespace Online
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-of-license-grace-period-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe-oF License Grace Period Active
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-of-license-grace-period-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe-oF License Grace Period Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvme-of-license-grace-period-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVMe-oF License Grace Period Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvram-battery-low" class="md-nav__link">
+    <span class="md-ellipsis">
+      NVRAM Battery Low
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#netbios-name-conflict" class="md-nav__link">
+    <span class="md-ellipsis">
+      NetBIOS Name Conflict
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-registered-scan-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      No Registered Scan Engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-vscan-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      No Vscan Connection
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#node-panic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Node Panic
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#node-root-volume-space-low" class="md-nav__link">
+    <span class="md-ellipsis">
+      Node Root Volume Space Low
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#non-responsive-antivirus-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-responsive AntiVirus Server
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nonexistent-admin-share" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nonexistent Admin Share
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-added" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Added
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-ca-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator CA Certificate Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-ca-certificate-expiring" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator CA Certificate Expiring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-client-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Client Certificate Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-client-certificate-expiring" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Client Certificate Expiring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-not-accessible" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Not Accessible
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Removed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-server-certificate-expired" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Server Certificate Expired
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-server-certificate-expiring" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Server Certificate Expiring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-mediator-unreachable" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Mediator Unreachable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-store-host-unresolvable" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Store Host Unresolvable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-store-intercluster-lif-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Store Intercluster LIF Down
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-store-signature-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Store Signature Mismatch
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qos-monitor-memory-maxed-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      QoS Monitor Memory Maxed Out
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readdir-timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      READDIR Timeout
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ransomware-activity-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ransomware Activity Detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relocation-of-storage-pool-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relocation of Storage Pool Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#san-active-active-state-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SAN "active-active" State Changed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sfp-in-fc-target-adapter-receiving-low-power" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFP in FC target adapter receiving low power
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sfp-in-fc-target-adapter-transmitting-low-power" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFP in FC target adapter transmitting low power
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-heartbeat-missed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Heartbeat Missed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-heartbeat-stopped" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Heartbeat Stopped
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-not-configured" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Not Configured
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-processor-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processor Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shadow-copy-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shadow Copy Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shelf-fan-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shelf Fan Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-common-snapshot-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Common Snapshot Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-initialization-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Initialization Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-out-of-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Out of Sync
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-resync-attempt-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Resync Attempt Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-relationship-snapshot-is-not-replicated" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror Relationship Snapshot is not Replicated
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-automatic-unplanned-failover-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Automatic Unplanned Failover Completed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-automatic-unplanned-failover-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Automatic Unplanned Failover Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-planned-failover-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Planned Failover Completed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-planned-failover-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Planned Failover Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snapmirror-active-sync-relationship-out-of-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      SnapMirror active sync Relationship Out of Sync
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-switch-power-supplies-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage Switch Power Supplies Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-vm-anti-ransomware-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage VM Anti-ransomware Monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-vm-stop-succeeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage VM Stop Succeeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#system-cannot-operate-due-to-main-unit-fan-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Cannot Operate Due to Main Unit Fan Failure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#too-many-cifs-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Too Many CIFS Authentication
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unassigned-disks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unassigned Disks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unauthorized-user-access-to-admin-share" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unauthorized User Access to Admin Share
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#virus-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Virus Detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-anti-ransomware-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Anti-ransomware Monitoring
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-automatic-resizing-succeeded" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Automatic Resizing Succeeded
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Offline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-restricted" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Restricted
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>EMS Alert Runbook</h1>
+
+<p>This document describes each <a href="https://mysupport.netapp.com/documentation/productlibrary/index.html?productID=62286">ONTAP event management system</a>
+(EMS) event that Harvest <a href="../../configure-ems/">collects</a> and remediation steps.</p>
+<h3 id="aws-credentials-not-initialized">AWS Credentials Not Initialized<a class="headerlink" href="#aws-credentials-not-initialized" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>cloud.aws.iamNotInitialized</code></p>
+<p>This event occurs when a module attempts to access Amazon Web Services (AWS) Identity and Access Management (IAM) role-based credentials from the cloud credentials thread before they are initialized.</p>
+<p><strong>Remediation</strong></p>
+<p>Wait for the cloud credential thread, as well as the system, to complete initialization.</p>
+<h3 id="antivirus-server-busy">Antivirus Server Busy<a class="headerlink" href="#antivirus-server-busy" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.vscanConnBackPressure</code></p>
+<p>The antivirus server is too busy to accept any new scan requests.</p>
+<p><strong>Remediation</strong></p>
+<p>If this message occurs frequently, ensure that there are enough antivirus servers to handle the virus scan load generated by the SVM.</p>
+<h3 id="cloud-tier-unreachable">Cloud Tier Unreachable<a class="headerlink" href="#cloud-tier-unreachable" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>object.store.unavailable</code></p>
+<p>A storage node cannot connect to Cloud Tier object store API. Some data will be inaccessible.</p>
+<p><strong>Remediation</strong></p>
+<p>If you use on-premises products, perform the following corrective actions: </p>
+<ol>
+<li>Verify that your intercluster LIF is online and functional by using the "network interface show" command.</li>
+<li>Check the network connectivity to the object store server by using the "ping" command over the destination node intercluster LIF.</li>
+<li>Ensure the following:
+    a. The configuration of your object store has not changed.
+    b. The login and connectivity information is still valid.
+Contact NetApp technical support if the issue persists.</li>
+</ol>
+<p>If you use Cloud Volumes ONTAP, perform the following corrective actions: </p>
+<ol>
+<li>Ensure that the configuration of your object store has not changed.</li>
+<li>Ensure that the login and connectivity information is still valid.
+Contact NetApp technical support if the issue persists.</li>
+</ol>
+<h3 id="directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit">Directory size is approaching the maximum directory size (maxdirsize) limit<a class="headerlink" href="#directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>wafl.dir.size.warning</code></p>
+<p>This message occurs when the size of a directory surpasses a configured percentage (default: 90%) of its current maximum directory size (maxdirsize) limit.</p>
+<p><strong>Remediation</strong></p>
+<p>Use the "volume file show-inode" command with the file ID and volume name information to find the file path. Reduce the number of files in the directory. If not possible, use the (privilege:advanced) option "volume modify -volume vol_name -maxdir-size new_value" to increase the maximum number of files per directory. However, doing so could impact system performance. If you need to increase the maximum directory size, contact NetApp technical support.</p>
+<h3 id="disk-out-of-service">Disk Out of Service<a class="headerlink" href="#disk-out-of-service" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>disk.outOfService</code></p>
+<p>This event occurs when a disk is removed from service because it has been marked failed, is being sanitized, or has entered the Maintenance Center.</p>
+<h3 id="disk-shelf-power-supply-discovered">Disk Shelf Power Supply Discovered<a class="headerlink" href="#disk-shelf-power-supply-discovered" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>EMS Event</strong>: <code>diskShelf.psu.added</code></p>
+<p>This message occurs when a power supply unit is added to the disk shelf.</p>
+<h3 id="disk-shelves-power-supply-removed">Disk Shelves Power Supply Removed<a class="headerlink" href="#disk-shelves-power-supply-removed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>diskShelf.psu.removed</code></p>
+<p>This message occurs when a power supply unit is removed from the disk shelf.</p>
+<h3 id="fc-target-port-commands-exceeded">FC Target Port Commands Exceeded<a class="headerlink" href="#fc-target-port-commands-exceeded" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>scsitarget.fct.port.full</code></p>
+<p>The number of outstanding commands on the physical FC target port exceeds the supported limit. The port does not have sufficient buffers for the outstanding commands. It is overrun or the fan-in is too steep because too many initiator I/Os are using it.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Evaluate the host fan-in on the port, and perform one of the following actions:
+      a. Reduce the number of hosts that log in to this port.
+      b. Reduce the number of LUNs accessed by the hosts that log in to this port.
+      c. Reduce the host command queue depth.</li>
+<li>Monitor the "queue_full" counter on the "fcp_port" CM object, and ensure that it does not increase. For example: 
+statistics show -object fcp_port -counter queue_full -instance port.portname -raw</li>
+<li>Monitor the threshold counter and ensure that it does not increase. For example:
+statistics show -object fcp_port -counter threshold_full -instance port.portname -raw</li>
+</ol>
+<h3 id="fabricpool-mirror-replication-resync-completed">FabricPool Mirror Replication Resync Completed<a class="headerlink" href="#fabricpool-mirror-replication-resync-completed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>EMS Event</strong>: <code>wafl.ca.resync.complete</code></p>
+<p>This message occurs when Data ONTAP(R) completes the resync process from the primary object store to the mirror object store for a mirrored FabricPool aggregate.</p>
+<h3 id="fabricpool-space-usage-limit-nearly-reached">FabricPool Space Usage Limit Nearly Reached<a class="headerlink" href="#fabricpool-space-usage-limit-nearly-reached" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>EMS Event</strong>: <code>fabricpool.nearly.full</code></p>
+<p>The total cluster-wide FabricPool space usage of object stores from capacity-licensed providers has nearly reached the licensed limit.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Check the percentage of the licensed capacity used by each FabricPool storage tier by using the "storage aggregate object-store show-space" command.</li>
+<li>Delete Snapshot copies from volumes with the tiering policy "snapshot" or "backup" by using the "volume snapshot delete" command to clear up space.</li>
+<li>Install a new license on the cluster to increase the licensed capacity.</li>
+</ol>
+<h3 id="fabricpool-space-usage-limit-reached">FabricPool Space Usage Limit Reached<a class="headerlink" href="#fabricpool-space-usage-limit-reached" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>EMS Event</strong>: <code>fabricpool.full</code></p>
+<p>The total cluster-wide FabricPool space usage of object stores from capacity-licensed providers has reached  the license limit.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Check the percentage of the licensed capacity used by each FabricPool storage tier by using the "storage aggregate object-store show-space" command.</li>
+<li>Delete Snapshot copies from volumes with the tiering policy "snapshot" or "backup" by using the "volume snapshot delete" command to clear up space.</li>
+<li>Install a new license on the cluster to increase the licensed capacity.</li>
+</ol>
+<h3 id="fanout-snapmirror-relationship-common-snapshot-deleted">Fanout SnapMirror Relationship Common Snapshot Deleted<a class="headerlink" href="#fanout-snapmirror-relationship-common-snapshot-deleted" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sms.fanout.comm.snap.deleted</code></p>
+<p>This message occurs when an older Snapshot(tm) copy is deleted as part of a SnapMirror® Synchronous resynchronize or update (common Snapshot copy) operation, which could lead to a "no common Snapshot scenario" between the synchronous and asynchronous disaster recovery (DR) copies that share the same source volume. If there is no common Snapshot copy between the synchronous and asynchronous DR copies, then a re-baseline will need to be performed during a disaster recovery.</p>
+<p><strong>Remediation</strong></p>
+<p>You can ignore this message if there is no asynchronous relationship configured for the synchronous source volume. If there is an asynchronous relationship configured, then update the asynchronous relationship by using the "snapmirror update" command. The SnapMirror update operation will transfer the snapshots that will act as common snapshots between the synchronous and asynchronous destinations.</p>
+<h3 id="giveback-of-storage-pool-failed">Giveback of Storage Pool Failed<a class="headerlink" href="#giveback-of-storage-pool-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>gb.netra.ca.check.failed</code></p>
+<p>This event occurs during the migration of an storage pool (aggregate) as part of a storage failover (SFO) giveback, when the destination node cannot reach the object stores.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Verify that your intercluster LIF is online and functional by using the "network interface show" command.</li>
+<li>Check network connectivity to the object store server by using the"'ping" command over the destination node intercluster LIF. </li>
+<li>Verify that the configuration of your object store has not changed and that login and connectivity information is still accurate by using the "aggregate object-store config show" command.</li>
+</ol>
+<p>Alternatively, you can override the error by specifying false for the "require-partner-waiting" parameter of the giveback command.</p>
+<p>Contact NetApp technical support for more information or assistance.</p>
+<h3 id="ha-interconnect-down">HA Interconnect Down<a class="headerlink" href="#ha-interconnect-down" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>callhome.hainterconnect.down</code></p>
+<p>The high-availability (HA) interconnect is down. Risk of service outage when failover is not available.</p>
+<p><strong>Remediation</strong></p>
+<p>Corrective actions depend on the number and type of HA interconnect links supported by the platform, as well as the reason why the interconnect is down. </p>
+<ul>
+<li>If the links are down:<ul>
+<li>Verify that both controllers in the HA pair are operational.</li>
+<li>For externally connected links, make sure that the interconnect cables are connected properly and that the small form-factor pluggables (SFPs), if applicable, are seated properly on both controllers.</li>
+<li>For internally connected links, disable and re-enable the links, one after the other, by using the "ic link off" and "ic link on" commands. </li>
+</ul>
+</li>
+<li>If links are disabled, enable the links by using the "ic link on" command. </li>
+<li>If a peer is not connected, disable and re-enable the links, one after the other, by using the "ic link off" and "ic link on" commands.</li>
+</ul>
+<p>Contact NetApp technical support if the issue persists.</p>
+<h3 id="lun-destroyed">LUN Destroyed<a class="headerlink" href="#lun-destroyed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>LUN.destroy</code></p>
+<p>This event occurs when a LUN is destroyed.</p>
+<h3 id="lun-offline">LUN Offline<a class="headerlink" href="#lun-offline" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>LUN.offline</code></p>
+<p>This message occurs when a LUN is brought offline manually.</p>
+<p><strong>Remediation</strong></p>
+<p>Bring the LUN back online.</p>
+<h3 id="main-unit-fan-failed">Main Unit Fan Failed<a class="headerlink" href="#main-unit-fan-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>monitor.fan.failed</code></p>
+<p>One or more main unit fans have failed. The system remains operational.</p>
+<p>However, if the condition persists for too long, the overtemperature might trigger an automatic shutdown.</p>
+<p><strong>Remediation</strong></p>
+<p>Reseat the failed fans. If the error persists, replace them.</p>
+<h3 id="main-unit-fan-in-warning-state">Main Unit Fan in Warning State<a class="headerlink" href="#main-unit-fan-in-warning-state" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>monitor.fan.warning</code></p>
+<p>This event occurs when one or more main unit fans are in a warning state.</p>
+<p><strong>Remediation</strong></p>
+<p>Replace the indicated fans to avoid overheating.</p>
+<h3 id="max-sessions-per-user-exceeded">Max Sessions Per User Exceeded<a class="headerlink" href="#max-sessions-per-user-exceeded" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.cifsMaxSessPerUsrConn</code></p>
+<p>You have exceeded the maximum number of sessions allowed per user over a TCP connection. Any request to establish a session will be denied until some sessions are released. </p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions: </p>
+<ol>
+<li>Inspect all the applications that run on the client, and terminate any that are not operating properly.</li>
+<li>Reboot the client.</li>
+<li>Check if the issue is caused by a new or existing application:
+    a. If the application is new, set a higher threshold for the client by using the "cifs option modify -max-opens-same-file-per-tree" command. In some cases, clients operate as expected, but require a higher threshold. You should have advanced privilege to set a higher threshold for the client. 
+    b. If the issue is caused by an existing application, there might be an issue with the client. Contact NetApp technical support for more information or assistance.</li>
+</ol>
+<h3 id="max-times-open-per-file-exceeded">Max Times Open Per File Exceeded<a class="headerlink" href="#max-times-open-per-file-exceeded" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.cifsMaxOpenSameFile</code></p>
+<p>You have exceeded the maximum number of times that you can open the file over a TCP connection. Any request to open this file will be denied until you close some open instances of the file. This typically indicates abnormal application behavior.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Inspect the applications that run on the client using this TCP connection.
+The client might be operating incorrectly because of the application running on it.</li>
+<li>Reboot the client.</li>
+<li>Check if the issue is caused by a new or existing application:
+    a. If the application is new, set a higher threshold for the client by using the "cifs option modify -max-opens-same-file-per-tree" command.
+In some cases, clients operate as expected, but require a higher threshold. You should have advanced privilege to set a higher threshold for the client. 
+    b. If the issue is caused by an existing application, there might be an issue with the client. Contact NetApp technical support for more information or assistance.</li>
+</ol>
+<h3 id="metrocluster-automatic-unplanned-switchover-disabled">MetroCluster Automatic Unplanned Switchover Disabled<a class="headerlink" href="#metrocluster-automatic-unplanned-switchover-disabled" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>mcc.config.auso.stDisabled</code></p>
+<p>This message occurs when automatic unplanned switchover capability is disabled.</p>
+<p><strong>Remediation</strong></p>
+<p>Run the "metrocluster modify -node-name <nodename> -automatic-switchover-onfailure true" command for each node in the cluster to enable automatic switchover.</p>
+<h3 id="metrocluster-monitoring">MetroCluster Monitoring<a class="headerlink" href="#metrocluster-monitoring" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>hm.alert.raised</code></p>
+<p>Aggregate was left behind during switchback.</p>
+<p><strong>Remediation</strong></p>
+<p>1) Check the aggregate state by using the command "aggr show".
+2) If the aggregate is online, return it to its original owner by using the command "metrocluster switchback".</p>
+<h3 id="nfsv4-store-pool-exhausted">NFSv4 Store Pool Exhausted<a class="headerlink" href="#nfsv4-store-pool-exhausted" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.nfsV4PoolExhaust</code></p>
+<p>A NFSv4 store pool has been exhausted.</p>
+<p><strong>Remediation</strong></p>
+<p>If the NFS server is unresponsive for more than 10 minutes after this event, contact NetApp technical support.</p>
+<h3 id="nvme-namespace-destroyed">NVMe Namespace Destroyed<a class="headerlink" href="#nvme-namespace-destroyed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>NVMeNS.destroy</code></p>
+<p>This event occurs when an NVMe namespace is destroyed.</p>
+<h3 id="nvme-namespace-offline">NVMe Namespace Offline<a class="headerlink" href="#nvme-namespace-offline" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>NVMeNS.offline</code></p>
+<p>This event occurs when an NVMe namespace is brought offline manually.</p>
+<h3 id="nvme-namespace-online">NVMe Namespace Online<a class="headerlink" href="#nvme-namespace-online" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>NVMeNS.online</code></p>
+<p>This event occurs when an NVMe namespace is brought online manually.</p>
+<h3 id="nvme-of-license-grace-period-active">NVMe-oF License Grace Period Active<a class="headerlink" href="#nvme-of-license-grace-period-active" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>nvmf.graceperiod.active</code></p>
+<p>This event occurs on a daily basis when the NVMe over Fabrics (NVMe-oF) protocol is in use and the grace period of the license is active. The NVMe-oF functionality requires a license after the license grace period expires. NVMe-oF functionality is disabled when the license grace period is over.</p>
+<p><strong>Remediation</strong></p>
+<p>Contact your sales representative to obtain an NVMe-oF license, and add it to the cluster, or remove all instances of NVMe-oF configuration from the cluster.</p>
+<h3 id="nvme-of-license-grace-period-expired">NVMe-oF License Grace Period Expired<a class="headerlink" href="#nvme-of-license-grace-period-expired" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>nvmf.graceperiod.expired</code></p>
+<p>The NVMe over Fabrics (NVMe-oF) license grace period is over and the NVMe-oF functionality is disabled.</p>
+<p><strong>Remediation</strong></p>
+<p>Contact your sales representative to obtain an NVMe-oF license, and add it to the cluster.</p>
+<h3 id="nvme-of-license-grace-period-start">NVMe-oF License Grace Period Start<a class="headerlink" href="#nvme-of-license-grace-period-start" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>nvmf.graceperiod.start</code></p>
+<p>The NVMe over Fabrics (NVMe-oF) configuration was detected during the upgrade to ONTAP 9.5 software. NVMe-oF functionality requires a license after the license grace period expires.</p>
+<p><strong>Remediation</strong></p>
+<p>Contact your sales representative to obtain an NVMe-oF license, and add it to the cluster.</p>
+<h3 id="nvram-battery-low">NVRAM Battery Low<a class="headerlink" href="#nvram-battery-low" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>callhome.battery.low</code></p>
+<p>The NVRAM battery capacity is critically low. There might be a potential data loss if the battery runs out of power.</p>
+<p>Your system generates and transmits an AutoSupport or "call home" message to NetApp technical support and the configured destinations if it is configured to do so. The successful delivery of an AutoSupport message significantly improves problem determination and resolution.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>View the battery's current status, capacity, and charging state by using the "system node environment sensors show" command.</li>
+<li>If the battery was replaced recently or the system was non-operational for an extended period of time, monitor the battery to verify that it is charging properly.</li>
+<li>Contact NetApp technical support if the battery runtime continues to decrease below critical levels, and the storage system shuts down automatically.</li>
+</ol>
+<h3 id="netbios-name-conflict">NetBIOS Name Conflict<a class="headerlink" href="#netbios-name-conflict" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.cifsNbNameConflict</code></p>
+<p>The NetBIOS Name Service has received a negative response to a name registration request, from a remote machine. This is typically caused by a conflict in the NetBIOS name or an alias. As a result, clients might not be able to access data or connect to the right data-serving node in the cluster.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform any one of the following corrective actions:</p>
+<ul>
+<li>If there is a conflict in the NetBIOS name or an alias, perform one of the following:<ul>
+<li>Delete the duplicate NetBIOS alias by using the "vserver cifs delete -aliases alias -vserver vserver" command.</li>
+<li>Rename a NetBIOS alias by deleting the duplicate name and adding an alias with a new name by using the "vserver cifs create -aliases alias -vserver vserver" command. </li>
+</ul>
+</li>
+<li>If there are no aliases configured and there is a conflict in the NetBIOS name, then rename the CIFS server by using the "vserver cifs delete -vserver vserver" and "vserver cifs create -cifs-server netbiosname" commands. NOTE: Deleting a CIFS server can make data inaccessible. </li>
+<li>Remove NetBIOS name or rename the NetBIOS on the remote machine.</li>
+</ul>
+<h3 id="no-registered-scan-engine">No Registered Scan Engine<a class="headerlink" href="#no-registered-scan-engine" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.vscanNoRegdScanner</code></p>
+<p>The antivirus connector notified ONTAP that it does not have a registered scan engine. This might cause data unavailability if the "scan-mandatory" option is enabled. </p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Ensure that the scan engine software installed on the antivirus server is compatible with ONTAP.</li>
+<li>Ensure that scan engine software is running and configured to connect to the antivirus connector over local loopback.</li>
+</ol>
+<h3 id="no-vscan-connection">No Vscan Connection<a class="headerlink" href="#no-vscan-connection" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.vscanNoScannerConn</code></p>
+<p>ONTAP has no Vscan connection to service virus scan requests. This might cause data unavailability if the "scan-mandatory" option is enabled.</p>
+<p><strong>Remediation</strong></p>
+<p>Ensure that the scanner pool is properly configured and the antivirus servers are active and connected to ONTAP.</p>
+<h3 id="node-panic">Node Panic<a class="headerlink" href="#node-panic" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Performance</p>
+<p><strong>EMS Event</strong>: <code>sk.panic</code></p>
+<p>This event is issued when a panic occurs.</p>
+<p><strong>Remediation</strong></p>
+<p>Contact NetApp customer support.</p>
+<h3 id="node-root-volume-space-low">Node Root Volume Space Low<a class="headerlink" href="#node-root-volume-space-low" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>EMS Event</strong>: <code>mgmtgwd.rootvolrec.low.space</code></p>
+<p>The system has detected that the root volume is dangerously low on space. The node is not fully operational. Data LIFs might have failed over within the cluster, because of which NFS and CIFS access is limited on the node. Administrative capability is limited to local recovery procedures for the node to clear up space on the root volume.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Clear up space on the root volume by deleting old Snapshot copies, deleting files you no longer need from the /mroot directory, or expanding the root volume capacity.</li>
+<li>Reboot the controller.</li>
+</ol>
+<p>Contact NetApp technical support for more information or assistance.</p>
+<h3 id="non-responsive-antivirus-server">Non-responsive AntiVirus Server<a class="headerlink" href="#non-responsive-antivirus-server" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.vscanConnInactive</code></p>
+<p>This event occurs when ONTAP(R) detects a non-responsive antivirus (AV) server and forcibly closes its Vscan connection.</p>
+<p><strong>Remediation</strong></p>
+<p>Ensure that the AV server installed on the AV connector can connect to the Storage Virtual Machine (SVM) and receive the scan requests.</p>
+<h3 id="nonexistent-admin-share">Nonexistent Admin Share<a class="headerlink" href="#nonexistent-admin-share" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.cifsNoPrivShare</code></p>
+<p>Vscan issue: a client has attempted to connect to a nonexistent ONTAP_ADMIN$ share.</p>
+<p><strong>Remediation</strong></p>
+<p>Ensure that Vscan is enabled for the mentioned SVM ID. Enabling Vscan on a SVM causes the ONTAP_ADMIN$ share to be created for the SVM automatically.</p>
+<h3 id="ontap-mediator-added">ONTAP Mediator Added<a class="headerlink" href="#ontap-mediator-added" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.added</code></p>
+<p>This message occurs when ONTAP Mediator is added successfully on a cluster.</p>
+<h3 id="ontap-mediator-ca-certificate-expired">ONTAP Mediator CA Certificate Expired<a class="headerlink" href="#ontap-mediator-ca-certificate-expired" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.cacert.expired</code></p>
+<p>This message occurs when the ONTAP Mediator certificate authority (CA) certificate has expired. As a result, all further communication to the ONTAP Mediator will not be possible.</p>
+<p><strong>Remediation</strong></p>
+<p>Remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Update a new CA certificate on the ONTAP Mediator server. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="ontap-mediator-ca-certificate-expiring">ONTAP Mediator CA Certificate Expiring<a class="headerlink" href="#ontap-mediator-ca-certificate-expiring" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.cacert.expiring</code></p>
+<p>This message occurs when the ONTAP Mediator certificate authority (CA) certificate is due to expire within the next 30 days.</p>
+<p><strong>Remediation</strong></p>
+<p>Before this certificate expires, remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Update a new CA certificate on the ONTAP Mediator server. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="ontap-mediator-client-certificate-expired">ONTAP Mediator Client Certificate Expired<a class="headerlink" href="#ontap-mediator-client-certificate-expired" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.clientc.expired</code></p>
+<p>This message occurs when the ONTAP Mediator client certificate has expired. As a result, all further communication to the ONTAP Mediator will not be possible.</p>
+<p><strong>Remediation</strong></p>
+<p>Remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="ontap-mediator-client-certificate-expiring">ONTAP Mediator Client Certificate Expiring<a class="headerlink" href="#ontap-mediator-client-certificate-expiring" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.clientc.expiring</code></p>
+<p>This message occurs when the ONTAP Mediator client certificate is due to expire within the next 30 days.</p>
+<p><strong>Remediation</strong></p>
+<p>Before this certificate expires, remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="ontap-mediator-not-accessible">ONTAP Mediator Not Accessible<a class="headerlink" href="#ontap-mediator-not-accessible" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.misconfigured</code></p>
+<p>This message occurs when either the ONTAP Mediator is repurposed or the Mediator package is no longer installed on the Mediator server. As a result, SnapMirror failover is not possible.</p>
+<p><strong>Remediation</strong></p>
+<p>Remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="ontap-mediator-removed">ONTAP Mediator Removed<a class="headerlink" href="#ontap-mediator-removed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.removed</code></p>
+<p>This message occurs when ONTAP Mediator is removed successfully from a cluster.</p>
+<h3 id="ontap-mediator-server-certificate-expired">ONTAP Mediator Server Certificate Expired<a class="headerlink" href="#ontap-mediator-server-certificate-expired" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.serverc.expired</code></p>
+<p>This message occurs when the ONTAP Mediator server certificate has expired. As a result, all further communication to the ONTAP Mediator will not be possible.</p>
+<p><strong>Remediation</strong></p>
+<p>Remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Update a new server certificate on the ONTAP Mediator server. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="ontap-mediator-server-certificate-expiring">ONTAP Mediator Server Certificate Expiring<a class="headerlink" href="#ontap-mediator-server-certificate-expiring" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.serverc.expiring</code></p>
+<p>This message occurs when the ONTAP Mediator server certificate is due to expire within the next 30 days.</p>
+<p><strong>Remediation</strong></p>
+<p>Before this certificate expires, remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Update a new server certificate on the ONTAP Mediator server. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="ontap-mediator-unreachable">ONTAP Mediator Unreachable<a class="headerlink" href="#ontap-mediator-unreachable" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sm.mediator.unreachable</code></p>
+<p>This message occurs when the ONTAP Mediator is unreachable on a cluster. As a result, SnapMirror failover is not possible.</p>
+<p><strong>Remediation</strong></p>
+<p>Check the network connectivity to the ONTAP Mediator by using the "network ping" and "network traceroute" commands. If the issue persists, remove the configuration of the current ONTAP Mediator by using the "snapmirror mediator remove" command. Reconfigure access to the ONTAP Mediator by using the "snapmirror mediator add" command.</p>
+<h3 id="object-store-host-unresolvable">Object Store Host Unresolvable<a class="headerlink" href="#object-store-host-unresolvable" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>objstore.host.unresolvable</code></p>
+<p>The object store server host name cannot be resolved to an IP address. The object store client cannot communicate with the object-store server without resolving to an IP address. As a result, data might be inaccessible.</p>
+<p><strong>Remediation</strong></p>
+<p>Check the DNS configuration to verify that the host name is configured correctly with an IP address.</p>
+<h3 id="object-store-intercluster-lif-down">Object Store Intercluster LIF Down<a class="headerlink" href="#object-store-intercluster-lif-down" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>objstore.interclusterlifDown</code></p>
+<p>The object-store client cannot find an operational LIF to communicate with the object store server. The node will not allow object store client traffic until the intercluster LIF is operational. As a result, data might be inaccessible.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Check the intercluster LIF status by using the "network interface show -role intercluster" command.</li>
+<li>Verify that the intercluster LIF is configured correctly and operational.</li>
+<li>If an intercluster LIF is not configured, add it by using the "network interface create -role intercluster" command.</li>
+</ol>
+<h3 id="object-store-signature-mismatch">Object Store Signature Mismatch<a class="headerlink" href="#object-store-signature-mismatch" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>osc.signatureMismatch</code></p>
+<p>The request signature sent to the object store server does not match the signature calculated by the client. As a result, data might be inaccessible.</p>
+<p><strong>Remediation</strong></p>
+<p>Verify that the secret access key is configured correctly. If it is configured correctly, contact NetApp technical support for assistance.</p>
+<h3 id="qos-monitor-memory-maxed-out">QoS Monitor Memory Maxed Out<a class="headerlink" href="#qos-monitor-memory-maxed-out" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>EMS Event</strong>: <code>qos.monitor.memory.maxed</code></p>
+<p>This event occurs when a QoS subsystem's dynamic memory reaches its limit for the current platform hardware. As a result, some QoS features might operate in a limited capacity.</p>
+<p><strong>Remediation</strong></p>
+<p>Delete some active workloads or streams to free up memory. Use the "statistics show -object workload -counter ops" command to determine which workloads are active. Active workloads show non-zero ops. Then use the "workload delete <workload_name>" command multiple times to remove specific workloads. Alternatively, use the "stream delete -workload <workload name> *" command to delete the associated streams from the active workload.</p>
+<h3 id="readdir-timeout">READDIR Timeout<a class="headerlink" href="#readdir-timeout" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>wafl.readdir.expired</code></p>
+<p>A READDIR file operation has exceeded the timeout that it is allowed to run in WAFL. This can be because of very large or sparse directories. Corrective action is recommended.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Find information specific to recent directories that have had READDIR file operations expire by using the following 'diag' privilege nodeshell CLI command:
+wafl readdir notice show.</li>
+<li>Check if directories are indicated as sparse or not:
+    a. If a directory is indicated as sparse, it is recommended that you copy the contents of the directory to a new directory to remove the sparseness of the directory file. 
+    b. If a directory is not indicated as sparse and the directory is large, it is recommended that you reduce the size of the directory file by reducing the number of file entries in the directory.</li>
+</ol>
+<h3 id="ransomware-activity-detected">Ransomware Activity Detected<a class="headerlink" href="#ransomware-activity-detected" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Security</p>
+<p><strong>EMS Event</strong>: <code>callhome.arw.activity.seen</code></p>
+<p>To protect the data from the detected ransomware, a Snapshot copy has been taken that can be used to restore original data.</p>
+<p>Your system generates and transmits an AutoSupport or "call home" message to NetApp technical support and any configured destinations. AutoSupport message improves problem determination and resolution.</p>
+<p><strong>Remediation</strong></p>
+<p>Refer to the anti-ransomware documentation to take remedial measures for ransomware activity. If you need assistance, contact NetApp technical support.</p>
+<h3 id="relocation-of-storage-pool-failed">Relocation of Storage Pool Failed<a class="headerlink" href="#relocation-of-storage-pool-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>arl.netra.ca.check.failed</code></p>
+<p>This event occurs during the relocation of an storage pool (aggregate), when the destination node cannot reach the object stores.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Verify that your intercluster LIF is online and functional by using the "network interface show" command.</li>
+<li>Check network connectivity to the object store server by using the"'ping" command over the destination node intercluster LIF. </li>
+<li>Verify that the configuration of your object store has not changed and that login and connectivity information is still accurate by using the "aggregate object-store config show" command.</li>
+</ol>
+<p>Alternatively, you can override the error by using the "override-destination-checks" parameter of the relocation command.</p>
+<p>Contact NetApp technical support for more information or assistance.</p>
+<h3 id="san-active-active-state-changed">SAN "active-active" State Changed<a class="headerlink" href="#san-active-active-state-changed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>scsiblade.san.config.active</code></p>
+<p>The SAN pathing is no longer symmetric. Pathing should be asymmetric only on ASA, because AFF and FAS are both asymmetric.</p>
+<p><strong>Remediation</strong></p>
+<p>Try and enable the "active-active" state. Contact customer support if the problem persists.</p>
+<h3 id="sfp-in-fc-target-adapter-receiving-low-power">SFP in FC target adapter receiving low power<a class="headerlink" href="#sfp-in-fc-target-adapter-receiving-low-power" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>scsitarget.fct.sfpRxPowerLow</code></p>
+<p>This alert occurs when the power received (RX) by a small form-factor pluggable transceiver (SFP in FC target) is at a level below the defined threshold, which might indicate a failing or faulty part.</p>
+<p><strong>Remediation</strong></p>
+<p>Monitor the operating value. If it continues to decrease, then replace the SFP and/or the cables.</p>
+<h3 id="sfp-in-fc-target-adapter-transmitting-low-power">SFP in FC target adapter transmitting low power<a class="headerlink" href="#sfp-in-fc-target-adapter-transmitting-low-power" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>scsitarget.fct.sfpTxPowerLow</code></p>
+<p>This alert occurs when the power transmitted (TX) by a small form-factor pluggable transceiver (SFP in FC target) is at a level below the defined threshold, which might indicate a failing or faulty part.</p>
+<p><strong>Remediation</strong></p>
+<p>Monitor the operating value. If it continues to decrease, then replace the SFP and/or the cables.</p>
+<h3 id="service-processor-heartbeat-missed">Service Processor Heartbeat Missed<a class="headerlink" href="#service-processor-heartbeat-missed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>callhome.sp.hbt.missed</code></p>
+<p>This message occurs when ONTAP does not receive an expected "heartbeat" signal from the Service Processor (SP). Along with this message, log files from SP will be sent out for debugging. ONTAP will reset the SP to attempt to restore communication. The SP will be unavailable for up to two minutes while it reboots.</p>
+<p><strong>Remediation</strong></p>
+<p>Contact NetApp technical support.</p>
+<h3 id="service-processor-heartbeat-stopped">Service Processor Heartbeat Stopped<a class="headerlink" href="#service-processor-heartbeat-stopped" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>callhome.sp.hbt.stopped</code></p>
+<p>This message occurs when ONTAP is no longer receiving heartbeats from the Service Processor (SP). Depending on the hardware design, the system may continue to serve data or may determine to shut down to prevent data loss or hardware damage. The system continues to serve data, but because the SP might not be working, the system cannot send notifications of down appliances, boot errors, or Open Firmware (OFW) Power-On Self-Test (POST) errors. If your system is configured to do so, it generates and transmits an AutoSupport (or 'call home') message to NetApp technical support and to the configured destinations. Successful delivery of an AutoSupport message significantly improves problem determination and resolution.</p>
+<p><strong>Remediation</strong></p>
+<p>If the system has shut down, attempt a hard power cycle: Pull the controller out from the chassis, push it back in then power on the system. Contact NetApp technical support if the problem persists after the power cycle, or for any other condition that may warrant attention.</p>
+<h3 id="service-processor-not-configured">Service Processor Not Configured<a class="headerlink" href="#service-processor-not-configured" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>sp.notConfigured</code></p>
+<p>This event occurs on a weekly basis, to remind you to configure the Service Processor (SP). The SP is a physical device that is incorporated into your system to provide remote access and remote management capabilities. You should configure the SP to use its full functionality.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Configure the SP by using the "system service-processor network modify" command.</li>
+<li>Optionally, obtain the MAC address of the SP by using the "system service-processor network show" command.</li>
+<li>Verify the SP network configuration by using the "system service-processor network show" command.</li>
+<li>Verify that the SP can send an AutoSupport email by using the "system service-processor autosupport invoke" command.
+    NOTE: AutoSupport email hosts and recipients should be configured in ONTAP before you issue this command.</li>
+</ol>
+<h3 id="service-processor-offline">Service Processor Offline<a class="headerlink" href="#service-processor-offline" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>sp.ipmi.lost.shutdown</code></p>
+<p>ONTAP is no longer receiving heartbeats from the Service Processor (SP), even though all the SP recovery actions have been taken. ONTAP cannot monitor the health of the hardware without the SP.</p>
+<p>The system will shut down to prevent hardware damage and data loss. Set up a panic alert to be notified immediately if the SP goes offline.</p>
+<p><strong>Remediation</strong></p>
+<p>Power-cycle the system by performing the following actions:</p>
+<ol>
+<li>Pull the controller out from the chassis.</li>
+<li>Push the controller back in.</li>
+<li>Turn the controller back on.
+If the problem persists, replace the controller module.</li>
+</ol>
+<h3 id="shadow-copy-failed">Shadow Copy Failed<a class="headerlink" href="#shadow-copy-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>cifs.shadowcopy.failure</code></p>
+<p>A Volume Shadow Copy Service (VSS), a Microsoft Server backup and restore service operation, has failed.</p>
+<p><strong>Remediation</strong></p>
+<p>Check the following using the information provided in the event message:</p>
+<ul>
+<li>Is shadow copy configuration enabled?</li>
+<li>Are the appropriate licenses installed? </li>
+<li>On which shares is the shadow copy operation performed?</li>
+<li>Is the share name correct?</li>
+<li>Does the share path exist?</li>
+<li>What are the states of the shadow copy set and its shadow copies?</li>
+</ul>
+<h3 id="shelf-fan-failed">Shelf Fan Failed<a class="headerlink" href="#shelf-fan-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>ses.status.fanError</code></p>
+<p>The indicated cooling fan or fan module of the shelf has failed. The disks in the shelf might not receive enough cooling airflow, which might result in disk failure.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Verify that the fan module is fully seated and secured.
+    NOTE: The fan is integrated into the power supply module in some disk shelves.</li>
+<li>If the issue persists, replace the fan module.</li>
+<li>If the issue still persists, contact NetApp technical support for assistance.</li>
+</ol>
+<h3 id="snapmirror-relationship-common-snapshot-failed">SnapMirror Relationship Common Snapshot Failed<a class="headerlink" href="#snapmirror-relationship-common-snapshot-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sms.common.snapshot.failed</code></p>
+<p>This message occurs when there is a failure in creating a common Snapshot(tm) copy. The SnapMirror® Sync relationship continues to be in "in-sync" status. The latest common Snapshot copy is used for recovery in case the relationship status changes to "out-of-sync." The common Snapshot copy should be created at scheduled intervals to decrease the recovery time of "out-of-sync" relationships.</p>
+<p><strong>Remediation</strong></p>
+<p>Create a common snapshot manually by using the "snapmirror update" command at the destination.</p>
+<h3 id="snapmirror-relationship-initialization-failed">SnapMirror Relationship Initialization Failed<a class="headerlink" href="#snapmirror-relationship-initialization-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>smc.snapmir.init.fail</code></p>
+<p>This message occurs when a SnapMirror® 'initialize' command fails and no more retries will be attempted.</p>
+<p><strong>Remediation</strong></p>
+<p>Check the reason for the error, take action accordingly, and issue the command again.</p>
+<h3 id="snapmirror-relationship-out-of-sync">SnapMirror Relationship Out of Sync<a class="headerlink" href="#snapmirror-relationship-out-of-sync" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sms.status.out.of.sync</code></p>
+<p>This event occurs when a SnapMirror(R) Sync relationship status changes from "in-sync" to "out-of-sync". I/O restrictions are imposed on the source volume based on the mode of replication. Client read or write access to the volume is not allowed for relationships of the "strict-sync-mirror" policy type. Data protection is affected.</p>
+<p><strong>Remediation</strong></p>
+<p>Check the network connection between the source and destination volumes. Monitor the SnapMirror Sync relationship status using the "snapmirror show" command. "Auto-resync" attempts to bring the relationship back to the "in-sync" status.</p>
+<h3 id="snapmirror-relationship-resync-attempt-failed">SnapMirror Relationship Resync Attempt Failed<a class="headerlink" href="#snapmirror-relationship-resync-attempt-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sms.resync.attempt.failed</code></p>
+<p>This message occurs when a resynchronize operation between the source volume and destination volume fails. The SnapMirror® Sync relationship is in "out-of-sync" status. Data protection is impacted.</p>
+<p><strong>Remediation</strong></p>
+<p>Monitor SnapMirror Sync status using the "snapmirror show" command.
+If the auto-resync attempts fail, bring the relationship back to "in-sync" status manually by using the "snapmirror resync" command.</p>
+<h3 id="snapmirror-relationship-snapshot-is-not-replicated">SnapMirror Relationship Snapshot is not Replicated<a class="headerlink" href="#snapmirror-relationship-snapshot-is-not-replicated" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sms.snap.not.replicated</code></p>
+<p>This message occurs when a Snapshot(tm) copy for SnapMirror® Synchronous relationship is not successfully replicated.</p>
+<p><strong>Remediation</strong></p>
+<p>No remediation required. User can trigger another snap create request to create a snapshot that exists on both primary and secondary site.</p>
+<h3 id="snapmirror-active-sync-automatic-unplanned-failover-completed">SnapMirror active sync Automatic Unplanned Failover Completed<a class="headerlink" href="#snapmirror-active-sync-automatic-unplanned-failover-completed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>smbc.aufo.completed</code></p>
+<p>This message occurs when the SnapMirror® active sync automatic unplanned failover operation completes.</p>
+<h3 id="snapmirror-active-sync-automatic-unplanned-failover-failed">SnapMirror active sync Automatic Unplanned Failover Failed<a class="headerlink" href="#snapmirror-active-sync-automatic-unplanned-failover-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>smbc.aufo.failed</code></p>
+<p>This message occurs when the SnapMirror® active sync automatic unplanned failover operation fails.</p>
+<p><strong>Remediation</strong></p>
+<p>The automatic unplanned failover will be retried internally. However, operations will be suspended till the failover is complete.
+If AUFO is failing persistently and the customer wishes to continue servicing IO, they can perform "snapmirror delete -destination-path destination_path" followed by "snapmirror break" on the volumes. Doing so will affect protection as the relationship will be removed, customer will need to re-establish protection relationship.</p>
+<h3 id="snapmirror-active-sync-planned-failover-completed">SnapMirror active sync Planned Failover Completed<a class="headerlink" href="#snapmirror-active-sync-planned-failover-completed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>smbc.pfo.completed</code></p>
+<p>This message occurs when the SnapMirror® active sync planned failover operation completes.</p>
+<h3 id="snapmirror-active-sync-planned-failover-failed">SnapMirror active sync Planned Failover Failed<a class="headerlink" href="#snapmirror-active-sync-planned-failover-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>smbc.pfo.failed</code></p>
+<p>This message occurs when the SnapMirror® active sync planned failover operation fails.</p>
+<p><strong>Remediation</strong></p>
+<p>Determine the cause of the failure by using the "snapmirror failover show -fields error-reason" command. If the relationship is out-of-sync, wait till the relationship is brought to in-sync. Else, address the error causing planned failover failure and then retry the "snapmirror failover start -destination-path destination_path" command.</p>
+<h3 id="snapmirror-active-sync-relationship-out-of-sync">SnapMirror active sync Relationship Out of Sync<a class="headerlink" href="#snapmirror-active-sync-relationship-out-of-sync" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>EMS Event</strong>: <code>sms.status.out.of.sync.cg</code></p>
+<p>This message occurs when a SnapMirror for Business Continuity (SMBC) relationship changes status from "in-sync" to "out-of-sync". Due to this RPO=0 data protection will be disrupted.</p>
+<p><strong>Remediation</strong></p>
+<p>Check the network connection between the source and destination volumes. Monitor the SMBC relationship status by using the "snapmirror show" command on the destination, and by using the "snapmirror list-destinations" command on the source. Auto-resync will attempt to bring the relationship back to "in-sync" status. If the resync fails, verify that all the nodes in the cluster are in quorum and are healthy.</p>
+<h3 id="storage-switch-power-supplies-failed">Storage Switch Power Supplies Failed<a class="headerlink" href="#storage-switch-power-supplies-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>cluster.switch.pwr.fail</code></p>
+<p>There is a missing power supply in the cluster switch. Redundancy is reduced, risk of outage with any further power failures.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Ensure that the power supply mains, which supplies power to the cluster switch, is turned on.</li>
+<li>Ensure that the power cord is connected to the power supply.</li>
+</ol>
+<p>Contact NetApp technical support if the issue persists.</p>
+<h3 id="storage-vm-anti-ransomware-monitoring">Storage VM Anti-ransomware Monitoring<a class="headerlink" href="#storage-vm-anti-ransomware-monitoring" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Security</p>
+<p><strong>EMS Event</strong>: <code>arw.vserver.state</code></p>
+<p>The anti-ransomware monitoring for the storage VM is disabled.</p>
+<p><strong>Remediation</strong></p>
+<p>Enable anti-ransomware to protect the storage VM.</p>
+<h3 id="storage-vm-stop-succeeded">Storage VM Stop Succeeded<a class="headerlink" href="#storage-vm-stop-succeeded" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>vserver.stop.succeeded</code></p>
+<p>This message occurs when a 'vserver stop' operation succeeds.</p>
+<p><strong>Remediation</strong></p>
+<p>Use 'vserver start' command to start the data access on a storage VM.</p>
+<h3 id="system-cannot-operate-due-to-main-unit-fan-failure">System Cannot Operate Due to Main Unit Fan Failure<a class="headerlink" href="#system-cannot-operate-due-to-main-unit-fan-failure" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>monitor.fan.critical</code></p>
+<p>One or more main unit fans have failed, disrupting system operation. This might lead to a potential data loss.</p>
+<p><strong>Remediation</strong></p>
+<p>Replace the failed fans.</p>
+<h3 id="too-many-cifs-authentication">Too Many CIFS Authentication<a class="headerlink" href="#too-many-cifs-authentication" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.cifsManyAuths</code></p>
+<p>Many authentication negotiations have occurred simultaneously. There are 256 incomplete new session requests from this client.</p>
+<p><strong>Remediation</strong></p>
+<p>Investigate why the client has created 256 or more new connection requests. You might have to contact the vendor of the client or of the application to determine why the error occurred.</p>
+<h3 id="unassigned-disks">Unassigned Disks<a class="headerlink" href="#unassigned-disks" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>unowned.disk.reminder</code></p>
+<p>System has unassigned disks - capacity is being wasted and your system may have some misconfiguration or partial configuration change applied.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Determine which disks are unassigned by using the "disk show -n" command.</li>
+<li>Assign the disks to a system by using the "disk assign" command.</li>
+</ol>
+<h3 id="unauthorized-user-access-to-admin-share">Unauthorized User Access to Admin Share<a class="headerlink" href="#unauthorized-user-access-to-admin-share" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Security</p>
+<p><strong>EMS Event</strong>: <code>Nblade.vscanBadUserPrivAccess</code></p>
+<p>A client has attempted to connect to the privileged ONTAP_ADMIN$ share even though their logged-in user is not an allowed user.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Ensure that the mentioned username and IP address is configured in one of the active Vscan scanner pools.</li>
+<li>Check the scanner pool configuration that is currently active by using the "vserver vscan scanner pool show-active" command.</li>
+</ol>
+<h3 id="virus-detected">Virus Detected<a class="headerlink" href="#virus-detected" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>Nblade.vscanVirusDetected</code></p>
+<p>A Vscan server has reported an error to the storage system. This typically indicates that a virus has been found. However, other errors on the Vscan server can cause this event.</p>
+<p>Client access to the file is denied. The Vscan server might, depending on its settings and configuration, clean the file, quarantine it, or delete it.</p>
+<p><strong>Remediation</strong></p>
+<p>Check the log of the Vscan server reported in the "syslog" event to see if it was able to successfully clean, quarantine, or delete the infected file. If it was not able to do so, a system administrator might have to manually delete the file.</p>
+<h3 id="volume-anti-ransomware-monitoring">Volume Anti-ransomware Monitoring<a class="headerlink" href="#volume-anti-ransomware-monitoring" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Security</p>
+<p><strong>EMS Event</strong>: <code>arw.volume.state</code></p>
+<p>The anti-ransomware monitoring for the volume is disabling.</p>
+<p><strong>Remediation</strong></p>
+<p>Enable anti-ransomware to protect the storage VM.</p>
+<h3 id="volume-automatic-resizing-succeeded">Volume Automatic Resizing Succeeded<a class="headerlink" href="#volume-automatic-resizing-succeeded" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>EMS Event</strong>: <code>wafl.vol.autoSize.done</code></p>
+<p>This event occurs when the automatic resizing of a volume is successful. It happens when the "autosize grow" option is enabled, and the volume reaches the grow threshold percentage.</p>
+<h3 id="volume-offline">Volume Offline<a class="headerlink" href="#volume-offline" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>wafl.vvol.offline</code></p>
+<p>This message indicates that a volume has been taken offline.</p>
+<p><strong>Remediation</strong></p>
+<p>Bring the volume back online.</p>
+<h3 id="volume-restricted">Volume Restricted<a class="headerlink" href="#volume-restricted" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>wafl.vvol.restrict</code></p>
+<p>This event indicates that a flexible volume is made restricted.</p>
+<p><strong>Remediation</strong></p>
+<p>Bring the volume back online.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>

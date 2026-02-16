@@ -1,0 +1,3627 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../storagegrid-metrics/">
+      
+      
+        <link rel="next" href="../eseries-metrics/">
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>Cisco Switch Metrics - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#understanding-the-structure" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cisco Switch Metrics
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cisco_cdp_neighbor_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_cdp_neighbor_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_speed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_zone_speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_zone_speed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_capacity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_in" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_in
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_out" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_out
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_sensor_temp" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_sensor_temp
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_admin_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_admin_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_crc_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_crc_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_lldp_neighbor_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_lldp_neighbor_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_rx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_rx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_tx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_tx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_uptime" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_uptime
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cisco_cdp_neighbor_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_cdp_neighbor_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_speed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_zone_speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_zone_speed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_capacity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_in" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_in
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_out" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_out
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_sensor_temp" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_sensor_temp
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_admin_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_admin_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_crc_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_crc_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_lldp_neighbor_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_lldp_neighbor_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_rx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_rx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_tx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_tx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_uptime" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_uptime
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Cisco Switch Metrics</h1>
+
+<p>This document describes which Cisco switch metrics are collected and what those metrics are named in Harvest, including:</p>
+<ul>
+<li>Details about which Harvest metrics each dashboard uses.
+These can be generated on demand by running <code>bin/harvest grafana metrics</code>. See
+<a href="https://github.com/NetApp/harvest/issues/1577#issue-1471478260">#1577</a> for details.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>Creation Date : 2026-Feb-13
+NX-OS Version: 9.3.12
+</code></pre></div>
+<details>
+<summary>Navigate to Grafana dashboards</summary>
+<p>Add your Grafana instance to the following form and save it. When you click on dashboard links on this page, a link to your dashboard will be opened. NAbox hosts Grafana on a subdomain like so: https://localhost/grafana/</p>
+<p><div>
+    <label for="grafanaHost">Grafana Host</label>
+    <input type="text" id="grafanaHost" name="grafanaHost" placeholder="e.g. http://localhost:3000" style="width: 80%;margin-left:1em">
+    <button type="button" onclick="saveGrafanaHost()">Save</button>
+</div></p>
+</details>
+<h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
+<p>Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the <a href="#metrics">metrics</a>.</p>
+<p>cisco_switch_uptime <span class="key">Name of the metric exported by Harvest</span></p>
+<p>Displays uptime duration of the Cisco switch. <span class="key">Description of the Cisco switch metric</span></p>
+<ul>
+<li><span class="key">API</span> Harvest uses the NXAPI protocol to collect metrics</li>
+<li><span class="key">Endpoint</span> name of the CLI used to collect this metric</li>
+<li><span class="key">Metric</span> name of the Cisco switch metric</li>
+<li><span class="key">Template</span> path of the template that collects the metric</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show version</code></td>
+<td>kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs</td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+</tbody>
+</table>
+<details>
+<summary>Example to invoke CLI show commands via curl</summary>
+<p>In this example, we would demonstrate invoking the <code>show version</code> CLI command via curl.</p>
+<p>To do this, send a POST request to your switch’s IP address with the desired command as input.
+Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only username, password, and the switch’s IP address.</p>
+<div class="highlight"><pre><span></span><code>curl -sk -u RO_USER:PASSWORD POST &#39;https://CISCO_SWITCH_IP/ins_api&#39; -d
+&#39;{
+&quot;ins_api&quot;: {
+&quot;version&quot;: &quot;1.0&quot;,
+&quot;type&quot;: &quot;cli_show&quot;,
+&quot;chunk&quot;: &quot;0&quot;,
+&quot;sid&quot;: &quot;1&quot;,
+&quot;input&quot;: &quot;show version&quot;,
+&quot;output_format&quot;: &quot;json&quot;
+}
+}&#39;
+</code></pre></div>
+<p>After invoking the above Curl command, You would get this response
+<div class="highlight"><pre><span></span><code>{
+        &quot;ins_api&quot;:      {
+                &quot;type&quot;: &quot;cli_show&quot;,
+                &quot;version&quot;:      &quot;1.0&quot;,
+                &quot;sid&quot;:  &quot;eoc&quot;,
+                &quot;outputs&quot;:      {
+                        &quot;output&quot;:       {
+                                &quot;input&quot;: &quot;show version&quot;,
+                                &quot;msg&quot;:  &quot;Success&quot;,
+                                &quot;code&quot;: &quot;200&quot;,
+                                &quot;body&quot;: {
+                                        &quot;header_str&quot;:   &quot;Cisco Nexus Operating System (NX-OS) Software\nTAC support: http://www.cisco.com/tac\nCopyright (C) 2002-2023, Cisco and/or its affiliates.\nAll rights reserved.\nThe copyrights to certain works contained in this software are\nowned by other third parties and used and distributed under their own\nlicenses, such as open source.  This software is provided \&quot;as is,\&quot; and unless\notherwise stated, there is no warranty, express or implied, including but not\nlimited to warranties of merchantability and fitness for a particular purpose.\nCertain components of this software are licensed under\nthe GNU General Public License (GPL) version 2.0 or \nGNU General Public License (GPL) version 3.0  or the GNU\nLesser General Public License (LGPL) Version 2.1 or \nLesser General Public License (LGPL) Version 2.0. \nA copy of each such license is available at\nhttp://www.opensource.org/licenses/gpl-2.0.php and\nhttp://opensource.org/licenses/gpl-3.0.html and\nhttp://www.opensource.org/licenses/lgpl-2.1.php and\nhttp://www.gnu.org/licenses/old-licenses/library.txt.\n&quot;,
+                                        &quot;bios_ver_str&quot;: &quot;04.25&quot;,
+                                        &quot;kickstart_ver_str&quot;:    &quot;9.3(12)&quot;,
+                                        &quot;nxos_ver_str&quot;: &quot;9.3(12)&quot;,
+                                        &quot;bios_cmpl_time&quot;:       &quot;05/22/2019&quot;,
+                                        &quot;kick_file_name&quot;:       &quot;bootflash:///nxos.9.3.12.bin&quot;,
+                                        &quot;nxos_file_name&quot;:       &quot;bootflash:///nxos.9.3.12.bin&quot;,
+                                        &quot;kick_cmpl_time&quot;:       &quot;6/20/2023 12:00:00&quot;,
+                                        &quot;nxos_cmpl_time&quot;:       &quot;6/20/2023 12:00:00&quot;,
+                                        &quot;kick_tmstmp&quot;:  &quot;06/23/2023 17:33:36&quot;,
+                                        &quot;nxos_tmstmp&quot;:  &quot;06/23/2023 17:33:36&quot;,
+                                        &quot;chassis_id&quot;:   &quot;Nexus 3132QV Chassis&quot;,
+                                        &quot;cpu_name&quot;:     &quot;Intel(R) Core(TM) i3- CPU @ 2.50GHz&quot;,
+                                        &quot;memory&quot;:       16399572,
+                                        &quot;mem_type&quot;:     &quot;kB&quot;,
+                                        &quot;proc_board_id&quot;:        &quot;FOC24213H5C&quot;,
+                                        &quot;host_name&quot;:    &quot;Switch-A1&quot;,
+                                        &quot;bootflash_size&quot;:       15137792,
+                                        &quot;slot0_size&quot;:   0,
+                                        &quot;kern_uptm_days&quot;:       256,
+                                        &quot;kern_uptm_hrs&quot;:        19,
+                                        &quot;kern_uptm_mins&quot;:       3,
+                                        &quot;kern_uptm_secs&quot;:       50,
+                                        &quot;rr_usecs&quot;:     24056,
+                                        &quot;rr_ctime&quot;:     &quot;Wed Nov  6 14:02:05 2024&quot;,
+                                        &quot;rr_reason&quot;:    &quot;Reset Requested by CLI command reload&quot;,
+                                        &quot;rr_sys_ver&quot;:   &quot;9.3(12)&quot;,
+                                        &quot;rr_service&quot;:   &quot;&quot;,
+                                        &quot;plugins&quot;:      &quot;Core Plugin, Ethernet Plugin&quot;,
+                                        &quot;manufacturer&quot;: &quot;Cisco Systems, Inc.&quot;,
+                                        &quot;TABLE_package_list&quot;:   {
+                                                &quot;ROW_package_list&quot;:     {
+                                                        &quot;package_id&quot;:   &quot;&quot;
+                                                }
+                                        }
+                                }
+                        }
+                }
+        }
+}
+</code></pre></div></p>
+</details>
+<h2 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h2>
+<h3 id="cisco_cdp_neighbor_labels">cisco_cdp_neighbor_labels<a class="headerlink" href="#cisco_cdp_neighbor_labels" title="Permanent link">&para;</a></h3>
+<p>Displays cisco discovery protocol information about neighbors in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show cdp neighbors detail</code></td>
+<td><code>device_id, platform_id, port_id, ttl, version, local_intf_mac, remote_intf_mac, capability</code></td>
+<td>conf/ciscorest/nxos/9.3.12/cdp.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_cdp_neighbor_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Neighbors</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=46">Cisco Discovery Protocol</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_fan_speed">cisco_environment_fan_speed<a class="headerlink" href="#cisco_environment_fan_speed" title="Permanent link">&para;</a></h3>
+<p>Displays fan speed.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment fan detail</code></td>
+<td><code>speed</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_fan_speed</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Temperature and Fan</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=18">Fan Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_fan_up">cisco_environment_fan_up<a class="headerlink" href="#cisco_environment_fan_up" title="Permanent link">&para;</a></h3>
+<p>Displays Present/Absent Status of the fan in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>fanstatus</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_fan_up</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Temperature and Fan</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=18">Fan Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_fan_zone_speed">cisco_environment_fan_zone_speed<a class="headerlink" href="#cisco_environment_fan_zone_speed" title="Permanent link">&para;</a></h3>
+<p>Displays the zone fan speed of the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment fan detail</code></td>
+<td><code>zonespeed</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_fan_zone_speed</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_capacity">cisco_environment_power_capacity<a class="headerlink" href="#cisco_environment_power_capacity" title="Permanent link">&para;</a></h3>
+<p>Displays total capacity of the power supply in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>tot_capa</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_capacity</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=35">PSU Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_in">cisco_environment_power_in<a class="headerlink" href="#cisco_environment_power_in" title="Permanent link">&para;</a></h3>
+<p>Displays actual input power in watts of power supply in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>actual_input OR watts</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_in</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=33">Total Power</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=9">PSU Efficiency</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=8">Top $TopResources Power Consumption</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_mode">cisco_environment_power_mode<a class="headerlink" href="#cisco_environment_power_mode" title="Permanent link">&para;</a></h3>
+<p>Displays redundant or operational Mode of power supply in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>ps_redun_mode, ps_oper_mode</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_mode</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_out">cisco_environment_power_out<a class="headerlink" href="#cisco_environment_power_out" title="Permanent link">&para;</a></h3>
+<p>Displays actual output power in watts of power supply in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>actual_out</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_out</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=9">PSU Efficiency</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=8">Top $TopResources Power Consumption</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=35">PSU Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_up">cisco_environment_power_up<a class="headerlink" href="#cisco_environment_power_up" title="Permanent link">&para;</a></h3>
+<p>Displays power supply status in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>ps_status</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_up</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=35">PSU Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_sensor_temp">cisco_environment_sensor_temp<a class="headerlink" href="#cisco_environment_sensor_temp" title="Permanent link">&para;</a></h3>
+<p>Displays current temperature of sensor in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>curtemp</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_sensor_temp</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Temperature and Fan</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=10">Top $TopResources Sensor Temperatures</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_admin_up">cisco_interface_admin_up<a class="headerlink" href="#cisco_interface_admin_up" title="Permanent link">&para;</a></h3>
+<p>Displays admin state of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>admin_state</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_admin_up</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Interfaces</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=37">Down (Last 24h)</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Interfaces</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=39">Down (Last 24h)</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Interfaces</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=40">Down (Last 24h)</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_crc_errors">cisco_interface_crc_errors<a class="headerlink" href="#cisco_interface_crc_errors" title="Permanent link">&para;</a></h3>
+<p>Displays CRC of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_crc</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_crc_errors</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=34">Top $TopResources Interface CRC error</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_receive_bytes">cisco_interface_receive_bytes<a class="headerlink" href="#cisco_interface_receive_bytes" title="Permanent link">&para;</a></h3>
+<p>Displays bytes input of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_inbytes</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_receive_bytes</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=48">Traffic on Switch</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=29">Top $TopResources Interface Receive Throughput</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_receive_drops">cisco_interface_receive_drops<a class="headerlink" href="#cisco_interface_receive_drops" title="Permanent link">&para;</a></h3>
+<p>Displays input if-down drops of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_in_ifdown_drops</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_receive_drops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=31">Top $TopResources Interface Receive Drops</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_receive_errors">cisco_interface_receive_errors<a class="headerlink" href="#cisco_interface_receive_errors" title="Permanent link">&para;</a></h3>
+<p>Displays input errors of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_inerr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_receive_errors</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=32">Top $TopResources Interface Errors</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_transmit_bytes">cisco_interface_transmit_bytes<a class="headerlink" href="#cisco_interface_transmit_bytes" title="Permanent link">&para;</a></h3>
+<p>Displays bytes output of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_outbytes</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_transmit_bytes</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=48">Traffic on Switch</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=28">Top $TopResources Interface Send Throughput</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_transmit_drops">cisco_interface_transmit_drops<a class="headerlink" href="#cisco_interface_transmit_drops" title="Permanent link">&para;</a></h3>
+<p>Displays output drops of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_out_drops</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_transmit_drops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=31">Top $TopResources Interface Receive Drops</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_transmit_errors">cisco_interface_transmit_errors<a class="headerlink" href="#cisco_interface_transmit_errors" title="Permanent link">&para;</a></h3>
+<p>Displays output errors of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_outerr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_transmit_errors</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=32">Top $TopResources Interface Errors</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_lldp_neighbor_labels">cisco_lldp_neighbor_labels<a class="headerlink" href="#cisco_lldp_neighbor_labels" title="Permanent link">&para;</a></h3>
+<p>Displays link layer discovery protocol information about neighbours in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show lldp neighbors detail</code></td>
+<td><code>sys_name, sys_desc, chassis_id, l_port_id, ttl, port_id, enabled_capability</code></td>
+<td>conf/ciscorest/nxos/9.3.12/lldp.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_lldp_neighbor_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Neighbors</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=44">Link Layer Discovery Protocol</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_optic_rx">cisco_optic_rx<a class="headerlink" href="#cisco_optic_rx" title="Permanent link">&para;</a></h3>
+<p>Displays rx power of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface transceiver details</code></td>
+<td><code>rx_pwr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/optic.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_optic_rx</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Transceiver</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=21">Top $TopResources Transceiver RX Power</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_optic_tx">cisco_optic_tx<a class="headerlink" href="#cisco_optic_tx" title="Permanent link">&para;</a></h3>
+<p>Displays tx power of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface transceiver details</code></td>
+<td><code>tx_pwr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/optic.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_optic_tx</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Transceiver</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=23">Top $TopResources Transceiver TX Power</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_switch_labels">cisco_switch_labels<a class="headerlink" href="#cisco_switch_labels" title="Permanent link">&para;</a></h3>
+<p>Displays configuration detail of the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show version</code></td>
+<td><code>bios_ver_str, chassis_id, host_name, nxos_ver_str,</code></td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+<tr>
+<td>NXAPI</td>
+<td><code>show banner motd</code></td>
+<td><code>banner_msg.b_msg</code></td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cisco_switch_uptime">cisco_switch_uptime<a class="headerlink" href="#cisco_switch_uptime" title="Permanent link">&para;</a></h3>
+<p>Displays uptime duration of the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show version</code></td>
+<td><code>kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs</code></td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_switch_uptime</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>

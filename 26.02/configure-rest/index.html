@@ -1,0 +1,3243 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../configure-zapi/">
+      
+      
+        <link rel="next" href="../configure-keyperf/">
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>REST - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rest-collector" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              REST
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rest-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rest Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rest Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#target-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Target System
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collector-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collector configuration file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object configuration file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object configuration file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template Example:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Counters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hidden_fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hidden_fields
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export_options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restperf-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestPerf Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RestPerf Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metrics_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restperf-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestPerf configuration file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-configuration-file_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object configuration file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object configuration file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export_options_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-excluding-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objects (Excluding Workload)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload Templates
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-private-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Private CLI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONTAP Private CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-templates-that-use-ontaps-private-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating Templates That Use ONTAP's Private CLI
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-and-diagnostic-mode-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced and Diagnostic Mode Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-harvest-template-for-private-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a Harvest Template for Private CLI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partial-aggregation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Partial Aggregation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rest-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rest Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rest Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#target-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Target System
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collector-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collector configuration file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object configuration file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object configuration file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template Example:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Counters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hidden_fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hidden_fields
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export_options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restperf-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestPerf Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RestPerf Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metrics_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restperf-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestPerf configuration file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-configuration-file_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object configuration file
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object configuration file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export_options_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-excluding-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objects (Excluding Workload)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload Templates
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ontap-private-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP Private CLI
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ONTAP Private CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-templates-that-use-ontaps-private-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating Templates That Use ONTAP's Private CLI
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-and-diagnostic-mode-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced and Diagnostic Mode Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-harvest-template-for-private-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a Harvest Template for Private CLI
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partial-aggregation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Partial Aggregation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>REST</h1>
+
+<h2 id="rest-collector">Rest Collector<a class="headerlink" href="#rest-collector" title="Permanent link">&para;</a></h2>
+<p>The Rest collectors uses the REST protocol to collect data from ONTAP systems.</p>
+<p>The <a href="#restperf-collector">RestPerf collector</a> is an extension of this collector, therefore they share many parameters
+and configuration settings.</p>
+<h3 id="target-system">Target System<a class="headerlink" href="#target-system" title="Permanent link">&para;</a></h3>
+<p>Target system can be cDot ONTAP system. 9.12.1 and after are supported, however the default configuration files
+may not completely match with all versions.
+See <a href="https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md">REST Strategy</a> for more details.</p>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
+<p>No SDK or other requirements. It is recommended to create a read-only user for Harvest on the ONTAP system (see
+<a href="../prepare-cdot-clusters/#all-apis-read-only-approach">prepare monitored clusters</a> for details)</p>
+<h3 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
+<p>The collector collects a dynamic set of metrics. ONTAP returns JSON documents and
+Harvest allows you to define templates to extract values from the JSON document via a dot notation path. You can view
+ONTAP's full set of REST APIs by
+visiting <code>https://docs.netapp.com/us-en/ontap-automation/reference/api_reference.html#access-a-copy-of-the-ontap-rest-api-reference-documentation</code></p>
+<p>As an example, the <code>/api/storage/aggregates</code> endpoint, lists all data aggregates in the cluster. Below is an example
+response from this endpoint:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;records&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3e59547d-298a-4967-bd0f-8ae96cead08c&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;umeng_aff300_aggr2&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;space&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;block_storage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8117898706944</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4889853616128</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;online&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;volume_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">36</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The Rest collector will take this document, extract the <code>records</code> section and convert the metrics above
+into: <code>name</code>, <code>space.block_storage.size</code>, <code>space.block_storage.available</code>, <code>state</code> and <code>volume_count</code>. Metric names will
+be taken, as is, unless you specify a short display name. See <a href="../configure-templates/#counters">counters</a> for more
+details.</p>
+<h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
+<p>The parameters of the collector are distributed across three files:</p>
+<ul>
+<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
+<li>Rest configuration file (default: <code>conf/rest/default.yaml</code>)</li>
+<li>Each object has its own configuration file (located in <code>conf/rest/$version/</code>)</li>
+</ul>
+<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the Rest collector can be
+defined in either of these three files. Parameters defined in the lower-level file, override parameters in the
+higher-level ones. This allows you to configure each object individually, or use the same parameters for all
+objects.</p>
+<p>The full set of parameters are described <a href="#collector-configuration-file">below</a>.</p>
+<h4 id="collector-configuration-file">Collector configuration file<a class="headerlink" href="#collector-configuration-file" title="Permanent link">&para;</a></h4>
+<p>This configuration file contains a list of objects that should be collected and the filenames of their templates (
+explained in the next section).</p>
+<p>Additionally, this file contains the parameters that are applied as defaults to all objects. As mentioned before, any
+of these parameters can be defined in the Harvest or object configuration files as well.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_timeout</code></td>
+<td>duration (Go-syntax)</td>
+<td>how long to wait for server responses</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>jitter</code></td>
+<td>duration (Go-syntax), optional</td>
+<td>Each Harvest collector runs independently, which means that at startup, each collector may send its REST queries at nearly the same time. To spread out the collector startup times over a broader period, you can use <code>jitter</code> to randomly distribute collector startup across a specified duration. For example, a <code>jitter</code> of <code>1m</code> starts each collector after a random delay between 0 and 60 seconds. For more details, refer to <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>schedule</code></td>
+<td>list, <strong>required</strong></td>
+<td>how frequently to retrieve metrics from ONTAP</td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>counter</code></td>
+<td>duration (Go-syntax)</td>
+<td>poll frequency of updating the counter metadata cache</td>
+<td>24 hours</td>
+</tr>
+<tr>
+<td>- <code>data</code></td>
+<td>duration (Go-syntax)</td>
+<td>how frequently this collector/object should retrieve metrics from ONTAP</td>
+<td>3 minutes</td>
+</tr>
+</tbody>
+</table>
+<p>The template should define objects in the <code>objects</code> section. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Aggregate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr.yaml</span>
+</code></pre></div>
+<p>For each object, we define the filename of the object configuration file. The object configuration files
+are located in subdirectories matching the ONTAP version that was used to create these files. It is possible to
+have multiple version-subdirectories for multiple ONTAP versions. At runtime, the collector will select the object
+configuration file that closest matches the version of the target ONTAP system.</p>
+<h3 id="object-configuration-file">Object configuration file<a class="headerlink" href="#object-configuration-file" title="Permanent link">&para;</a></h3>
+<p>The Object configuration file ("subtemplate") should contain the following parameters:</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string, <strong>required</strong></td>
+<td>display name of the collector that will collect this object</td>
+<td></td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>string, <strong>required</strong></td>
+<td>REST endpoint used to issue a REST request</td>
+<td></td>
+</tr>
+<tr>
+<td><code>object</code></td>
+<td>string, <strong>required</strong></td>
+<td>short name of the object</td>
+<td></td>
+</tr>
+<tr>
+<td><code>counters</code></td>
+<td>string</td>
+<td>list of counters to collect (see notes below)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td>list</td>
+<td>plugins and their parameters to run on the collected data</td>
+<td></td>
+</tr>
+<tr>
+<td><code>export_options</code></td>
+<td>list</td>
+<td>parameters to pass to exporters (see notes below)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="template-example">Template Example:<a class="headerlink" href="#template-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">                     </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">                    </span><span class="l l-Scalar l-Scalar-Plain">api/storage/volumes</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">                   </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                        =&gt; volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^svm.name                                    =&gt; svm</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^aggregates.#.name                            =&gt; aggr</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^anti_ransomware.state                        =&gt; antiRansomwareState</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^state                                        =&gt; state</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^style                                        =&gt; style</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.available                               =&gt; size_available</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.overwrite_reserve                       =&gt; overwrite_reserve_total</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.overwrite_reserve_used                  =&gt; overwrite_reserve_used</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.percent_used                            =&gt; size_used_percent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.physical_used                           =&gt; space_physical_used</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.physical_used_percent                   =&gt; space_physical_used_percent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.size                                    =&gt; size</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space.used                                    =&gt; size_used</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hidden_fields</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">anti_ransomware.state</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">space</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name=*harvest*</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">LabelAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">exclude_equals</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style `flexgroup_constituent`</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">antiRansomwareState</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">state</span>
+</code></pre></div>
+<h4 id="counters">Counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
+<p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
+histograms. The exact property of each counter is fetched from ONTAP and updated periodically.</p>
+<p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>space.block_storage.size =&gt; space_total</code>).</p>
+<p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
+<p>The <code>counters</code> section allows you to specify <code>hidden_fields</code> and <code>filter</code> parameters. Please find the detailed explanation below.</p>
+<h5 id="hidden_fields">Hidden_fields<a class="headerlink" href="#hidden_fields" title="Permanent link">&para;</a></h5>
+<p>There are some fields that ONTAP will not return unless you explicitly ask for them, even when using the URL parameter <code>fields=**</code>. <code>hidden_fields</code> is how you tell ONTAP which additional fields it should include in the REST response.</p>
+<h5 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h5>
+<p>The <code>filter</code> is used to constrain the data returned by the endpoint, allowing for more targeted data retrieval. The filtering uses ONTAP's REST record filtering. The example above asks ONTAP to only return records where a volume's name matches <code>*harvest*</code>.</p>
+<p>If you're familiar with ONTAP's REST record filtering, the <a href="#template-example">example</a> above would become <code>name=*harvest*</code> and appended to the final URL like so:</p>
+<div class="highlight"><pre><span></span><code>https://CLUSTER_IP/api/storage/volumes?fields=*,anti_ransomware.state,space&amp;name=*harvest*
+</code></pre></div>
+<p>Refer to the ONTAP API specification, sections: <code>query parameters</code> and <code>record filtering</code>, for more details.</p>
+<h4 id="export_options">Export_options<a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
+<p>Parameters in this section tell the exporters how to handle the collected data.</p>
+<p>There are two different kinds of time-series that Harvest publishes: metrics and instance labels.</p>
+<ul>
+<li>Metrics are numeric data with associated labels (key-value pairs). E.g. <code>volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123</code>. The <code>volume_read_ops_total</code> metric is exporting three labels: <code>cluster</code>, <code>node</code>, and <code>volume</code> and the metric value is <code>123</code>.</li>
+<li>Instance labels are named after their associated config object (e.g., <code>volume_labels</code>, <code>qtree_labels</code>, etc.). There will be one instance label for each object instance, and each instance label will contain a set of associated labels (key-value pairs) that are defined in the templates <code>instance_labels</code> parameter. E.g. <code>volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1</code>. The <code>volume_labels</code> instance label is exporting four labels: <code>cluster</code>, <code>node</code>, <code>volume</code>, and <code>svm</code>. Instance labels always export a metric value of <code>1</code>.</li>
+</ul>
+<p>The <code>export_options</code> section allows you to define how to export these time-series.</p>
+<ul>
+<li><code>instances_keys</code> (list): display names of labels to export to both metric and instance labels.
+  For example, if you list the <code>svm</code> counter under <code>instances_keys</code>,
+  that key-value will be included in all time-series metrics and all instance-labels.</li>
+<li><code>instance_labels</code> (list): display names of labels to export with the corresponding instance label config object. For example, if you want the <code>volume</code> counter to be exported with the <code>volume_labels</code> instance label, you would list <code>volume</code> in the <code>instance_labels</code> section.</li>
+<li><code>include_all_labels</code> (bool): exports all labels for all time-series metrics. If there are no metrics defined in the template, this option will do nothing. This option also overrides the previous two parameters. See also <a href="#collector-configuration-file">collect_only_labels</a>.</li>
+</ul>
+<h4 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">&para;</a></h4>
+<p>In Harvest REST templates, <code>endpoints</code> are additional queries that enhance the data collected from the main query. The main query, identified by the <code>query</code> parameter, is the primary REST API for data collection. For example, the main query for a <code>disk</code> object is <code>api/storage/disks</code>.
+This main query collects disk objects from the ONTAP API and converts them into a <a href="../resources/matrix/">matrix</a>.</p>
+<p>Typically <code>endpoints</code> are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.
+Within the <code>endpoints</code> section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own <code>query</code> and associated <code>counters</code>, allowing you to collect additional metrics or labels from various API.
+These additional metrics or labels are combined with the main matrix via a key. The key is denoted by the <code>^^</code> notation in the counters of both the main query and the <code>endpoints</code>.</p>
+<p>If the <code>instance_add</code> flag is set to <code>true</code> within an endpoint, new records will be created rather than modifying existing ones.
+This allows for the collection of additional instances without altering the existing matrix.</p>
+<p>In the example below, the <code>endpoints</code> section makes an additional query to <code>api/private/cli/disk</code>, which collects metrics such as <code>stats_io_kbps</code>, <code>stats_sectors_read</code>, and <code>stats_sectors_written</code>. The <code>uuid</code> is the key that links the data from the <code>api/storage/disks</code> and <code>api/private/cli/disk</code> API.
+The <code>type</code> label from the <code>api/private/cli/disk</code> endpoint is included as outlined in the <code>export_options</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">             </span><span class="l l-Scalar l-Scalar-Plain">Disk</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">api/storage/disks</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">           </span><span class="l l-Scalar l-Scalar-Plain">disk</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^uid                       =&gt; uuid</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^bay                        =&gt; shelf_bay</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^container_type</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^home_node.name             =&gt; owner_node</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^model</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^name                       =&gt; disk</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^node.name                  =&gt; node</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^node.uuid</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^outage.reason              =&gt; outage</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^serial_number</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^shelf.uid                  =&gt; shelf</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^state</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bytes_per_sector            =&gt; bytes_per_sector</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sector_count                =&gt; sectors</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stats.average_latency       =&gt; stats_average_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stats.power_on_hours        =&gt; power_on_hours</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">usable_size</span>
+
+<span class="nt">endpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api/private/cli/disk</span>
+<span class="w">    </span><span class="nt">counters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^uid                   =&gt; uuid</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^type</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk_io_kbps_total      =&gt; stats_io_kbps</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sectors_read            =&gt; stats_sectors_read</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sectors_written         =&gt; stats_sectors_written</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Disk</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">LabelAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">value_to_num</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new_status outage - - `0`</span><span class="w"> </span><span class="c1">#ok_value is empty value, &#39;-&#39; would be converted to blank while processing.</span>
+<span class="w">      </span><span class="nt">join</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index `_` node,disk</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MetricAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">compute_metric</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uptime MULTIPLY stats.power_on_hours 60 60</span><span class="w"> </span><span class="c1">#convert to second for zapi parity</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">container_type</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">failed</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">model</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">outage</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">owner_node</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">serial_number</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shared</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shelf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shelf_bay</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
+</code></pre></div>
+<p>Example with <code>instance_add</code></p>
+<p>In the example below, the use of <code>instance_add</code> is necessary to collect both flexvols and their flexgroup constituents, which cannot be retrieved in a single ONTAP API call.
+Therefore, two separate API calls are required. Initially, volume data excluding flexgroups is gathered from <code>api/storage/volumes</code> and added to the <code>matrix</code>.
+The endpoint with <code>instance_add: true</code> enables the collection and addition of flexgroup constituent volumes to the matrix.
+Subsequently, the endpoint query <code>api/private/cli/volume</code> is used to add <code>aggr</code> and <code>node</code> labels to the data collected from both the main query and the first endpoint query,
+modifying the matrix with additional details.</p>
+<p>This example is from <code>conf/keyperf/9.15.0/volume.yaml</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">                     </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">                    </span><span class="l l-Scalar l-Scalar-Plain">api/storage/volumes</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">                   </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                    =&gt; volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^svm.name                                =&gt; svm</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^statistics.status                        =&gt; status</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^style                                    =&gt; style</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.other                 =&gt; other_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.read                  =&gt; read_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.total                 =&gt; total_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.write                 =&gt; write_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.other              =&gt; other_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.read               =&gt; read_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.total              =&gt; avg_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.write              =&gt; write_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.other           =&gt; other_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.read            =&gt; read_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.total           =&gt; total_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.write           =&gt; write_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp(timestamp)           =&gt; timestamp</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hidden_fields</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp=!&quot;-&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style=!flexgroup</span><span class="w">     </span><span class="c1"># collected via endpoints</span>
+
+<span class="nt">endpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api/storage/volumes</span>
+<span class="w">    </span><span class="nt">instance_add</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">counters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                =&gt; volume</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^svm.name                            =&gt; svm</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^statistics.status                    =&gt; status</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^style                                =&gt; style</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.other             =&gt; other_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.read              =&gt; read_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.total             =&gt; total_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.write             =&gt; write_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.other          =&gt; other_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.read           =&gt; read_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.total          =&gt; avg_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.write          =&gt; write_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.other       =&gt; other_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.read        =&gt; read_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.total       =&gt; total_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.write       =&gt; write_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp(timestamp)       =&gt; timestamp</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hidden_fields</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp=!&quot;-&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">is_constituent=true</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api/private/cli/volume</span>
+<span class="w">    </span><span class="nt">counters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^volume                              =&gt; volume</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^vserver                             =&gt; svm</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^aggr_list                            =&gt; aggr</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^nodes                                =&gt; node</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">is_constituent=*</span>
+</code></pre></div>
+<h2 id="restperf-collector">RestPerf Collector<a class="headerlink" href="#restperf-collector" title="Permanent link">&para;</a></h2>
+<p>RestPerf collects performance metrics from ONTAP systems using the REST protocol. The collector is designed to be easily
+extendable to collect new objects or to collect additional counters from already configured objects.</p>
+<p>This collector is an extension of the <a href="#rest-collector">Rest collector</a>. The major difference between them is that
+RestPerf collects only the performance (<code>perf</code>) APIs. Additionally, RestPerf always calculates final values from the
+deltas of two subsequent polls.</p>
+<h3 id="metrics_1">Metrics<a class="headerlink" href="#metrics_1" title="Permanent link">&para;</a></h3>
+<p>RestPerf metrics are calculated the same as ZapiPerf metrics. More details about how
+performance metrics are calculated can be found <a href="../configure-zapi/#metrics_1">here</a>.</p>
+<h3 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h3>
+<p>The parameters of the collector are distributed across three files:</p>
+<ul>
+<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
+<li>RestPerf configuration file (default: <code>conf/restperf/default.yaml</code>)</li>
+<li>Each object has its own configuration file (located in <code>conf/restperf/$version/</code>)</li>
+</ul>
+<p>Except for <code>addr</code>, <code>datacenter</code> and <code>auth_style</code>, all other parameters of the RestPerf collector can be
+defined in either of these three files. Parameters defined in the lower-level file, override parameters in the
+higher-level file. This allows the user to configure each objects individually, or use the same parameters for all
+objects.</p>
+<p>The full set of parameters are described <a href="#restperf-configuration-file">below</a>.</p>
+<h4 id="restperf-configuration-file">RestPerf configuration file<a class="headerlink" href="#restperf-configuration-file" title="Permanent link">&para;</a></h4>
+<p>This configuration file (the "template") contains a list of objects that should be collected and the filenames of their
+configuration (explained in the next section).</p>
+<p>Additionally, this file contains the parameters that are applied as defaults to all objects. (As mentioned before, any
+of these parameters can be defined in the Harvest or object configuration files as well).</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th style="text-align: right;">default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>use_insecure_tls</code></td>
+<td>bool, optional</td>
+<td>skip verifying TLS certificate of the target system</td>
+<td style="text-align: right;">false</td>
+</tr>
+<tr>
+<td><code>client_timeout</code></td>
+<td>duration (Go-syntax)</td>
+<td>how long to wait for server responses</td>
+<td style="text-align: right;">30s</td>
+</tr>
+<tr>
+<td><code>latency_io_reqd</code></td>
+<td>int, optional</td>
+<td>threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable)</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td><code>jitter</code></td>
+<td>duration (Go-syntax), optional</td>
+<td>Each Harvest collector runs independently, which means that at startup, each collector may send its REST queries at nearly the same time. To spread out the collector startup times over a broader period, you can use <code>jitter</code> to randomly distribute collector startup across a specified duration. For example, a <code>jitter</code> of <code>1m</code> starts each collector after a random delay between 0 and 60 seconds. For more details, refer to <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td><code>schedule</code></td>
+<td>list, required</td>
+<td>the poll frequencies of the collector/object, should include exactly these three elements in the exact same other:</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td>- <code>counter</code></td>
+<td>duration (Go-syntax)</td>
+<td>poll frequency of updating the counter metadata cache</td>
+<td style="text-align: right;">24 hours</td>
+</tr>
+<tr>
+<td>- <code>data</code></td>
+<td>duration (Go-syntax)</td>
+<td>poll frequency of updating the data cache <br /><br /><strong>Note</strong> Harvest allows defining poll intervals on sub-second level (e.g. <code>1ms</code>), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than <code>client_timeout</code>.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul></td>
+<td style="text-align: right;">1  minute</td>
+</tr>
+</tbody>
+</table>
+<p>The template should define objects in the <code>objects</code> section. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">SystemNode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system_node.yaml</span>
+<span class="w">  </span><span class="nt">HostAdapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostadapter.yaml</span>
+</code></pre></div>
+<p>Note that for each object we only define the filename of the object configuration file. The object configuration files
+are located in subdirectories matching to the ONTAP version that was used to create these files. It is possible to have
+multiple version-subdirectories for multiple ONTAP versions. At runtime, the collector will select the object
+configuration file that closest matches to the version of the target ONTAP system. (A mismatch is tolerated since
+RestPerf will fetch and validate counter metadata from the system.)</p>
+<h3 id="object-configuration-file_1">Object configuration file<a class="headerlink" href="#object-configuration-file_1" title="Permanent link">&para;</a></h3>
+<p>Refer <a href="./#object-configuration-file">Object configuration file</a></p>
+<h4 id="counters_1">Counters<a class="headerlink" href="#counters_1" title="Permanent link">&para;</a></h4>
+<p>See <a href="./#counters">Counters</a></p>
+<p>Some counters require a "base-counter" for post-processing. If the base-counter is missing, RestPerf will still run, but
+the missing data won't be exported.</p>
+<h4 id="export_options_1">Export_options<a class="headerlink" href="#export_options_1" title="Permanent link">&para;</a></h4>
+<p>See <a href="./#export_options">Export Options</a></p>
+<h3 id="filter_1">Filter<a class="headerlink" href="#filter_1" title="Permanent link">&para;</a></h3>
+<p>This guide provides instructions on how to use the <code>filter</code> feature in RestPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.</p>
+<h4 id="objects-excluding-workload">Objects (Excluding Workload)<a class="headerlink" href="#objects-excluding-workload" title="Permanent link">&para;</a></h4>
+<p>In RestPerf templates, you can set up filters under <code>counters</code>. Wildcards like <code>*</code> are useful if you don't want to specify all instances.</p>
+<p>For instance, to filter <code>volume</code> performance instances by volume name, use the following configuration in RestPerf <code>volume.yaml</code> under <code>counters</code>. This example will return the volumes named <code>NS_svm_nvme</code> or the volumes with <code>Test</code> in their name.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="nn">...</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">query=NS_svm_nvme|*Test*</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">query_fields=properties.value</span>
+</code></pre></div>
+<h3 id="workload-templates">Workload Templates<a class="headerlink" href="#workload-templates" title="Permanent link">&para;</a></h3>
+<p>Performance workload templates require a different syntax because instances are retrieved from the <code>api/storage/qos/workloads</code> Rest call.</p>
+<p>The <code>api/storage/qos/workloads</code> Rest supports filtering on the following fields:</p>
+<ul>
+<li>name</li>
+<li>workload_class</li>
+<li>wid</li>
+<li>policy.name</li>
+<li>svm.name</li>
+<li>volume</li>
+<li>lun</li>
+<li>file</li>
+<li>qtree</li>
+</ul>
+<p>You can include these fields under the <code>filter</code> parameter. For example, to filter Workload performance instances by <code>name</code> where the name contains <code>NS</code> or <code>Test</code> and <code>svm</code> is <code>vs1</code>, use the following configuration in RestPerf <code>workload.yaml</code> under <code>counters</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="nn">...</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name=*NS*|*Test*</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm.name=vs1</span>
+</code></pre></div>
+<h2 id="ontap-private-cli">ONTAP Private CLI<a class="headerlink" href="#ontap-private-cli" title="Permanent link">&para;</a></h2>
+<p>The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collector can make full use of ONTAP's private CLI. This means when ONTAP's public REST API is missing counters, Harvest can still collect them as long as those counters are available via ONTAP's CLI.</p>
+<p>For more information on using the ONTAP private CLI with the REST API, you can refer to the following resources:</p>
+<ul>
+<li><a href="https://library.netapp.com/ecmdocs/ECMLP2885799/html/#/Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API">NetApp Documentation: Accessing ONTAP CLI through REST APIs</a></li>
+<li><a href="https://netapp.io/2020/11/09/private-cli-passthrough-ontap-rest-api/">NetApp Blog: Private CLI Passthrough with ONTAP REST API</a></li>
+</ul>
+<h3 id="creating-templates-that-use-ontaps-private-cli">Creating Templates That Use ONTAP's Private CLI<a class="headerlink" href="#creating-templates-that-use-ontaps-private-cli" title="Permanent link">&para;</a></h3>
+<p>Let's take an example of how we can make Harvest use the <code>system fru-check show</code> CLI command.</p>
+<div class="highlight"><pre><span></span><code>system<span class="w"> </span>fru-check<span class="w"> </span>show
+</code></pre></div>
+<p>REST APIs endpoint:</p>
+<div class="highlight"><pre><span></span><code><span class="err">/api/private/cli/system/fru-check?fields=node,fru_name,fru_status</span>
+</code></pre></div>
+<p>Converting the CLI command <code>system fru-check show</code> for use with a private CLI REST API can be achieved by adhering to the path rules outlined in the ONTAP <a href="https://docs.netapp.com/us-en/ontap-restapi/ontap/getting_started_with_the_ontap_rest_api.html#Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API">documentation</a>. Generally, this involves substituting all spaces within the CLI command with a forward slash (/), and converting the ONTAP CLI verb into the corresponding REST verb.</p>
+<p>The <code>show</code> command gets converted to the HTTP method GET call. From the CLI, look at the required field names and pass them as a comma-separated value in <code>fields=</code> in the API endpoint.</p>
+<p>Note: If the field name contains a hyphen (<code>-</code>), it should be converted to an underscore (<code>_</code>) in the REST API field. For example, <code>fru-name</code> becomes <code>fru_name</code>. ONTAP is flexible with the input format and can freely convert between hyphen (<code>-</code>) and underscore (<code>_</code>) forms. However, when it comes to output, ONTAP returns field names with underscores. For compatibility and consistency, it is mandatory to use underscores in field names when working with Harvest REST templates for ONTAP private CLI.</p>
+<h3 id="advanced-and-diagnostic-mode-commands">Advanced and Diagnostic Mode Commands<a class="headerlink" href="#advanced-and-diagnostic-mode-commands" title="Permanent link">&para;</a></h3>
+<p>The CLI pass through allows you to execute advanced and diagnostic mode CLI commands by including the <code>privilege_level</code> field in your request under the <code>filter</code> setting like so:
+<div class="highlight"><pre><span></span><code>counters:
+  - filter:
+      - privilege_level=diagnostic
+</code></pre></div></p>
+<h3 id="creating-a-harvest-template-for-private-cli">Creating a Harvest Template for Private CLI<a class="headerlink" href="#creating-a-harvest-template-for-private-cli" title="Permanent link">&para;</a></h3>
+<p>Here's a Harvest template that uses ONTAP's private CLI to collect field-replaceable units (FRU) counters by using ONTAP's CLI command <code>system fru-check show</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">                         </span><span class="l l-Scalar l-Scalar-Plain">FruCheck</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">                        </span><span class="l l-Scalar l-Scalar-Plain">api/private/cli/system/fru-check</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">                       </span><span class="l l-Scalar l-Scalar-Plain">fru_check</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^node</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^serial_number              =&gt; serial_number</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^fru_name                    =&gt; name</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^fru_status                  =&gt; status</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">serial_number</span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status</span>
+</code></pre></div>
+<p>In this template, the <code>query</code> field specifies the private CLI command to be used (<code>system fru-check show</code>). The <code>counters</code> field maps the output of the private CLI command to the fields of the <code>fru_check</code> object.
+To identify the ONTAP counter names (the left side of the '=&gt;' symbol in the template, such as <code>fru_name</code>), you can establish an SSH connection to your ONTAP cluster. Once connected, leverage ONTAP's command completion functionality to reveal the counter names. For instance, you can type <code>system fru-check show -fields</code>, then press the '?' key. This will display a list of ONTAP field names, as demonstrated below.</p>
+<div class="highlight"><pre><span></span><code>cluster-01::&gt; system fru-check show -fields ?
+  node                        Node
+  serial-number               FRU Serial Number
+  fru-name                    FRU Name
+  fru-type                    FRU Type
+  fru-status                  Status
+  display-name                Display Name
+  location                    Location
+  additional-info             Additional Info
+  reason                      Details
+</code></pre></div>
+<p>The <code>export_options</code> field specifies how the data should be exported. The <code>instance_keys</code> field lists the fields that will be added as labels to all exported instances of the <code>fru_check</code> object. The <code>instance_labels</code> field lists the fields that should be included as labels in the exported data.</p>
+<p>The output of this template would look like:</p>
+<div class="highlight"><pre><span></span><code>fru_check_labels{cluster=&quot;umeng-aff300-01-02&quot;,datacenter=&quot;u2&quot;,name=&quot;DIMM-1&quot;,node=&quot;umeng-aff300-02&quot;,serial_number=&quot;s2&quot;,status=&quot;pass&quot;} 1.0
+fru_check_labels{cluster=&quot;umeng-aff300-01-02&quot;,datacenter=&quot;u2&quot;,name=&quot;PCIe Devices&quot;,node=&quot;umeng-aff300-02&quot;,serial_number=&quot;s1&quot;,status=&quot;pass&quot;} 1.0
+</code></pre></div>
+<h2 id="partial-aggregation">Partial Aggregation<a class="headerlink" href="#partial-aggregation" title="Permanent link">&para;</a></h2>
+<p>For more details about partial aggregation behavior and configuration, see <a href="../partial-aggregation/">Partial Aggregation</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>

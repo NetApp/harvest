@@ -1,0 +1,3172 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../configure-harvest-basic/">
+      
+      
+        <link rel="next" href="../influxdb-exporter/">
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>Prometheus - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prometheus-exporter" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Prometheus
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-should-i-configure-the-prometheus-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      How should I configure the Prometheus exporter?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#per-poller-prom_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per-poller prom_port
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Port Range
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-port-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single Port Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow_addrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      allow_addrs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow_addrs_regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      allow_addrs_regex
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disk_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      disk_cache
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-prometheus-to-scrape-harvest-pollers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure Prometheus to scrape Harvest pollers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure Prometheus to scrape Harvest pollers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-http-service-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus HTTP Service Discovery
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus HTTP Service Discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-http-service-discovery-in-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enable HTTP service discovery in Harvest
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#harvest-http-service-discovery-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Harvest HTTP Service Discovery options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable-http-service-discovery-in-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enable HTTP service discovery in Prometheus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-http-service-discovery-and-port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus HTTP Service Discovery and Port Range
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-scrape-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Static Scrape Targets
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-exporter-and-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Exporter and TLS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Exporter and TLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-tls-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate TLS Certificates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-harvest-prometheus-exporter-to-use-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure Harvest Prometheus Exporter to use TLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-prometheus-to-use-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure Prometheus to use TLS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Alerts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Alerts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alertmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alertmanager
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-should-i-configure-the-prometheus-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      How should I configure the Prometheus exporter?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#per-poller-prom_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per-poller prom_port
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Port Range
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-port-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single Port Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow_addrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      allow_addrs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow_addrs_regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      allow_addrs_regex
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disk_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      disk_cache
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-prometheus-to-scrape-harvest-pollers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure Prometheus to scrape Harvest pollers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure Prometheus to scrape Harvest pollers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-http-service-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus HTTP Service Discovery
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus HTTP Service Discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-http-service-discovery-in-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enable HTTP service discovery in Harvest
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#harvest-http-service-discovery-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Harvest HTTP Service Discovery options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable-http-service-discovery-in-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enable HTTP service discovery in Prometheus
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-http-service-discovery-and-port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus HTTP Service Discovery and Port Range
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-scrape-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Static Scrape Targets
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-exporter-and-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Exporter and TLS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Exporter and TLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate-tls-certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate TLS Certificates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-harvest-prometheus-exporter-to-use-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure Harvest Prometheus Exporter to use TLS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-prometheus-to-use-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure Prometheus to use TLS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-alerts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Alerts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Alerts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alertmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alertmanager
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="prometheus-exporter">Prometheus Exporter<a class="headerlink" href="#prometheus-exporter" title="Permanent link">&para;</a></h1>
+<details class="note" open="open">
+<summary>Prometheus Install</summary>
+<p>The information below describes how to setup Harvest's Prometheus exporter. 
+If you need help installing or setting up Prometheus, check 
+out <a href="https://prometheus.io/docs/prometheus/latest/getting_started/">their documentation</a>.</p>
+</details>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The Prometheus exporter is responsible for:</p>
+<ul>
+<li>formatting metrics into the Prometheus <a href="https://prometheus.io/docs/instrumenting/exposition_formats/">line protocol</a></li>
+<li>creating a web-endpoint on <code>http://&lt;ADDR&gt;:&lt;PORT&gt;/metrics</code> (or <code>https:</code> if TLS is enabled) for Prometheus to scrape</li>
+</ul>
+<p>A web end-point is required because Prometheus scrapes Harvest by polling that end-point.</p>
+<p>In addition to the <code>/metrics</code> end-point, the Prometheus exporter also serves an overview of all metrics and collectors
+available on its root address <code>scheme://&lt;ADDR&gt;:&lt;PORT&gt;/</code>.</p>
+<p>Because Prometheus polls Harvest, remember
+to <a href="#configure-prometheus-to-scrape-harvest-pollers">update your Prometheus configuration</a> and tell Prometheus how to
+scrape each poller.</p>
+<h2 id="how-should-i-configure-the-prometheus-exporter">How should I configure the Prometheus exporter?<a class="headerlink" href="#how-should-i-configure-the-prometheus-exporter" title="Permanent link">&para;</a></h2>
+<p>There are several ways to configure the Prometheus exporter with various trade-offs outlined below:</p>
+<ul>
+<li>a per-poller prom_port in the <code>Pollers</code> section</li>
+<li>a port range in the <code>Exporters</code> section</li>
+<li>a single port in the <code>Exporters</code> section</li>
+<li>embedded exporters in the <code>Pollers</code> section</li>
+</ul>
+<p>We recommend the first two options, using a per-poller <code>prom_port</code> or <code>port_range</code>, since they work for the majority of 
+use cases and are the easiest to manage.</p>
+<p>Use <code>prom_port</code> when you want the most control over the Prometheus port with the least amount of management.
+Use <code>port_range</code> when you want Harvest to manage the port numbers for you,
+but be aware that the port numbers depend on the order of pollers in your <code>harvest.yml</code>.
+You need to keep that order consistent otherwise it will appear that you have lost data.  </p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Pros</th>
+<th>Cons</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#per-poller-prom_port">prom_port</a></td>
+<td>Precisely control each Poller's Prometheus exporter port. The port is defined in one place, beside each poller.</td>
+<td>You have to manage which port each poller should use.</td>
+<td>Start with this until you outgrow it. Many folks never do.</td>
+</tr>
+<tr>
+<td><a href="#port-range">port_range</a></td>
+<td>Less to manage since Harvest assigns the port numbers for you based on the order of the pollers in your <code>harvest.yml</code></td>
+<td>You need to be mindful of the order of pollers in your <code>harvest.yml</code> file and be careful about changing that order when adding/removing pollers. Reordering will cause the Prometheus port to change. Since Prometheus includes the port in the <code>instance</code> label, changing the port causes Prometheus to treat metrics with different ports as different instances. That means it will appear that you have lost data because the metrics with the new port are distinct from the metrics with the older port. See <a href="https://github.com/NetApp/harvest/issues/2782">#2782</a> for details.</td>
+<td>Less to manage, but makes sure you understand how to <a href="#port-range">control the order of your pollers</a>.</td>
+</tr>
+<tr>
+<td><a href="#single-port-exporter">port in Exporters</a></td>
+<td>Precisely control each Poller's Prometheus exporter port.<br>Can define multiple Prometheus exporters, each with custom configuration.</td>
+<td>Similar to <code>prom_port</code> but with an unnecessary level of indirection that makes you repeat yourself.</td>
+<td>Exporter that Harvest always shipped with. Most folks should use <code>prom_port</code> unless they need to configure many instances of the Prometheus exporter, which is rare.</td>
+</tr>
+<tr>
+<td><a href="#embedded-exporter">embedded exporter</a></td>
+<td>All the pros of <code>port in Exporters</code> but without the unnecessary indirection</td>
+<td>Removes the level of indirection and allows you to define the exporter in one place, but more verbose than per-poller <code>prom_port</code>.</td>
+<td>Most folks should use <code>prom_port</code> unless they need to configure many instances of the Prometheus exporter, which is rare.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<p>All parameters of the exporter are defined in the <code>Exporters</code> section of <code>harvest.yml</code>.</p>
+<p>An overview of all parameters:</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_meta_tags</code></td>
+<td>bool, optional</td>
+<td>add <code>HELP</code> and <code>TYPE</code> <a href="https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information">metatags</a> to metrics (currently no useful information, but required by some tools)</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><a href="#allow_addrs"><code>allow_addrs</code></a></td>
+<td>list of strings, optional</td>
+<td>allow access only if host matches any of the provided addresses</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#allow_addrs_regex"><code>allow_addrs_regex</code></a></td>
+<td>list of strings, optional</td>
+<td>allow access only if host address matches at least one of the regular expressions</td>
+<td></td>
+</tr>
+<tr>
+<td><code>cache_max_keep</code></td>
+<td>string (Go duration format), optional</td>
+<td>maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)</td>
+<td><code>5m</code></td>
+</tr>
+<tr>
+<td><a href="#disk_cache"><code>disk_cache</code></a></td>
+<td>object, optional</td>
+<td>disk-based cache configuration</td>
+<td></td>
+</tr>
+<tr>
+<td><code>global_prefix</code></td>
+<td>string, optional</td>
+<td>add a prefix to all metrics (e.g. <code>netapp_</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>local_http_addr</code></td>
+<td>string, optional</td>
+<td>address of the HTTP server Harvest starts for Prometheus to scrape:<br />use <code>localhost</code> to serve only on the local machine<br />use <code>0.0.0.0</code> (default) if Prometheus is scrapping from another machine</td>
+<td><code>0.0.0.0</code></td>
+</tr>
+<tr>
+<td><code>port_range</code></td>
+<td>int-int (range), overrides <code>port</code> if specified</td>
+<td>lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td>int, required if port_range is not specified</td>
+<td>port of the HTTP end-point</td>
+<td></td>
+</tr>
+<tr>
+<td><code>sort_labels</code></td>
+<td>bool, optional</td>
+<td>sort metric labels before exporting. <a href="https://github.com/NetApp/harvest/issues/756">VictoriaMetrics</a> requires this otherwise stale metrics are reported.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>tls</code></td>
+<td><code>tls</code></td>
+<td>optional</td>
+<td>If present, enables TLS transport. If running in a container, see <a href="https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589">note</a></td>
+</tr>
+<tr>
+<td>tls <code>cert_file</code>, <code>key_file</code></td>
+<td><strong>required</strong> child of <code>tls</code></td>
+<td>Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with <code>bin/harvest admin tls create server</code>, <code>openssl</code>, <code>mkcert</code>, etc.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="per-poller-prom_port">Per-poller prom_port<a class="headerlink" href="#per-poller-prom_port" title="Permanent link">&para;</a></h3>
+<p>Define a Prometheus exporter in the <code>Exporters</code> section of your <code>harvest.yml</code> file, use that exporter in <code>Defaults</code>, 
+and then each poller lists its <code>prom_port</code> in the <code>Pollers</code> section.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">add_meta_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="nt">Defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">auth_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic_auth</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span>
+<span class="w">  </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_prom</span>
+</code></pre></div>
+<p>Then update your pollers in the <code>Pollers</code> section of your <code>harvest.yml</code> file.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">prom_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12990</span>
+<span class="w">  </span><span class="nt">cluster-02</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.2</span>
+<span class="w">    </span><span class="nt">prom_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12991</span>
+</code></pre></div>
+<h3 id="port-range">Port Range<a class="headerlink" href="#port-range" title="Permanent link">&para;</a></h3>
+<p>Port range works by defining a range of ports in the <code>Exporters</code> section of your <code>harvest.yml</code> file.
+Harvest will assign the first available port in the range to each poller that uses the exporter.
+That means you need to be careful about the order of your pollers in the <code>harvest.yml</code> file.</p>
+<p>If you add or remove pollers, the order of the pollers may change, and the port assigned to each poller may change.
+To mitigate this:</p>
+<ul>
+<li>when you add new pollers to the <code>harvest.yml</code> file, add them to the end of the <code>Pollers</code> section of your <code>harvest.yml</code> file.</li>
+<li>when you want to remove pollers, instead of deleting them, add the <code>disabled: true</code> parameter to the poller.
+The poller will not be started, but the port will be reserved.
+That way, the order of later pollers won't change. </li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prom-prod</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000-2030</span>
+<span class="nt">Defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom-prod</span><span class="w">    </span>
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">  </span><span class="c1"># This poller will not be used</span>
+<span class="w">  </span><span class="nt">cluster-02</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.2</span>
+<span class="w">  </span><span class="nt">cluster-03</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.3</span>
+<span class="w">  </span><span class="c1"># ... more</span>
+<span class="w">  </span><span class="nt">cluster-16</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.16</span>
+</code></pre></div>
+<p>In the example above, fifteen pollers will collect metrics from 15 clusters
+and make those metrics available to a single instance of Prometheus named <code>prom-prod</code>.
+Fifteen web end-points will be created on the available free ports between 2000 and 2030 (inclusive).
+Port 2000 will be assigned to <code>cluster-01</code>, port 2001 to <code>cluster-02</code>, and so on.</p>
+<p>After starting the pollers in the example above, running <code>bin/harvest status</code> shows the following.
+Since <code>cluster-01</code> is disabled, it won't be started and its port will be skipped.
+If no free port can be found, an error will
+be logged.</p>
+<div class="highlight"><pre><span></span><code>  Datacenter  |    Poller    | PID  | PromPort |  Status     
+--------------+--------------+------+----------+----------
+  dc-01       | cluster-01   | 2339 |          | disabled  
+  dc-01       | cluster-02   | 2343 |  2001    | running  
+  dc-01       | cluster-03   | 2351 |  2002    | running  
+...
+  dc-01       | cluster-14   | 2405 |  2013    | running  
+  dc-01       | cluster-15   | 2502 |  2014    | running  
+  dc-01       | cluster-16   | 2514 |  2015    | running  
+</code></pre></div>
+<h3 id="single-port-exporter">Single Port Exporter<a class="headerlink" href="#single-port-exporter" title="Permanent link">&para;</a></h3>
+<p>Define a Prometheus exporter in the <code>Exporters</code> section of your <code>harvest.yml</code> file.
+Give that exporter a <code>port</code> and update a single poller to use this exporter.
+Each poller requires a different Prometheus exporter.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">add_meta_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12990</span>
+</code></pre></div>
+<p>Then update a single poller in the <code>Pollers</code> section of your <code>harvest.yml</code> file to reference the Prometheus exporter.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_prom</span>
+</code></pre></div>
+<h3 id="embedded-exporter">Embedded Exporter<a class="headerlink" href="#embedded-exporter" title="Permanent link">&para;</a></h3>
+<p>This example is similar to the <a href="#single-port-exporter">single port exporter</a> example,
+but the exporter is defined in the <code>Pollers</code> section.
+No need to define the exporter in the <code>Exporters</code> section.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">        </span><span class="nt">add_meta_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12990</span>
+</code></pre></div>
+<h3 id="allow_addrs">allow_addrs<a class="headerlink" href="#allow_addrs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">allow_addrs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.102</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.103</span>
+</code></pre></div>
+<p>Access will only be allowed from these two addresses.</p>
+<h3 id="allow_addrs_regex">allow_addrs_regex<a class="headerlink" href="#allow_addrs_regex" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">allow_addrs_regex</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="err">`</span><span class="l l-Scalar l-Scalar-Plain">^192.168.0.\d+$`</span>
+</code></pre></div>
+<p>Access will only be allowed from the IP4 range <code>192.168.0.0</code>-<code>192.168.0.255</code>.</p>
+<h3 id="disk_cache">disk_cache<a class="headerlink" href="#disk_cache" title="Permanent link">&para;</a></h3>
+<p>The <code>disk_cache</code> parameter enables disk-based staging of metrics before they are served to Prometheus. Instead of storing formatted metrics in memory, Harvest flushes them to disk files. When Prometheus scrapes the <code>/metrics</code> endpoint, Harvest reads these cached files from disk and streams them directly to Prometheus. This approach reduces memory overhead, making it ideal for large deployments with many metrics.</p>
+<p><strong>Configuration:</strong></p>
+<p>The <code>disk_cache</code> parameter requires a <code>path</code> field that specifies the directory where cache files will be stored. The path is <strong>mandatory</strong> when using disk cache.</p>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>The <code>path</code> is <strong>required</strong> when using <code>disk_cache</code></li>
+<li>Harvest will automatically create a subdirectory for each poller to avoid conflicts between multiple pollers</li>
+<li>The cache directory is cleared on startup</li>
+<li>Ensure the specified directory is writable by the Harvest process</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prom_disk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13000-13100</span>
+<span class="w">    </span><span class="nt">disk_cache</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/harvest/cache</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom_disk</span>
+<span class="w">  </span><span class="nt">cluster-02</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.2</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom_disk</span>
+</code></pre></div>
+<p>In this example, cache files will be created in:
+- <code>/var/lib/harvest/cache/cluster-01/</code>
+- <code>/var/lib/harvest/cache/cluster-02/</code></p>
+<h2 id="configure-prometheus-to-scrape-harvest-pollers">Configure Prometheus to scrape Harvest pollers<a class="headerlink" href="#configure-prometheus-to-scrape-harvest-pollers" title="Permanent link">&para;</a></h2>
+<p>There are two ways to tell Prometheus how to scrape Harvest: using HTTP service discovery (SD) or listing each poller
+individually.</p>
+<p>HTTP service discovery is the more flexible of the two. It is also less error-prone, and easier to manage. Combined with
+the port_range configuration described above, SD is the least effort to configure Prometheus and the easiest way to keep
+both Harvest and Prometheus in sync.</p>
+<p><strong>NOTE</strong> HTTP service discovery does not work with Docker yet. With Docker, you will need to list each poller
+individually or if possible, use the <a href="https://github.com/NetApp/harvest/tree/main/docker">Docker Compose</a> workflow that
+uses file service discovery to achieve a similar ease-of-use as HTTP service discovery.</p>
+<p>See the <a href="#prometheus-http-service-discovery-and-port-range">example</a> below for how to use HTTP SD and port_range
+together.</p>
+<h3 id="prometheus-http-service-discovery">Prometheus HTTP Service Discovery<a class="headerlink" href="#prometheus-http-service-discovery" title="Permanent link">&para;</a></h3>
+<p><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#http_sd_config">HTTP service discovery</a> was
+introduced in Prometheus version 2.28.0. Make sure you're using that version or later.</p>
+<p>The way service discovery works is:</p>
+<ul>
+<li>shortly after a poller starts up, it registers with the SD node (if one exists)</li>
+<li>the poller sends a heartbeat to the SD node, by default every 45s.</li>
+<li>if a poller fails to send a heartbeat, the SD node removes the poller from the list of active targets after a minute</li>
+<li>the SD end-point is reachable via SCHEMA://<listen>/api/v1/sd</li>
+</ul>
+<p>To use HTTP service discovery you need to:</p>
+<ol>
+<li>tell <a href="#enable-http-service-discovery-in-harvest">Harvest to start the HTTP service discovery process</a></li>
+<li>tell <a href="#enable-http-service-discovery-in-prometheus">Prometheus to use the HTTP service discovery endpoint</a></li>
+</ol>
+<h4 id="enable-http-service-discovery-in-harvest">Enable HTTP service discovery in Harvest<a class="headerlink" href="#enable-http-service-discovery-in-harvest" title="Permanent link">&para;</a></h4>
+<p>Add the following to your <code>harvest.yml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">Admin</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">httpsd</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">listen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">:8887</span>
+</code></pre></div>
+<p>This tells Harvest to create an HTTP service discovery end-point on interface <code>0.0.0.0:8887</code>. If you want to only listen
+on localhost, use <code>127.0.0.1:&lt;port&gt;</code> instead. See <a href="https://pkg.go.dev/net#Dial">net.Dial</a> for details on the supported
+listen formats.</p>
+<p>Start the SD process by running <code>bin/harvest admin start</code>. Once it is started, you can curl the end-point for the list
+of running Harvest pollers.</p>
+<div class="highlight"><pre><span></span><code>curl -s &#39;http://localhost:8887/api/v1/sd&#39; | jq .
+[
+  {
+    &quot;targets&quot;: [
+      &quot;10.0.1.55:12990&quot;,
+      &quot;10.0.1.55:15037&quot;,
+      &quot;127.0.0.1:15511&quot;,
+      &quot;127.0.0.1:15008&quot;,
+      &quot;127.0.0.1:15191&quot;,
+      &quot;10.0.1.55:15343&quot;
+    ]
+  }
+]
+</code></pre></div>
+<h4 id="harvest-http-service-discovery-options">Harvest HTTP Service Discovery options<a class="headerlink" href="#harvest-http-service-discovery-options" title="Permanent link">&para;</a></h4>
+<p>HTTP service discovery (SD) is configured in the <code>Admin &gt; httpsd</code> section of your <code>harvest.yml</code>.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>listen</code></td>
+<td><strong>required</strong></td>
+<td>Interface and port to listen on, use localhost:PORT or :PORT for all interfaces</td>
+<td></td>
+</tr>
+<tr>
+<td><code>auth_basic</code></td>
+<td>optional</td>
+<td>If present, enables basic authentication on <code>/api/v1/sd</code> end-point</td>
+<td></td>
+</tr>
+<tr>
+<td>auth_basic <code>username</code>, <code>password</code></td>
+<td><strong>required</strong> child of <code>auth_basic</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>tls</code></td>
+<td>optional</td>
+<td>If present, enables TLS transport. If running in a container, see <a href="https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589">note</a></td>
+<td></td>
+</tr>
+<tr>
+<td>tls <code>cert_file</code>, <code>key_file</code></td>
+<td><strong>required</strong> child of <code>tls</code></td>
+<td>Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with <code>bin/harvest admin tls create server</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ssl_cert</code>, <code>ssl_key</code></td>
+<td>optional if <code>auth_style</code> is <code>certificate_auth</code></td>
+<td>Absolute paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for <code>&lt;hostname&gt;.key</code> and <code>&lt;hostname&gt;.pem</code> in <code>$HARVEST_HOME/cert/</code>.<br/><br/>To create certificates for ONTAP systems, see <a href="../prepare-cdot-clusters/#using-certificate-authentication">using certificate authentication</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>heart_beat</code></td>
+<td>optional, <a href="https://pkg.go.dev/time#ParseDuration">Go Duration format</a></td>
+<td>How frequently each poller sends a heartbeat message to the SD node</td>
+<td>45s</td>
+</tr>
+<tr>
+<td><code>expire_after</code></td>
+<td>optional, <a href="https://pkg.go.dev/time#ParseDuration">Go Duration format</a></td>
+<td>If a poller fails to send a heartbeat, the SD node removes the poller after this duration</td>
+<td>1m</td>
+</tr>
+</tbody>
+</table>
+<h4 id="enable-http-service-discovery-in-prometheus">Enable HTTP service discovery in Prometheus<a class="headerlink" href="#enable-http-service-discovery-in-prometheus" title="Permanent link">&para;</a></h4>
+<p>Edit your <code>prometheus.yml</code> and add the following section</p>
+<p><code>$ vim /etc/prometheus/prometheus.yml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">scrape_configs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">    </span><span class="nt">http_sd_configs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:8887/api/v1/sd</span>
+</code></pre></div>
+<p>Harvest and Prometheus both support basic authentication for HTTP SD end-points. To enable basic auth, add the following
+to your Harvest config.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Admin</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">httpsd</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">listen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">:8887</span>
+<span class="w">    </span><span class="c1"># Basic auth protects GETs and publishes</span>
+<span class="w">    </span><span class="nt">auth_basic</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+</code></pre></div>
+<p>Don't forget to also update your Prometheus config with the
+matching <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#http_sd_config">basic_auth</a>
+credentials.</p>
+<h3 id="prometheus-http-service-discovery-and-port-range">Prometheus HTTP Service Discovery and Port Range<a class="headerlink" href="#prometheus-http-service-discovery-and-port-range" title="Permanent link">&para;</a></h3>
+<p>HTTP SD combined with Harvest's <code>port_range</code> feature leads to significantly less configuration in your <code>harvest.yml</code>.
+For example, if your clusters all export to the same Prometheus instance, you can refactor the per-poller exporter into
+a single exporter shared by all clusters in <code>Defaults</code> as shown below:</p>
+<p>Notice that none of the pollers specify an exporter. Instead, all the pollers share the single exporter
+named <code>prometheus-r</code> listed in <code>Defaults</code>. <code>prometheus-r</code> is the only exporter defined and as specified will manage up
+to 1,000 Harvest Prometheus exporters.</p>
+<p>If you add or remove more clusters in the <code>Pollers</code> section, you do not have to change Prometheus since it dynamically
+pulls the targets from the Harvest admin node.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Admin</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">httpsd</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">listen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">:8887</span>
+
+<span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prometheus-r</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13000-13999</span>
+
+<span class="nt">Defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">collectors</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Zapi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZapiPerf</span>
+<span class="w">  </span><span class="nt">use_insecure_tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">auth_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span>
+<span class="w">  </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prometheus-r</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">umeng_aff300</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">meg</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.193.48.11</span>
+
+<span class="w">  </span><span class="nt">F2240-127-26</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">meg</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.193.6.61</span>
+
+<span class="w">  </span><span class="c1"># ... add more clusters</span>
+</code></pre></div>
+<h3 id="static-scrape-targets">Static Scrape Targets<a class="headerlink" href="#static-scrape-targets" title="Permanent link">&para;</a></h3>
+<p>If we define two Prometheus exporters at ports: 12990 and 14567 in the <code>harvest.yml</code> file like so, you need to add two targets to your <code>prometheus.yml</code> too.</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>vim<span class="w"> </span>harvest.yml
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prometheus1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12990</span>
+<span class="w">  </span><span class="nt">prometheus2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">14567</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prometheus1</span>
+<span class="w">  </span><span class="nt">cluster2</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">      </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prometheus2</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>vim<span class="w"> </span>/etc/prometheus/prometheus.yml
+</code></pre></div>
+<p>Scroll down to near the end of the file and add the following lines:</p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;harvest&#39;</span>
+<span class="w">    </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;localhost:12990&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;localhost:14567&#39;</span>
+</code></pre></div>
+<p><strong>NOTE</strong> If Prometheus is not on the same machine as Harvest, then replace <code>localhost</code> with the IP address of your
+Harvest machine. Also note the scrape interval above is set to 1m. That matches the polling frequency of the default
+Harvest collectors. If you change the polling frequency of a Harvest collector to a lower value, you should also change
+the scrape interval.</p>
+<h2 id="prometheus-exporter-and-tls">Prometheus Exporter and TLS<a class="headerlink" href="#prometheus-exporter-and-tls" title="Permanent link">&para;</a></h2>
+<p>The Harvest Prometheus exporter can be configured to serve its metrics via <code>HTTPS</code> by configuring the <code>tls</code> section in
+the <code>Exporters</code> section of <code>harvest.yml</code>.</p>
+<p>Let's walk through an example of how to set up Harvest's Prometheus exporter and how to configure Prometheus to use TLS.</p>
+<h3 id="generate-tls-certificates">Generate TLS Certificates<a class="headerlink" href="#generate-tls-certificates" title="Permanent link">&para;</a></h3>
+<p>We'll use Harvest's admin command line tool to create a self-signed TLS certificate key/pair for the exporter and Prometheus.
+Note: If running in a container, see <a href="https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589">note</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$Harvest_Install_Directory</span>
+bin/harvest<span class="w"> </span>admin<span class="w"> </span>tls<span class="w"> </span>create<span class="w"> </span>server
+<span class="m">2023</span>/06/23<span class="w"> </span><span class="m">09</span>:39:48<span class="w"> </span>wrote<span class="w"> </span>cert/admin-cert.pem
+<span class="m">2023</span>/06/23<span class="w"> </span><span class="m">09</span>:39:48<span class="w"> </span>wrote<span class="w"> </span>cert/admin-key.pem
+</code></pre></div>
+<p>Two files are created. Since we want to use these certificates for our Prometheus exporter, let's rename them to make that clearer.</p>
+<div class="highlight"><pre><span></span><code>mv<span class="w"> </span>cert/admin-cert.pem<span class="w"> </span>cert/prom-cert.pem
+mv<span class="w"> </span>cert/admin-key.pem<span class="w"> </span>cert/prom-key.pem
+</code></pre></div>
+<h3 id="configure-harvest-prometheus-exporter-to-use-tls">Configure Harvest Prometheus Exporter to use TLS<a class="headerlink" href="#configure-harvest-prometheus-exporter-to-use-tls" title="Permanent link">&para;</a></h3>
+<p>Edit your <code>harvest.yml</code> and add a TLS section to your exporter block like this:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my-exporter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">local_http_addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16001</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cert_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert/prom-cert.pem</span>
+<span class="w">      </span><span class="nt">key_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert/prom-key.pem</span>
+</code></pre></div>
+<p>Update one of your Pollers to use this exporter and start the poller.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my-cluster</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.193.48.11</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-exporter</span><span class="w">     </span><span class="c1"># Use TLS exporter we created above</span>
+</code></pre></div>
+<p>When the poller is started, it will log whether <code>https</code> or <code>http</code> is being used as part of the <code>url</code> like so:</p>
+<div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>start<span class="w"> </span>-f<span class="w"> </span>my-cluster
+<span class="m">2023</span>-06-23T10:02:03-04:00<span class="w"> </span>INF<span class="w"> </span>prometheus/httpd.go:40<span class="w"> </span>&gt;<span class="w"> </span>server<span class="w"> </span>listen<span class="w"> </span><span class="nv">Poller</span><span class="o">=</span>my-cluster<span class="w"> </span><span class="nv">exporter</span><span class="o">=</span>my-exporter<span class="w"> </span><span class="nv">url</span><span class="o">=</span>https://localhost:16001/metrics
+</code></pre></div>
+<p>If the <code>url</code> schema is <code>https</code>, TLS is being used.</p>
+<p>You can use curl to scrape the Prometheus exporter and verify that TLS is being used like so:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>--cacert<span class="w"> </span>cert/prom-cert.pem<span class="w"> </span>https://localhost:16001/metrics
+
+<span class="c1"># or use --insecure to tell curl to skip certificate validation</span>
+<span class="c1"># curl --insecure cert/prom-cert.pem https://localhost:16001/metrics  </span>
+</code></pre></div>
+<h3 id="configure-prometheus-to-use-tls">Configure Prometheus to use TLS<a class="headerlink" href="#configure-prometheus-to-use-tls" title="Permanent link">&para;</a></h3>
+<p>Let's configure Prometheus to use <code>HTTPs</code> to communicate with the exporter setup above.</p>
+<p>Edit your <code>prometheus.yml</code> and add or adapt your <code>scrape_configs</code> job. You need to add <code>scheme: https</code> and setup a <code>tls_config</code>
+block to point to the earlier created <code>prom-cert.pem</code> like so:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">scrape_configs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;harvest-https&#39;</span>
+<span class="w">    </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span>
+<span class="w">    </span><span class="nt">tls_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ca_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/prom-cert.pem</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;localhost:16001&#39;</span>
+</code></pre></div>
+<p>Start Prometheus and visit http://localhost:9090/targets with your browser. 
+You should see https://localhost:16001/metrics in the list of targets. </p>
+<p><img alt="Prometheus Targets" src="../assets/prometheus/PrometheusTLS.png" /></p>
+<h2 id="prometheus-alerts">Prometheus Alerts<a class="headerlink" href="#prometheus-alerts" title="Permanent link">&para;</a></h2>
+<p>Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your <code>prometheus.yml</code>
+file. Setup and details can be found in the Prometheus
+guide on <a href="https://prometheus.io/docs/practices/alerting/">alerting</a>.</p>
+<p>Harvest also includes <a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/ems_alert_rules.yml">EMS</a>
+and <a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml">sample</a> alerts for reference. 
+Refer to the <a href="../configure-ems/">EMS Collector</a> for more details about EMS events.
+Refer to the <a href="../resources/ems-alert-runbook/">EMS alert runbook</a> for descriptions and remediation steps.</p>
+<h3 id="alertmanager">Alertmanager<a class="headerlink" href="#alertmanager" title="Permanent link">&para;</a></h3>
+<p>Prometheus's builtin alerts are good for simple workflows. They do a nice job telling you what's happening at the
+moment.
+If you need a richer solution that includes summarization, notification, advanced delivery, deduplication, etc.
+checkout <a href="https://prometheus.io/docs/alerting/latest/alertmanager/">Alertmanager</a>.</p>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">Prometheus Alerting</a></li>
+<li><a href="https://prometheus.io/docs/alerting/latest/alertmanager/">Alertmanager</a></li>
+<li><a href="https://utcc.utoronto.ca/~cks/space/blog/sysadmin/AlertmanagerNotificationMetrics">Alertmanager's notification metrics</a></li>
+<li><a href="https://github.com/cloudflare/pint">Prometheus Linter</a></li>
+<li><a href="https://github.com/samber/awesome-prometheus-alerts">Collection of example Prometheus Alerts</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>

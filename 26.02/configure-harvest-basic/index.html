@@ -1,0 +1,3168 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../prepare-cisco-switch/">
+      
+      
+        <link rel="next" href="../prometheus-exporter/">
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>Configure Harvest (basic) - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pollers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configure Harvest (basic)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pollers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pollers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exporters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#influxdb-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      InfluxDB Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#victoriametrics-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      VictoriaMetrics Exporter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tools
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#poller_files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Poller_files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-collectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring collectors
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring collectors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zapi-and-zapiperf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zapi and ZapiPerf
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest-and-restperf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rest and RestPerf
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ems" class="md-nav__link">
+    <span class="md-ellipsis">
+      EMS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storagegrid" class="md-nav__link">
+    <span class="md-ellipsis">
+      StorageGRID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unix" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unix
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      Labels
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-recorder" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Recorder
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pool
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      Precedence
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credentials-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Credentials File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credentials-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Credentials Script
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Credentials Script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yaml-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      YAML format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plain-text-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plain text format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pollers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pollers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exporters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#influxdb-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      InfluxDB Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#victoriametrics-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      VictoriaMetrics Exporter
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tools
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#poller_files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Poller_files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-collectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring collectors
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring collectors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zapi-and-zapiperf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zapi and ZapiPerf
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest-and-restperf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rest and RestPerf
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ems" class="md-nav__link">
+    <span class="md-ellipsis">
+      EMS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storagegrid" class="md-nav__link">
+    <span class="md-ellipsis">
+      StorageGRID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unix" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unix
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      Labels
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-recorder" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Recorder
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pool
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      Precedence
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credentials-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Credentials File
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credentials-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Credentials Script
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Credentials Script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yaml-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      YAML format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plain-text-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plain text format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<p>The main configuration file, <code>harvest.yml</code>, consists of the following sections, described below:</p>
+<h2 id="pollers">Pollers<a class="headerlink" href="#pollers" title="Permanent link">&para;</a></h2>
+<p>All pollers are defined in <code>harvest.yml</code>, the main configuration file of Harvest, under the section <code>Pollers</code>.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Poller name (header)</td>
+<td><strong>required</strong></td>
+<td>Poller name, user-defined value</td>
+<td></td>
+</tr>
+<tr>
+<td><code>datacenter</code></td>
+<td><strong>required</strong></td>
+<td>Datacenter name, user-defined value</td>
+<td></td>
+</tr>
+<tr>
+<td><code>addr</code></td>
+<td>required by some collectors</td>
+<td>IPv4, IPv6 or FQDN of the target system</td>
+<td></td>
+</tr>
+<tr>
+<td><code>collectors</code></td>
+<td><strong>required</strong></td>
+<td>List of collectors to run for this poller. Possible values are <code>Zapi</code>, <code>ZapiPerf</code>, <code>Rest</code>, <code>RestPerf</code>, <code>KeyPerf</code>, <code>StatPerf</code>, <code>Ems</code>, <code>StorageGrid</code>, <code>CiscoRest</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>exporters</code></td>
+<td><strong>required</strong></td>
+<td>List of exporter names from the <code>Exporters</code> section. Note: this should be the name of the exporter (e.g. <code>prometheus1</code>), not the value of the <code>exporter</code> key (e.g. <code>Prometheus</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>auth_style</code></td>
+<td>required by Zapi* collectors</td>
+<td>Either <code>basic_auth</code> or <code>certificate_auth</code> See <a href="#authentication">authentication</a> for details</td>
+<td><code>basic_auth</code></td>
+</tr>
+<tr>
+<td><code>username</code>, <code>password</code></td>
+<td>required if <code>auth_style</code> is <code>basic_auth</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ssl_cert</code>, <code>ssl_key</code></td>
+<td>optional if <code>auth_style</code> is <code>certificate_auth</code></td>
+<td>Paths to SSL (client) certificate and key used to authenticate with the target system.<br /><br />If not provided, the poller will look for <code>&lt;hostname&gt;.key</code> and <code>&lt;hostname&gt;.pem</code> in <code>$HARVEST_HOME/cert/</code>.<br/><br/>To create certificates for ONTAP systems, see <a href="../prepare-cdot-clusters/#using-certificate-authentication">using certificate authentication</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ca_cert</code></td>
+<td>optional if <code>auth_style</code> is <code>certificate_auth</code></td>
+<td>Path to file that contains PEM encoded certificates. Harvest will append these certificates to the system-wide set of root certificate authorities (CA).<br /><br />If not provided, the OS's root CAs will be used.<br/><br/>To create certificates for ONTAP systems, see <a href="../prepare-cdot-clusters/#using-certificate-authentication">using certificate authentication</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>use_insecure_tls</code></td>
+<td>optional, bool</td>
+<td>If true, disable TLS verification when connecting to ONTAP cluster</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>credentials_file</code></td>
+<td>optional, string</td>
+<td>Path to a yaml file that contains cluster credentials. The file should have the same shape as <code>harvest.yml</code>. See <a href="./#credentials-file">here</a> for examples. Path can be relative to <code>harvest.yml</code> or absolute.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>credentials_script</code></td>
+<td>optional, section</td>
+<td>Section that defines how Harvest should fetch credentials via external script. See <a href="./#credentials-script">here</a> for details.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>tls_min_version</code></td>
+<td>optional, string</td>
+<td>Minimum TLS version to use when connecting to ONTAP cluster: One of tls10, tls11, tls12 or tls13</td>
+<td>Platform decides</td>
+</tr>
+<tr>
+<td><code>labels</code></td>
+<td>optional, list of key-value pairs</td>
+<td>Each of the key-value pairs will be added to a poller's metrics. Details <a href="./#labels">below</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>log_max_bytes</code></td>
+<td></td>
+<td>Maximum size of the log file before it will be rotated</td>
+<td><code>10 MB</code></td>
+</tr>
+<tr>
+<td><code>log_max_files</code></td>
+<td></td>
+<td>Number of rotated log files to keep</td>
+<td><code>5</code></td>
+</tr>
+<tr>
+<td><code>log</code></td>
+<td>optional, list of collector names</td>
+<td>Matching collectors log their ZAPI request/response</td>
+<td></td>
+</tr>
+<tr>
+<td><code>prefer_zapi</code></td>
+<td>optional, bool</td>
+<td>Use the ZAPI API if the cluster supports it, otherwise allow Harvest to choose REST or ZAPI, whichever is appropriate to the ONTAP version. See <a href="https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md">rest-strategy</a> for details.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>conf_path</code></td>
+<td>optional, <code>:</code> separated list of directories</td>
+<td>The search path Harvest uses to load its <a href="../configure-templates/">templates</a>. Harvest walks each directory in order, stopping at the first one that contains the desired template.</td>
+<td>conf</td>
+</tr>
+<tr>
+<td><code>recorder</code></td>
+<td>optional, section</td>
+<td>Section that determines if Harvest should record or replay HTTP requests. See <a href="./#http-recorder">here</a> for details.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>pool</code></td>
+<td>optional, section</td>
+<td>Section that determines if Harvest should limit the number of concurrent collectors. See <a href="./#pool">here</a> for details.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
+<p>This section is optional.
+If there are parameters identical for all your pollers (e.g., datacenter, authentication
+method, login preferences), they can be grouped under this section.
+The poller section will be checked first, and if the
+values aren't found there, the defaults will be consulted.</p>
+<h2 id="exporters">Exporters<a class="headerlink" href="#exporters" title="Permanent link">&para;</a></h2>
+<p>All exporters need two types of parameters:</p>
+<ul>
+<li><code>exporter parameters</code> - defined in <code>harvest.yml</code> under <code>Exporters</code> section</li>
+<li><code>export_options</code> - these options are defined in the <code>Matrix</code> data structure emitted from collectors and
+  plugins</li>
+</ul>
+<p>The following two parameters are required for all exporters:</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exporter name (header)</td>
+<td><strong>required</strong></td>
+<td>Name of the exporter instance, this is a user-defined value</td>
+<td></td>
+</tr>
+<tr>
+<td><code>exporter</code></td>
+<td><strong>required</strong></td>
+<td>Name of the exporter class (e.g. Prometheus, InfluxDB, Http) - these can be found under the <code>cmd/exporters/</code> directory</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Note: when we talk about the <em>Prometheus Exporter</em> or <em>InfluxDB Exporter</em>, we mean the Harvest modules that send the
+data to a database, NOT the names used to refer to the actual databases.</p>
+<h3 id="prometheus-exporter"><a href="../prometheus-exporter/">Prometheus Exporter</a><a class="headerlink" href="#prometheus-exporter" title="Permanent link">&para;</a></h3>
+<h3 id="influxdb-exporter"><a href="../influxdb-exporter/">InfluxDB Exporter</a><a class="headerlink" href="#influxdb-exporter" title="Permanent link">&para;</a></h3>
+<h3 id="victoriametrics-exporter"><a href="../victoriametrics-exporter/">VictoriaMetrics Exporter</a><a class="headerlink" href="#victoriametrics-exporter" title="Permanent link">&para;</a></h3>
+<h2 id="tools">Tools<a class="headerlink" href="#tools" title="Permanent link">&para;</a></h2>
+<p>This section is optional. You can uncomment the <code>grafana_api_token</code> key and add your Grafana API token so <code>harvest</code> does
+not prompt you for the key when importing dashboards.</p>
+<div class="highlight"><pre><span></span><code>Tools:
+  #grafana_api_token: &#39;aaa-bbb-ccc-ddd&#39;
+</code></pre></div>
+<h2 id="poller_files">Poller_files<a class="headerlink" href="#poller_files" title="Permanent link">&para;</a></h2>
+<p>Harvest supports loading pollers from multiple files specified in the <code>Poller_files</code> section of your <code>harvest.yml</code> file.
+For example, the following snippet tells harvest to load pollers from all the <code>*.yml</code> files under the <code>configs</code> directory, 
+and from the <code>path/to/single.yml</code> file.</p>
+<p>Paths may be relative or absolute.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Poller_files</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configs/*.yml</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path/to/single.yml</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">u2</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+</code></pre></div>
+<p>Each referenced file can contain one or more unique pollers.
+Ensure that you include the top-level <code>Pollers</code> section in these files.
+All other top-level sections will be ignored.
+For example:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># contents of configs/00-rtp.yml</span>
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ntap3</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rtp</span>
+
+<span class="w">  </span><span class="nt">ntap4</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rtp</span>
+<span class="nn">---</span>
+<span class="c1"># contents of configs/01-rtp.yml</span>
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ntap5</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blr</span>
+<span class="nn">---</span>
+<span class="c1"># contents of path/to/single.yml</span>
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ntap1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+
+<span class="w">  </span><span class="nt">ntap2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dc-1</span>
+</code></pre></div>
+<p>At runtime, all files will be read and combined into a single configuration.
+The example above would result in the following set of pollers in this order.
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">u2</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap3</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap4</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap5</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap1</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntap2</span>
+</code></pre></div></p>
+<p>When using glob patterns, the list of matching paths will be sorted before they are read.
+Errors will be logged for all duplicate pollers and Harvest will refuse to start.</p>
+<h2 id="configuring-collectors">Configuring collectors<a class="headerlink" href="#configuring-collectors" title="Permanent link">&para;</a></h2>
+<p>Collectors are configured by their own configuration files (<a href="../configure-templates/">templates</a>), which are stored in subdirectories
+in <a href="https://github.com/NetApp/harvest/tree/main/conf">conf/</a>.
+Most collectors run concurrently and collect a subset of related metrics.
+For example, node related metrics are grouped together and run independently of the disk-related metrics.
+Below is a snippet from <code>conf/zapi/default.yaml</code></p>
+<p>In this example, the <code>default.yaml</code> template contains a list of objects (e.g., Node) that reference sub-templates (e.g.,
+node.yaml). This decomposition groups related metrics together and at runtime, a <code>Zapi</code> collector per object will be
+created and each of these collectors will run concurrently.</p>
+<p>Using the snippet below, we expect there to be four <code>Zapi</code> collectors running, each with a different subtemplate and
+object.</p>
+<div class="highlight"><pre><span></span><code>collector:          Zapi
+objects:
+  Node:             node.yaml
+  Aggregate:        aggr.yaml
+  Volume:           volume.yaml
+  SnapMirror:       snapmirror.yaml
+</code></pre></div>
+<p>At start-up, Harvest looks for two files (<code>default.yaml</code> and <code>custom.yaml</code>) in the <code>conf</code> directory of the
+collector (e.g. <code>conf/zapi/default.yaml</code>).
+The <code>default.yaml</code> is installed by default, while the <code>custom.yaml</code> is an optional file
+you can create
+to <a href="../configure-templates/#creatingediting-templates">add new templates</a>.</p>
+<p>When present, the <code>custom.yaml</code> file will be merged with the <code>default.yaml</code> file.
+This behavior can be overridden in your <code>harvest.yml</code>, see
+<a href="https://github.com/NetApp/harvest/blob/main/pkg/conf/testdata/issue_396.yaml">here</a> for an example.</p>
+<p>For a list of collector-specific parameters, refer to their individual documentation.</p>
+<h4 id="zapi-and-zapiperf"><a href="../configure-zapi/">Zapi and ZapiPerf</a><a class="headerlink" href="#zapi-and-zapiperf" title="Permanent link">&para;</a></h4>
+<h4 id="rest-and-restperf"><a href="../configure-rest/">Rest and RestPerf</a><a class="headerlink" href="#rest-and-restperf" title="Permanent link">&para;</a></h4>
+<h4 id="ems"><a href="../configure-ems/">EMS</a><a class="headerlink" href="#ems" title="Permanent link">&para;</a></h4>
+<h4 id="storagegrid"><a href="../configure-storagegrid/">StorageGRID</a><a class="headerlink" href="#storagegrid" title="Permanent link">&para;</a></h4>
+<h4 id="unix"><a href="../configure-unix/">Unix</a><a class="headerlink" href="#unix" title="Permanent link">&para;</a></h4>
+<h2 id="labels">Labels<a class="headerlink" href="#labels" title="Permanent link">&para;</a></h2>
+<p>Labels offer a way to add additional key-value pairs to a poller's metrics. These allow you to tag a cluster's metrics
+in a cross-cutting fashion. Here's an example:</p>
+<div class="highlight"><pre><span></span><code>  cluster-03:
+    datacenter: DC-01
+    addr: 10.0.1.1
+    labels:
+      - org: meg       # add an org label with the value &quot;meg&quot;
+      - ns:  rtp       # add a namespace label with the value &quot;rtp&quot;
+</code></pre></div>
+<p>These settings add two key-value pairs to each metric collected from <code>cluster-03</code> like this:</p>
+<div class="highlight"><pre><span></span><code>node_vol_cifs_write_data{org=&quot;meg&quot;,ns=&quot;rtp&quot;,datacenter=&quot;DC-01&quot;,cluster=&quot;cluster-03&quot;,node=&quot;umeng-aff300-05&quot;} 10
+</code></pre></div>
+<p>Keep in mind that each unique combination of key-value pairs increases the amount of stored data. Use them sparingly.
+See <a href="https://prometheus.io/docs/practices/naming/#labels">PrometheusNaming</a> for details.</p>
+<h1 id="http-recorder">HTTP Recorder<a class="headerlink" href="#http-recorder" title="Permanent link">&para;</a></h1>
+<p>When troubleshooting, it can be useful to record HTTP requests and responses to disk for later replay.</p>
+<p>Harvest removes <code>Authorization</code> and <code>Host</code> headers from recorded requests and responses
+to prevent sensitive information from being stored on disk.</p>
+<p>The <code>recorder</code> section in the <code>harvest.yml</code> file allows you to configure the HTTP recorder.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th style="text-align: right;">default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>string <strong>required</strong></td>
+<td>Path to a directory. Recorded requests and responses will be stored here. Replaying will read the requests and responses from this directory.</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>string <strong>required</strong></td>
+<td><code>record</code> or <code>replay</code></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td><code>keep_last</code></td>
+<td>optional, int</td>
+<td>When mode is <code>record</code>, the number of records to keep before overwriting</td>
+<td style="text-align: right;">60</td>
+</tr>
+</tbody>
+</table>
+<h1 id="pool">Pool<a class="headerlink" href="#pool" title="Permanent link">&para;</a></h1>
+<p>By default, Harvest does not limit the number of concurrent collectors.
+To limit the number of concurrent collectors, use the <code>pool</code> section in the <code>harvest.yaml</code> file.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>limit</code></td>
+<td>int <strong>required</strong></td>
+<td>The maximum number of allowed concurrent collectors</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="nt">cluster-03</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DC-01</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">pool</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"> </span><span class="c1"># no more than 10 concurrent collectors will run at a time</span>
+</code></pre></div>
+<h1 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h1>
+<p>When authenticating with ONTAP and StorageGRID clusters,
+Harvest supports both client certificates and basic authentication.</p>
+<p>These methods of authentication are defined in the <code>Pollers</code> or <code>Defaults</code> section of your <code>harvest.yml</code> using one or more
+of the following parameters.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>description</th>
+<th>default</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth_sytle</code></td>
+<td>One of <code>basic_auth</code> or <code>certificate_auth</code> Optional when using <code>credentials_file</code> or <code>credentials_script</code></td>
+<td><code>basic_auth</code></td>
+<td><a href="#Pollers">link</a></td>
+</tr>
+<tr>
+<td><code>username</code></td>
+<td>Username used for authenticating to the remote system</td>
+<td></td>
+<td><a href="#Pollers">link</a></td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>Password used for authenticating to the remote system</td>
+<td></td>
+<td><a href="#Pollers">link</a></td>
+</tr>
+<tr>
+<td><code>credentials_file</code></td>
+<td>Relative or absolute path to a yaml file that contains cluster credentials</td>
+<td></td>
+<td><a href="#credentials-file">link</a></td>
+</tr>
+<tr>
+<td><code>credentials_script</code></td>
+<td>External script Harvest executes to retrieve credentials</td>
+<td></td>
+<td><a href="#credentials-script">link</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="precedence">Precedence<a class="headerlink" href="#precedence" title="Permanent link">&para;</a></h2>
+<p>When multiple authentication parameters are defined at the same time,
+Harvest tries each method listed below, in the following order, to resolve authentication requests. 
+The first method that returns a non-empty password stops the search. </p>
+<p>When these parameters exist in both the <code>Pollers</code> and <code>Defaults</code> section,
+the <code>Pollers</code> section will be consulted before the <code>Defaults</code>.</p>
+<table>
+<thead>
+<tr>
+<th>section</th>
+<th>parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Pollers</code></td>
+<td>auth_style: <code>certificate_auth</code></td>
+</tr>
+<tr>
+<td><code>Pollers</code></td>
+<td>auth_style: <code>basic_auth</code> with username and password</td>
+</tr>
+<tr>
+<td><code>Pollers</code></td>
+<td><code>credentials_script</code></td>
+</tr>
+<tr>
+<td><code>Pollers</code></td>
+<td><code>credentials_file</code></td>
+</tr>
+<tr>
+<td><code>Defaults</code></td>
+<td>auth_style: <code>certificate_auth</code></td>
+</tr>
+<tr>
+<td><code>Defaults</code></td>
+<td>auth_style: <code>basic_auth</code> with username and password</td>
+</tr>
+<tr>
+<td><code>Defaults</code></td>
+<td><code>credentials_script</code></td>
+</tr>
+<tr>
+<td><code>Defaults</code></td>
+<td><code>credentials_file</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="credentials-file">Credentials File<a class="headerlink" href="#credentials-file" title="Permanent link">&para;</a></h2>
+<p>If you would rather not list cluster credentials in your <code>harvest.yml</code>, you can use the <code>credentials_file</code> section
+in your <code>harvest.yml</code> to point to a file that contains the credentials.
+At runtime, the <code>credentials_file</code> will be read and the included credentials will be used to authenticate with the
+matching cluster(s).</p>
+<p>This is handy when integrating with 3rd party credential stores.
+See <a href="https://github.com/NetApp/harvest/discussions/884">#884</a> for examples.</p>
+<p>The format of the <code>credentials_file</code> is similar to <code>harvest.yml</code> and can contain multiple cluster credentials.</p>
+<p>Example:</p>
+<p>Snippet from <code>harvest.yml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.193.48.11</span>
+<span class="w">    </span><span class="nt">credentials_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secrets/cluster1.yml</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom1</span><span class="w"> </span>
+</code></pre></div>
+<p>File <code>secrets/cluster1.yml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+</code></pre></div>
+<h2 id="credentials-script">Credentials Script<a class="headerlink" href="#credentials-script" title="Permanent link">&para;</a></h2>
+<p>The <code>credentials_script</code> feature allows you to fetch authentication information via an external script. This can be configured in the <code>Pollers</code> section of your <code>harvest.yml</code> file, as shown in the example below.</p>
+<p>At runtime, Harvest will invoke the script specified in the <code>credentials_script</code> <code>path</code> section. Harvest will call the script with one or two arguments depending on how your poller is configured in the <code>harvest.yml</code> file. The script will be called like this: <code>./script $addr</code> or <code>./script $addr $username</code>.</p>
+<ul>
+<li>The first argument <code>$addr</code> is the address of the cluster taken from the <code>addr</code> field under the <code>Pollers</code> section of your <code>harvest.yml</code> file.</li>
+<li>The second argument <code>$username</code> is the username for the cluster taken from the <code>username</code> field under the <code>Pollers</code> section of your <code>harvest.yml</code> file. If your <code>harvest.yml</code> does not include a username, nothing will be passed.</li>
+</ul>
+<p>The script should communicate the credentials to Harvest by writing the response to its standard output (stdout).
+Harvest supports two output formats from the script: YAML and plain text.</p>
+<p>When running Harvest inside a container, tools like <code>jq</code> and <code>curl</code> are not available.
+In such cases, you can use a Go binary as a credential script to fetch authentication information. For details on using a Go binary as a credential script for Harvest container deployment, please refer to the <a href="https://github.com/NetApp/harvest/discussions/3380">GitHub discussion</a>.</p>
+<h3 id="yaml-format">YAML format<a class="headerlink" href="#yaml-format" title="Permanent link">&para;</a></h3>
+<p>If the script outputs a YAML object with <code>username</code> and <code>password</code> keys, Harvest will use both the <code>username</code> and <code>password</code> from the output. For example, if the script writes the following, Harvest will use <code>myuser</code> and <code>mypassword</code> for the poller's credentials.
+   <div class="highlight"><pre><span></span><code><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myuser</span>
+<span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypassword</span>
+</code></pre></div>
+   If only the <code>password</code> is provided, Harvest will use the <code>username</code> from the <code>harvest.yml</code> file, if available. If your username or password contains spaces, <code>#</code>, or other characters with special meaning in YAML, make sure you quote the value like so:
+   <code>password: "my password with spaces"</code></p>
+<p>If the script outputs a YAML object containing an <code>authToken</code>, Harvest will use this <code>authToken</code> when communicating with ONTAP or StorageGRID clusters. Harvest will include the <code>authToken</code> in the HTTP request's authorization header using the Bearer authentication scheme.
+   <div class="highlight"><pre><span></span><code><span class="nt">authToken</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJEcEVkRmgyODlaTXpYR25OekFvaWhTZ0FaUnBtVlVZSDJ3R3dXb0VIWVE0In0.eyJleHAiOjE3MjE4Mj</span>
+</code></pre></div>
+  When using <code>authToken</code>, the <code>username</code> and <code>password</code> fields are ignored if they are present in the script's output.</p>
+<h3 id="plain-text-format">Plain text format<a class="headerlink" href="#plain-text-format" title="Permanent link">&para;</a></h3>
+<p>If the script outputs plain text, Harvest will use the output as the password. The <code>username</code> will be taken from the <code>harvest.yml</code> file, if available.  For example, if the script writes the following to its stdout, Harvest will use the username defined in that poller's section of the <code>harvest.yml</code> and <code>mypassword</code> for the poller's credentials.
+   <div class="highlight"><pre><span></span><code>mypassword
+</code></pre></div></p>
+<p>If the script doesn't finish within the specified <code>timeout</code>, Harvest will terminate the script and any spawned processes.</p>
+<p>Credential scripts are defined under the <code>credentials_script</code> section within <code>Pollers</code> in your <code>harvest.yml</code>. Below are the options for the <code>credentials_script</code> section:</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>path</td>
+<td>string</td>
+<td>Absolute path to the script that takes two arguments: <code>addr</code> and <code>username</code>, in that order.</td>
+<td></td>
+</tr>
+<tr>
+<td>schedule</td>
+<td>go duration or <code>always</code></td>
+<td>Schedule for calling the authentication script. If set to <code>always</code>, the script is called every time a password is requested; otherwise, the previously cached value is used.</td>
+<td>24h</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>go duration</td>
+<td>Maximum time Harvest will wait for the script to finish before terminating it and its descendants.</td>
+<td>10s</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<p>Here is an example of how to configure the <code>credentials_script</code> in the <code>harvest.yml</code> file:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ontap1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rtp</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.1.1.1</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span><span class="w"> </span><span class="c1"># Optional: if not provided, the script must return the username</span>
+<span class="w">    </span><span class="nt">collectors</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rest</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RestPerf</span>
+<span class="w">    </span><span class="nt">credentials_script</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./get_credentials</span>
+<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3h</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+</code></pre></div>
+<p>In this example, the <code>get_credentials</code> script should be located in the same directory as the <code>harvest.yml</code> file and should be executable. It should output the credentials in either YAML or plain text format. Here are three example scripts:</p>
+<p><code>get_credentials</code> that outputs username and password in YAML format:
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">username: myuser</span>
+<span class="s">password: mypassword</span>
+<span class="s">EOF</span>
+</code></pre></div></p>
+<p><code>get_credentials</code> that outputs authToken in YAML format:
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># script requests an access token from the authorization server</span>
+<span class="c1"># authorization returns an access token to the script</span>
+<span class="c1"># script writes the YAML formatted authToken like so:</span>
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">authToken: $authToken</span>
+<span class="s">EOF</span>
+</code></pre></div></p>
+<p>Below are a couple of OAuth2 credential script examples for authenticating with ONTAP or StorageGRID OAuth2-enabled clusters.</p>
+<details class="note">
+<summary>These are examples that you will need to adapt to your environment.</summary>
+<p>Example OAuth2 script authenticating with the Keycloak auth provider via <code>curl</code>. Uses <a href="https://github.com/jqlang/jq">jq</a> to extract the token. This script outputs the authToken in YAML format.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="nv">response</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span><span class="s2">&quot;http://{KEYCLOAK_IP:PORT}/realms/{REALM_NAME}/protocol/openid-connect/token&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--header<span class="w"> </span><span class="s2">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;grant_type=password&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;username={USERNAME}&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;password={PASSWORD}&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;client_id={CLIENT_ID}&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">&quot;client_secret={CLIENT_SECRET}&quot;</span><span class="k">)</span>
+
+<span class="nv">access_token</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$response</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.access_token&#39;</span><span class="k">)</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">authToken: $access_token</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Example OAuth2 script authenticating with the Auth0 auth provider via <code>curl</code>. Uses <a href="https://github.com/jqlang/jq">jq</a> to extract the token. This script outputs the authToken in YAML format.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">response</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span>https://<span class="o">{</span>AUTH0_TENANT_URL<span class="o">}</span>/oauth/token<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--header<span class="w"> </span><span class="s1">&#39;content-type: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data<span class="w"> </span><span class="s1">&#39;{&quot;client_id&quot;:&quot;{CLIENT_ID}&quot;,&quot;client_secret&quot;:&quot;{CLIENT_SECRET}&quot;,&quot;audience&quot;:&quot;{ONTAP_CLUSTER_IP}&quot;,&quot;grant_type&quot;:&quot;client_credentials&quot;&#39;</span><span class="k">)</span>
+
+<span class="nv">access_token</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$response</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.access_token&#39;</span><span class="k">)</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">authToken: $access_token</span>
+<span class="s">EOF</span>
+</code></pre></div>
+</details>
+<p><code>get_credentials</code> that outputs only the password in plain text format:
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;mypassword&quot;</span>
+</code></pre></div></p>
+<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Make sure your script is executable</li>
+<li>If running the poller from a container, ensure that you have mounted the script so that it is available inside the container and that you have updated the path in the <code>harvest.yml</code> file to reflect the path inside the container.</li>
+<li>If running the poller from a container, ensure that your <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">shebang</a> references an interpreter that exists inside the container. Harvest containers are built from <a href="https://github.com/GoogleContainerTools/distroless">Distroless</a> images, so you may need to use <code>#!/busybox/sh</code>.</li>
+<li>Ensure the user/group that executes your poller also has read and execute permissions on the script. 
+  One way to test this is to <code>su</code> to the user/group that runs Harvest
+  and ensure that the <code>su</code>-ed user/group can execute the script too.</li>
+<li>When your script outputs YAML, make sure it is valid YAML. You can use <a href="http://www.yamllint.com/">YAML Lint</a> to check your output.</li>
+<li>When your script outputs YAML and you want to include debug logging, make sure to redirect the debug output to <code>stderr</code> instead of <code>stdout</code>, or write the debug output as YAML comments prefixed with <code>#.</code></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>

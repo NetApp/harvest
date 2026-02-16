@@ -1,0 +1,2647 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../concepts/">
+      
+      
+        <link rel="next" href="../install/overview/">
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>Quickstart - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-set-installation-path" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Quickstart
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-set-installation-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Set Installation Path
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-create-harvest-user-and-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Create Harvest User and Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-install-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Install Harvest
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-install-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Install Prometheus
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-install-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Install Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Configuration File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-edit-prometheus-config-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Edit Prometheus Config File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-start-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Start Harvest
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-add-prometheus-datasource-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Add Prometheus Datasource in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-generate-grafana-api-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Generate Grafana API Token
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-import-grafana-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      11. Import Grafana Dashboards
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-verify-dashboards-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      12. Verify Dashboards in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-set-installation-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Set Installation Path
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-create-harvest-user-and-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Create Harvest User and Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-install-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Install Harvest
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-install-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Install Prometheus
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-install-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Install Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Configuration File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-edit-prometheus-config-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Edit Prometheus Config File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-start-harvest" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Start Harvest
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-add-prometheus-datasource-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Add Prometheus Datasource in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-generate-grafana-api-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Generate Grafana API Token
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-import-grafana-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      11. Import Grafana Dashboards
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-verify-dashboards-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      12. Verify Dashboards in Grafana
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Quickstart</h1>
+
+<p>Welcome to the NetApp Harvest Getting Started Guide. This tutorial will guide you through the steps required to deploy an instance of NetApp Harvest, Prometheus, and Grafana on a Linux platform to monitor an ONTAP cluster.</p>
+<p>If you prefer to use the container version of NetApp Harvest, please refer to the <a href="../install/containers/">container installation guide</a>.</p>
+<p>This tutorial uses <code>systemd</code> to manage Harvest, Prometheus, and Grafana. If you would rather run the processes directly, feel free to ignore the sections of the tutorial that set up <code>systemd</code> service files.</p>
+<h3 id="1-set-installation-path">1. Set Installation Path<a class="headerlink" href="#1-set-installation-path" title="Permanent link">&para;</a></h3>
+<p>First, set the installation path as an environment variable. For example, we'll use <code>/opt/netapp/harvest</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">HARVEST_INSTALL_PATH</span><span class="o">=</span>/opt/netapp/harvest
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+</code></pre></div>
+<h3 id="2-create-harvest-user-and-group">2. Create Harvest User and Group<a class="headerlink" href="#2-create-harvest-user-and-group" title="Permanent link">&para;</a></h3>
+<p>Create a dedicated user and group for running Harvest services.</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>groupadd<span class="w"> </span>harvest
+sudo<span class="w"> </span>useradd<span class="w"> </span>-r<span class="w"> </span>-g<span class="w"> </span>harvest<span class="w"> </span>harvest
+</code></pre></div>
+<h3 id="3-install-harvest">3. Install Harvest<a class="headerlink" href="#3-install-harvest" title="Permanent link">&para;</a></h3>
+<p>Harvest is distributed as a container, native tarball, and RPM and Debs. Pick the one that works best for you.
+More details can be found in the <a href="https://netapp.github.io/harvest/latest/install/overview/">installation</a> documentation.</p>
+<p>For this guide, we'll use the tarball package as an example.</p>
+<p>Visit the releases page and take note of the latest release. Update the <code>HARVEST_VERSION</code> environment variable with the latest release in the script below. For example, to download the <code>24.11.0</code> release you would use <code>HARVEST_VERSION=24.11.0</code>.</p>
+<p>After updating the <code>HARVEST_VERSION</code> environment variable, run the bash script to download Harvest and untar it into your <code>HARVEST_INSTALL_PATH</code> directory.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">HARVEST_VERSION</span><span class="o">=</span><span class="m">24</span>.11.0
+<span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+wget<span class="w"> </span>https://github.com/NetApp/harvest/releases/download/v<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
+</code></pre></div>
+<p>Change ownership of the files to the <code>harvest</code> user and group:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>harvest:harvest<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+</code></pre></div>
+<h3 id="4-install-prometheus">4. Install Prometheus<a class="headerlink" href="#4-install-prometheus" title="Permanent link">&para;</a></h3>
+<p>To install Prometheus, follow these steps. For more details see <a href="https://prometheus.io/docs/prometheus/latest/installation/">Prometheus installation</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">PROMETHEUS_VERSION</span><span class="o">=</span><span class="m">2</span>.49.1
+<span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+wget<span class="w"> </span>https://github.com/prometheus/prometheus/releases/download/v<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+mv<span class="w"> </span>prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64<span class="w"> </span>prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>
+</code></pre></div>
+<p>If you want to manage Prometheus with <code>systemd</code>, you can create a service file for Prometheus like so. This step is optional.
+A service file will attempt to restart Prometheus automatically when the machine is restarted.</p>
+<p>Create a service file for Prometheus:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/prometheus.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Prometheus Server</span>
+<span class="s">Documentation=https://prometheus.io/docs/introduction/overview/</span>
+<span class="s">After=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=root</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus --config.file=${HARVEST_INSTALL_PATH}/prometheus-${PROMETHEUS_VERSION}/prometheus.yml</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Reload the systemd configuration and start Prometheus:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>prometheus
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>prometheus
+</code></pre></div>
+<p>Check if Prometheus is up and running:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>prometheus
+</code></pre></div>
+<p>You should see output indicating that the Prometheus service is active and running.</p>
+<details>
+  <summary>Alternative: Start Prometheus Directly</summary>
+
+  If you would rather start Prometheus directly and kick the tires before creating a service file, you can run the following command to start Prometheus in the background:
+
+  <div class="highlight"><pre><span></span><code>nohup<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>/prometheus<span class="w"> </span>--config.file<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>/prometheus.yml<span class="w"> </span>&gt;<span class="w"> </span>prometheus.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+
+  This command uses <code>nohup</code> to run Prometheus in the background and redirects the output to <code>prometheus.log</code>.
+
+</details>
+
+<h3 id="5-install-grafana">5. Install Grafana<a class="headerlink" href="#5-install-grafana" title="Permanent link">&para;</a></h3>
+<p>To install Grafana, follow these steps:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">GRAFANA_VERSION</span><span class="o">=</span><span class="m">10</span>.4.5
+<span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
+wget<span class="w"> </span>https://dl.grafana.com/oss/release/grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
+</code></pre></div>
+<p>If you want to manage Grafana with <code>systemd</code>, you can create a service file for Grafana like so. This step is optional.
+A service file will attempt to restart Grafana automatically when the machine is restarted.</p>
+<p>Create a service file for Grafana:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/grafana.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Grafana Server</span>
+<span class="s">Documentation=https://grafana.com/docs/grafana/latest/setup-grafana/installation/</span>
+<span class="s">After=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=root</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Reload the systemd configuration and start Grafana:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>grafana
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>grafana
+</code></pre></div>
+<p>Check if Grafana is up and running:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>grafana
+</code></pre></div>
+<p>You should see output indicating that the Grafana service is active and running.</p>
+<details>
+  <summary>Alternative: Start Grafana Directly</summary>
+
+  If you would rather start Grafana directly and kick the tires before creating a service file, you can run the following command to start Grafana in the background:
+
+  <div class="highlight"><pre><span></span><code>nohup<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/bin/grafana-server<span class="w"> </span>--config<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/conf/defaults.ini<span class="w"> </span>--homepath<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span>grafana.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+
+  This command uses <code>nohup</code> to run Grafana in the background and redirects the output to <code>grafana.log</code>.
+
+</details>
+
+<h3 id="6-configuration-file">6. Configuration File<a class="headerlink" href="#6-configuration-file" title="Permanent link">&para;</a></h3>
+<p>By default, Harvest loads its configuration information from the <code>./harvest.yml</code> file.
+If you would rather use a different file, use the <code>--config</code> command line argument flag to specify the path to your config file.</p>
+<p>To start collecting metrics, you need to define at least one <code>poller</code> and one <code>exporter</code> in your configuration file.
+This is useful if you want to monitor resource usage by Harvest and serves as a good example. Feel free to delete it if you want.</p>
+<p>The next step is to add pollers for your ONTAP clusters in the <a href="../configure-harvest-basic/#pollers">Pollers</a> section of the Harvest configuration file, <code>harvest.yml</code>.</p>
+<p>Edit the Harvest configuration file:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+sudo<span class="w"> </span>-u<span class="w"> </span>harvest<span class="w"> </span>vi<span class="w"> </span>harvest.yml
+</code></pre></div>
+<p>Copy and paste the following YAML configuration into your editor and update the <code>$cluster-management-ip</code>, <code>$username</code>, and <code>$password</code> sections to match your ONTAP system.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prometheus1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13000-13100</span>
+
+<span class="nt">Defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">collectors</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Zapi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZapiPerf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ems</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rest</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RestPerf</span>
+<span class="w">  </span><span class="nt">use_insecure_tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">jamaica</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DC-01</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$cluster-management-ip</span>
+<span class="w">    </span><span class="nt">auth_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic_auth</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$username</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$password</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prometheus1</span>
+</code></pre></div>
+<p><strong>Note:</strong> The ONTAP user specified in this configuration must have the appropriate permissions as outlined in the <a href="../prepare-cdot-clusters/">Prepare cDot Clusters</a> documentation.</p>
+<h3 id="7-edit-prometheus-config-file">7. Edit Prometheus Config File<a class="headerlink" href="#7-edit-prometheus-config-file" title="Permanent link">&para;</a></h3>
+<p>Edit the Prometheus configuration file:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>
+vi<span class="w"> </span>prometheus.yml
+</code></pre></div>
+<p>Add the following under the <code>scrape_configs</code> section. The targets you are adding should match the range of ports you specified in your <code>harvest.yml</code> file (in the example above, we use the port_range <code>13000-13100</code>).</p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;harvest&#39;</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;localhost:13000&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;localhost:13001&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;localhost:13002&#39;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Add ports as defined in the port range</span>
+</code></pre></div>
+<p>For example, if your port range in the Harvest configuration is <code>13000-13100</code>, you should add the ports within this range that you plan to use.</p>
+<p>Restart Prometheus to apply the changes:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>prometheus
+</code></pre></div>
+<p>Check if Prometheus is up and running:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>prometheus
+</code></pre></div>
+<h3 id="8-start-harvest">8. Start Harvest<a class="headerlink" href="#8-start-harvest" title="Permanent link">&para;</a></h3>
+<p>To start the Harvest pollers, follow these steps. For more details see <a href="https://github.com/NetApp/harvest/blob/main/service/contrib/README.md">Harvest service</a>.</p>
+<p>Create a systemd service file for Harvest pollers:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/poller@.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=&quot;NetApp Harvest Poller instance %I&quot;</span>
+<span class="s">PartOf=harvest.target</span>
+<span class="s">After=network-online.target</span>
+<span class="s">Wants=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=harvest</span>
+<span class="s">Group=harvest</span>
+<span class="s">Type=simple</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">WorkingDirectory=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start -f %i</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=harvest.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Create a target file for Harvest:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+bin/harvest<span class="w"> </span>generate<span class="w"> </span>systemd<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/harvest.target
+</code></pre></div>
+<p>Reload the systemd configuration and start Harvest:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>harvest.target
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>harvest.target
+</code></pre></div>
+<p>Verify that the pollers have started successfully by checking their status:</p>
+<div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span><span class="s2">&quot;poller*&quot;</span>
+</code></pre></div>
+<details>
+  <summary>Optional: Log to File Instead of journald</summary>
+
+  By default, the systemd service logs to stdout, which means log messages are captured by journald (and on some systems like RHEL8, also in `/var/log/messages`).
+
+  If you want Harvest to log directly to files instead, you can modify the service file to use the `--logtofile` flag and set the `HARVEST_LOGS` environment variable to specify the log directory.
+
+  Modify the poller service file like below:
+
+  <div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/poller@.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=&quot;NetApp Harvest Poller instance %I&quot;</span>
+<span class="s">PartOf=harvest.target</span>
+<span class="s">After=network-online.target</span>
+<span class="s">Wants=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=harvest</span>
+<span class="s">Group=harvest</span>
+<span class="s">Type=simple</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">Environment=&quot;HARVEST_LOGS=/opt/harvest/logs&quot;</span>
+<span class="s">WorkingDirectory=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start --logtofile -f %i</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=harvest.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+  **Create the log directory**:
+
+  <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/harvest/logs
+sudo<span class="w"> </span>chown<span class="w"> </span>harvest:harvest<span class="w"> </span>/opt/harvest/logs
+</code></pre></div>
+
+  **Reload and restart**:
+
+  <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>harvest.target
+</code></pre></div>
+
+  Logs will be written to `/opt/harvest/logs/poller_<poller-name>.log` (e.g., `/opt/harvest/logs/poller_jamaica.log`).
+
+</details>
+
+<details>
+  <summary>Alternative: Start Harvest Directly</summary>
+
+  If you would rather start Harvest directly and kick the tires before creating a service file, you can run the following command to start Harvest:
+
+  <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+bin/harvest<span class="w"> </span>start
+</code></pre></div>
+
+  Verify that the pollers have started successfully by checking their status:
+
+  <div class="highlight"><pre><span></span><code>bin/harvest<span class="w"> </span>status
+</code></pre></div>
+
+  The output should look similar to this:
+
+  <div class="highlight"><pre><span></span><code>Datacenter | Poller  |   PID   | PromPort | Status
+-----------+---------+---------+----------+----------
+DC-01      | jamaica | 1280145 |    13000 | running
+</code></pre></div>
+
+  <p>The <a href="https://netapp.github.io/harvest/latest/help/log-collection/">logs</a> of each poller can be found in <code>/var/log/harvest/</code>.</p>
+</details>
+
+<h3 id="9-add-prometheus-datasource-in-grafana">9. Add Prometheus Datasource in Grafana<a class="headerlink" href="#9-add-prometheus-datasource-in-grafana" title="Permanent link">&para;</a></h3>
+<p>To add a Prometheus datasource in Grafana, follow these steps:</p>
+<ol>
+<li>Open your web browser and navigate to Grafana (<a href="http://localhost:3000">http://localhost:3000</a>). When prompted for credentials, use Grafana defaults admin/admin. You should change the default credentials once you log in.</li>
+<li>Navigate to the data sources section by visiting <a href="http://localhost:3000/connections/datasources">http://localhost:3000/connections/datasources</a> or by clicking the hamburger menu (three horizontal lines) at the top-left of the page and navigate to <strong>Connections</strong> and then <strong>Data Sources</strong>.</li>
+<li>Click on <strong>Add data source</strong>.</li>
+<li>Select <strong>Prometheus</strong> from the list of available data sources.</li>
+<li>In the <strong>Prometheus server URL</strong> field, enter (<a href="http://localhost:9090">http://localhost:9090</a>).</li>
+<li>Click on <strong>Save and test</strong>.</li>
+<li>At the bottom of the page, you should see the message 'Successfully queried the Prometheus API.'
+For detailed instructions, please refer to the <a href="https://grafana.com/docs/grafana/latest/datasources/prometheus/configure-prometheus-data-source/">configure Prometheus Data Source documentation</a>.</li>
+</ol>
+<h3 id="10-generate-grafana-api-token">10. Generate Grafana API Token<a class="headerlink" href="#10-generate-grafana-api-token" title="Permanent link">&para;</a></h3>
+<p>To import Grafana dashboards using the <code>bin/harvest grafana import</code> command, you need a Grafana API token. Follow these steps to generate it:</p>
+<ol>
+<li>Open your web browser and navigate to Grafana (<a href="http://localhost:3000">http://localhost:3000</a>). Enter your Grafana credentials to log in. The default username and password are <code>admin</code>.</li>
+<li>Click the hamburger menu (three horizontal lines) at the top-left of the page and Navigate to <strong>Administration</strong> -&gt; <strong>Users and access</strong> and then select <strong>Service Account</strong>.</li>
+<li>Click on <strong>Add Service Account</strong>.</li>
+<li>Enter the display name <strong>Harvest</strong>.</li>
+<li>Set the role to <strong>Editor</strong>.</li>
+<li>Click on <strong>Create</strong>. The service account will appear in the dashboard.</li>
+<li>Navigate back to <strong>Service Account</strong>.</li>
+<li>Click on <strong>Add service account token</strong> for the Harvest service account.</li>
+<li>Click on <strong>Generate Token</strong>.</li>
+<li>Click on <strong>Copy to clipboard and close</strong>.</li>
+</ol>
+<p><strong>IMPORTANT:</strong> This is the only opportunity to save the token. Immediately paste it into a text file and save it. The token will be needed by Harvest later on.</p>
+<p>For detailed instructions, please refer to the <a href="https://grafana.com/docs/grafana/latest/administration/api-keys/">Grafana API Keys documentation</a>.</p>
+<h3 id="11-import-grafana-dashboards">11. Import Grafana Dashboards<a class="headerlink" href="#11-import-grafana-dashboards" title="Permanent link">&para;</a></h3>
+<p>To import Grafana dashboards, use the following command:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64
+bin/harvest<span class="w"> </span>grafana<span class="w"> </span>import<span class="w"> </span>--token<span class="w"> </span>YOUR_TOKEN_HERE
+</code></pre></div>
+<p>Replace <code>YOUR_TOKEN_HERE</code> with the token obtained in step 10.</p>
+<p>You will be prompted to save your API key (token) for later use. Press <code>n</code> to not save the token in your harvest.yml file.</p>
+<p>After a few seconds, all the dashboards will be imported into Grafana.</p>
+<h3 id="12-verify-dashboards-in-grafana">12. Verify Dashboards in Grafana<a class="headerlink" href="#12-verify-dashboards-in-grafana" title="Permanent link">&para;</a></h3>
+<p>After adding the Prometheus datasource, you can verify that your dashboards are correctly displaying data. Follow these steps:</p>
+<ol>
+<li>Open your web browser and navigate to Grafana (<a href="http://localhost:3000">http://localhost:3000</a>). Enter your Grafana credentials to log in. The default username and password are <code>admin</code>.</li>
+<li>Click on the "three lines" button (also known as the hamburger menu) in the top left corner of the Grafana interface. From the menu, select <strong>Dashboards</strong>.</li>
+<li>Open the <a href="http://localhost:3000/d/cdot-volume/ontap3a-volume?orgId=1">Volume</a> dashboard. Once the dashboard opens, you should see volume data displayed.</li>
+</ol>
+<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
+<p>If you encounter issues, check the logs in <code>/var/log/harvest</code> and refer to the <a href="https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest">troubleshooting</a> section on the wiki.
+You can also reach out for help on <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help">Discord</a> or via email at ng-harvest-files@netapp.com.</p>
+<h3 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h3>
+<p>🎊 Congratulations! You have successfully set up NetApp Harvest, Prometheus, and Grafana.
+Enjoy monitoring your systems and feel free to reach out on <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help">Discord, GitHub, or email</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>

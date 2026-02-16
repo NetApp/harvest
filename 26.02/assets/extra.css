@@ -1,0 +1,26 @@
+.key {
+    color: #1496BB;
+}
+
+.md-typeset h5 {
+    text-transform: lowercase;
+    font-size: medium;
+}
+
+.md-typeset h5.prominent-subsection {
+    text-transform: none;
+    font-size: 1em;
+    font-weight: 600;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
+}
+
+/* Light theme */
+[data-md-color-scheme="default"] .md-typeset h5.prominent-subsection {
+    color: #555;
+}
+
+/* Dark theme */
+[data-md-color-scheme="slate"] .md-typeset h5.prominent-subsection {
+    color: #ccc;
+}
