@@ -7,7 +7,7 @@ replace github.com/netapp/harvest/v2 => ../
 require (
 	github.com/goccy/go-yaml v1.19.2
 	github.com/modelcontextprotocol/go-sdk v1.3.0
-	github.com/netapp/harvest/v2 v2.0.0-20260209074053-ab2d66969073
+	github.com/netapp/harvest/v2 v2.0.0-20260211133735-682c93ad66b7
 	github.com/spf13/cobra v1.10.2
 )
 
