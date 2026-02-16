@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	SgVersion    = "11.6.0"
-	CiscoVersion = "9.3.12"
+	SgVersion      = "11.6.0"
+	CiscoVersion   = "9.3.12"
+	ESeriesVersion = "11.80.0"
 )
 
 var panelKeyMap = make(map[string]bool)
@@ -23,16 +24,18 @@ var opts = &tools.Options{
 	Image:    "harvest:latest",
 }
 
-func generateCounterTemplate(metricsPanelMap map[string]tools.PanelData) (map[string]tools.Counter, map[string]tools.Counter) {
+func generateCounterTemplate(metricsPanelMap map[string]tools.PanelData) (map[string]tools.Counter, map[string]tools.Counter, map[string]tools.Counter) {
 	sgCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "storagegrid", metricsPanelMap)
 	tools.GenerateStorageGridCounterTemplate(sgCounters, SgVersion)
 	ciscoCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "cisco", metricsPanelMap)
 	tools.GenerateCiscoSwitchCounterTemplate(ciscoCounters, CiscoVersion)
-	return sgCounters, ciscoCounters
+	eseriesCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "eseries", metricsPanelMap)
+	tools.GenerateESeriesCounterTemplate(eseriesCounters, ESeriesVersion)
+	return sgCounters, ciscoCounters, eseriesCounters
 }
 
 // generateMetadataFiles generates JSON metadata files for MCP server consumption
-func generateMetadataFiles(ontapCounters, sgCounters, ciscoCounters map[string]tools.Counter) {
+func generateMetadataFiles(ontapCounters, sgCounters, ciscoCounters, eseriesCounters map[string]tools.Counter) {
 	metadataDir := "mcp/metadata"
 	if err := os.MkdirAll(metadataDir, 0750); err != nil {
 		fmt.Printf("Error creating metadata directory: %v\n", err)
@@ -64,6 +67,15 @@ func generateMetadataFiles(ontapCounters, sgCounters, ciscoCounters map[string]t
 		fmt.Printf("Error writing Cisco metadata: %v\n", err)
 	} else {
 		fmt.Printf("Cisco metadata file generated at %s with %d metrics\n", ciscoPath, len(ciscoMetadata))
+	}
+
+	// Generate ESeries metadata
+	eseriesMetadata := extractMetricDescriptions(eseriesCounters)
+	eseriesPath := filepath.Join(metadataDir, "eseries_metrics.json")
+	if err := writeMetadataFile(eseriesPath, eseriesMetadata); err != nil {
+		fmt.Printf("Error writing ESeries metadata: %v\n", err)
+	} else {
+		fmt.Printf("ESeries metadata file generated at %s with %d metrics\n", eseriesPath, len(eseriesMetadata))
 	}
 }
 

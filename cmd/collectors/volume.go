@@ -147,7 +147,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				}
 
 				opsKey := ""
-				if strings.Contains(mkey, "_latency") {
+				if strings.Contains(mkey, "_latency") || strings.Contains(mkey, "latency_raw") {
 					opsKey = m.GetComment()
 				}
 
@@ -205,7 +205,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			if m.IsExportable() && strings.HasSuffix(m.GetName(), "_latency") {
 				if value, ok := m.GetValueFloat64(i); ok {
 					opsKey := ""
-					if strings.Contains(mkey, "_latency") {
+					if strings.Contains(mkey, "_latency") || strings.Contains(mkey, "latency_raw") {
 						opsKey = m.GetComment()
 					}
 

@@ -61,10 +61,11 @@ type Options struct {
 }
 
 type CounterMetaData struct {
-	Date         string
-	OntapVersion string
-	SGVersion    string
-	CiscoVersion string
+	Date           string
+	OntapVersion   string
+	SGVersion      string
+	CiscoVersion   string
+	ESeriesVersion string
 }
 
 type CounterTemplate struct {
@@ -86,15 +87,16 @@ type Counter struct {
 }
 
 type MetricDef struct {
-	API          string `yaml:"API"`
-	Endpoint     string `yaml:"Endpoint"`
-	ONTAPCounter string `yaml:"ONTAPCounter"`
-	CiscoCounter string `yaml:"CiscoCounter"`
-	SGCounter    string `yaml:"SGCounter"`
-	Template     string `yaml:"Template"`
-	Unit         string `yaml:"Unit"`
-	Type         string `yaml:"Type"`
-	BaseCounter  string `yaml:"BaseCounter"`
+	API            string `yaml:"API"`
+	Endpoint       string `yaml:"Endpoint"`
+	ONTAPCounter   string `yaml:"ONTAPCounter"`
+	CiscoCounter   string `yaml:"CiscoCounter"`
+	SGCounter      string `yaml:"SGCounter"`
+	ESeriesCounter string `yaml:"ESeriesCounter"`
+	Template       string `yaml:"Template"`
+	Unit           string `yaml:"Unit"`
+	Type           string `yaml:"Type"`
+	BaseCounter    string `yaml:"BaseCounter"`
 }
 
 type PanelDef struct {
@@ -1924,6 +1926,8 @@ func (c Counter) HasPanels() bool {
 
 func (m MetricDef) TableRow() string {
 	switch {
+	case strings.Contains(m.Template, "eseries"):
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ESeriesCounter, m.Template)
 	case strings.Contains(m.Template, "perf"):
 		unitTypeBase := `<br><span class="key">Unit:</span> ` + m.Unit +
 			`<br><span class="key">Type:</span> ` + m.Type +
@@ -2299,5 +2303,65 @@ func appendRow(table *tw.Table, missing string, counter Counter, def MetricDef) 
 		table.Append([]string{missing, counter.Name, def.API, def.Endpoint, def.ONTAPCounter, def.Template})
 	} else {
 		table.Append([]string{missing, counter.Name})
+	}
+}
+
+func GenerateESeriesCounterTemplate(counters map[string]Counter, version string) {
+	targetPath := "docs/eseries-metrics.md"
+	t, err := template.New("eseries_counter.tmpl").ParseFiles("cmd/tools/generate/eseries_counter.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	out, err := os.Create(targetPath)
+	if err != nil {
+		panic(err)
+	}
+
+	keys := make([]string, 0, len(counters))
+	for k := range counters {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	values := make([]Counter, 0, len(keys))
+
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "ESeriesCounter", "Template"})
+
+	for _, k := range keys {
+		if k == "" {
+			continue
+		}
+		counter := counters[k]
+		if !strings.HasPrefix(counter.Name, "eseries_") {
+			continue
+		}
+
+		if counter.Description == "" {
+			appendRow(table, "Description", counter, MetricDef{API: ""})
+		}
+
+		values = append(values, counter)
+	}
+
+	table.Render()
+	c := CounterTemplate{
+		Counters: values,
+		CounterMetaData: CounterMetaData{
+			Date:           time.Now().Format("2006-Jan-02"),
+			ESeriesVersion: version,
+		},
+	}
+
+	err = t.Execute(out, c)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
+
+	if table.NumLines() > 0 {
+		log.Fatalf("Issues found: refer table above")
 	}
 }

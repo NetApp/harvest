@@ -4,9 +4,11 @@ object:                   flashpool
 
 counters:
   - ^^id
+  - ^aggregate.name         => aggr
   - ^node.name              => node
   - cache_stats
 
 export_options:
   instance_keys:
+    - aggr
     - node

@@ -1,6 +1,161 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 26.02.0 / 2026-02-11 Release
+:pushpin: Highlights of this major release include:
+## :star: New Features
+
+- :medal_sports: Harvest includes a new BETA E-Series collector for inventory and performance metrics along with four E-Series dashboards and 47 panels.
+  E-Series newly added dashboards:
+  - E-Series: Array
+  - E-Series: Controller
+  - E-Series: Hardware
+  - E-Series: Volume
+    Thanks to @mamoep, @ReBaunana, @erikgruetter, @mark.pendrick, @darthVikes, @crollorc, @heinowalther, @ngocchiongnoi, @summertony15, @Venumadhu for raising.
+
+- :medal_sports: Harvest already supports VictoriaMetrics exporter in pull mode, and with this release Harvest also supports VictoriaMetrics in push mode. More details are available for VictoriaMetrics push mode https://docs.victoriametrics.com/victoriametrics/single-server-victoriametrics/#how-to-import-time-series-data
+
+- :medal_sports: Harvest includes an opt-in disk-based cache for improved memory efficiency. More details https://netapp.github.io/harvest/latest/prometheus-exporter/#disk_cache
+
+- Harvest MCP now supports overriding the default HARVEST_TSDB_URL on a per-request basis. Thanks @gautcher for raising.
+
+- Harvest includes fix to avoid double-counting of the shelf power. Thanks to @rmilkowski for raising and contributing a fix 🤘
+
+- **IMPORTANT** KeyPerf is the default collector for volume performance metrics starting in `25.11` and this release `26.02` fixes an issue where KeyPerf Collector did not calculate FlexGroup latency.
+
+- :gem: New dashboards and additional panels:
+  - Harvest includes LUN Serial hex numbers in Lun table. Thanks @Venumadhu for raising.
+
+- :closed_book: Documentation additions:
+  - Added documentation recommending binding to all interfaces in HTTP mode. Thanks to Chris Gautcher for reporting!
+  - Added new E-Series documentation
+  - Added mcp installation.md documentation
+
+- `harvest grafana metrics` prints the template path for each metric consumed in all Grafana dashboards. Thanks @songlin-rgb for raising.
+- `harvest grafana import` adds additional options to customize the orgId, title, uid, and tags when importing the Grafana dashboards. Thanks @spapadop for reporting.
+
+- Harvest provides an option to limit concurrent ONTAP HTTP connections. Thanks @songlin-rgb for raising.
+
+- Harvest MCP enhancement:
+  - Harvest MCP includes metric unit and type information for performance metrics. Thanks @gautcher for reporting.
+  - Harvest adds health endpoint in harvest mcp. Thanks @Yann for reporting.
+  - Harvest supports prometheus/victoriametrics endpoint retry in mcp-server. Thanks @Yann for reporting.
+
+## Announcements
+
+:bulb: **IMPORTANT** After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+:bulb: E-Series collector and dashboards are beta as we collect more feedback.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
+
+@mamoep, @gautcher, @Venumadhu, Chris Gautcher, @songlin-rgb, @spapadop
+
+:seedling: This release includes 15 features, 21 bug fixes, 6 documentation, 1 testing, 4 refactoring, 22 miscellaneous, and 7 ci pull requests.
+
+<details>
+
+<summary>Expand for full list of pull requests</summary>
+
+### :rocket: Features
+- Limit concurrent collectors ([#4024](https://github.com/NetApp/harvest/pull/4024))
+- Adding serial in hex format in LUN table ([#4034](https://github.com/NetApp/harvest/pull/4034))
+- Override default HARVEST_TSDB_URL on a per-request basis for Harvest MCP ([#4042](https://github.com/NetApp/harvest/pull/4042))
+- Disk cache ([#4033](https://github.com/NetApp/harvest/pull/4033))
+- Add templatePath in grafana metric harvest cli ([#4056](https://github.com/NetApp/harvest/pull/4056))
+- Support victoria metrics push exporter ([#4031](https://github.com/NetApp/harvest/pull/4031))
+- Add units for ONTAP metrics missing them ([#4082](https://github.com/NetApp/harvest/pull/4082))
+- Add support for specifying organization ID when importing dashb… ([#4087](https://github.com/NetApp/harvest/pull/4087))
+- Add units for ONTAP metrics missing them ([#4091](https://github.com/NetApp/harvest/pull/4091))
+- Add health endpoint in harvest mcp ([#4097](https://github.com/NetApp/harvest/pull/4097))
+- E-Series collector infrastructure ([#4088](https://github.com/NetApp/harvest/pull/4088))
+- Include options for modifying title, uid, tags when importing d… ([#4101](https://github.com/NetApp/harvest/pull/4101))
+- Time series retry in harvest MCP ([#4105](https://github.com/NetApp/harvest/pull/4105))
+- E-Series hardware metrics ([#4112](https://github.com/NetApp/harvest/pull/4112))
+- Enable Qtree latency collection via KeyPerf collector ([#4139](https://github.com/NetApp/harvest/pull/4139))
+
+
+### :bug: Bug Fixes
+- StorageGRID Cached credential script tokens not expired on 401 ([#4011](https://github.com/NetApp/harvest/pull/4011))
+- Fix activity label for volume analytics ([#4026](https://github.com/NetApp/harvest/pull/4026))
+- Handle local/remote records in cluster schedule ([#4027](https://github.com/NetApp/harvest/pull/4027))
+- Better error handling when trying to monitor an ONTAP cluster wi… ([#4041](https://github.com/NetApp/harvest/pull/4041))
+- Update logic of hot/cold changes if total_footprint is missing in volume template ([#4046](https://github.com/NetApp/harvest/pull/4046))
+- Support different ontap port Zapi/ZapiPerf collector ([#4061](https://github.com/NetApp/harvest/pull/4061))
+- Volume top metrics are not available for Flexgroup volumes ([#4072](https://github.com/NetApp/harvest/pull/4072))
+- Adding dynamic threshold of link speed in 2 network tables ([#4062](https://github.com/NetApp/harvest/pull/4062))
+- RestPerf:Volume volume aggregate metrics error handling ([#4098](https://github.com/NetApp/harvest/pull/4098))
+- Remove unsafe GetChildS GetChildren chaining ([#4102](https://github.com/NetApp/harvest/pull/4102))
+- E-Series dashboard names ([#4114](https://github.com/NetApp/harvest/pull/4114))
+- Avoid double-counting shelf power ([#4116](https://github.com/NetApp/harvest/pull/4116))
+- E-Series dashboard names for container ([#4118](https://github.com/NetApp/harvest/pull/4118))
+- Volume uuid should be instance_uuid ([#4121](https://github.com/NetApp/harvest/pull/4121))
+- Top file note should point to correct discussion ([#4123](https://github.com/NetApp/harvest/pull/4123))
+- Enable multiselect for array dashboard ([#4125](https://github.com/NetApp/harvest/pull/4125))
+- Move cache log to debug ([#4127](https://github.com/NetApp/harvest/pull/4127))
+- Fix units for capacity ([#4130](https://github.com/NetApp/harvest/pull/4130))
+- Use clonedstring for gjson ([#4132](https://github.com/NetApp/harvest/pull/4132))
+- Duplicate metrics for flashpool ([#4134](https://github.com/NetApp/harvest/pull/4134))
+- Rest client should use its own error struct ([#4135](https://github.com/NetApp/harvest/pull/4135))
+- KeyPerf collector doesn't calculate flexgroup latency ([#4137](https://github.com/NetApp/harvest/pull/4137))
+
+### :closed_book: Documentation
+- Update rest strategy guide ([#4039](https://github.com/NetApp/harvest/pull/4039))
+- For HTTP mode recommend binding to all interfaces ([#4065](https://github.com/NetApp/harvest/pull/4065))
+- Mention flagship models and which model was used for examples ([#4084](https://github.com/NetApp/harvest/pull/4084))
+- E-Series documentation ([#4115](https://github.com/NetApp/harvest/pull/4115))
+- Fix mcp installation.md ([#4124](https://github.com/NetApp/harvest/pull/4124))
+- E-Series metric documentation ([#4133](https://github.com/NetApp/harvest/pull/4133))
+
+### :wrench: Testing
+- Ensure node GetChildren does not panic ([#4110](https://github.com/NetApp/harvest/pull/4110))
+
+### Refactoring
+- Make mcp go runnable ([#4018](https://github.com/NetApp/harvest/pull/4018))
+- Address lint warnings ([#4032](https://github.com/NetApp/harvest/pull/4032))
+- Lint issues ([#4038](https://github.com/NetApp/harvest/pull/4038))
+- Fix potential resource leak ([#4064](https://github.com/NetApp/harvest/pull/4064))
+- Address lint warnings ([#4081](https://github.com/NetApp/harvest/pull/4081))
+
+### Miscellaneous
+- Improve changelog twistie formatting ([#4025](https://github.com/NetApp/harvest/pull/4025))
+- Update all dependencies ([#4019](https://github.com/NetApp/harvest/pull/4019))
+- Merge release/25.11.0 to main ([#4023](https://github.com/NetApp/harvest/pull/4023))
+- Update all dependencies ([#4029](https://github.com/NetApp/harvest/pull/4029))
+- Update all dependencies ([#4036](https://github.com/NetApp/harvest/pull/4036))
+- Update all dependencies ([#4047](https://github.com/NetApp/harvest/pull/4047))
+- Track upstream go-version changes ([#4048](https://github.com/NetApp/harvest/pull/4048))
+- Bump go ([#4054](https://github.com/NetApp/harvest/pull/4054))
+- Lint issues ([#4055](https://github.com/NetApp/harvest/pull/4055))
+- Update all dependencies ([#4058](https://github.com/NetApp/harvest/pull/4058))
+- Update all dependencies ([#4066](https://github.com/NetApp/harvest/pull/4066))
+- Update all dependencies ([#4068](https://github.com/NetApp/harvest/pull/4068))
+- Track upstream gopsutil changes ([#4074](https://github.com/NetApp/harvest/pull/4074))
+- Update all dependencies ([#4083](https://github.com/NetApp/harvest/pull/4083))
+- Bump go ([#4090](https://github.com/NetApp/harvest/pull/4090))
+- Update all dependencies ([#4092](https://github.com/NetApp/harvest/pull/4092))
+- Update all dependencies ([#4104](https://github.com/NetApp/harvest/pull/4104))
+- Bring harvest.cue up to date ([#4107](https://github.com/NetApp/harvest/pull/4107))
+- Update all dependencies ([#4111](https://github.com/NetApp/harvest/pull/4111))
+- Bump go ([#4113](https://github.com/NetApp/harvest/pull/4113))
+- Update all dependencies ([#4119](https://github.com/NetApp/harvest/pull/4119))
+- Bump dependencies ([#4122](https://github.com/NetApp/harvest/pull/4122))
+- Bump go ([#4128](https://github.com/NetApp/harvest/pull/4128))
+
+### :hammer: CI
+- Unit test should fail ZapiPerf templates when detect caret ([#4043](https://github.com/NetApp/harvest/pull/4043))
+- V-zhuravlev has signed the CCLA ([#4070](https://github.com/NetApp/harvest/pull/4070))
+- Allow first party GitHub actions to use unpinned references ([#4079](https://github.com/NetApp/harvest/pull/4079))
+- Fix ci issue ([#4094](https://github.com/NetApp/harvest/pull/4094))
+- KuaJnio has signed the CCLA ([#4109](https://github.com/NetApp/harvest/pull/4109))
+- Rmilkowski has signed the CCLA ([#4117](https://github.com/NetApp/harvest/pull/4117))
+- Fix lint ([#4126](https://github.com/NetApp/harvest/pull/4126))
+</details>
+
+
+---
 ## 25.11.0 / 2025-11-10 Release
 :pushpin: Highlights of this major release include:
 ## :star: New Features
@@ -8,34 +163,34 @@
 - :medal_sports: We've created a [Harvest Model Context Protocol](https://netapp.github.io/harvest/latest/mcp/overview/) (MCP) server. The Harvest MCP server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
 
 - :fire: Harvest supports monitoring NetApp AFX clusters with this release. Performance metrics with the API name KeyPerf or StatPerf in the [ONTAP metrics documentation](https://netapp.github.io/harvest/latest/ontap-metrics/) are supported in AFX systems. As a result, some panels in the dashboards may be missing information.
- 
+
 - :gem: New dashboards and additional panels:
-    - Harvest includes an ASAr2 dashboard with storage units and SAN initiator group panels.
-    - Harvest includes a StorageGRID S3 dashboard. Thanks to @ofu48167 for raising!
-    - Harvest includes a Hosts dashboard with SAN initiator groups. Thanks to @CJLvU for raising!
-    - Harvest collects FlexCache metrics from FSx.
-    - The StorageGRID Tenants dashboard includes tenant descriptions and bucket versioning. Thanks to @jowanw for raising!
-    - The Volume dashboard includes an autosize table panel. Thanks to @roybatty2019 for raising!
-    - The Network dashboard shows all ethernet port errors. Thanks to RobertWatson for raising!
-    - The Datacenter dashboard includes a System Manager panel with links to ONTAP System Manager. Thanks to Ed Barron for raising!
-    - The Data Protection dashboard includes a Snapshot Policy Violations panel that shows the number of snapshots outside the defined policy scope. Thanks to Lora NeyMan for raising!
-    - The Volume dashboard includes panels on hot and cold data. Thanks to prime_kiwi_05259 for raising!
-    - The Snapmirror Destination dashboard includes a "TopN Destination Volumes by Average Throughput" panel. Thanks to @roybatty2019 for raising!
-    - The Volume dashboard includes a Snaplock panel. Thanks to @BrendonA667 for raising!
-    - The MetroCluster dashboard includes IWarp and NVM mirror metrics. Thanks to @mamoep for raising!
-    - The Security dashboard includes an anti-ransomware snapshots table. Thanks to @ybizeul for raising!
-    - The Workload dashboard includes min IOPs and workload size in the adaptive QoS workload table. Thanks to Paqui for raising!
-    - The LUN dashboard includes a LUN's block size in the LUN table. Thanks to Venumadhu for raising!
+  - Harvest includes an ASAr2 dashboard with storage units and SAN initiator group panels.
+  - Harvest includes a StorageGRID S3 dashboard. Thanks to @ofu48167 for raising!
+  - Harvest includes a Hosts dashboard with SAN initiator groups. Thanks to @CJLvU for raising!
+  - Harvest collects FlexCache metrics from FSx.
+  - The StorageGRID Tenants dashboard includes tenant descriptions and bucket versioning. Thanks to @jowanw for raising!
+  - The Volume dashboard includes an autosize table panel. Thanks to @roybatty2019 for raising!
+  - The Network dashboard shows all ethernet port errors. Thanks to RobertWatson for raising!
+  - The Datacenter dashboard includes a System Manager panel with links to ONTAP System Manager. Thanks to Ed Barron for raising!
+  - The Data Protection dashboard includes a Snapshot Policy Violations panel that shows the number of snapshots outside the defined policy scope. Thanks to Lora NeyMan for raising!
+  - The Volume dashboard includes panels on hot and cold data. Thanks to prime_kiwi_05259 for raising!
+  - The Snapmirror Destination dashboard includes a "TopN Destination Volumes by Average Throughput" panel. Thanks to @roybatty2019 for raising!
+  - The Volume dashboard includes a Snaplock panel. Thanks to @BrendonA667 for raising!
+  - The MetroCluster dashboard includes IWarp and NVM mirror metrics. Thanks to @mamoep for raising!
+  - The Security dashboard includes an anti-ransomware snapshots table. Thanks to @ybizeul for raising!
+  - The Workload dashboard includes min IOPs and workload size in the adaptive QoS workload table. Thanks to Paqui for raising!
+  - The LUN dashboard includes a LUN's block size in the LUN table. Thanks to Venumadhu for raising!
 
 - :ear_of_rice: `harvest grafana import` includes a new command-line interface option (`show-datasource`) to show the datasource variable dropdown in dashboards, useful for multi-datasource setups. Thanks to @RockSolidScripts for raising!
 
 - `harvest grafana import` includes a new command-line interface option (`add-cluster-label`) to rewrite all panel expressions to add the specified cluster label and variable. Thanks to @RockSolidScripts for raising!
 
 - :closed_book: Documentation additions:
-    - Added a tutorial for how to include StorageGRID-supplied dashboards into Harvest. Thanks to @ofu48167 for raising!
-    - Included [ONTAP permissions](https://netapp.github.io/harvest/latest/prepare-cdot-clusters/#statperf-least-privilege-role) required for the [StatPerf collector](https://netapp.github.io/harvest/latest/configure-statperf/).
-    - Clarified which APIs are used to collect each metric.
-    - Clarified that the StatPerf collector does not work for FSx clusters due to ONTAP limitations.
+  - Added a tutorial for how to include StorageGRID-supplied dashboards into Harvest. Thanks to @ofu48167 for raising!
+  - Included [ONTAP permissions](https://netapp.github.io/harvest/latest/prepare-cdot-clusters/#statperf-least-privilege-role) required for the [StatPerf collector](https://netapp.github.io/harvest/latest/configure-statperf/).
+  - Clarified which APIs are used to collect each metric.
+  - Clarified that the StatPerf collector does not work for FSx clusters due to ONTAP limitations.
 
 - Harvest reports node-scoped metrics even when some nodes are down.
 
@@ -58,7 +213,7 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 
 ## Known Issues
 
-- #3941 disabled the `restperf/volume_node.yaml` and `zapiperf/volume_node.yaml` templates because ONTAP provided incomplete metrics for them. The `node_vol` prefixed metrics are not used in any Harvest dashboard. If you still need these metrics, you can re-enable the templates in their corresponding `default.yaml`. See #3900 for details.   
+- #3941 disabled the `restperf/volume_node.yaml` and `zapiperf/volume_node.yaml` templates because ONTAP provided incomplete metrics for them. The `node_vol` prefixed metrics are not used in any Harvest dashboard. If you still need these metrics, you can re-enable the templates in their corresponding `default.yaml`. See #3900 for details.
 
 ## Thanks to all the awesome contributors
 
@@ -128,7 +283,7 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 - Harvest Target File Should Use Soft Dependency ([#4002](https://github.com/NetApp/harvest/pull/4002))
 - Cisco Lldp Should Handle Instances With The Same Chassisid ([#4004](https://github.com/NetApp/harvest/pull/4004))
 - Storagegrid Cached Credential Script Tokens Not Expired On 401 ([#4010](https://github.com/NetApp/harvest/pull/4010))
-- Statperf Multi Line Handling ([#4017](https://github.com/NetApp/harvest/pull/4017)) 
+- Statperf Multi Line Handling ([#4017](https://github.com/NetApp/harvest/pull/4017))
 
 ### :closed_book: Documentation
 - Remove Invalid Api Url From Permissions ([#3835](https://github.com/NetApp/harvest/pull/3835))
@@ -220,25 +375,25 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
   - This collector is designed for environments where ZapiPerf, RestPerf, or KeyPerf collectors can not be used and uses the well known ONTAP statistics CLI command to gather performance statistics.
 
 - :gem: Three new dashboards:
-    - Multi-admin verification (MAV) Dashboard provides a real-time overview of Multi-Admin Verification requests, tracking their status, approvals, and pending actions for enhanced security and operational visibility.
-    - FPolicy dashboard for monitoring FPolicy performance metrics at the policy, SVM, and server levels.
-    - ONTAP:Switch dashboard that provides details about switches connected to ONTAP.
+  - Multi-admin verification (MAV) Dashboard provides a real-time overview of Multi-Admin Verification requests, tracking their status, approvals, and pending actions for enhanced security and operational visibility.
+  - FPolicy dashboard for monitoring FPolicy performance metrics at the policy, SVM, and server levels.
+  - ONTAP:Switch dashboard that provides details about switches connected to ONTAP.
 
 - Cisco switch dashboard updates: :100: Thanks to @roybatty2019 for raising this issue and providing valuable guidance and examples.
-    - Individual fan speeds are now displayed separately from zone speeds.
-    - LLDP and CDP parsing have been refined with consistent field naming and improved data handling
-    - New traffic monitoring metrics
+  - Individual fan speeds are now displayed separately from zone speeds.
+  - LLDP and CDP parsing have been refined with consistent field naming and improved data handling
+  - New traffic monitoring metrics
 
 - :star:
-   - Quota and FSA dashboards now support filtering by volume tags.
-   - Added a Junction Path variable in the Volume dashboard.
-   - Added bucket quotas in StorageGrid Tenant dashboard.
-   - Added "Volume" and "Idle Timeout" columns to the CIFS sessions table in the SMB Dashboard.
-   - Added Used% in the bucket table within Tenant dashboard.
+  - Quota and FSA dashboards now support filtering by volume tags.
+  - Added a Junction Path variable in the Volume dashboard.
+  - Added bucket quotas in StorageGrid Tenant dashboard.
+  - Added "Volume" and "Idle Timeout" columns to the CIFS sessions table in the SMB Dashboard.
+  - Added Used% in the bucket table within Tenant dashboard.
 
 - :closed_book: Documentation additions
-   - Navigate to your local Grafana dashboards from the metrics documentation by linking to your Grafana instance.
-   - Added documentation for Cisco Switch and StorageGrid metrics.
+  - Navigate to your local Grafana dashboards from the metrics documentation by linking to your Grafana instance.
+  - Added documentation for Cisco Switch and StorageGrid metrics.
 
 ## Announcements
 
@@ -534,7 +689,7 @@ pushpin: Highlights of this major release include:
 
 - All Harvest dashboards default to Datacenter=All instead of the first datacenter in the list. Thanks to @roybatty2019 for reporting.
 
-- Harvest provides a [FIPS 140-3 compliant](https://go.dev/doc/security/fips140) container image, available as a separate image at `ghcr.io/netapp/harvest:25.02.0-1-fips`. 
+- Harvest provides a [FIPS 140-3 compliant](https://go.dev/doc/security/fips140) container image, available as a separate image at `ghcr.io/netapp/harvest:25.02.0-1-fips`.
 
 - :ear_of_rice: Harvest `bin/grafana import`
   - Supports nested Grafana folders. Thanks to @IvanZenger for reporting.
@@ -1134,7 +1289,7 @@ This release includes 40 features, 28 bug fixes, 13 documentation, 1 performance
 - Doc Update For Oauth 2.0 Support In Harvest ([#3073](https://github.com/NetApp/harvest/pull/3073))
 - Add Ems Permissions For Rest Least Privilege Approach ([#3088](https://github.com/NetApp/harvest/pull/3088))
 - Add container troubleshooting steps ([#3097](https://github.com/NetApp/harvest/pull/3097))
- 
+
 ### :zap: Performance
 - Improve Prometheus Render Escaping By 23% ([#2922](https://github.com/NetApp/harvest/pull/2922))
 
@@ -1467,10 +1622,10 @@ Please upgrade your Prometheus server to at least 2.33 before upgrading Harvest.
 ## Known Issues
 
 - Harvest does not calculate power metrics for AFF A250 systems. This data is not available from ONTAP via ZAPI or REST.
-See ONTAP bug [1511476](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1511476) for more details.
+  See ONTAP bug [1511476](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1511476) for more details.
 
 - ONTAP does not include REST metrics for `offbox_vscan_server` and `offbox_vscan` until ONTAP 9.13.1. See ONTAP bug
-[1473892](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1473892) for more details.
+  [1473892](https://burtview.netapp.com/burt/burt-bin/start?burt-id=1473892) for more details.
 
 **IMPORTANT** 7-mode filers that are not on the latest release of ONTAP may experience TLS connection issues with errors
 like `tls: server selected unsupported protocol version 301` This is caused by a change in Go 1.18.
@@ -1656,7 +1811,7 @@ this release:
 
 - :zap: Optimized the Harvest binaries, significantly reducing their size.
 
-- The Metadata dashboard works inside container deployments. 
+- The Metadata dashboard works inside container deployments.
 
 - The FabricPool panels in the Volume dashboard now support FlexGroup volumes. Thanks to @sriniji for reporting.
 
@@ -2910,7 +3065,7 @@ this release:
 
 **IMPORTANT** :bangbang: NetApp is moving their communities from Slack to [NetApp's Discord](https://discord.gg/ZmmWPHTBHw) with a plan to lock the Slack channel at the end of August. Please join us on [Discord](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
 
-**IMPORTANT** :bangbang: Prometheus version `2.26` or higher is required for the EMS Collector. 
+**IMPORTANT** :bangbang: Prometheus version `2.26` or higher is required for the EMS Collector.
 
 **IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the `bin/harvest/grafana import` CLI or from the Grafana UI.
 
@@ -2925,16 +3080,16 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 ### Enhancements
 
 - :sparkler: Harvest adds an [ONTAP event management system (EMS) events](https://github.com/NetApp/harvest/blob/main/cmd/collectors/ems/README.md) collector in this release.
-It collects ONTAP events, exports them to Prometheus, and provides integration with Prometheus AlertManager.
-[Full list of 64 events](https://github.com/NetApp/harvest/blob/main/conf/ems/9.6.0/ems.yaml)
+  It collects ONTAP events, exports them to Prometheus, and provides integration with Prometheus AlertManager.
+  [Full list of 64 events](https://github.com/NetApp/harvest/blob/main/conf/ems/9.6.0/ems.yaml)
 
 - New Harvest Headroom dashboard. [#1039](https://github.com/NetApp/harvest/issues/1039) Thanks to @faguayot for reporting.
- 
+
 - New Quota dashboard. [#1111](https://github.com/NetApp/harvest/issues/1111) Thanks to @ev1963 for raising this feature request.
 
 - We've made lots of improvements to the REST Perf collector and filled several gaps in this release. [#881](https://github.com/NetApp/harvest/issues/881)
 
-- Harvest Power dashboard should include `Min Ambient Temp` and `Min Temp`. Thanks to Papadopoulos Anastasios for reporting. 
+- Harvest Power dashboard should include `Min Ambient Temp` and `Min Temp`. Thanks to Papadopoulos Anastasios for reporting.
 
 - Harvest Disk dashboard should include the `Back-to-back CP Count` and `Write Latency` metrics. [#1040](https://github.com/NetApp/harvest/issues/1040) Thanks to @faguayot for reporting.
 
@@ -3022,7 +3177,7 @@ It collects ONTAP events, exports them to Prometheus, and provides integration w
 
 - New `value_to_num_regex` plugin allows you to map all matching expressions to 1 and non-matching ones to 0.
 
-- Harvest pollers can optionally [read credentials](https://github.com/NetApp/harvest/discussions/884) from a mounted volume or file. This enables [Hashicorp Vault](https://www.vaultproject.io/) support and works especially well with [Vault agent](https://www.vaultproject.io/docs/agent) 
+- Harvest pollers can optionally [read credentials](https://github.com/NetApp/harvest/discussions/884) from a mounted volume or file. This enables [Hashicorp Vault](https://www.vaultproject.io/) support and works especially well with [Vault agent](https://www.vaultproject.io/docs/agent)
 
 - `bin/grafana import` provides a `--multi` flag that rewrites dashboards to include multi-select dropdowns for each variable at the top of the dashboard
 
@@ -3116,7 +3271,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 :boom: Highlights of this major release include:
 
 - Continued progress on the ONTAP REST config collector. Most of the template changes are in place and we're working on closing the gaps between ZAPI and REST. We've made lots of improvements to the REST collector and included 13 REST templates in this release. The REST collector  should be considered early-access as we continue to improve it. If you try it out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). :book: You can find more information about when you should switch from ZAPI to REST, what versions of ONTAP are supported by Harvest's REST collector, and how to fill ONTAP gaps between REST and ZAPI documented [here](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-collector.md)
-  
+
 - Many of you asked for nightly builds. [We have them](https://github.com/NetApp/harvest/releases/tag/nightly). :confetti_ball: We're also working on publishing to multiple Docker registries since you've told us you're running into rate-limiting problems with DockerHub. We'll announce here and Slack when we have a solution in place.
 
 - Two new Data Protection dashboards
@@ -3128,19 +3283,19 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - We've included more out-of-the-box [Prometheus alerts](https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml). Keep sharing your most useful alerts!
 
 - 7mode workflows continue to be improved :heart: Harvest now collects Qtree and Quotas counters from 7mode filers (these are already collected in cDOT)
-    
+
 - 28 bug fixes, 52 feature, and 11 documentation commits this release
 
 **IMPORTANT** Admin node certificate file location changed. Certificate files have been consolidated into the `cert` directory. If you created self-signed admin certs, you need to move the `admin-cert.pem` and `admin-key.pem` files into the `cert` directory.
 
-**IMPORTANT** In earlier versions of Harvest, the Qtree template exported the `vserver` metric. This counter was changed to `svm` to be consistent with other templates. If you are using the qtree `vserver` metric, you will need to update your queries to use `svm` instead.   
+**IMPORTANT** In earlier versions of Harvest, the Qtree template exported the `vserver` metric. This counter was changed to `svm` to be consistent with other templates. If you are using the qtree `vserver` metric, you will need to update your queries to use `svm` instead.
 
-**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes. 
+**IMPORTANT** :bangbang: After upgrade, don't forget to re-import your dashboards so you get all the new enhancements and fixes.
 You can import via `bin/harvest/grafana import` cli or from the Grafana UI.
 
 **IMPORTANT** The LabelAgent `value_mapping` plugin was deprecated in the `21.11` release and removed in `22.02`.
 Use LabelAgent `value_to_num` instead. See [docs](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num)
-for details. 
+for details.
 
 **Known Issues**
 
@@ -3151,7 +3306,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - Harvest should include a Data Protection dashboard that shows volumes protected by snapshots, which ones have exceeded their reserve copy, and which are unprotected #664
 
 - Harvest should include a Data Protection SnapMirror dashboard that shows which volumes are protected, how they're protected, their protection relationship, along with their health and lag durations.
-  
+
 - Harvest should provide nightly builds to GitHub and DockerHub #713
 
 - Harvest `bin/grafana` cli should not overwrite dashboard changes, making it simpler to import/export dashboards, and enabling round-tripping dashboards (import, export, re-import) #831 Thanks to @luddite516 for reporting and @florianmulatz for iterating with us on a solution
@@ -3164,13 +3319,13 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 
 - Harvest should include a richer set of Prometheus alerts #254 Thanks @demalik for raising
 
-- Template plugins should run in the order they are defined and compose better. 
-The output of one plugin can be fed into the input of the next one. #736 Thanks to @chadpruden for raising
+- Template plugins should run in the order they are defined and compose better.
+  The output of one plugin can be fed into the input of the next one. #736 Thanks to @chadpruden for raising
 
 - Harvest should collect Antivirus counters when ONTAP offbox vscan is configured [#346](https://github.com/NetApp/harvest/issues/346) Thanks to @burkl and @Falcon667 for reporting
 
 - [Document](https://github.com/NetApp/harvest/tree/main/container/containerd) how to run Harvest with `containerd` and `Rancher`
-     
+
 - Qtree counters should be collected for 7-mode filers #766 Thanks to @jmg011 for raising this issue and iterating with us on a solution
 
 - Harvest admin node should work with pollers running in Docker compose [#678](https://github.com/NetApp/harvest/pull/678)
@@ -3179,7 +3334,7 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 
 - Harvest should include a Systemd service file for the HTTP service discovery admin node [#656](https://github.com/NetApp/harvest/pull/656)
 
-- [Document](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md) how ZAPI collectors, templates, and exporting work together. Thanks @jmg011 and others for asking for this 
+- [Document](https://github.com/NetApp/harvest/blob/main/docs/TemplatesAndMetrics.md) how ZAPI collectors, templates, and exporting work together. Thanks @jmg011 and others for asking for this
 
 - Remove redundant dashboards (Network, Node, SVM, Volume) [#703](https://github.com/NetApp/harvest/issues/703) Thanks to @mamoep for reporting this
 
@@ -3193,7 +3348,7 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 
 - Harvest should collect workload concurrency [#714](https://github.com/NetApp/harvest/pull/714)
 
-- Harvest certificate directory should be included in a container's volume mounts #725 
+- Harvest certificate directory should be included in a container's volume mounts #725
 
 - MetroCluster dashboard should show path object metrics #746
 
@@ -3204,8 +3359,8 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 - Harvest Grafana dashboard version string should match the Harvest release #631
 
 - REST collector improvements
-  - Harvest REST collector should support ONTAP private cli endpoints #766 
-  
+  - Harvest REST collector should support ONTAP private cli endpoints #766
+
   - REST collector should support ZAPI-like object prefixing #786
 
   - REST collector should support computing new customer-defined metrics #780
@@ -3213,7 +3368,7 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
   - REST collector should collect aggregate, qtree and quota counters #780
 
   - REST collector metrics should be reported in autosupport #841
-    
+
   - REST collector should collect sensor counters #789
 
   - Collect network port interface information not available via ZAPI #691 Thanks to @pilot7777, @mamoep amd @wagneradrian92 for working on this with us
@@ -3229,18 +3384,18 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 ### Fixes
 
 - FlexGroup statistics should be aggregated across node and aggregates [#706](https://github.com/NetApp/harvest/issues/706) Thanks to @wally007 for reporting
-  
+
 - Network Details dashboard should use correct units and support variable sorting [#673](https://github.com/NetApp/harvest/issues/673) Thanks to @mamoep for reporting and reviewing the fix
- 
+
 - Harvest Systemd service should wait for network to start [#707](https://github.com/NetApp/harvest/pull/707) Thanks to @mamoep for reporting and fixing
 
 - MetroCluster dashboard should use correct units and support variable sorting [#685](https://github.com/NetApp/harvest/issues/685) Thanks to @mamoep and @chris4789 for reporting this
-    
+
 - 7mode shelf plugin should handle cases where multiple channels have the same shelf id [#692](https://github.com/NetApp/harvest/issues/692) Thanks to @pilot7777 for reporting this on Slack
 
 - Improve template YAML parsing when indentation varies [#704](https://github.com/NetApp/harvest/issues/704) Thanks to @mamoep for reporting this.
-  
-- Harvest should not include version information in its container name. [#660](https://github.com/NetApp/harvest/issues/660). Thanks to @wally007 for raising this. 
+
+- Harvest should not include version information in its container name. [#660](https://github.com/NetApp/harvest/issues/660). Thanks to @wally007 for raising this.
 
 - Ignore missing Qtrees and improve uniqueness check on 7mode filers #782 and #797. Thanks to @jmg011 for reporting
 
@@ -3255,19 +3410,19 @@ The output of one plugin can be fed into the input of the next one. #736 Thanks 
 - `bin/zapi` should print output [#715](https://github.com/NetApp/harvest/pull/715)
 
 - Snapmirror dashboard should show correct number of SVM-DR relationships, last transfer, and health status #728 Thanks to Gaël Cantarero on Slack for reporting
-  
+
 - Ensure that properties defined in object templates override their parent properties #765
 
-- Increase time that metrics are retained in Prometheus exporter from 3 minutes to 5 minutes #778 
+- Increase time that metrics are retained in Prometheus exporter from 3 minutes to 5 minutes #778
 
 - Remove the misplaced `SVM FCP Throughput` panel from the iSCSI drilldown section of the SVM details dashboard #821 Thanks to @florianmulatz for reporting and fixing
 
 - When importing Grafana dashboards, remove the existing `id` and `uid` so Grafana treats the import as a create instead of an overwrite #825 Thanks to @luddite516 for reporting
-  
+
 - Relax the Grafana version check constraint so version `8.4.0-beta1` is considered `>=7.1` #828 Thanks to @ybizeul for reporting
 
 - `bin/harvest status` should report `running` for pollers exporting to InfluxDB, instead of reporting that they are not running #835
-  
+
 - Pin the Grafana and Prometheus versions in the Docker compose workflow instead of pulling latest #822
 
 ---
@@ -3295,9 +3450,9 @@ Highlights of this major release include:
 release and will be removed in the next release of Harvest. Use LabelAgent
 `value_to_num` instead. See
 [docs](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num)
-for details. 
+for details.
 
-**IMPORTANT** After upgrade, don't forget to re-import all dashboards so you get new dashboard enhancements and fixes. 
+**IMPORTANT** After upgrade, don't forget to re-import all dashboards so you get new dashboard enhancements and fixes.
 You can re-import via `bin/harvest/grafana` cli or from the Grafana UI.
 
 **IMPORTANT** RPM and Debian packages will be deprecated in the future, replaced
@@ -3313,25 +3468,25 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 ### Enhancements
 
 - :construction: [ONTAP started moving their APIs from ZAPI to REST](https://devnet.netapp.com/restapi.php) in ONTAP 9.6. Harvest adds an early access ONTAP REST collector in this release (config only). :confetti_ball: This is our first step among several as we prepare for the day that ZAPIs are turned off. The REST collector and seven templates are included in 21.11. These should be considered early access as we continue to improve them. If you try them out or have any feedback, let us know on Slack or [GitHub](https://github.com/NetApp/harvest/discussions). [#402](https://github.com/NetApp/harvest/issues/402)
-  
+
 - Harvest should have a [Prometheus HTTP service discovery](https://github.com/NetApp/harvest/blob/main/cmd/exporters/prometheus/README.md#prometheus-http-service-discovery) end-point to make it easier to add/remove pollers [#575](https://github.com/NetApp/harvest/pull/575)
-  
+
 - Harvest should include a MetroCluster dashboard [#539](https://github.com/NetApp/harvest/issues/539) Thanks @darthVikes for reporting
-   
-- Harvest should collect Qtree and Quota metrics [#522](https://github.com/NetApp/harvest/issues/522) Thanks @jmg011 for reporting and validating this works in your environment 
-  
+
+- Harvest should collect Qtree and Quota metrics [#522](https://github.com/NetApp/harvest/issues/522) Thanks @jmg011 for reporting and validating this works in your environment
+
 - SVM dashboard: Make NFS version a variable. SVM variable should allow selecting all SVMs for a cluster wide view [#454](https://github.com/NetApp/harvest/pull/454)
 
 - Harvest should monitor ONTAP chassis sensors [#384](https://github.com/NetApp/harvest/issues/384) Thanks to @hashi825 for raising this issue and reviewing the pull request
 
 - Harvest cluster dashboard should include `All` option in dropdown for clusters [#630](https://github.com/NetApp/harvest/pull/630) thanks @TopSpeed for raising this on Slack
- 
+
 - Harvest should collect volume `sis status` [#519](https://github.com/NetApp/harvest/issues/519) Thanks to @jmg011 for raising
 
 - Separate cDOT and 7-mode dashboards allowing each to change independently [#489](https://github.com/NetApp/harvest/pull/489) [#501](https://github.com/NetApp/harvest/pull/501) [#547](https://github.com/NetApp/harvest/pull/547)
 
 - Improve collector and object template merging and documentation [#493](https://github.com/NetApp/harvest/issues/493) [#555](https://github.com/NetApp/harvest/pull/555) Thanks @hashi825 for reviewing and suggesting improvements
- 
+
 - Harvest should support [label sets](https://github.com/NetApp/harvest#labels), allowing you to add additional key-value pairs to a poller's metrics[#538](https://github.com/NetApp/harvest/pull/538)
 
 - `bin/grafana import` should create a matching label and rewrite queries to use chained variable when using label sets [#550](https://github.com/NetApp/harvest/pull/550)
@@ -3341,11 +3496,11 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - Improve instantiated systemd template by specifying user/group, requires, and moving Unix pollers to the end of the list. [#643](https://github.com/NetApp/harvest/issues/643) Thanks to @mamoep for reporting and providing the changes! :sparkles:
 
 - Harvest's Docker container should use local `conf` directory instead of copying into image. Makes upgrade and changing template files easier. [#511](https://github.com/NetApp/harvest/issues/511)
-  
+
 - Improve Disk dashboard by showing total number of disks by node and aggregate [#583](https://github.com/NetApp/harvest/pull/583)
 
 - Harvest 7-mode dashboards should be provisioned when using Docker Compose workflow [#544](https://github.com/NetApp/harvest/pull/554)
-  
+
 - When upgrading, `bin/harvest grafana import` should add dashboards to a release-named folder so earlier dashboards are not overwritten [#616](https://github.com/NetApp/harvest/pull/616)
 
 - `client_timeout` should be overridable in object template files [#563](https://github.com/NetApp/harvest/pull/563)
@@ -3355,7 +3510,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - Doctor: Ensure that all pollers export to unique Prometheus ports [#597](https://github.com/NetApp/harvest/pull/597)
 
 - Improve execution performance of Harvest management commands :rocket: `bin/harvest start|stop|restart` [#600](https://github.com/NetApp/harvest/pull/600)
-  
+
 - Include eight cDOT dashboards that use InfluxDB datasource [#466](https://github.com/NetApp/harvest/pull/466). Harvest does not support InfluxDB dashboards for 7-mode. Thanks to @SamyukthaM for working on these
 
 - Docs: Describe how Harvest converts template labels into Prometheus labels [#585](https://github.com/NetApp/harvest/issues/585)
@@ -3367,25 +3522,25 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 ### Fixes
 
 - Poller should report metadata when running on BusyBox [#529](https://github.com/NetApp/harvest/issues/529) Thanks to @charz for reporting issue and providing details
-  
-- Space used % calculation was incorrect for Cluster and Aggregate dashboards [#624](https://github.com/NetApp/harvest/issues/624) Thanks to @faguayot and @jorbour for reporting.  
+
+- Space used % calculation was incorrect for Cluster and Aggregate dashboards [#624](https://github.com/NetApp/harvest/issues/624) Thanks to @faguayot and @jorbour for reporting.
 
 - When ONTAP indicates a counter is deprecated, but a replacement is not provided, continue using the deprecated counter [#498](https://github.com/NetApp/harvest/pull/498)
 
 - Harvest dashboard panels must specify a Prometheus datasource to correctly handles cases were a non-Prometheus default datasource is defined in Grafana. [#639](https://github.com/NetApp/harvest/issues/639) Thanks for reporting @MrObvious
- 
-- Prometheus datasource was missing on five dashboards (Network and Disk) [#566](https://github.com/NetApp/harvest/pull/566) Thanks to @survive-wustl for reporting 
-  
-- Document permissions that Harvest requires to monitor ONTAP with a read-only user [#559](https://github.com/NetApp/harvest/pull/559) Thanks to @survive-wustl for reporting and working with us to chase this down. :thumbsup: 
+
+- Prometheus datasource was missing on five dashboards (Network and Disk) [#566](https://github.com/NetApp/harvest/pull/566) Thanks to @survive-wustl for reporting
+
+- Document permissions that Harvest requires to monitor ONTAP with a read-only user [#559](https://github.com/NetApp/harvest/pull/559) Thanks to @survive-wustl for reporting and working with us to chase this down. :thumbsup:
 
 - Metadata dashboard should show correct status for running/stopped pollers [#567](https://github.com/NetApp/harvest/issues/567) Thanks to @cordelster for reporting
 
 - Harvest should serve a human-friendly :corn: overview page of metric types when hitting the Prometheus end-point [#613](https://github.com/NetApp/harvest/issues/613) Thanks @cordelster for reporting
-  
+
 - SnapMirror plugin should include source_node [#608](https://github.com/NetApp/harvest/issues/608)
-  
-- Disk dashboard should use better labels in table details [#578](https://github.com/NetApp/harvest/pull/578) 
-  
+
+- Disk dashboard should use better labels in table details [#578](https://github.com/NetApp/harvest/pull/578)
+
 - SVM dashboard should show correct units and remove duplicate graph [#454](https://github.com/NetApp/harvest/pull/454)
 
 - FCP plugin should work with 7-mode clusters [#464](https://github.com/NetApp/harvest/pull/464)
@@ -3395,7 +3550,7 @@ The Unix collector is unable to monitor pollers running in containers. See [#249
 - Nic state is missing from several network related dashboards [486](https://github.com/NetApp/harvest/issues/486)
 
 - Reduce log noise when templates are not found since this is often expected [#606](https://github.com/NetApp/harvest/pull/606)
-  
+
 - Use `diagnosis-config-get-iter` to collect node status from 7-mode systems [#499](https://github.com/NetApp/harvest/pull/499)
 
 - Node status is missing from 7-mode [#527](https://github.com/NetApp/harvest/pull/527)
@@ -3449,9 +3604,9 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 - Make it easy to install Grafana, Prometheus, and Harvest with Docker Compose and auto-provisioned dashboards. [#349](https://github.com/NetApp/harvest/pull/349)
 
 - Lun, Volume Details, Node Details, Network Details, and SVM dashboards added to Harvest. Thanks to @jgasher for contributing five solid dashboards. [#458](https://github.com/NetApp/harvest/pull/458) [#482](https://github.com/NetApp/harvest/pull/482)
-      
+
 - Disk dashboard added to Harvest with disk type, status, uptime, and aggregate information. Thanks to @faguayot, @bengoldenberg, and @talshechanovitz for helping with this feature [#348](https://github.com/NetApp/harvest/issues/348) [#375](https://github.com/NetApp/harvest/pull/375) [#367](https://github.com/NetApp/harvest/pull/367) [#361](https://github.com/NetApp/harvest/pull/361)
-  
+
 - New SVM dashboard with NFS v3, v4, and v4.1 frontend drill-downs. Thanks to @burkl for contributing these. :tada: [#344](https://github.com/NetApp/harvest/issues/344)
 
 - Harvest templates should be extendible without modifying the originals. Thanks to @madhusudhanarya and @albinpopote for reporting. [#394](https://github.com/NetApp/harvest/issues/394) [#396](https://github.com/NetApp/harvest/issues/396) [#391](https://github.com/NetApp/harvest/pull/391)
@@ -3460,8 +3615,8 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 
 - Harvest should include example Prometheus alerting rules [#414](https://github.com/NetApp/harvest/pull/414)
 
-- Improved documentation on how to send new ZAPIs and modify existing ZAPI templates. Thanks to @albinpopote for reporting. [#397](https://github.com/NetApp/harvest/issues/397) 
- 
+- Improved documentation on how to send new ZAPIs and modify existing ZAPI templates. Thanks to @albinpopote for reporting. [#397](https://github.com/NetApp/harvest/issues/397)
+
 - Improve Harvest ZAPI template selection when monitoring a broader set of ONTAP clusters including 7-mode and 9.10.X [#407](https://github.com/NetApp/harvest/pull/407)
 
 - Collectors should log their full ZAPI request/response(s) when their poller includes a `log` section [#382](https://github.com/NetApp/harvest/pull/382)
@@ -3469,12 +3624,12 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 - Harvest should load config information from the `HARVEST_CONF` environment variable when set. Thanks to @ybizeul for reporting. [#368](https://github.com/NetApp/harvest/issues/368)
 
 - Document how to delete time series data from Prometheus [#393](https://github.com/NetApp/harvest/pull/393)
-  
+
 - Harvest ZAPI tool supports printing results in XML and colors. This makes it easier to post-process responses in downstream pipelines [#353](https://github.com/NetApp/harvest/pull/353)
-  
+
 - Harvest `version` should check for a new release and display it when available [#323](https://github.com/NetApp/harvest/issues/323)
 
-- Document how client authentication works and how to troubleshoot [#325](https://github.com/NetApp/harvest/pull/325)  
+- Document how client authentication works and how to troubleshoot [#325](https://github.com/NetApp/harvest/pull/325)
 
 ### Fixes
 
@@ -3491,7 +3646,7 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 - Harvest should collect include NVMe and fiber channel port counters. Thanks to @jgasher for submitting these. [#363](https://github.com/NetApp/harvest/issues/363)
 
 - Harvest should export NFS v4 metrics. It does for v3 and v4.1, but did not for v4 due to a typo in the v4 ZAPI template. Thanks to @jgasher for reporting. [#481](https://github.com/NetApp/harvest/pull/481)
-  
+
 - Harvest panics when port_range is used in the Prometheus exporter and address is missing. Thanks to @ybizeul for reporting. [#357](https://github.com/NetApp/harvest/issues/357)
 
 - Network dashboard fiber channel ports (FCP) should report read and write throughput [#445](https://github.com/NetApp/harvest/pull/445)
@@ -3518,18 +3673,18 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 - Harvest collects Qtree protocol ops [#298](https://github.com/NetApp/harvest/pull/298). Thanks to Martin Möbius for contributing
 
 - Harvest Grafana tool (optionally) adds a user-specified prefix to all Dashboard metrics during import. See  `harvest grafana --help` [#87](https://github.com/NetApp/harvest/issues/87)
-  
+
 - Harvest is taking its first steps to talk REST: query ONTAP, show Swagger API, model, and definitions [#292](https://github.com/NetApp/harvest/pull/292)
- 
-- Tagged releases of Harvest are published to [Docker Hub](https://hub.docker.com/r/rahulguptajss/harvest) 
-  
+
+- Tagged releases of Harvest are published to [Docker Hub](https://hub.docker.com/r/rahulguptajss/harvest)
+
 - Harvest honors Go's http(s) environment variable proxy information. See https://pkg.go.dev/net/http#ProxyFromEnvironment for details [#252](https://github.com/NetApp/harvest/pull/252)
 
 - New plugin [value_to_num](https://github.com/NetApp/harvest/blob/main/cmd/poller/plugin/README.md#value_to_num) helps map labels to numeric values for Grafana dashboards. Current dashboards updated to use this plugin [#319](https://github.com/NetApp/harvest/pull/319)
 
 - `harvest.yml` supports YAML flow style. E.g. `collectors: [Zapi]` [#260](https://github.com/NetApp/harvest/pull/260)
 
-- New Simple collector that runs on Macos and Unix [#270](https://github.com/NetApp/harvest/pull/270)  
+- New Simple collector that runs on Macos and Unix [#270](https://github.com/NetApp/harvest/pull/270)
 
 - Improve client certificate authentication [documentation](https://github.com/NetApp/harvest/issues/314#issuecomment-882120238)
 
@@ -3540,16 +3695,16 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 - Harvest collector should not panic when resources are deleted from ONTAP [#174](https://github.com/NetApp/harvest/issues/174) and [#302](https://github.com/NetApp/harvest/issues/302). Thanks to @hashi825 and @mamoep for providing steps to reproduce
 
 - Shelf metrics should report on op-status for components. Thanks to @hashi825 for working with us on this fix and dashboard improvements [#262](https://github.com/NetApp/harvest/issues/262)
-  
+
 - Harvest should not panic when InfluxDB is the only exporter [#286](https://github.com/NetApp/harvest/issues/284)
 
 - Volume dashboard space-used column should display with percentage filled. Thanks to @florianmulatz for reporting and suggesting a fix [#303](https://github.com/NetApp/harvest/issues/303)
 
 - Certificate authentication should honor path in `harvest.yml` [#318](https://github.com/NetApp/harvest/pull/318)
-  
+
 - Harvest should not kill processes with `poller` in their arguments [#328](https://github.com/NetApp/harvest/issues/328)
-  
-- Harvest ZAPI command line tool should limit perf-object-get-iter to subset of counters when using `--counter` [#299](https://github.com/NetApp/harvest/pull/299) 
+
+- Harvest ZAPI command line tool should limit perf-object-get-iter to subset of counters when using `--counter` [#299](https://github.com/NetApp/harvest/pull/299)
 
 ---
 
@@ -3565,26 +3720,26 @@ On RHEL and Debian, the example Unix collector does not work at the moment due t
 - Create Prometheus port range exporter that allows you to connect multiple pollers to Prometheus without needing to specify a port-per-poller. This makes it much easier to connect Prometheus and Harvest; especially helpful when you're monitoring many clusters [#172](https://github.com/NetApp/harvest/issues/172)
 
 - Improve Harvest build times by 7x and reduce executable sizes by 3x [#100](https://github.com/NetApp/harvest/issues/100)
- 
+
 - Improve containerization with the addition of a poller-per-container Dockerfile. Create a new subcommand `harvest generate docker` which generates a `docker-compose.yml` file for all pollers defined in your config
 
 - Improve systemd integration by using instantiated units for each poller and a harvest target to tie them together. Create a new subcommand `harvest generate systemd` which generates a Harvest systemd target for all pollers defined in your config [#systemd](https://github.com/NetApp/harvest/tree/main/service/contrib)
-  
+
 - Harvest doctor checks that all Prometheus exporters specify a unique port [#118](https://github.com/NetApp/harvest/issues/118)
-  
+
 - Harvest doctor warns when an unknown exporter type is specified (likely a spelling error) [#118](https://github.com/NetApp/harvest/issues/118)
-  
+
 - Add Harvest [CUE](https://cuelang.org/) validation and type-checking [#208](https://github.com/NetApp/harvest/pull/208)
-  
+
 - `bin/zapi` uses the `--config` command line option to read the harvest config file. This brings this tool inline with other Harvest tools. This makes it easier to switch between multiple sets of harvest.yml files.
-  
+
 - Harvest no longer writes pidfiles; simplifying management code and install [#159](https://github.com/NetApp/harvest/pull/159)
 
 ### Fixes
 - Ensure that the Prometheus exporter does not create duplicate labels [#132](https://github.com/NetApp/harvest/issues/132)
 
 - Ensure that the Prometheus exporter includes `HELP` and `TYPE` metatags when requested. Some tools require these [#104](https://github.com/NetApp/harvest/issues/104)
-      
+
 - Disk status should return zero for a failed disk and one for a healthy disk. Thanks to @hashi825 for reporting and fixing [#182](https://github.com/NetApp/harvest/issues/182)
 
 - Lun info should be collected by Harvest. Thanks to @hashi825 for reporting and fixing [#230](https://github.com/NetApp/harvest/issues/230)
@@ -3643,12 +3798,12 @@ Going forward Harvest2 will follow a `year.month.fix` release naming convention 
 
 **IMPORTANT** v21.05 increased Harvest's out-of-the-box security posture - self-signed certificates are rejected by default. You have two options:
 
- 1. [Setup client certificates for each cluster](https://github.com/NetApp/harvest-private/blob/main/cmd/collectors/zapi/README.md)
- 2. Disable the TLS check in Harvest. To disable, you need to edit `harvest.yml` and add `use_insecure_tls=true` to each poller or add it to the `Defaults` section. Doing so tells Harvest to ignore invalid TLS certificates.
+1. [Setup client certificates for each cluster](https://github.com/NetApp/harvest-private/blob/main/cmd/collectors/zapi/README.md)
+2. Disable the TLS check in Harvest. To disable, you need to edit `harvest.yml` and add `use_insecure_tls=true` to each poller or add it to the `Defaults` section. Doing so tells Harvest to ignore invalid TLS certificates.
 
 **IMPORTANT** RPM and Debian packages will be deprecated in the future, replaced with Docker and native packages.
 
- **IMPORTANT** Harvest 1.6 is end of support. We recommend you upgrade to Harvest 21.05 to take advantage of the improvements.
+**IMPORTANT** Harvest 1.6 is end of support. We recommend you upgrade to Harvest 21.05 to take advantage of the improvements.
 
 Changes since rc2
 ### Fixes
@@ -3710,20 +3865,20 @@ Changes since rc2
 ### Enhancements
 - Add Debian package
 - Improved metric architecture, eliminated race conditions in matrix data structure. This paves the way for other developers to create custom collectors
-    - Matrix can be manipulated by collectors and plugins safely
-    - Size of the matrix can be changed dynamically
-    - Label data is collected (in early versions, at least one numeric metric was required)
+  - Matrix can be manipulated by collectors and plugins safely
+  - Size of the matrix can be changed dynamically
+  - Label data is collected (in early versions, at least one numeric metric was required)
 - [New plugin architecture](cmd/poller/plugin/README.md) - creating new plugins is easier and existing plugins made more generic
-    - You can use built-in plugins by adding rules to a collector's template. RC2 includes two built-in plugins:
-      - **Aggregator**: Aggregates metrics for a given label, e.g. volume data can be used to create an aggregation at the node or SVM-level
-       - **LabelAgent**: Defines rules for rewriting instance labels, creating new labels or create ignore-lists based on regular expressions
+  - You can use built-in plugins by adding rules to a collector's template. RC2 includes two built-in plugins:
+    - **Aggregator**: Aggregates metrics for a given label, e.g. volume data can be used to create an aggregation at the node or SVM-level
+    - **LabelAgent**: Defines rules for rewriting instance labels, creating new labels or create ignore-lists based on regular expressions
 
 ---
 ## rc1
 
- **IMPORTANT** Harvest has been rewritten in Go
+**IMPORTANT** Harvest has been rewritten in Go
 
- **IMPORTANT** Harvest no longer gathers data from AIQ Unified Manager. An install of AIQ.UM is not required.
+**IMPORTANT** Harvest no longer gathers data from AIQ Unified Manager. An install of AIQ.UM is not required.
 
 ### Fixes
 

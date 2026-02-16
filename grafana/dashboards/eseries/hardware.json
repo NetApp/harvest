@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1770108469172,
+  "iteration": 1770821294656,
   "links": [
     {
       "asDropdown": true,
@@ -262,7 +262,7 @@
                 "array",
                 "code_module",
                 "datacenter",
-                "version_string",
+                "version",
                 "controller"
               ]
             }
@@ -277,7 +277,7 @@
               "code_module": 3,
               "controller": 2,
               "datacenter": 0,
-              "version_string": 4
+              "version": 4
             },
             "renameByName": {
               "array": "Array",
@@ -285,7 +285,7 @@
               "controller": "Controller",
               "controller_location": "Controller",
               "datacenter": "Datacenter",
-              "version_string": "Version"
+              "version": "Version"
             }
           }
         }
@@ -652,7 +652,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               },
@@ -664,7 +664,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               },
@@ -676,7 +676,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               }
@@ -830,7 +830,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               }
@@ -972,7 +972,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               }
@@ -1146,7 +1146,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               }
@@ -1251,7 +1251,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               }
@@ -1356,7 +1356,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               }
@@ -1454,7 +1454,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 20
           },
           "id": 5,
           "interval": "1m",
@@ -1637,7 +1637,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 21
           },
           "id": 6,
           "interval": "1m",
@@ -1870,7 +1870,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 6
+            "y": 22
           },
           "id": 7,
           "interval": "1m",
@@ -2001,7 +2001,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 16
+            "y": 32
           },
           "id": 8,
           "interval": "1m",
@@ -2120,7 +2120,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 23
           },
           "id": 105,
           "interval": "1m",
@@ -2352,7 +2352,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 9
+            "y": 25
           },
           "id": 107,
           "interval": "1m",
@@ -2459,7 +2459,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 26
           },
           "id": 101,
           "interval": "1m",
@@ -2575,7 +2575,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 27
           },
           "id": 109,
           "interval": "1m",

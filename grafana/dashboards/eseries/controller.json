@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1770118720622,
+  "iteration": 1770821483201,
   "links": [
     {
       "asDropdown": true,
@@ -789,7 +789,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               },
@@ -801,7 +801,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               },
@@ -813,7 +813,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "mbytes"
+                    "value": "bytes"
                   }
                 ]
               }

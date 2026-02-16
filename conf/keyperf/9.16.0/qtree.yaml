@@ -1,0 +1,41 @@
+name:                     Qtree
+query:                    api/storage/qtrees
+object:                   qtree
+
+client_timeout: 2m
+
+counters:
+  - ^^name                                => qtree
+  - ^^svm.name                            => svm
+  - ^^volume.name                         => volume
+  - ^statistics.status                    => status
+  - statistics.iops_raw.other             => other_ops
+  - statistics.iops_raw.read              => read_ops
+  - statistics.iops_raw.total             => total_ops
+  - statistics.iops_raw.write             => write_ops
+  # These latency metrics are only collected when the following conditions are met:
+  # - ONTAP version is 9.16.1+
+  # - ONTAP's extended qtree performance monitoring is enabled
+  # - You need to remount the affected volume to activate this feature
+  # See https://docs.netapp.com/us-en/ontap/volumes/qtrees-partition-your-volumes-concept.html#extended-qtree-performance-monitoring
+  # for details
+  - statistics.latency_raw.other          => other_latency
+  - statistics.latency_raw.read           => read_latency
+  - statistics.latency_raw.total          => total_latency
+  - statistics.latency_raw.write          => write_latency
+  - statistics.throughput_raw.other       => other_data
+  - statistics.throughput_raw.read        => read_data
+  - statistics.throughput_raw.total       => total_data
+  - statistics.throughput_raw.write       => write_data
+  - statistics.timestamp(timestamp)       => timestamp
+  - filter:
+      - name=!""
+      - statistics.timestamp=!"-"
+  - hidden_fields:
+      - statistics
+
+export_options:
+  instance_keys:
+    - qtree
+    - svm
+    - volume

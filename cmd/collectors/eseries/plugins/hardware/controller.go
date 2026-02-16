@@ -183,7 +183,7 @@ func (h *Hardware) initCodeVersionMatrix() {
 	instanceLabels.NewChildS("", "controller_id")
 	instanceLabels.NewChildS("", "controller")
 	instanceLabels.NewChildS("", "code_module")
-	instanceLabels.NewChildS("", "version_string")
+	instanceLabels.NewChildS("", "version")
 
 	mat.SetExportOptions(exportOptions)
 
@@ -302,17 +302,17 @@ func (h *Hardware) processController(controller gjson.Result, controllerID strin
 	// Set metrics
 	if m := mat.GetMetric("used_cache_memory"); m != nil {
 		if val := controller.Get("cacheMemorySize"); val.Exists() {
-			m.SetValueFloat64(inst, val.Float())
+			m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 		}
 	}
 	if m := mat.GetMetric("total_cache_memory"); m != nil {
 		if val := controller.Get("physicalCacheMemorySize"); val.Exists() {
-			m.SetValueFloat64(inst, val.Float())
+			m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 		}
 	}
 	if m := mat.GetMetric("processor_memory"); m != nil {
 		if val := controller.Get("processorMemorySize"); val.Exists() {
-			m.SetValueFloat64(inst, val.Float())
+			m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 		}
 	}
 
@@ -437,7 +437,7 @@ func (h *Hardware) processCodeVersions(controller gjson.Result, controllerID, co
 		inst.SetLabelTrimmed("controller_id", controllerID)
 		inst.SetLabelTrimmed("controller", controllerLocation)
 		inst.SetLabelTrimmed("code_module", codeModule)
-		inst.SetLabelTrimmed("version_string", versionString)
+		inst.SetLabelTrimmed("version", versionString)
 	}
 }
 
@@ -740,7 +740,7 @@ func (h *Hardware) processCacheMemoryDimms(response gjson.Result, controllerLabe
 		inst.SetLabelTrimmed("status", dimm.Get("status").ClonedString())
 		if val := dimm.Get("capacityInMegabytes"); val.Exists() {
 			if m := mat.GetMetric("capacity"); m != nil {
-				m.SetValueFloat64(inst, float64(val.Int()))
+				m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 			}
 		}
 		inst.SetLabelTrimmed("serial_number", dimm.Get("serialNumber").ClonedString())
@@ -788,7 +788,7 @@ func (h *Hardware) processCacheBackupDevices(response gjson.Result, controllerLa
 		inst.SetLabelTrimmed("device_type", device.Get("backupDeviceType").ClonedString())
 		if val := device.Get("backupDeviceCapacity"); val.Exists() {
 			if m := mat.GetMetric("capacity"); m != nil {
-				m.SetValueFloat64(inst, float64(val.Int()))
+				m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 			}
 		}
 		inst.SetLabelTrimmed("serial_number", device.Get("backupDeviceVpd.serialNumber").ClonedString())
