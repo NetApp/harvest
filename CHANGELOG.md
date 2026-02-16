@@ -5,17 +5,17 @@
 :pushpin: Highlights of this major release include:
 ## :star: New Features
 
-- :medal_sports: Harvest includes a new BETA E-Series collector for inventory and performance metrics along with five E-Series dashboards and 47 panels. 
-  Thanks to @mamoep, @ReBaunana, @erikgruetter, @mark.pendrick, @darthVikes, @crollorc, @heinowalther, @ngocchiongnoi, @summertony15, @Venumadhu for raising.
+- :medal_sports: Harvest includes a new BETA E-Series collector for inventory and performance metrics along with four E-Series dashboards and 47 panels. 
   E-Series newly added dashboards:
     - E-Series: Array
     - E-Series: Controller
     - E-Series: Hardware
     - E-Series: Volume
+  Thanks to @mamoep, @ReBaunana, @erikgruetter, @mark.pendrick, @darthVikes, @crollorc, @heinowalther, @ngocchiongnoi, @summertony15, @Venumadhu for raising.
 
-- :medal_sports: Harvest already supports VictoriaMetrics exporter in pull mode, and with this release Harvest also supports VictoriaMetrics in push mode. More detail available for VictoriaMetrics push mode https://docs.victoriametrics.com/victoriametrics/single-server-victoriametrics/#how-to-import-time-series-data
+- :medal_sports: Harvest already supports VictoriaMetrics exporter in pull mode, and with this release Harvest also supports VictoriaMetrics in push mode. More details are available for VictoriaMetrics push mode https://docs.victoriametrics.com/victoriametrics/single-server-victoriametrics/#how-to-import-time-series-data
 
-- :medal_sports: Harvest includes an opt-in disk-based cache for improved memory efficiency. More detail https://netapp.github.io/harvest/latest/prometheus-exporter/#disk_cache
+- :medal_sports: Harvest includes an opt-in disk-based cache for improved memory efficiency. More details https://netapp.github.io/harvest/latest/prometheus-exporter/#disk_cache
 
 - Harvest MCP now supports overriding the default HARVEST_TSDB_URL on a per-request basis. Thanks @gautcher for raising.
 
@@ -25,14 +25,14 @@
   - Harvest includes LUN Serial hex numbers in Lun table. Thanks @Venumadhu for raising.
 
 - :closed_book: Documentation additions:
-  - Included doc HTTP mode recommend binding to all interfaces. Thanks to Chris Gautcher for reporting!
-  - Added new Eseries documentation
-  - Included mcp installation.md
+  - Added documentation recommending binding to all interfaces in HTTP mode. Thanks to Chris Gautcher for reporting!
+  - Added new E-Series documentation
+  - Added mcp installation.md documentation
 
 - `harvest grafana metrics` prints the template path for each metric consumed in all Grafana dashboards. Thanks @songlin-rgb for raising.
 - `harvest grafana import` adds additional options to customize the orgId, title, uid, and tags when importing the Grafana dashboards. Thanks @spapadop for reporting.
 
-- Harvest provides an option to limit concurrent ONTAP HTTP connections. Thanks @songlin-rg for raising.
+- Harvest provides an option to limit concurrent ONTAP HTTP connections. Thanks @songlin-rgb for raising.
 
 - Harvest MCP enhancement:
   - Harvest MCP includes metric unit and type information for performance metrics. Thanks @gautcher for reporting.
@@ -72,10 +72,11 @@
 - Add support for specifying organization ID when importing dashb… ([#4087](https://github.com/NetApp/harvest/pull/4087))
 - Add units for ONTAP metrics missing them ([#4091](https://github.com/NetApp/harvest/pull/4091))
 - Add health endpoint in harvest mcp ([#4097](https://github.com/NetApp/harvest/pull/4097))
-- ESeries collector infrastructure ([#4088](https://github.com/NetApp/harvest/pull/4088))
+- E-Series collector infrastructure ([#4088](https://github.com/NetApp/harvest/pull/4088))
 - Include options for modifying title, uid, tags when importing d… ([#4101](https://github.com/NetApp/harvest/pull/4101))
 - Time series retry in harvest MCP ([#4105](https://github.com/NetApp/harvest/pull/4105))
-- ESeries hardware metrics ([#4112](https://github.com/NetApp/harvest/pull/4112))
+- E-Series hardware metrics ([#4112](https://github.com/NetApp/harvest/pull/4112))
+- Enable Qtree latency collection via KeyPerf collector ([#4139](https://github.com/NetApp/harvest/pull/4139))
 
 
 ### :bug: Bug Fixes
@@ -89,9 +90,9 @@
 - Adding dynamic threshold of link speed in 2 network tables ([#4062](https://github.com/NetApp/harvest/pull/4062))
 - RestPerf:Volume volume aggregate metrics error handling ([#4098](https://github.com/NetApp/harvest/pull/4098))
 - Remove unsafe GetChildS GetChildren chaining ([#4102](https://github.com/NetApp/harvest/pull/4102))
-- Eseries dashboard names ([#4114](https://github.com/NetApp/harvest/pull/4114))
+- E-Series dashboard names ([#4114](https://github.com/NetApp/harvest/pull/4114))
 - Avoid double-counting shelf power ([#4116](https://github.com/NetApp/harvest/pull/4116))
-- Eseries dashboard names for container ([#4118](https://github.com/NetApp/harvest/pull/4118))
+- E-Series dashboard names for container ([#4118](https://github.com/NetApp/harvest/pull/4118))
 - Volume uuid should be instance_uuid ([#4121](https://github.com/NetApp/harvest/pull/4121))
 - Top file note should point to correct discussion ([#4123](https://github.com/NetApp/harvest/pull/4123))
 - Enable multiselect for array dashboard ([#4125](https://github.com/NetApp/harvest/pull/4125))
@@ -100,14 +101,15 @@
 - Use clonedstring for gjson ([#4132](https://github.com/NetApp/harvest/pull/4132))
 - Duplicate metrics for flashpool ([#4134](https://github.com/NetApp/harvest/pull/4134))
 - Rest client should use its own error struct ([#4135](https://github.com/NetApp/harvest/pull/4135))
+- KeyPerf collector doesn't calculate flexgroup latency ([#4137](https://github.com/NetApp/harvest/pull/4137))
 
 ### :closed_book: Documentation
 - Update rest strategy guide ([#4039](https://github.com/NetApp/harvest/pull/4039))
 - For HTTP mode recommend binding to all interfaces ([#4065](https://github.com/NetApp/harvest/pull/4065))
 - Mention flagship models and which model was used for examples ([#4084](https://github.com/NetApp/harvest/pull/4084))
-- Eseries documentation ([#4115](https://github.com/NetApp/harvest/pull/4115))
+- E-Series documentation ([#4115](https://github.com/NetApp/harvest/pull/4115))
 - Fix mcp installation.md ([#4124](https://github.com/NetApp/harvest/pull/4124))
-- Eseries metric documentation ([#4133](https://github.com/NetApp/harvest/pull/4133))
+- E-Series metric documentation ([#4133](https://github.com/NetApp/harvest/pull/4133))
 
 ### :wrench: Testing
 - Ensure node GetChildren does not panic ([#4110](https://github.com/NetApp/harvest/pull/4110))
