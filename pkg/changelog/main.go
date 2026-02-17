@@ -271,9 +271,9 @@ func (c *cli) printPrSummary() {
 			os.Exit(1)
 		}
 		if i == len(c.prOrder)-1 {
-			b.WriteString(fmt.Sprintf("and %d %s pull requests.", len(prs), pt.summary))
+			_, _ = fmt.Fprintf(&b, "and %d %s pull requests.", len(prs), pt.summary)
 		} else {
-			b.WriteString(fmt.Sprintf("%d %s, ", len(prs), pt.summary))
+			_, _ = fmt.Fprintf(&b, "%d %s, ", len(prs), pt.summary)
 		}
 	}
 	fmt.Printf("\n:seedling: This release includes %s\n", b.String())
