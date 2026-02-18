@@ -31,7 +31,7 @@ type LabelsResponse struct {
 type TSDBOverride struct {
 	URL      string `json:"tsdb_url,omitempty" jsonschema:"Optional override for Prometheus/VictoriaMetrics URL. If not provided, uses the default HARVEST_TSDB_URL from server configuration. Example: http://prometheus-prod:9090"`
 	Username string `json:"tsdb_username,omitempty" jsonschema:"Optional basic auth username. Only used if tsdb_url is provided. Overrides default authentication."`
-	Password string `json:"tsdb_password,omitempty" jsonschema:"Optional basic auth password. Only used if tsdb_url is provided. Overrides default authentication."`
+	Password string `json:"tsdb_password,omitempty" jsonschema:"Optional basic auth password. Only used if tsdb_url is provided. Overrides default authentication."` //nolint:gosec
 }
 
 type QueryRequest struct {
