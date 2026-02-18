@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Feb-13
+Creation Date : 2026-Feb-18
 NX-OS Version: 9.3.12
 ```
 
@@ -347,6 +347,25 @@ The `cisco_interface_crc_errors` metric is visualized in the following Grafana d
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | Cisco: Switch | Traffic | timeseries | [Top $TopResources Interface CRC error](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=34) |
+///
+
+
+
+### cisco_interface_eth_out_discards
+
+Number of Ethernet output discarded packets in the Cisco switch.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_outdiscard` | conf/ciscorest/nxos/9.3.12/interface.yaml |
+
+The `cisco_interface_eth_out_discards` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| Cisco: Switch | Traffic | timeseries | [Top $TopResources Ethernet Out Discards](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=49) |
 ///
 
 

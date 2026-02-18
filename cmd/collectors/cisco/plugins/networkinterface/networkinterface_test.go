@@ -48,6 +48,7 @@ func TestInterface_parseInterface(t *testing.T) {
 			{metric: adminUp, value: "1"},
 			{metric: crcErrors, value: "0"},
 			{metric: errorStatus, value: "0"},
+			{metric: ethOutDiscard, value: "8"},
 			{metric: receiveBroadcast, value: "705871"},
 			{metric: receiveBytes, value: "65962757720684"},
 			{metric: receiveErrors, value: "0"},

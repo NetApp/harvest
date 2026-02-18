@@ -17,6 +17,7 @@ const (
 	adminUp          = "admin_up"
 	crcErrors        = "crc_errors"
 	errorStatus      = "error_status"
+	ethOutDiscard    = "eth_out_discards"
 	receiveBroadcast = "receive_broadcast"
 	receiveBytes     = "receive_bytes"
 	receiveErrors    = "receive_errors"
@@ -32,6 +33,7 @@ var metrics = []string{
 	adminUp,
 	crcErrors,
 	errorStatus,
+	ethOutDiscard,
 	receiveBroadcast,
 	receiveBytes,
 	receiveErrors,
@@ -149,6 +151,7 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		ethCrcErrors := value.Get("eth_crc").Float()
 		ethInDrops := value.Get("eth_in_ifdown_drops").Float()
 		ethOutDrops := value.Get("eth_out_drops").Float()
+		ethOutDiscards := value.Get("eth_outdiscard").Float()
 
 		instanceKey := interfaceName + "_" + macAddr
 
@@ -169,6 +172,7 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		instance.SetLabel("speed", ethSpeed)
 
 		envMat.GetMetric(crcErrors).SetValueFloat64(instance, ethCrcErrors)
+		envMat.GetMetric(ethOutDiscard).SetValueFloat64(instance, ethOutDiscards)
 		envMat.GetMetric(receiveBytes).SetValueFloat64(instance, ethInBytes)
 		envMat.GetMetric(receiveErrors).SetValueFloat64(instance, ethInErrors)
 		envMat.GetMetric(transmitBytes).SetValueFloat64(instance, ethOutBytes)

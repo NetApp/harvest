@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Feb-13
+Creation Date : 2026-Feb-18
 ONTAP Version: 9.16.1
 ```
 
@@ -16363,7 +16363,17 @@ Performance metric for other I/O operations in bytes per seconds. Other I/O oper
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
+
+
+
+### qtree_other_latency
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/qtrees` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.other | conf/keyperf/9.16.0/qtree.yaml |
 
 
 
@@ -16373,7 +16383,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
 
 
 
@@ -16383,7 +16393,17 @@ Performance metric for read I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
+
+
+
+### qtree_read_latency
+
+Performance metric for read I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/qtrees` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.read | conf/keyperf/9.16.0/qtree.yaml |
 
 
 
@@ -16393,7 +16413,7 @@ Performance metric for read I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
 
 
 
@@ -16403,7 +16423,17 @@ Performance metric aggregated over all types of I/O operations in bytes per seco
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
+
+
+
+### qtree_total_latency
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/qtrees` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.total | conf/keyperf/9.16.0/qtree.yaml |
 
 
 
@@ -16414,7 +16444,7 @@ Summation of NFS ops, CIFS ops, CSS ops and internal ops
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/qtree` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/qtree.yaml |
-| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
 | ZapiPerf | `perf-object-get-instances qtree` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
 The `qtree_total_ops` metric is visualized in the following Grafana dashboards:
@@ -16434,7 +16464,17 @@ Performance metric for write I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
+
+
+
+### qtree_write_latency
+
+Performance metric for write I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/qtrees` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.write | conf/keyperf/9.16.0/qtree.yaml |
 
 
 
@@ -16444,7 +16484,7 @@ Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+| KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.16.0/qtree.yaml |
 
 
 
