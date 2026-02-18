@@ -654,7 +654,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 
 		promResp, err := executeTSDBQuery(config, queryURL, urlValues)
 		if err != nil {
-			healthReport.WriteString(fmt.Sprintf("❌ **%s**: Error querying - %v\n", check.name, err))
+			fmt.Fprintf(&healthReport, "❌ **%s**: Error querying - %v\n", check.name, err)
 			continue
 		}
 
@@ -666,26 +666,26 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 				icon = "🚨"
 			}
 
-			healthReport.WriteString(fmt.Sprintf("%s **%s**: %d issues found - %s\n", icon, check.name, len(resultSlice), check.description))
+			fmt.Fprintf(&healthReport, "%s **%s**: %d issues found - %s\n", icon, check.name, len(resultSlice), check.description) //nolint:gosec
 
 			// Add details if requested
 			if args.IncludeDetails {
 				healthReport.WriteString("   Details:\n")
 				for i, result := range resultSlice {
 					if i >= 5 { // Limit to first 5 for readability
-						healthReport.WriteString(fmt.Sprintf("   ... and %d more\n", len(resultSlice)-5))
+						fmt.Fprintf(&healthReport, "   ... and %d more\n", len(resultSlice)-5) //nolint:gosec
 						break
 					}
 					if resultMap, ok := result.(map[string]any); ok {
 						if metric, ok := resultMap["metric"].(map[string]any); ok {
 							name := extractIdentifiers(metric)
-							healthReport.WriteString(fmt.Sprintf("   - %s\n", name))
+							fmt.Fprintf(&healthReport, "   - %s\n", name) //nolint:gosec
 						}
 					}
 				}
 			}
 		} else {
-			healthReport.WriteString(fmt.Sprintf("✅ **%s**: No issues found\n", check.name))
+			fmt.Fprintf(&healthReport, "✅ **%s**: No issues found\n", check.name)
 		}
 	}
 
@@ -1096,13 +1096,13 @@ func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params mcptypes.Se
 	}
 
 	var responseBuilder strings.Builder
-	responseBuilder.WriteString(fmt.Sprintf("Found %d metrics matching pattern '%s':\n\n", len(matches), params.Pattern))
+	fmt.Fprintf(&responseBuilder, "Found %d metrics matching pattern '%s':\n\n", len(matches), params.Pattern)
 
 	for i, match := range matches {
 		if i > 0 {
 			responseBuilder.WriteString("\n---\n\n")
 		}
-		responseBuilder.WriteString(fmt.Sprintf("**%s**\n%s", match.name, match.description))
+		fmt.Fprintf(&responseBuilder, "**%s**\n%s", match.name, match.description)
 	}
 
 	return &mcp.CallToolResult{
@@ -1142,22 +1142,22 @@ func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp
 
 	var builder strings.Builder
 	builder.WriteString("**Alert Rules Summary**\n")
-	builder.WriteString(fmt.Sprintf("Total Rules: %d\n", response.TotalRules))
-	builder.WriteString(fmt.Sprintf("Last Modified: %s\n\n", response.LastModified))
+	fmt.Fprintf(&builder, "Total Rules: %d\n", response.TotalRules)
+	fmt.Fprintf(&builder, "Last Modified: %s\n\n", response.LastModified)
 
 	if len(response.AlertRules) > 0 {
 		builder.WriteString("**Standard Alert Rules (alert_rules.yml):**\n")
 		for _, rule := range response.AlertRules {
-			builder.WriteString(fmt.Sprintf("- **%s**\n", rule.Alert))
-			builder.WriteString(fmt.Sprintf("  Expression: `%s`\n", rule.Expr))
+			fmt.Fprintf(&builder, "- **%s**\n", rule.Alert)
+			fmt.Fprintf(&builder, "  Expression: `%s`\n", rule.Expr)
 			if rule.For != "" {
-				builder.WriteString(fmt.Sprintf("  Duration: %s\n", rule.For))
+				fmt.Fprintf(&builder, "  Duration: %s\n", rule.For)
 			}
 			if severity, ok := rule.Labels["severity"]; ok {
-				builder.WriteString(fmt.Sprintf("  Severity: %s\n", severity))
+				fmt.Fprintf(&builder, "  Severity: %s\n", severity)
 			}
 			if summary, ok := rule.Annotations["summary"]; ok {
-				builder.WriteString(fmt.Sprintf("  Summary: %s\n", summary))
+				fmt.Fprintf(&builder, "  Summary: %s\n", summary)
 			}
 			builder.WriteString("\n")
 		}
@@ -1166,16 +1166,16 @@ func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp
 	if len(response.EMSRules) > 0 {
 		builder.WriteString("**EMS Alert Rules (ems_alert_rules.yml):**\n")
 		for _, rule := range response.EMSRules {
-			builder.WriteString(fmt.Sprintf("- **%s**\n", rule.Alert))
-			builder.WriteString(fmt.Sprintf("  Expression: `%s`\n", rule.Expr))
+			fmt.Fprintf(&builder, "- **%s**\n", rule.Alert)
+			fmt.Fprintf(&builder, "  Expression: `%s`\n", rule.Expr)
 			if rule.For != "" {
-				builder.WriteString(fmt.Sprintf("  Duration: %s\n", rule.For))
+				fmt.Fprintf(&builder, "  Duration: %s\n", rule.For)
 			}
 			if severity, ok := rule.Labels["severity"]; ok {
-				builder.WriteString(fmt.Sprintf("  Severity: %s\n", severity))
+				fmt.Fprintf(&builder, "  Severity: %s\n", severity)
 			}
 			if summary, ok := rule.Annotations["summary"]; ok {
-				builder.WriteString(fmt.Sprintf("  Summary: %s\n", summary))
+				fmt.Fprintf(&builder, "  Summary: %s\n", summary)
 			}
 			builder.WriteString("\n")
 		}

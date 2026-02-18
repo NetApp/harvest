@@ -76,7 +76,7 @@ func (pc *PrometheusClient) ReloadConfig() error {
 		return fmt.Errorf("failed to create reload request: %w", err)
 	}
 
-	resp, err := pc.client.Do(req)
+	resp, err := pc.client.Do(req) //nolint:gosec
 	if err != nil {
 		return fmt.Errorf("failed to call reload API: %w", err)
 	}

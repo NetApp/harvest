@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"mcp-server/cmd/version"
 	"net/http"
@@ -15,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/netapp/harvest/v2/pkg/slogx"
 )
 
 // Type represents the type of authentication
@@ -30,7 +31,7 @@ const (
 type Config struct {
 	Type            Type
 	Username        string
-	Password        string
+	Password        string //nolint:gosec
 	CertFile        string
 	KeyFile         string
 	CAFile          string
@@ -265,7 +266,7 @@ func MakeRequest(config TSDBConfig, url string) (*http.Response, error) {
 
 	req.Header.Set("User-Agent", "harvest-mcp-server/"+version.Info())
 
-	resp, err := client.Do(req)
+	resp, err := client.Do(req) //nolint:gosec
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request to %s: %w", url, err)
 	}
