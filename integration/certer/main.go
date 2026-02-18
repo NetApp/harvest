@@ -191,8 +191,7 @@ func addCertificateAuthToHarvestUser() error {
 			Fetch(context.Background())
 
 		if err != nil {
-			var oe models.OntapError
-			if errors.As(err, &oe) {
+			if oe, ok := errors.AsType[models.OntapError](err); ok {
 				if oe.StatusCode == http.StatusConflict {
 					// duplicate entry - that's fine, ignore
 					continue

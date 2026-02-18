@@ -96,17 +96,15 @@ func TestPollerUnion(t *testing.T) {
 	TestLoadHarvestConfig(testYml)
 	addr := "addr"
 	user := "user"
-	no := false
-	yes := true
 	defaults := Poller{
 		Addr:           addr,
 		Collectors:     []Collector{{Name: "0"}, {Name: "1"}, {Name: "2"}, {Name: "3"}},
 		Username:       user,
-		UseInsecureTLS: &yes,
+		UseInsecureTLS: new(true),
 		IsKfs:          true,
 	}
 	p := Poller{
-		UseInsecureTLS: &no,
+		UseInsecureTLS: new(false),
 		IsKfs:          false,
 	}
 	p.Union(&defaults)

@@ -1743,8 +1743,7 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 			if p.remote.IsASAr2() {
 				for _, col := range ontapCols {
 					if slices.Equal(*col.Templates, *conf.DefaultTemplates) {
-						newTemplates := append(*col.Templates, "asar2/default.yaml", "asar2/custom.yaml")
-						col.Templates = &newTemplates
+						col.Templates = new(append(*col.Templates, "asar2/default.yaml", "asar2/custom.yaml"))
 						validCollectors = append(validCollectors, col)
 					} else {
 						validCollectors = append(validCollectors, col)

@@ -394,8 +394,7 @@ func (s *Sensor) Init(remote conf.Remote) error {
 	s.hasREST = true
 
 	if err := s.client.Init(5, remote); err != nil {
-		var re *errs.RestError
-		if errors.As(err, &re) && re.StatusCode == http.StatusNotFound {
+		if re, ok := errors.AsType[*errs.RestError](err); ok && re.StatusCode == http.StatusNotFound {
 			s.SLogger.Warn("Cluster does not support REST. Power plugin disabled")
 			s.hasREST = false
 			return nil

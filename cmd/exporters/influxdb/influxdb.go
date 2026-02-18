@@ -89,12 +89,10 @@ func (e *InfluxDB) Init() error {
 		}
 		if port = e.Params.Port; port == nil {
 			e.Logger.Debug("using default port", slog.Int("default", defaultPort))
-			defPort := defaultPort
-			port = &defPort
+			port = new(defaultPort)
 		}
 		if version = e.Params.Version; version == nil {
-			v := defaultAPIVersion
-			version = &v
+			version = new(defaultAPIVersion)
 		}
 		e.Logger.Debug("using api version", slog.String("version", *version))
 
@@ -109,14 +107,12 @@ func (e *InfluxDB) Init() error {
 		e.Logger.Debug("using organization", slog.String("org", *org))
 
 		if precision = e.Params.Precision; precision == nil {
-			p := defaultAPIPrecision
-			precision = &p
+			precision = new(defaultAPIPrecision)
 		}
 		e.Logger.Debug("using api precision", slog.String("precision", *precision))
 
 		//goland:noinspection HttpUrlsUsage
-		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
-		url = &urlToUSe
+		url = new("http://" + *addr + ":" + strconv.Itoa(*port))
 		e.url = fmt.Sprintf("%s/api/v%s/write?org=%s&bucket=%s&precision=%s",
 			*url, *version, url2.PathEscape(*org), url2.PathEscape(*bucket), *precision)
 	}

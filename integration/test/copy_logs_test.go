@@ -70,8 +70,7 @@ func checkLogs(t *testing.T, container docker.Container, info containerInfo) {
 	//   1 means no lines matched
 	//  >1 means an error occurred
 	if err != nil {
-		var ee *exec.ExitError
-		if errors.As(err, &ee) {
+		if ee, ok := errors.AsType[*exec.ExitError](err); ok {
 			// an exit code of 1 means there were no matches, that's OK
 			if ee.ExitCode() == 1 {
 				return

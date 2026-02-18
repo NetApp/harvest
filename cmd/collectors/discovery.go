@@ -116,8 +116,7 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 
 		returnErr := true
 
-		var he errs.HarvestError
-		if errors.As(err, &he) {
+		if he, ok := errors.AsType[errs.HarvestError](err); ok {
 			switch {
 			case he.ErrNum == errs.ErrNumZAPISuspended, he.StatusCode >= 400 && he.StatusCode < 500:
 				// ZAPI is suspended, or we got a 4xx error, so we assume that ZAPI is not available

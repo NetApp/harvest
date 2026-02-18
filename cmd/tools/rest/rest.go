@@ -130,8 +130,7 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 	// Init is called to get the cluster version
 	err = client.Init(1, conf.Remote{})
 	if err != nil {
-		var re *errs.RestError
-		if errors.As(err, &re) {
+		if re, ok := errors.AsType[*errs.RestError](err); ok {
 			return nil, fmt.Errorf("poller=%s statusCode=%d", poller.Name, re.StatusCode)
 		}
 		return nil, fmt.Errorf("poller=%s %w", poller.Name, err)

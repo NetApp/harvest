@@ -98,8 +98,7 @@ var (
 )
 
 func IsRestErr(err error, sentinel OntapRestCode) bool {
-	var restErr *RestError
-	if errors.As(err, &restErr) {
+	if restErr, ok := errors.AsType[*RestError](err); ok {
 		if restErr.Code == sentinel.Code {
 			return true
 		}

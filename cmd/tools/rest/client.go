@@ -286,8 +286,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 	body, err = doInvoke()
 
 	if err != nil {
-		var re *errs.RestError
-		if errors.As(err, &re) {
+		if re, ok := errors.AsType[*errs.RestError](err); ok {
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, update the client's password,
 			// and try again

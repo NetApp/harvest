@@ -206,8 +206,7 @@ func (c *Client) invoke() ([]byte, error) {
 	resp, err = c.fetch()
 	if err != nil {
 		// check that the auth token has not expired
-		var storageGridErr errs.StorageGridError
-		if errors.As(err, &storageGridErr) {
+		if storageGridErr, ok := errors.AsType[errs.StorageGridError](err); ok {
 			if storageGridErr.IsAuthErr() {
 				// If using authToken from credential script, expire cache before retry
 				// so fetchTokenWithAuthRetry gets fresh token instead of cached expired one
@@ -432,8 +431,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 
 	err := fetchToken()
 	if err != nil {
-		var storageGridErr errs.StorageGridError
-		if errors.As(err, &storageGridErr) {
+		if storageGridErr, ok := errors.AsType[errs.StorageGridError](err); ok {
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, and try again
 			if storageGridErr.IsAuthErr() {

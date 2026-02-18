@@ -44,8 +44,7 @@ func checkMetrics(t *testing.T, port int) {
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
 	if err != nil {
-		var ee *exec.ExitError
-		if !errors.As(err, &ee) {
+		if _, ok := errors.AsType[*exec.ExitError](err); !ok {
 			// An exit code can't be used since we need to ignore metrics that are not valid but can't change
 			t.Errorf("ERR checking metrics cli=%s err=%v output=%s", cli, err, string(output))
 			return
