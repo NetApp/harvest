@@ -776,8 +776,7 @@ func ZapiPoller(n *node.Node) *Poller {
 		p.TLSMinVersion = tlsMinVersion
 	}
 	if logSet := n.GetChildS("log"); logSet != nil {
-		names := logSet.GetAllChildNamesS()
-		p.LogSet = &names
+		p.LogSet = new(logSet.GetAllChildNamesS())
 	}
 	if confPath := n.GetChildContentS("conf_path"); confPath != "" {
 		p.ConfPath = confPath

@@ -436,8 +436,7 @@ func (c *Client) invokeWithAuthRetry(withTimers bool, headers ...map[string]stri
 	resp, t1, t2, err := c.invoke(withTimers, headers...)
 
 	if err != nil {
-		var he errs.HarvestError
-		if errors.As(err, &he) {
+		if he, ok := errors.AsType[errs.HarvestError](err); ok {
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, update the client's password,
 			// and try again

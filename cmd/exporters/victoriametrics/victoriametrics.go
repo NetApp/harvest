@@ -98,18 +98,15 @@ func (v *VictoriaMetrics) Init() error {
 		}
 		if port = v.Params.Port; port == nil {
 			v.Logger.Debug("using default port", slog.Int("default", defaultPort))
-			defPort := defaultPort
-			port = &defPort
+			port = new(defaultPort)
 		}
 		if version = v.Params.Version; version == nil {
-			v := defaultAPIVersion
-			version = &v
+			version = new(defaultAPIVersion)
 		}
 		v.Logger.Debug("using api version", slog.String("version", *version))
 
 		//goland:noinspection HttpUrlsUsage
-		urlToUse := "http://" + *addr + ":" + strconv.Itoa(*port)
-		url = &urlToUse
+		url = new("http://" + *addr + ":" + strconv.Itoa(*port))
 		v.url = fmt.Sprintf("%s/api/v%s/import/prometheus", *url, *version)
 	}
 
