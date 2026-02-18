@@ -11,6 +11,7 @@
   "cisco_environment_sensor_temp": "Displays current temperature of sensor in the Cisco switch.",
   "cisco_interface_admin_up": "Displays admin state of the interface in the Cisco switch.",
   "cisco_interface_crc_errors": "Displays CRC of interface in the Cisco switch.",
+  "cisco_interface_eth_out_discards": "Number of Ethernet output discarded packets in the Cisco switch.",
   "cisco_interface_receive_bytes": "Displays bytes input of the interface in the Cisco switch.",
   "cisco_interface_receive_drops": "Displays input if-down drops of interface in the Cisco switch.",
   "cisco_interface_receive_errors": "Displays input errors of interface in the Cisco switch.",

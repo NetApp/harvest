@@ -124,6 +124,14 @@ counters:
         CiscoCounter: eth_crc
         Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
+  - Name: cisco_interface_eth_out_discards
+    Description: Number of Ethernet output discarded packets in the Cisco switch.
+    APIs:
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_outdiscard
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
   - Name: cisco_interface_receive_bytes
     Description: Displays bytes input of the interface in the Cisco switch.
     APIs:

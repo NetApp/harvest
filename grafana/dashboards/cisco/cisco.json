@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1732181856878,
+  "iteration": 1771439614355,
   "links": [
     {
       "asDropdown": true,
@@ -1395,7 +1395,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 12
           },
           "id": 48,
           "options": {
@@ -1544,7 +1544,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 17
+            "y": 24
           },
           "id": 28,
           "options": {
@@ -1636,7 +1636,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 17
+            "y": 24
           },
           "id": 29,
           "options": {
@@ -1728,7 +1728,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 25
+            "y": 32
           },
           "id": 31,
           "options": {
@@ -1827,7 +1827,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 25
+            "y": 32
           },
           "id": 32,
           "options": {
@@ -1926,7 +1926,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 33
+            "y": 40
           },
           "id": 34,
           "options": {
@@ -1957,6 +1957,98 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "Top $TopResources Interface CRC error",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Displays Ethernet output discarded packets",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "pps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 40
+          },
+          "id": 49,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max",
+                "diff"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_eth_out_discards{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_eth_out_discards{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{switch}} - {{interface}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Ethernet Out Discards",
           "type": "timeseries"
         }
       ],
@@ -2734,5 +2826,5 @@
   "timezone": "",
   "title": "Cisco: Switch",
   "uid": "cisco-switch",
-  "version": 2
+  "version": 3
 }
