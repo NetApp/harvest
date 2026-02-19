@@ -457,7 +457,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster, svm) (\n    rate(\n      svm_vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
+          "expr": "sum by (cluster, svm) (\n    svm_vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -571,7 +571,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster, svm) (\n    rate(\n      svm_vscan_scan_noti_received_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_noti_received_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
+          "expr": "sum by (cluster, svm) (\n    svm_vscan_scan_noti_received_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_noti_received_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -785,7 +785,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "sum by (cluster, scanner, svm) (\n    rate(\n      vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, scanner, svm) (\n      avg_over_time(\n        vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (cluster, scanner, svm) (\n    vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, scanner, svm) (\n      avg_over_time(\n        vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"

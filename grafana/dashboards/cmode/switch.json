@@ -432,7 +432,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface) (\n    rate(\n      ethernet_switch_port_transmit_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_transmit_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface) (\n    ethernet_switch_port_transmit_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_transmit_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
@@ -524,7 +524,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface) (\n    rate(\n      ethernet_switch_port_receive_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_receive_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface) (\n    ethernet_switch_port_receive_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_receive_packets{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
@@ -616,14 +616,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface) (\n    rate(\n      ethernet_switch_port_receive_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_receive_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface) (\n    ethernet_switch_port_receive_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_receive_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "Receive - {{switch}} - {{interface}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface) (\n    rate(\n      ethernet_switch_port_transmit_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_transmit_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface) (\n    ethernet_switch_port_transmit_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_transmit_discards{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "Transmit - {{switch}} - {{interface}}",
               "refId": "B"
@@ -715,14 +715,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface) (\n    rate(\n      ethernet_switch_port_transmit_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_transmit_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface) (\n    ethernet_switch_port_transmit_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_transmit_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "Transmit - {{switch}} - {{interface}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface) (\n    rate(\n      ethernet_switch_port_receive_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_receive_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface) (\n    ethernet_switch_port_receive_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\n  )\nand on (switch, interface)\n  topk(\n    $TopResources,\n    sum by (switch, interface) (\n      avg_over_time(\n        ethernet_switch_port_receive_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "Receive - {{switch}} - {{interface}}",
               "refId": "B"
