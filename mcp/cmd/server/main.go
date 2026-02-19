@@ -198,8 +198,8 @@ func formatDataResponse(data any) (*mcp.CallToolResult, any, error) {
 
 // resolveTSDBConfig returns the appropriate TSDBConfig to use for a request
 // If override parameters are provided, creates a new config otherwise uses default
-func resolveTSDBConfig(override *mcptypes.TSDBOverride) auth.TSDBConfig {
-	if override == nil || override.URL == "" {
+func resolveTSDBConfig(override mcptypes.TSDBOverride) auth.TSDBConfig {
+	if override.URL == "" {
 		return tsdbConfig
 	}
 
@@ -392,9 +392,18 @@ func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMe
 
 	config := resolveTSDBConfig(args.TSDBOverride)
 
-	if len(args.Matches) > 0 {
-		logger.Debug("Using server-side filtering with matches", slog.Any("matches", args.Matches))
-		body, err = makePrometheusAPICallWithMatches(config, "/api/v1/label/__name__/values", args.Matches)
+	var matchList []string
+	if args.Matches != "" {
+		for m := range strings.SplitSeq(args.Matches, ",") {
+			if s := strings.TrimSpace(m); s != "" {
+				matchList = append(matchList, s)
+			}
+		}
+	}
+
+	if len(matchList) > 0 {
+		logger.Debug("Using server-side filtering with matches", slog.Any("matches", matchList))
+		body, err = makePrometheusAPICallWithMatches(config, "/api/v1/label/__name__/values", matchList)
 	} else {
 		body, err = makePrometheusAPICall(config, "/api/v1/label/__name__/values")
 	}
@@ -413,12 +422,12 @@ func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMe
 	}
 
 	metrics := promResp.Data
-	if args.Match != "" && len(args.Matches) == 0 {
+	if args.Match != "" && len(matchList) == 0 {
 		metrics = filterStrings(metrics, args.Match)
 	}
 
 	// Include descriptions only when filtering is applied to limit response size
-	includeDescriptions := (args.Match != "" || len(args.Matches) > 0) && len(metricDescriptions) > 0
+	includeDescriptions := (args.Match != "" || len(matchList) > 0) && len(metricDescriptions) > 0
 
 	metricsArray := make([]map[string]any, 0, len(metrics))
 	for _, metric := range metrics {
@@ -436,10 +445,10 @@ func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMe
 		"data": map[string]any{
 			"total_count": len(metrics),
 			"filtering": map[string]any{
-				"server_side_matches": len(args.Matches) > 0,
-				"client_side_pattern": args.Match != "" && len(args.Matches) == 0,
+				"server_side_matches": len(matchList) > 0,
+				"client_side_pattern": args.Match != "" && len(matchList) == 0,
 				"pattern_used":        args.Match,
-				"matches_used":        args.Matches,
+				"matches_used":        matchList,
 			},
 			"descriptions_included": includeDescriptions,
 			"metrics":               metricsArray,
