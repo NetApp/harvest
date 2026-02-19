@@ -111,11 +111,11 @@ USE THIS TOOL WHEN:
 
 FILTERING OPTIONS:
 - No filter: Returns all available metric names (can be large!)
-- match='volume': Simple pattern matching in metric names
-- match='.*latency.*': Regex pattern for complex filtering
-- matches=['{__name__=~"volume.*"}]: Server-side filtering (more efficient)
+- match='volume': Simple string matching in metric names
+- match='.*volume.*(latency|data|throughput).*': Regex pattern for complex filtering
+- matches='{__name__=~"volume.*latency.*"},{__name__=~"volume.*data$"}': Comma-separated PromQL label matchers for efficient server-side filtering
 
-TIP: For large systems, use search_metrics with specific patterns instead of listing all metrics.`
+TIP: For large systems, use 'match' with regex alternation (e.g., '.*volume.*(latency|data|throughput).*') or search_metrics for targeted results.`
 
 const GetActiveAlertsDesc = `Get active alerts from Prometheus or VictoriaMetrics with summary by severity level.
 Provides grouped view of critical, warning, and info alerts for quick operational assessment.

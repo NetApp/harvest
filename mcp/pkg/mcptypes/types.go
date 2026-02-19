@@ -35,49 +35,49 @@ type TSDBOverride struct {
 }
 
 type QueryRequest struct {
-	Query        string        `json:"query" jsonschema:"PromQL query string"`
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	Query        string       `json:"query" jsonschema:"PromQL query string"`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type RangeQueryRequest struct {
-	Query        string        `json:"query" jsonschema:"PromQL query string"`
-	Start        string        `json:"start" jsonschema:"Start timestamp (RFC3339 or Unix timestamp)"`
-	End          string        `json:"end" jsonschema:"End timestamp (RFC3339 or Unix timestamp)"`
-	Step         string        `json:"step" jsonschema:"Query resolution step width (e.g., '15s', '1m', '1h')"`
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	Query        string       `json:"query" jsonschema:"PromQL query string"`
+	Start        string       `json:"start" jsonschema:"Start timestamp (RFC3339 or Unix timestamp)"`
+	End          string       `json:"end" jsonschema:"End timestamp (RFC3339 or Unix timestamp)"`
+	Step         string       `json:"step" jsonschema:"Query resolution step width (e.g., '15s', '1m', '1h')"`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type ListMetricsRequest struct {
-	Match        string        `json:"match,omitempty" jsonschema:"Optional metric name pattern to filter results. Supports: 1) Simple string matching (e.g., 'volume'), 2) Regex patterns (e.g., '.*volume.*space.*'), 3) PromQL label matchers (e.g., '{__name__=~\".*volume.*\"}')"`
-	Matches      []string      `json:"matches,omitempty" jsonschema:"Array of PromQL label matchers for server-side filtering (e.g., ['{__name__=~\".*volume.*space.*\"}']). More efficient than 'match' for complex patterns."`
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	Match        string       `json:"match,omitempty" jsonschema:"Optional metric name pattern to filter results. Supports: 1) Simple string matching (e.g., 'volume'), 2) Regex patterns (e.g., '.*volume.*(latency|data|throughput).*'), 3) PromQL label matchers (e.g., '{__name__=~\".*volume.*\"}')"`
+	Matches      string       `json:"matches,omitempty" jsonschema:"Comma-separated PromQL label matchers for server-side filtering. Example: '{__name__=~\"volume.*latency.*\"},{__name__=~\"volume.*data$\"}'. Each matcher is a PromQL selector passed to Prometheus for efficient server-side filtering."`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type InfrastructureHealthRequest struct {
-	IncludeDetails bool          `json:"includeDetails,omitempty" jsonschema:"Include detailed metrics in the response"`
-	TSDBOverride   *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	IncludeDetails bool         `json:"includeDetails,omitempty" jsonschema:"Include detailed metrics in the response"`
+	TSDBOverride   TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type ListLabelValuesRequest struct {
-	Label        string        `json:"label" jsonschema:"Label name to get values for (e.g., 'cluster', 'node', 'volume')"`
-	Match        string        `json:"match,omitempty" jsonschema:"Optional pattern to filter label values. Supports simple string matching or regex patterns (e.g., '.*prod.*', '^cluster_[0-9]+$')"`
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	Label        string       `json:"label" jsonschema:"Label name to get values for (e.g., 'cluster', 'node', 'volume')"`
+	Match        string       `json:"match,omitempty" jsonschema:"Optional pattern to filter label values. Supports simple string matching or regex patterns (e.g., '.*prod.*', '^cluster_[0-9]+$')"`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type GetMetricDescriptionRequest struct {
-	MetricName   string        `json:"metricName" jsonschema:"The name of the metric to get description for"`
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	MetricName   string       `json:"metricName" jsonschema:"The name of the metric to get description for"`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type SearchMetricsRequest struct {
-	Pattern      string        `json:"pattern" jsonschema:"Search pattern to match against metric names and descriptions"`
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	Pattern      string       `json:"pattern" jsonschema:"Search pattern to match against metric names and descriptions"`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type GetActiveAlertsRequest struct {
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
 type ListAllLabelNamesRequest struct {
-	TSDBOverride *TSDBOverride `json:"tsdb_override,omitempty" jsonschema:"Optional override for TSDB connection"`
+	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
