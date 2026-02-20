@@ -1,10 +1,9 @@
 # What is NetApp Harvest?
 
-> Harvest is the open-metrics endpoint for ONTAP and StorageGRID
+> Harvest is the open-metrics endpoint for ONTAP, StorageGRID, E-Series and Cisco Nexus Switches
 
-NetApp Harvest brings observability to ONTAP and StorageGRID clusters.
-Harvest collects performance, capacity and hardware metrics from ONTAP and StorageGRID,
-transforms them, and routes them to your choice of time-series database.
+NetApp Harvest brings observability to ONTAP, StorageGRID, E-Series and Cisco Nexus Switches by collecting performance, capacity and hardware metrics,
+transforming them and routing them to your choice of a time-series database.
 
 The included Grafana dashboards deliver the datacenter insights you need, while
 new metrics can be collected with a few edits of the included template files.
@@ -33,7 +32,7 @@ and GitHub [discussions](https://github.com/NetApp/harvest/discussions). Come jo
 
 # Model Context Protocol (MCP)
 
-:sparkles: Query your Harvest-collected ONTAP, StorageGRID, and Cisco metrics with [Harvest's MCP server](https://netapp.github.io/harvest/nightly/mcp/overview/)
+:sparkles: Query your Harvest-collected ONTAP, StorageGRID, E-Series and Cisco metrics with [Harvest's MCP server](https://netapp.github.io/harvest/nightly/mcp/overview/)
 
 ---
 
