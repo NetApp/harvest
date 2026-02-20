@@ -23831,7 +23831,7 @@ This metric measures the amount of data written by the top clients to a specific
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_clients_write_data` metric is visualized in the following Grafana dashboards:
     

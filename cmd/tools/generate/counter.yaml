@@ -1690,7 +1690,7 @@ counters:
     Description: This metric measures the amount of data written by the top clients to a specific volume.
     APIs:
       - API: KeyPerf
-        Endpoint: api/storage/volumes/*/top-metrics/files
+        Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: throughput.write
         Template: conf/keyperf/9.15.0/volume.yaml
 
