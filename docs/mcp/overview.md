@@ -43,7 +43,7 @@ graph LR
     C --> D[Harvest Pollers]
     D --> F[ONTAP Clusters]
     D --> G[StorageGRID]  
-    D --> H[Cisco Switches]
+    D --> H[Cisco Nexus Switches]
     D --> I[E-Series Arrays]
 ```
 
