@@ -1800,6 +1800,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cisco_interface_eth_out_discards" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_eth_out_discards
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cisco_interface_receive_bytes" class="md-nav__link">
     <span class="md-ellipsis">
       cisco_interface_receive_bytes
@@ -2325,6 +2334,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cisco_interface_eth_out_discards" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_eth_out_discards
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cisco_interface_receive_bytes" class="md-nav__link">
     <span class="md-ellipsis">
       cisco_interface_receive_bytes
@@ -2451,7 +2469,7 @@
 These can be generated on demand by running <code>bin/harvest grafana metrics</code>. See
 <a href="https://github.com/NetApp/harvest/issues/1577#issue-1471478260">#1577</a> for details.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2026-Feb-13
+<div class="highlight"><pre><span></span><code>Creation Date : 2026-Feb-18
 NX-OS Version: 9.3.12
 </code></pre></div>
 <details>
@@ -3087,6 +3105,47 @@ Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only userna
 <td>Traffic</td>
 <td>timeseries</td>
 <td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=34">Top $TopResources Interface CRC error</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_eth_out_discards">cisco_interface_eth_out_discards<a class="headerlink" href="#cisco_interface_eth_out_discards" title="Permanent link">&para;</a></h3>
+<p>Number of Ethernet output discarded packets in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_outdiscard</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_eth_out_discards</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=49">Top $TopResources Ethernet Out Discards</a></td>
 </tr>
 </tbody>
 </table>

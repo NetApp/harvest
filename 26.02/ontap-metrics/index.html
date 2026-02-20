@@ -11190,6 +11190,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qtree_other_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_other_latency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qtree_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_other_ops
@@ -11202,6 +11211,15 @@
   <a href="#qtree_read_data" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qtree_read_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_read_latency
     </span>
   </a>
   
@@ -11226,6 +11244,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qtree_total_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_total_latency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qtree_total_ops" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_total_ops
@@ -11238,6 +11265,15 @@
   <a href="#qtree_write_data" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qtree_write_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_write_latency
     </span>
   </a>
   
@@ -25464,6 +25500,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qtree_other_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_other_latency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qtree_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_other_ops
@@ -25476,6 +25521,15 @@
   <a href="#qtree_read_data" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qtree_read_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_read_latency
     </span>
   </a>
   
@@ -25500,6 +25554,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qtree_total_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_total_latency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qtree_total_ops" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_total_ops
@@ -25512,6 +25575,15 @@
   <a href="#qtree_write_data" class="md-nav__link">
     <span class="md-ellipsis">
       qtree_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qtree_write_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      qtree_write_latency
     </span>
   </a>
   
@@ -29870,7 +29942,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2026-Feb-13
+<div class="highlight"><pre><span></span><code>Creation Date : 2026-Feb-18
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -72630,7 +72702,27 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qtree_other_latency">qtree_other_latency<a class="headerlink" href="#qtree_other_latency" title="Permanent link">&para;</a></h3>
+<p>Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/qtrees</code></td>
+<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.other</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72650,7 +72742,7 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72670,7 +72762,27 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qtree_read_latency">qtree_read_latency<a class="headerlink" href="#qtree_read_latency" title="Permanent link">&para;</a></h3>
+<p>Performance metric for read I/O operations.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/qtrees</code></td>
+<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.read</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72690,7 +72802,7 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72710,7 +72822,27 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qtree_total_latency">qtree_total_latency<a class="headerlink" href="#qtree_total_latency" title="Permanent link">&para;</a></h3>
+<p>Performance metric aggregated over all types of I/O operations.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/qtrees</code></td>
+<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.total</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72736,7 +72868,7 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 <tr>
 <td>ZapiPerf</td>
@@ -72789,7 +72921,27 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qtree_write_latency">qtree_write_latency<a class="headerlink" href="#qtree_write_latency" title="Permanent link">&para;</a></h3>
+<p>Performance metric for write I/O operations.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/qtrees</code></td>
+<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> qtree_statistics.iops_raw.write</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72809,7 +72961,7 @@ ONTAP Version: 9.16.1
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
 <td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/qtree.yaml</td>
+<td>conf/keyperf/9.16.0/qtree.yaml</td>
 </tr>
 </tbody>
 </table>
