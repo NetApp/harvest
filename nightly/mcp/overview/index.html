@@ -2078,7 +2078,7 @@
 
 
 <h1 id="harvest-model-context-protocol-server">Harvest Model Context Protocol Server<a class="headerlink" href="#harvest-model-context-protocol-server" title="Permanent link">&para;</a></h1>
-<p>The Harvest Model Context Protocol (MCP) server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.</p>
+<p>The Harvest Model Context Protocol (MCP) server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, E-Series and Cisco Nexus Switches.</p>
 <h2 id="what-is-mcp">What is MCP?<a class="headerlink" href="#what-is-mcp" title="Permanent link">&para;</a></h2>
 <p>The <a href="https://modelcontextprotocol.io/docs/getting-started/intro">Model Context Protocol</a> (MCP) is an open standard that enables interactions between MCP clients and external data sources.
 The Harvest MCP server provides APIs for large language models (LLMs) to query your Harvest-collected open-metrics data. These APIs enable intelligent data analysis and insights.</p>
@@ -2114,7 +2114,8 @@ The Harvest MCP server provides APIs for large language models (LLMs) to query y
     C --&gt; D[Harvest Pollers]
     D --&gt; F[ONTAP Clusters]
     D --&gt; G[StorageGRID]  
-    D --&gt; H[Cisco Switches]</code></pre>
+    D --&gt; H[Cisco Nexus Switches]
+    D --&gt; I[E-Series Arrays]</code></pre>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Prometheus or VictoriaMetrics instance with Harvest data</li>

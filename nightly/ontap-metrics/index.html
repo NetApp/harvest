@@ -15285,6 +15285,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#volume_top_users_read_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_users_read_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_read_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_users_write_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_users_write_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#volume_total_data" class="md-nav__link">
     <span class="md-ellipsis">
       volume_total_data
@@ -29589,6 +29625,42 @@
   <a href="#volume_top_files_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       volume_top_files_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_users_read_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_users_read_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_read_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_users_write_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_users_write_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_users_write_ops
     </span>
   </a>
   
@@ -90629,6 +90701,30 @@ ONTAP Version: 9.16.1
 </tr>
 <tr>
 <td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=197">Top $TopResources Volumes Users by Read IOPs</a></td>
+</tr>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=199">Top $TopResources Volumes Users by Write IOPs</a></td>
+</tr>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=201">Top $TopResources Volumes Users by Read Throughput</a></td>
+</tr>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=203">Top $TopResources Volumes Users by Write Throughput</a></td>
+</tr>
+<tr>
+<td>ONTAP: Volume</td>
 <td>Object Storage</td>
 <td>timeseries</td>
 <td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=93">Top $TopResources Volumes by Object Storage GET Latency</a></td>
@@ -94022,12 +94118,6 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
-<td><code>throughput.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
-<tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes/*/top-metrics/clients</code></td>
 <td><code>throughput.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
@@ -94068,12 +94158,6 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
-<td><code>iops.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes/*/top-metrics/clients</code></td>
@@ -94116,14 +94200,8 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
-<td><code>throughput.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
-<tr>
 <td>KeyPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
 <td><code>throughput.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
@@ -94162,12 +94240,6 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
-<td><code>iops.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes/*/top-metrics/clients</code></td>
@@ -94210,12 +94282,6 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/files</code></td>
-<td><code>throughput.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
-<tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes/*/top-metrics/files</code></td>
 <td><code>throughput.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
@@ -94256,12 +94322,6 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/files</code></td>
-<td><code>iops.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes/*/top-metrics/files</code></td>
@@ -94304,12 +94364,6 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/files</code></td>
-<td><code>throughput.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
-<tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes/*/top-metrics/files</code></td>
 <td><code>throughput.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
@@ -94351,12 +94405,6 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>RestPerf</td>
-<td><code>api/storage/volumes/*/top-metrics/files</code></td>
-<td><code>iops.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.12.0/volume.yaml</td>
-</tr>
-<tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes/*/top-metrics/files</code></td>
 <td><code>iops.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
@@ -94381,6 +94429,170 @@ ONTAP Version: 9.16.1
 <td>Files</td>
 <td>timeseries</td>
 <td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=171">Top $TopResources Volumes Files by Write IOPs</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="volume_top_users_read_data">volume_top_users_read_data<a class="headerlink" href="#volume_top_users_read_data" title="Permanent link">&para;</a></h3>
+<p>This metric measures the amount of data read by users from a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/users</code></td>
+<td><code>throughput.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>volume_top_users_read_data</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=201">Top $TopResources Volumes Users by Read Throughput</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="volume_top_users_read_ops">volume_top_users_read_ops<a class="headerlink" href="#volume_top_users_read_ops" title="Permanent link">&para;</a></h3>
+<p>This metric tracks the number of read operations performed by users on a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/users</code></td>
+<td><code>iops.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>volume_top_users_read_ops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=197">Top $TopResources Volumes Users by Read IOPs</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="volume_top_users_write_data">volume_top_users_write_data<a class="headerlink" href="#volume_top_users_write_data" title="Permanent link">&para;</a></h3>
+<p>This metric measures the amount of data written by users to a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/users</code></td>
+<td><code>throughput.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>volume_top_users_write_data</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=203">Top $TopResources Volumes Users by Write Throughput</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="volume_top_users_write_ops">volume_top_users_write_ops<a class="headerlink" href="#volume_top_users_write_ops" title="Permanent link">&para;</a></h3>
+<p>This metric tracks the number of write operations performed by users on a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/users</code></td>
+<td><code>iops.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>volume_top_users_write_ops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Users</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=199">Top $TopResources Volumes Users by Write IOPs</a></td>
 </tr>
 </tbody>
 </table>
