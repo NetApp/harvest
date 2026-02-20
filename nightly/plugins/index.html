@@ -2986,6 +2986,13 @@ options, otherwise they will not be exported.</p>
 <span class="c1"># if they are set, a new &quot;plex_long&quot; label will be added</span>
 <span class="c1"># by joining their values with &quot;_&quot;</span>
 </code></pre></div>
+<p>You can also use <code>join</code> to add a new label with a different name than the one collected, while keeping the original label intact. Use an empty separator and a single source label:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">join</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggregate `` aggr</span>
+<span class="c1"># will create a new label &quot;aggregate&quot; using the value of the existing &quot;aggr&quot; label</span>
+<span class="c1"># the original &quot;aggr&quot; label is preserved; this is useful when you want to expose</span>
+<span class="c1"># a collected label under a different name without losing the original</span>
+</code></pre></div>
 <h2 id="replace">replace<a class="headerlink" href="#replace" title="Permanent link">&para;</a></h2>
 <p>Substitute substring <code>OLD</code> with <code>NEW</code> in label <code>SOURCE</code> and store in <code>TARGET</code>. Note that target and source labels can be
 the same.</p>
