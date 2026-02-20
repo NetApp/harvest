@@ -26,6 +26,10 @@ func (mv *MockVolume) fetchTopFiles(_ *set.Set, _ *set.Set, _ string) ([]gjson.R
 	return collectors.InvokeRestCallWithTestFile(nil, "", mv.testFilePath)
 }
 
+func (mv *MockVolume) fetchTopUsers(_ *set.Set, _ *set.Set, _ string) ([]gjson.Result, error) {
+	return collectors.InvokeRestCallWithTestFile(nil, "", mv.testFilePath)
+}
+
 func (mv *MockVolume) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {
 	va := set.New()
 	va.Add("osc" + keyToken + "osc_vol01")
@@ -139,6 +143,43 @@ func TestProcessTopFiles(t *testing.T) {
 			assert.Nil(t, err)
 
 			err = mockVolume.processTopFiles(metrics)
+			assert.Nil(t, err)
+
+			resultMatrix := mockVolume.data[tc.matrixName]
+
+			assert.NotNil(t, resultMatrix)
+			assert.Equal(t, len(resultMatrix.GetInstances()), tc.expectedCount)
+		})
+	}
+}
+
+func TestProcessTopUsers(t *testing.T) {
+	testCases := []struct {
+		name          string
+		matrixName    string
+		testFilePath  string
+		expectedCount int
+	}{
+		{"User Read Ops", topUserReadOPSMatrix, "testdata/user_readops.json", 3},
+		{"User Write Ops", topUserWriteOPSMatrix, "testdata/user_writeops.json", 2},
+		{"User Read Data", topUserReadDataMatrix, "testdata/user_readdata.json", 3},
+		{"User Write Data", topUserWriteDataMatrix, "testdata/user_writedata.json", 1},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mockVolume := NewMockVolume(&plugin.AbstractPlugin{}, tc.testFilePath)
+			mockVolume.maxVolumeCount = 5
+
+			err := mockVolume.InitAllMatrix()
+			assert.Nil(t, err)
+
+			data := globalDataMatrix
+
+			metrics, err := mockVolume.processTopMetrics(data)
+			assert.Nil(t, err)
+
+			err = mockVolume.processTopUsers(metrics)
 			assert.Nil(t, err)
 
 			resultMatrix := mockVolume.data[tc.matrixName]
