@@ -113,8 +113,8 @@ plugins:
 #      - max_volumes: 5
 #      - objects:
 #          - client  # collect read/write operations and throughput metrics for the top clients.
-#          - file    # collect read/write operations and throughput metrics for the top files
-#          - user    # collect read/write operations and throughput metrics for the top users
+#          - file    # collect read/write operations and throughput metrics for the top files.
+#          - user    # collect read/write operations and throughput metrics for the top users.
 
 export_options:
   instance_keys:
