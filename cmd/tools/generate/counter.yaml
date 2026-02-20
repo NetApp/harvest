@@ -1730,7 +1730,7 @@ counters:
     Description: This metric tracks the number of read operations performed by users on a specific volume.
     APIs:
       - API: KeyPerf
-        Endpoint: api/storage/volumes/*/top-metrics/files
+        Endpoint: api/storage/volumes/*/top-metrics/users
         ONTAPCounter: iops.read
         Template: conf/keyperf/9.15.0/volume.yaml
 
@@ -1738,7 +1738,7 @@ counters:
     Description: This metric tracks the number of write operations performed by users on a specific volume.
     APIs:
       - API: KeyPerf
-        Endpoint: api/storage/volumes/*/top-metrics/files
+        Endpoint: api/storage/volumes/*/top-metrics/users
         ONTAPCounter: iops.write
         Template: conf/keyperf/9.15.0/volume.yaml
 
@@ -1746,7 +1746,7 @@ counters:
     Description: This metric measures the amount of data read by users from a specific volume.
     APIs:
       - API: KeyPerf
-        Endpoint: api/storage/volumes/*/top-metrics/files
+        Endpoint: api/storage/volumes/*/top-metrics/users
         ONTAPCounter: throughput.read
         Template: conf/keyperf/9.15.0/volume.yaml
 
@@ -1754,7 +1754,7 @@ counters:
     Description: This metric measures the amount of data written by users to a specific volume.
     APIs:
       - API: KeyPerf
-        Endpoint: api/storage/volumes/*/top-metrics/files
+        Endpoint: api/storage/volumes/*/top-metrics/users
         ONTAPCounter: throughput.write
         Template: conf/keyperf/9.15.0/volume.yaml
 

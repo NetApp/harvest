@@ -23939,7 +23939,7 @@ This metric measures the amount of data read by users from a specific volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/users` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_read_data` metric is visualized in the following Grafana dashboards:
     
@@ -23957,7 +23957,7 @@ This metric tracks the number of read operations performed by users on a specifi
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/users` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_read_ops` metric is visualized in the following Grafana dashboards:
     
@@ -23975,7 +23975,7 @@ This metric measures the amount of data written by users to a specific volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/users` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_write_data` metric is visualized in the following Grafana dashboards:
     
@@ -23993,7 +23993,7 @@ This metric tracks the number of write operations performed by users on a specif
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/users` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_write_ops` metric is visualized in the following Grafana dashboards:
     
