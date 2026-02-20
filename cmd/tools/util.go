@@ -201,6 +201,7 @@ var (
 		"token_",
 		"volume_top_clients",
 		"volume_top_files",
+		"volume_top_users",
 		"vscan_",
 	}
 

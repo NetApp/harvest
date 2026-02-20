@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Feb-18
+Creation Date : 2026-Feb-20
 ONTAP Version: 9.16.1
 ```
 
@@ -22640,6 +22640,10 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Files | timeseries | [Top $TopResources Volumes Files by Write IOPs](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=171) |
 | ONTAP: Volume | Files | timeseries | [Top $TopResources Volumes Files by Read Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=173) |
 | ONTAP: Volume | Files | timeseries | [Top $TopResources Volumes Files by Write Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=175) |
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Read IOPs](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=197) |
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Write IOPs](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=199) |
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Read Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=201) |
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Write Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=203) |
 | ONTAP: Volume | Object Storage | timeseries | [Top $TopResources Volumes by Object Storage GET Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=93) |
 | ONTAP: Volume | Object Storage | timeseries | [Top $TopResources Volumes by Object Storage GET Request Count](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=94) |
 | ONTAP: Volume | Object Storage | timeseries | [Top $TopResources Volumes by Object Storage PUT Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=95) |
@@ -23791,7 +23795,6 @@ This metric measures the amount of data read by the top clients to a specific vo
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/clients` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_clients_read_data` metric is visualized in the following Grafana dashboards:
@@ -23810,7 +23813,6 @@ This metric tracks the number of read operations performed by the top clients on
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_clients_read_ops` metric is visualized in the following Grafana dashboards:
@@ -23829,7 +23831,6 @@ This metric measures the amount of data written by the top clients to a specific
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/clients` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_clients_write_data` metric is visualized in the following Grafana dashboards:
@@ -23848,7 +23849,6 @@ This metric tracks the number of write operations performed by the top clients o
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_clients_write_ops` metric is visualized in the following Grafana dashboards:
@@ -23867,7 +23867,6 @@ This metric measures the amount of data read from the files of a specific volume
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_files_read_data` metric is visualized in the following Grafana dashboards:
@@ -23886,7 +23885,6 @@ This metric tracks the number of read operations performed on the files of a spe
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/files` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_files_read_ops` metric is visualized in the following Grafana dashboards:
@@ -23905,7 +23903,6 @@ This metric measures the amount of data written to the top files of a specific v
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_files_write_data` metric is visualized in the following Grafana dashboards:
@@ -23924,7 +23921,6 @@ This metric tracks the number of write operations performed on the files of a sp
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/storage/volumes/*/top-metrics/files` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_files_write_ops` metric is visualized in the following Grafana dashboards:
@@ -23933,6 +23929,78 @@ The `volume_top_files_write_ops` metric is visualized in the following Grafana d
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Volume | Files | timeseries | [Top $TopResources Volumes Files by Write IOPs](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=171) |
+///
+
+
+
+### volume_top_users_read_data
+
+This metric measures the amount of data read by users from a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
+The `volume_top_users_read_data` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Read Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=201) |
+///
+
+
+
+### volume_top_users_read_ops
+
+This metric tracks the number of read operations performed by users on a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
+The `volume_top_users_read_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Read IOPs](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=197) |
+///
+
+
+
+### volume_top_users_write_data
+
+This metric measures the amount of data written by users to a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
+The `volume_top_users_write_data` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Write Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=203) |
+///
+
+
+
+### volume_top_users_write_ops
+
+This metric tracks the number of write operations performed by users on a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
+The `volume_top_users_write_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Users | timeseries | [Top $TopResources Volumes Users by Write IOPs](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=199) |
 ///
 
 
