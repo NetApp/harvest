@@ -77,7 +77,7 @@ Results in
 
 This guide assumes that you have already installed and configured Harvest, Prometheus, and Grafana. Instead of creating a new Grafana dashboard from scratch, you might find it more efficient to clone and modify an existing one. Alternatively, you can copy/paste an existing dashboard's panel from an existing dashboard into your new one.
 
-Harvest collects a wide range of metrics from ONTAP and StorageGRID clusters, which are documented [here](https://netapp.github.io/harvest/latest/ontap-metrics/). These metrics can be used to create dashboards in Grafana.
+Harvest collects a wide range of metrics from [ONTAP](https://netapp.github.io/harvest/latest/ontap-metrics/), [StorageGRID](https://netapp.github.io/harvest/latest/storagegrid-metrics/), [E-Series](https://netapp.github.io/harvest/latest/eseries-metrics/) and [Cisco Nexus Switches](https://netapp.github.io/harvest/latest/cisco-switch-metrics/). These metrics can be used to create dashboards in Grafana.
 
 ### Step 1: Confirm that Prometheus is Receiving Metrics from Harvest
 

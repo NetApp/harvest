@@ -1,6 +1,6 @@
 # Harvest Model Context Protocol Server
 
-The Harvest Model Context Protocol (MCP) server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
+The Harvest Model Context Protocol (MCP) server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, E-Series and Cisco Nexus Switches.
 
 ## What is MCP?
 
@@ -44,6 +44,7 @@ graph LR
     D --> F[ONTAP Clusters]
     D --> G[StorageGRID]  
     D --> H[Cisco Switches]
+    D --> I[E-Series Arrays]
 ```
 
 ## Prerequisites
