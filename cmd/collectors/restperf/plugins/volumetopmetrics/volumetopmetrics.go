@@ -597,7 +597,7 @@ func (t *TopMetrics) fetchTopClients(volumes *set.Set, svms *set.Set, metric str
 		APIPath(query).
 		Fields([]string{"client_ip", "svm", "volume.name", metric}).
 		MaxRecords(collectors.DefaultBatchSize).
-		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
+		Filter([]string{"top_metric=" + metric, "volume.name=" + strings.Join(volumes.Values(), "|"), "svm.name=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
@@ -620,7 +620,7 @@ func (t *TopMetrics) fetchTopFiles(volumes *set.Set, svms *set.Set, metric strin
 		APIPath(query).
 		Fields([]string{"path", "svm", "volume.name", metric}).
 		MaxRecords(collectors.DefaultBatchSize).
-		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
+		Filter([]string{"top_metric=" + metric, "volume.name=" + strings.Join(volumes.Values(), "|"), "svm.name=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
@@ -643,7 +643,7 @@ func (t *TopMetrics) fetchTopUsers(volumes *set.Set, svms *set.Set, metric strin
 		APIPath(query).
 		Fields([]string{"user_name", "user_id", "svm", "volume.name", metric}).
 		MaxRecords(collectors.DefaultBatchSize).
-		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
+		Filter([]string{"top_metric=" + metric, "volume.name=" + strings.Join(volumes.Values(), "|"), "svm.name=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
