@@ -1020,13 +1020,13 @@
                 "excludeByName": {
                   "Time": true,
                   "Value": true,
+                  "admin_state": true,
                   "description": true,
                   "instance": true,
                   "interface": false,
                   "is_isl": true,
                   "job": true,
                   "op_state": true,
-                  "admin_state": true,
                   "type": true
                 },
                 "indexByName": {
