@@ -1,0 +1,85 @@
+{
+    "records": [
+        {
+            "volume": {
+                "uuid": "079b3c19-1356-11ef-9138-00a098d390f2",
+                "name": "volharvest",
+                "_links": {
+                    "self": {
+                        "href": "/api/storage/volumes/079b3c19-1356-11ef-9138-00a098d390f2"
+                    }
+                }
+            },
+            "iops": {
+                "read": 1495
+            },
+            "user_id": "S-1-5-21-256008430-3394229847-3930036330-1001",
+            "user_name": "John",
+            "svm": {
+                "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+                "name": "osc",
+                "_links": {
+                    "self": {
+                        "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+                    }
+                }
+            }
+        },
+        {
+            "volume": {
+                "uuid": "079b3c19-1356-11ef-9138-00a098d390f2",
+                "name": "volharvest",
+                "_links": {
+                    "self": {
+                        "href": "/api/storage/volumes/079b3c19-1356-11ef-9138-00a098d390f2"
+                    }
+                }
+            },
+            "iops": {
+                "read": 1022
+            },
+            "user_id": "1988",
+            "user_name": "Ryan",
+            "svm": {
+                "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+                "name": "osc",
+                "_links": {
+                    "self": {
+                        "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+                    }
+                }
+            }
+        },
+        {
+            "volume": {
+                "uuid": "03613247-54ac-4127-a512-afb331f1c207",
+                "name": "osc_vol01",
+                "_links": {
+                    "self": {
+                        "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207"
+                    }
+                }
+            },
+            "iops": {
+                "read": 345
+            },
+            "user_id": "S-1-5-21-256008430-3394229847-3930036330-1003",
+            "user_name": "Julie",
+            "svm": {
+                "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+                "name": "osc",
+                "_links": {
+                    "self": {
+                        "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+                    }
+                }
+            }
+        }
+    ],
+    "num_records": 3,
+    "_links": {
+        "self": {
+            "href": "/api/storage/volumes/*/top-metrics/users?top_metric=iops.read&fields=user_name,user_id,svm&volume.name=volharvest|osc_vol01&svm.name=osc"
+        }
+    }
+}

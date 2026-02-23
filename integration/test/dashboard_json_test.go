@@ -136,6 +136,7 @@ var excludeCounters = []string{
 	"svm_write_total",
 	"volume_top_clients_",
 	"volume_top_files_",
+	"volume_top_users_",
 }
 
 var flakyCounters = []string{

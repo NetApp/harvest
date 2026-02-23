@@ -2,6 +2,12 @@ package volumetopmetrics
 
 import (
 	"cmp"
+	"log/slog"
+	"slices"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -11,19 +17,16 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"log/slog"
-	"slices"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type VolumeTracker interface {
 	fetchTopClients(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error)
 	fetchTopFiles(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error)
+	fetchTopUsers(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error)
 	fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 	processTopClients(data *TopMetricsData) error
 	processTopFiles(data *TopMetricsData) error
+	processTopUsers(data *TopMetricsData) error
 }
 
 const (
@@ -36,6 +39,10 @@ const (
 	topFileWriteOPSMatrix    = "volume_top_files_write_ops"
 	topFileReadDataMatrix    = "volume_top_files_read_data"
 	topFileWriteDataMatrix   = "volume_top_files_write_data"
+	topUserReadOPSMatrix     = "volume_top_users_read_ops"
+	topUserWriteOPSMatrix    = "volume_top_users_write_ops"
+	topUserReadDataMatrix    = "volume_top_users_read_data"
+	topUserWriteDataMatrix   = "volume_top_users_write_data"
 	defaultTopN              = 5
 	maxTopN                  = 50
 )
@@ -54,6 +61,7 @@ type TopMetrics struct {
 	tracker              VolumeTracker
 	clientMetricsEnabled bool
 	fileMetricsEnabled   bool
+	userMetricsEnabled   bool
 }
 
 type TopMetricsData struct {
@@ -96,6 +104,10 @@ func (t *TopMetrics) InitAllMatrix() error {
 		{topFileWriteOPSMatrix, "volume_top_files_write", opMetric},
 		{topFileReadDataMatrix, "volume_top_files_read", dataMetric},
 		{topFileWriteDataMatrix, "volume_top_files_write", dataMetric},
+		{topUserReadOPSMatrix, "volume_top_users_read", opMetric},
+		{topUserWriteOPSMatrix, "volume_top_users_write", opMetric},
+		{topUserReadDataMatrix, "volume_top_users_read", dataMetric},
+		{topUserWriteDataMatrix, "volume_top_users_write", dataMetric},
 	}
 
 	for _, m := range mats {
@@ -149,9 +161,10 @@ func (t *TopMetrics) Init(remote conf.Remote) error {
 		}
 	}
 
-	// enable client and file metrics collection by default
+	// enable client, file and user metrics collection by default
 	t.clientMetricsEnabled = true
 	t.fileMetricsEnabled = true
+	t.userMetricsEnabled = true
 
 	if objects := t.Params.GetChildS("objects"); objects != nil {
 		o := objects.GetAllChildContentS()
@@ -161,6 +174,9 @@ func (t *TopMetrics) Init(remote conf.Remote) error {
 		if !slices.Contains(o, "file") {
 			t.fileMetricsEnabled = false
 		}
+		if !slices.Contains(o, "user") {
+			t.userMetricsEnabled = false
+		}
 	}
 	t.schedule = t.SetPluginInterval()
 	t.SLogger.Info("Using", slog.Int("maxVolumeCount", t.maxVolumeCount))
@@ -168,8 +184,8 @@ func (t *TopMetrics) Init(remote conf.Remote) error {
 }
 
 func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
-	// if both client and file metrics are disabled then return
-	if !t.clientMetricsEnabled && !t.fileMetricsEnabled {
+	// if client, file and user metrics are all disabled then return
+	if !t.clientMetricsEnabled && !t.fileMetricsEnabled && !t.userMetricsEnabled {
 		return nil, nil, nil
 	}
 
@@ -201,6 +217,12 @@ func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	}
 	if t.fileMetricsEnabled {
 		err = t.processTopFiles(metricsData)
+		if err != nil {
+			return nil, t.client.Metadata, err
+		}
+	}
+	if t.userMetricsEnabled {
+		err = t.processTopUsers(metricsData)
 		if err != nil {
 			return nil, t.client.Metadata, err
 		}
@@ -281,6 +303,26 @@ func (t *TopMetrics) processTopFiles(metricsData *TopMetricsData) error {
 	}
 
 	if err := t.processTopFilesByMetric(metricsData.writeDataVolumes, metricsData.writeDataSvms, topFileWriteDataMatrix, "throughput.write", dataMetric); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *TopMetrics) processTopUsers(metricsData *TopMetricsData) error {
+	if err := t.processTopUsersByMetric(metricsData.readOpsVolumes, metricsData.readOpsSvms, topUserReadOPSMatrix, "iops.read", opMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopUsersByMetric(metricsData.writeOpsVolumes, metricsData.writeOpsSvms, topUserWriteOPSMatrix, "iops.write", opMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopUsersByMetric(metricsData.readDataVolumes, metricsData.readDataSvms, topUserReadDataMatrix, "throughput.read", dataMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopUsersByMetric(metricsData.writeDataVolumes, metricsData.writeDataSvms, topUserWriteDataMatrix, "throughput.write", dataMetric); err != nil {
 		return err
 	}
 
@@ -466,6 +508,41 @@ func (t *TopMetrics) processTopClientsByMetric(volumes, svms *set.Set, matrixNam
 	return nil
 }
 
+func (t *TopMetrics) processTopUsersByMetric(volumes, svms *set.Set, matrixName, metric, metricType string) error {
+	if svms.Size() == 0 || volumes.Size() == 0 {
+		return nil
+	}
+
+	topUsers, err := t.fetchTopUsers(volumes, svms, metric)
+	if err != nil {
+		return err
+	}
+
+	mat := t.data[matrixName]
+	if mat == nil {
+		return nil
+	}
+	for _, user := range topUsers {
+		userName := user.Get("user_name").ClonedString()
+		userID := user.Get("user_id").ClonedString()
+		vol := user.Get("volume.name").ClonedString()
+		svm := user.Get("svm.name").ClonedString()
+		value := user.Get(metric).Float()
+		instanceKey := userID + keyToken + vol + keyToken + svm
+		instance, err := mat.NewInstance(instanceKey)
+		if err != nil {
+			t.SLogger.Warn("error while creating instance", slogx.Err(err), slog.String("volume", vol))
+			continue
+		}
+		instance.SetLabel("volume", vol)
+		instance.SetLabel("svm", svm)
+		instance.SetLabel("user_name", userName)
+		instance.SetLabel("user_id", userID)
+		t.setMetric(mat, instance, value, metricType)
+	}
+	return nil
+}
+
 func (t *TopMetrics) setMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64, metricType string) {
 	var err error
 	m := mat.GetMetric(metricType)
@@ -520,7 +597,7 @@ func (t *TopMetrics) fetchTopClients(volumes *set.Set, svms *set.Set, metric str
 		APIPath(query).
 		Fields([]string{"client_ip", "svm", "volume.name", metric}).
 		MaxRecords(collectors.DefaultBatchSize).
-		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
+		Filter([]string{"top_metric=" + metric, "volume.name=" + strings.Join(volumes.Values(), "|"), "svm.name=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
@@ -543,7 +620,30 @@ func (t *TopMetrics) fetchTopFiles(volumes *set.Set, svms *set.Set, metric strin
 		APIPath(query).
 		Fields([]string{"path", "svm", "volume.name", metric}).
 		MaxRecords(collectors.DefaultBatchSize).
-		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
+		Filter([]string{"top_metric=" + metric, "volume.name=" + strings.Join(volumes.Values(), "|"), "svm.name=" + strings.Join(svms.Values(), "|")}).
+		Build()
+
+	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (t *TopMetrics) fetchTopUsers(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+	if t.tracker != nil {
+		return t.tracker.fetchTopUsers(volumes, svms, metric)
+	}
+	query := "api/storage/volumes/*/top-metrics/users"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"user_name", "user_id", "svm", "volume.name", metric}).
+		MaxRecords(collectors.DefaultBatchSize).
+		Filter([]string{"top_metric=" + metric, "volume.name=" + strings.Join(volumes.Values(), "|"), "svm.name=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
 	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {

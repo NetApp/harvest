@@ -278,6 +278,16 @@ join:
 # by joining their values with "_"
 ```
 
+You can also use `join` to add a new label with a different name than the one collected, while keeping the original label intact. Use an empty separator and a single source label:
+
+```yaml
+join:
+  - aggregate `` aggr
+# will create a new label "aggregate" using the value of the existing "aggr" label
+# the original "aggr" label is preserved; this is useful when you want to expose
+# a collected label under a different name without losing the original
+```
+
 ## replace
 
 Substitute substring `OLD` with `NEW` in label `SOURCE` and store in `TARGET`. Note that target and source labels can be
