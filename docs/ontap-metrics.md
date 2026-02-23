@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Feb-18
+Creation Date : 2026-Feb-23
 ONTAP Version: 9.16.1
 ```
 
@@ -9263,6 +9263,14 @@ Receive errors in bytes per second.
 | RestPerf | `api/cluster/counter/tables/nic_common` | `receive_errors`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZapiPerf | `perf-object-get-instances nic_common` | `rx_errors`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_rx_errors` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | Ethernet | timeseries | [NICs Receive Errors by Cluster](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=30) |
+///
+
 
 
 ### nic_rx_length_errors
@@ -9356,6 +9364,14 @@ Sent errors in bytes per second.
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/nic_common` | `transmit_errors`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZapiPerf | `perf-object-get-instances nic_common` | `tx_errors`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+The `nic_tx_errors` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | Ethernet | timeseries | [NICs Send Errors by Cluster](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=29) |
+///
 
 
 

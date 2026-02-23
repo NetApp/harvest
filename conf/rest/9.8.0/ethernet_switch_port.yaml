@@ -10,7 +10,6 @@ counters:
   - ^isl                       => is_isl
   - ^speed                     => speed
   - ^state                     => op_state
-  - ^type                      => type
 
 plugins:
   - LabelAgent:

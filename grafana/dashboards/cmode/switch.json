@@ -351,7 +351,7 @@
         "sortBy": [
           {
             "desc": false,
-            "displayName": "State"
+            "displayName": "Op Status"
           }
         ]
       },
@@ -1025,7 +1025,7 @@
                   "interface": false,
                   "is_isl": true,
                   "job": true,
-                  "state": true,
+                  "op_state": true,
                   "type": true
                 },
                 "indexByName": {
@@ -1037,8 +1037,8 @@
                   "interface": 4,
                   "is_isl": 9,
                   "job": 6,
+                  "op_state": 10,
                   "speed": 7,
-                  "state": 10,
                   "switch": 3,
                   "type": 11
                 },
@@ -1046,8 +1046,8 @@
                   "Value": "Count",
                   "interface": "Interface",
                   "message": "EMS",
+                  "op_state": "Op State",
                   "speed": "Speed",
-                  "state": "State",
                   "switch": "Switch",
                   "type": ""
                 }
