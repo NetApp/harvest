@@ -203,7 +203,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "State"
+              "options": "Op Status"
             },
             "properties": [
               {
@@ -234,6 +234,74 @@
               {
                 "id": "custom.displayMode",
                 "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Admin Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "up": {
+                        "color": "semi-dark-green",
+                        "index": 0,
+                        "text": "Up"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null+nan",
+                      "result": {
+                        "color": "semi-dark-orange",
+                        "index": 1
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ISL"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "No"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "true": {
+                        "index": 1,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
               }
             ]
           },
@@ -291,7 +359,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "ethernet_switch_port_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "expr": "ethernet_switch_port_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -312,7 +380,10 @@
                 "cluster",
                 "interface",
                 "speed",
-                "state"
+                "op_state",
+                "admin_state",
+                "is_isl",
+                "type"
               ]
             }
           }
@@ -325,15 +396,19 @@
               "cluster": 1,
               "datacenter": 0,
               "interface": 3,
+              "is_isl": 5,
               "speed": 4,
-              "state": 5,
-              "switch": 2
+              "switch": 2,
+              "type": 6
             },
             "renameByName": {
+              "admin_state": "Admin Status",
               "interface": "Interface",
+              "is_isl": "ISL",
+              "op_state": "Op Status",
               "speed": "Speed",
-              "state": "State",
-              "switch": "Switch"
+              "switch": "Switch",
+              "type": "Type"
             }
           }
         }
