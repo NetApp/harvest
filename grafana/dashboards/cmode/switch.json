@@ -1026,6 +1026,7 @@
                   "is_isl": true,
                   "job": true,
                   "op_state": true,
+                  "admin_state": true,
                   "type": true
                 },
                 "indexByName": {
@@ -1046,7 +1047,6 @@
                   "Value": "Count",
                   "interface": "Interface",
                   "message": "EMS",
-                  "op_state": "Op State",
                   "speed": "Speed",
                   "switch": "Switch",
                   "type": ""
