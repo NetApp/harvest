@@ -144,12 +144,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(217, 91, 91, 0.74)",
+                "color": "semi-dark-red",
                 "value": null
-              },
-              {
-                "color": "rgb(101, 201, 87)",
-                "value": 1
               }
             ]
           },
@@ -223,7 +219,7 @@
                     "options": {
                       "match": "null+nan",
                       "result": {
-                        "color": "semi-dark-orange",
+                        "color": "semi-dark-red",
                         "index": 1
                       }
                     },
@@ -260,7 +256,7 @@
                     "options": {
                       "match": "null+nan",
                       "result": {
-                        "color": "semi-dark-orange",
+                        "color": "semi-dark-red",
                         "index": 1
                       }
                     },
