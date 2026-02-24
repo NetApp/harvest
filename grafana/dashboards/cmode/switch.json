@@ -389,10 +389,12 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
+              "admin_state": 7,
               "cluster": 1,
               "datacenter": 0,
               "interface": 3,
               "is_isl": 5,
+              "op_state": 8,
               "speed": 4,
               "switch": 2,
               "type": 6

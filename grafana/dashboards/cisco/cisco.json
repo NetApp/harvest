@@ -2539,7 +2539,6 @@
               "options": {
                 "excludeByName": {
                   "Time": true,
-                  "Time 1": false,
                   "Time 2": true,
                   "Value": true,
                   "__name__": true,
