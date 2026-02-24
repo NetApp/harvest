@@ -258,6 +258,10 @@ security login rest-role create -role harvest-rest-role -access readonly -api /a
 security login rest-role create -role harvest-rest-role -access read_create -api /api/private/cli
 security login create -user-or-group-name harvest2 -application ssh -authentication-method password -role harvest2-role
 security login create -user-or-group-name harvest2 -application http -authentication-method password -role harvest-rest-role
+
+# If you also want to use certificate authentication for the StatPerf collector, run these commands as well
+security login create -user-or-group-name harvest2 -application ssh -authentication-method publickey -role harvest2-role
+security login create -user-or-group-name harvest2 -application http -authentication-method cert -role harvest-rest-role
 ```
 
 **Note:** StatPerf Collector is not supported for FSx systems.
