@@ -17,8 +17,8 @@ endpoints:
   - query: api/svm/svms
     counters:
       - ^^name                              => svm
-      - ^nsswitch                           => nameservice_switch
       - ^nfs.enabled                        => nfs_protocol_enabled
+      - ^nsswitch                           => nameservice_switch
   - query: api/security/ssh/svms
     counters:
       - ^^svm.name                          => svm
