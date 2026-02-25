@@ -2676,6 +2676,10 @@ security<span class="w"> </span>login<span class="w"> </span>rest-role<span clas
 security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span>read_create<span class="w"> </span>-api<span class="w"> </span>/api/private/cli
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ssh<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role
+
+<span class="c1"># If you also want to use certificate authentication for the StatPerf collector, run these commands as well</span>
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ssh<span class="w"> </span>-authentication-method<span class="w"> </span>publickey<span class="w"> </span>-role<span class="w"> </span>harvest2-role
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>cert<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role
 </code></pre></div>
 <p><strong>Note:</strong> StatPerf Collector is not supported for FSx systems.</p>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
