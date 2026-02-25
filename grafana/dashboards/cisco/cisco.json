@@ -2419,6 +2419,70 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Admin Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "color": "semi-dark-red",
+                            "index": 0,
+                            "text": "Down"
+                          },
+                          "1": {
+                            "color": "semi-dark-green",
+                            "index": 1,
+                            "text": "Up"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background-solid"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Op Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "color": "semi-dark-red",
+                            "index": 0,
+                            "text": "Down"
+                          },
+                          "1": {
+                            "color": "semi-dark-green",
+                            "index": 1,
+                            "text": "Up"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background-solid"
+                  }
+                ]
               }
             ]
           },
@@ -2437,27 +2501,60 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "min_over_time(\n    cisco_interface_admin_up{datacenter=~\"$Datacenter\",interface=~\"$Interface\",speed!=\"\",speed!=\"auto-speed\",switch=~\"$Switch\"}[1d]\n  )\n==\n  0",
+              "expr": "label_join(\n    min_over_time(\n      cisco_interface_admin_up{datacenter=~\"$Datacenter\",interface=~\"$Interface\",speed!=\"\",speed!=\"auto-speed\",switch=~\"$Switch\"}[1d]\n    )\n  ==\n    0,\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"switch\",\n  \"interface\"\n)",
               "format": "table",
               "instant": true,
               "interval": "",
               "legendFormat": "",
               "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  cisco_interface_up{datacenter=~\"$Datacenter\",interface=~\"$Interface\",speed!=\"\",speed!=\"auto-speed\",switch=~\"$Switch\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"switch\",\n  \"interface\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
             }
           ],
           "title": "Down (Last 24h)",
           "transformations": [
             {
+              "id": "joinByField",
+              "options": {
+                "byField": "index",
+                "mode": "inner"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
               "id": "organize",
               "options": {
                 "excludeByName": {
                   "Time": true,
+                  "Time 2": true,
                   "Value": true,
+                  "__name__": true,
+                  "datacenter 2": true,
                   "description": true,
+                  "index": true,
                   "instance": true,
+                  "instance 2": true,
                   "interface": false,
+                  "interface 2": true,
                   "job": true,
-                  "mac": true
+                  "job 2": true,
+                  "mac": true,
+                  "mac 2": true,
+                  "speed 2": true,
+                  "switch 2": true
                 },
                 "indexByName": {
                   "Time": 0,
@@ -2473,6 +2570,8 @@
                 },
                 "renameByName": {
                   "Value": "Count",
+                  "Value #A": "Admin Status",
+                  "Value #B": "Op Status",
                   "interface": "Interface",
                   "mac": "",
                   "message": "EMS",

@@ -144,12 +144,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(217, 91, 91, 0.74)",
+                "color": "semi-dark-red",
                 "value": null
-              },
-              {
-                "color": "rgb(101, 201, 87)",
-                "value": 1
               }
             ]
           },
@@ -203,7 +199,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "State"
+              "options": "Op Status"
             },
             "properties": [
               {
@@ -223,7 +219,7 @@
                     "options": {
                       "match": "null+nan",
                       "result": {
-                        "color": "semi-dark-orange",
+                        "color": "semi-dark-red",
                         "index": 1
                       }
                     },
@@ -234,6 +230,74 @@
               {
                 "id": "custom.displayMode",
                 "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Admin Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "up": {
+                        "color": "semi-dark-green",
+                        "index": 0,
+                        "text": "Up"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null+nan",
+                      "result": {
+                        "color": "semi-dark-red",
+                        "index": 1
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ISL"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "No"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "true": {
+                        "index": 1,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
               }
             ]
           },
@@ -283,7 +347,7 @@
         "sortBy": [
           {
             "desc": false,
-            "displayName": "State"
+            "displayName": "Op Status"
           }
         ]
       },
@@ -291,7 +355,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "ethernet_switch_port_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "expr": "ethernet_switch_port_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -312,7 +376,10 @@
                 "cluster",
                 "interface",
                 "speed",
-                "state"
+                "op_state",
+                "admin_state",
+                "is_isl",
+                "type"
               ]
             }
           }
@@ -322,18 +389,24 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
+              "admin_state": 7,
               "cluster": 1,
               "datacenter": 0,
               "interface": 3,
+              "is_isl": 5,
+              "op_state": 8,
               "speed": 4,
-              "state": 5,
-              "switch": 2
+              "switch": 2,
+              "type": 6
             },
             "renameByName": {
+              "admin_state": "Admin Status",
               "interface": "Interface",
+              "is_isl": "ISL",
+              "op_state": "Op Status",
               "speed": "Speed",
-              "state": "State",
-              "switch": "Switch"
+              "switch": "Switch",
+              "type": "Type"
             }
           }
         }
@@ -945,12 +1018,13 @@
                 "excludeByName": {
                   "Time": true,
                   "Value": true,
+                  "admin_state": true,
                   "description": true,
                   "instance": true,
                   "interface": false,
                   "is_isl": true,
                   "job": true,
-                  "state": true,
+                  "op_state": true,
                   "type": true
                 },
                 "indexByName": {
@@ -962,8 +1036,8 @@
                   "interface": 4,
                   "is_isl": 9,
                   "job": 6,
+                  "op_state": 10,
                   "speed": 7,
-                  "state": 10,
                   "switch": 3,
                   "type": 11
                 },
@@ -972,7 +1046,6 @@
                   "interface": "Interface",
                   "message": "EMS",
                   "speed": "Speed",
-                  "state": "State",
                   "switch": "Switch",
                   "type": ""
                 }

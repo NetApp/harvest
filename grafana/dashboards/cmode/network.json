@@ -1843,6 +1843,13 @@
               "interval": "",
               "legendFormat": "HW",
               "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(nic_tx_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "SENT",
+              "refId": "B"
             }
           ],
           "timeFrom": null,
@@ -1956,6 +1963,13 @@
               "interval": "",
               "legendFormat": "LENGTH",
               "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(nic_rx_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "RECEIVED",
+              "refId": "E"
             }
           ],
           "timeFrom": null,
