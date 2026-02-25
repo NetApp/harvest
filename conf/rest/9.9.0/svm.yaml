@@ -16,16 +16,13 @@ endpoints:
     counters:
       - ^^name                              => svm
       - ^nsswitch                           => nameservice_switch
+      - ^nfs.enabled                        => nfs_protocol_enabled
   - query: api/protocols/cifs/services
     counters:
       - ^^svm.name                          => svm
       - ^enabled                            => cifs_protocol_enabled
       - ^security.smb_encryption            => smb_encryption_required
       - ^security.smb_signing               => smb_signing_required
-  - query: api/protocols/nfs/services
-    counters:
-      - ^^svm.name                          => svm
-      - ^enabled                            => nfs_protocol_enabled
   - query: api/protocols/audit
     counters:
       - ^^svm.name                          => svm
