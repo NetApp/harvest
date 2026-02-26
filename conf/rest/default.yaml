@@ -17,6 +17,7 @@ objects:
 #  CIFSShare:                    cifs_share.yaml
   CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
+  Cluster:                     cluster.yaml
   ClusterSchedule:             clusterschedule.yaml
   ClusterSoftware:             clustersoftware.yaml
   Disk:                        disk.yaml

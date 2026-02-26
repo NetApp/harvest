@@ -46,10 +46,37 @@ var exceptionLegendMap = map[string][]string{
 }
 
 var exceptionList = []string{
-	"Total Power Consumed", "Average Power Consumption (kWh) Over Last Hour",
-	"NICs Send Errors by Cluster", "NICs Receive Errors by Cluster", "FCPs Transmission interrupts", "FCPs Transmission errors",
-	"Average Latency", "Throughput", "IOPs", "System Utilization", "NFSv3 Read and Write Latency", "NFSv3 Read and Write Throughput", "NFSv3 Read and Write IOPs", "CIFS Connections", "Protocol Backend IOPs",
-	"SVM Average Latency", "SVM Throughput", "SVM IOPs", "SVM CIFS Latency", "SVM CIFS IOPs", "SVM FCP Average Latency", "SVM FCP IOPs", "SVM FCP Throughput", "SVM iSCSI Average Latency", "SVM iSCSI Throughput", "SVM NVMe/FC Average Latency", "SVM NVMe/FC Throughput", "SVM NVMe/FC IOPs", "Copy Offload Data Copied",
+	"Average Latency",
+	"Average Power Consumption (kWh) Over Last Hour",
+	"CIFS Connections",
+	"Copy Offload Data Copied",
+	"FCPs Transmission errors",
+	"FCPs Transmission interrupts",
+	"IOPs",
+	"NFSv3 Read and Write IOPs",
+	"NFSv3 Read and Write Latency",
+	"NFSv3 Read and Write Throughput",
+	"NICs Receive Errors by Cluster",
+	"NICs Send Errors by Cluster",
+	"Protocol Backend IOPs",
+	"SVM Average Latency",
+	"SVM CIFS IOPs",
+	"SVM CIFS Latency",
+	"SVM FCP Average Latency",
+	"SVM FCP IOPs",
+	"SVM FCP Throughput",
+	"SVM IOPs",
+	"SVM NVMe/FC Average Latency",
+	"SVM NVMe/FC IOPs",
+	"SVM NVMe/FC Throughput",
+	"SVM Throughput",
+	"SVM iSCSI Average Latency",
+	"SVM iSCSI Throughput",
+	"System Utilization",
+	"Top $TopResources Time Till Full by Volume",
+	"Top $TopResources Time Till Full by Aggregate",
+	"Throughput",
+	"Total Power Consumed",
 }
 
 var legendName = regexp.MustCompile(`{{.*?}}`)
@@ -300,17 +327,20 @@ func TestUnitsAndExprMatch(t *testing.T) {
 	allowedSuffix := map[string][]string{
 		"_count":                     {"none", "short", "locale"},
 		"_lag_time":                  {"", "s", "short"},
-		"aggr_total_physical_used":   {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"aggr_space_available":       {"bytes", "dtdhms"},
+		"aggr_space_used":            {"bytes", "percent"},
 		"aggr_total_logical_used":    {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
-		"volume_space_physical_used": {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
-		"volume_space_logical_used":  {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"aggr_total_physical_used":   {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"cluster_space_available":    {"bytes", "dtdhms"},
+		"environment_sensor_power":   {"watt", "watth"},
 		"qos_ops":                    {"iops", "percent"},
 		"qos_total_data":             {"Bps", "percent", "MBs"}, // Max Throughput uses MBs unit
-		"aggr_space_used":            {"bytes", "percent"},
-		"volume_size_used":           {"bytes", "percent"},
 		"shelf_power":                {"watt", "watth"},
-		"environment_sensor_power":   {"watt", "watth"},
 		"volume_num_compress_fail":   {"percent", "short"},
+		"volume_size_available":      {"bytes", "dtdhms"},
+		"volume_size_used":           {"bytes", "percent"},
+		"volume_space_logical_used":  {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"volume_space_physical_used": {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 	}
 
 	// Normalize rates to their base unit
@@ -1147,6 +1177,10 @@ func doLegends(t *testing.T, value gjson.Result, dashPath string) {
 }
 
 func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashPath, title string) {
+	exceptions := map[string]bool{
+		"cmode/timetillfull.json": true,
+	}
+
 	wantLegendNoMin := strings.Join([]string{"mean", "lastNotNull", "max"}, ",")
 	wantLegendWithMin := "min," + wantLegendNoMin
 	got := strings.Join(gotLegendCalculations, ",")
@@ -1157,11 +1191,11 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 		return
 	}
 	if strings.Contains(got, "min") {
-		if got != wantLegendWithMin {
+		if got != wantLegendWithMin && !exceptions[dashPath] {
 			t.Errorf(`dashboard=%s, panel="%s", got=[%s] want=[%s]`, dashPath, title, got, wantLegendWithMin)
 		}
 	} else {
-		if got != wantLegendNoMin {
+		if got != wantLegendNoMin && !exceptions[dashPath] {
 			t.Errorf(`dashboard=%s, panel="%s", got=[%s] want=[%s]`, dashPath, title, got, wantLegendNoMin)
 		}
 	}
@@ -2055,7 +2089,7 @@ func checkLegendFormat(t *testing.T, path string, data []byte) {
 			legendFormat := targetN.Get("legendFormat").ClonedString()
 			legendExist := false
 			if !strings.Contains(legendFormat, "{{") {
-				t.Errorf("dashboard=%s panel=%s kind=%s legendFormat=%s should have {{object}} in legendFormat", path, panelTitle, kind, legendFormat)
+				t.Errorf("dashboard=%s panelTitle=%s kind=%s legendFormat=%s should have {{object}} in legendFormat", path, panelTitle, kind, legendFormat)
 			} else {
 				matches := legendName.FindAllString(legendFormat, -1)
 				for _, match := range matches {
@@ -2065,7 +2099,7 @@ func checkLegendFormat(t *testing.T, path string, data []byte) {
 					}
 				}
 				if !legendExist {
-					t.Errorf("dashboard=%s panel=%s kind=%s legendFormat=%s should have legends from %s in legendFormat", path, panelTitle, kind, legendFormat, possibleLegends)
+					t.Errorf("dashboard=%s panelTitle=%s kind=%s legendFormat=%s should have legends from %s in legendFormat", path, panelTitle, kind, legendFormat, possibleLegends)
 				}
 			}
 		}
