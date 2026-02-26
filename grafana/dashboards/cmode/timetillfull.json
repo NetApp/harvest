@@ -861,9 +861,7 @@
                   "aggr": "Aggregate",
                   "cluster": "Cluster",
                   "datacenter": "Datacenter",
-                  "node": "Node",
-                  "svm": "SVM",
-                  "volume": "Volume"
+                  "node": "Node"
                 }
               }
             }
@@ -955,8 +953,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "3",
-          "value": "3"
+          "text": "5",
+          "value": "5"
         },
         "description": null,
         "error": null,
