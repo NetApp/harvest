@@ -376,7 +376,15 @@ func shouldSkipDashboard(path string) bool {
 	if !strings.Contains(path, "cmode") {
 		return true
 	}
-	skip := []string{"nfs4storePool", "headroom", "fsa", "health", "nfsTroubleshooting", "vscan"}
+	skip := []string{
+		"fsa",
+		"headroom",
+		"health",
+		"nfs4storePool",
+		"nfsTroubleshooting",
+		"timetillfull",
+		"vscan",
+	}
 	for _, s := range skip {
 		if strings.Contains(path, s) {
 			return true
