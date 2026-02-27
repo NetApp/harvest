@@ -76,6 +76,7 @@ security login rest-role create -role harvest-rest-role -access readonly -api /a
 security login rest-role create -role harvest-rest-role -access readonly -api /api/snapmirror/relationships
 security login rest-role create -role harvest-rest-role -access readonly -api /api/snapmirror/policies
 security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/aggregates
+security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/cluster
 security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/disks
 security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/flexcache/flexcaches
 security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/luns

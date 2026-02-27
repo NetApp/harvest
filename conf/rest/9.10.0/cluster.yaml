@@ -1,0 +1,11 @@
+name:                     Cluster
+query:                    api/storage/cluster
+object:                   cluster
+
+counters:
+  - block_storage.available           => space_available
+  - hidden_fields:
+      - block_storage
+
+export_options:
+  include_all_labels: true
