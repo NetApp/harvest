@@ -407,7 +407,7 @@
   "license_capacity_maximum_size": "Maximum licensed capacity in bytes for capacity-based licenses. This metric is only applicable to licenses that have capacity limits.",
   "license_capacity_used_percent": "The percentage of the licensed capacity currently being used. This is calculated as (capacity_used_size / capacity_maximum_size) * 100 and is only applicable to capacity-based licenses.",
   "license_capacity_used_size": "The amount of capacity currently being used against the license limit in bytes. This metric is only applicable to capacity-based licenses.",
-  "license_expiry_time": "License expiration timestamp in Unix epoch seconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.",
+  "license_expiry_time": "License expiration timestamp in Unix epoch milliseconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.",
   "license_labels": "Detailed information about licenses installed on the cluster.",
   "lif_labels": "This metric provides information about LIF",
   "lif_recv_data": "Number of bytes received per second",
