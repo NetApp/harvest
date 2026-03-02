@@ -27,6 +27,7 @@ objects:
   FlexCache:                   flexcache.yaml
   FCP:                         fcp.yaml
   FRU:                         fru.yaml
+  License:                     license.yaml
   LIF:                         lif.yaml
 #  Lock:                        lock.yaml
   Health:                      health.yaml

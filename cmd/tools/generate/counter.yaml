@@ -1088,6 +1088,46 @@ counters:
   - Name: flexcache_miss_percent
     Description: This metric represents the percentage of block requests from a client that resulted in a "miss" in the FlexCache. A "miss" occurs when the requested data is not found in the cache and has to be retrieved from the origin volume.
 
+  - Name: license_labels
+    Description: Detailed information about licenses installed on the cluster.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/licensing/licenses
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/license.yaml
+
+  - Name: license_capacity_maximum_size
+    Description: Maximum licensed capacity in bytes for capacity-based licenses. This metric is only applicable to licenses that have capacity limits.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/licensing/licenses
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/license.yaml
+
+  - Name: license_capacity_used_size
+    Description: The amount of capacity currently being used against the license limit in bytes. This metric is only applicable to capacity-based licenses.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/licensing/licenses
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/license.yaml
+
+  - Name: license_capacity_used_percent
+    Description: The percentage of the licensed capacity currently being used. This is calculated as (capacity_used_size / capacity_maximum_size) * 100 and is only applicable to capacity-based licenses.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/licensing/licenses
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/license.yaml
+
+  - Name: license_expiry_time
+    Description: License expiration timestamp in Unix epoch milliseconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/licensing/licenses
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/license.yaml
+
   - Name: lun_size_used_percent
     Description: This metric represents the percentage of a LUN that is currently being used.
 

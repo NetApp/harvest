@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Feb-23
+Creation Date : 2026-Mar-02
 NX-OS Version: 9.3.12
 ```
 
@@ -524,6 +524,15 @@ Displays operational state of the interface in the Cisco switch.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | NXAPI | `show interface` | `state` | conf/ciscorest/nxos/9.3.12/interface.yaml |
+
+The `cisco_interface_up` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| Cisco: Switch | Interfaces | table | [Down (Last 24h)](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=39) |
+///
+
 
 
 ### cisco_lldp_neighbor_labels
