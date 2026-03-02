@@ -1121,7 +1121,7 @@ counters:
         Template: conf/rest/9.12.0/license.yaml
 
   - Name: license_expiry_time
-    Description: License expiration timestamp in Unix epoch seconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.
+    Description: License expiration timestamp in Unix epoch milliseconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.
     APIs:
       - API: REST
         Endpoint: api/cluster/licensing/licenses

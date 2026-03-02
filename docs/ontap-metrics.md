@@ -6667,7 +6667,7 @@ The `license_capacity_used_size` metric is visualized in the following Grafana d
 
 ### license_expiry_time
 
-License expiration timestamp in Unix epoch seconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.
+License expiration timestamp in Unix epoch milliseconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

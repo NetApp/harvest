@@ -109,7 +109,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "`State:` License state (compliant, noncompliant, unlicensed, or unknown).\n\n`Compliance State:` Compliance state of the license per owner. Green for `compliant`, red for `noncompliant`, `unlicensed`, or `unknown`.\n\n`Description:` License package description.\n\n`Entitlement Action:` Recommended action for the entitlement.\n\n`Entitlement Risk:` Risk level for the entitlement (high, medium, low).\n\n`Active:` Whether the license is active (Yes/No).\n\n`Evaluation:` Whether this is an evaluation license (Yes/No).\n\n`Licensed Capacity:` Maximum licensed capacity for capacity-based licenses (N/A for feature licenses).\n\n`Expiration Date:` License expiry date (N/A for perpetual licenses).\n\n`Host ID:` Host identifier for the license owner (N/A if not applicable).",
+      "description": "`Compliance State:` Compliance state of the license per owner. Green for `compliant`, red for `noncompliant`, `unlicensed`, or `unknown`.\n\n`Description:` License package description.\n\n`Entitlement Action:` Recommended action for the entitlement.\n\n`Entitlement Risk:` Risk level for the entitlement (high, medium, low).\n\n`Active:` Whether the license is active (Yes/No).\n\n`Evaluation:` Whether this is an evaluation license (Yes/No).\n\n`Licensed Capacity:` Maximum licensed capacity for capacity-based licenses (N/A for feature licenses).\n\n`Expiration Date:` License expiry date (N/A for perpetual licenses).\n\n`Host ID:` Host identifier for the license owner (N/A if not applicable).",
       "fieldConfig": {
         "defaults": {
           "color": {
