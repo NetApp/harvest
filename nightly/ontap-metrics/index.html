@@ -5331,6 +5331,51 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#license_capacity_maximum_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_capacity_maximum_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_capacity_used_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_capacity_used_percent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_capacity_used_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_capacity_used_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_expiry_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_expiry_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#lif_labels" class="md-nav__link">
     <span class="md-ellipsis">
       lif_labels
@@ -19671,6 +19716,51 @@
   <a href="#iw_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       iw_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_capacity_maximum_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_capacity_maximum_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_capacity_used_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_capacity_used_percent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_capacity_used_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_capacity_used_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_expiry_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_expiry_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      license_labels
     </span>
   </a>
   
@@ -46651,6 +46741,211 @@ ONTAP Version: 9.16.1
 <td>MetroCluster Iwarp</td>
 <td>timeseries</td>
 <td><a href="/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&amp;viewPanel=109">Write IOPs</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="license_capacity_maximum_size">license_capacity_maximum_size<a class="headerlink" href="#license_capacity_maximum_size" title="Permanent link">&para;</a></h3>
+<p>Maximum licensed capacity in bytes for capacity-based licenses. This metric is only applicable to licenses that have capacity limits.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/licensing/licenses</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/license.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>license_capacity_maximum_size</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: License</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-license/ontap3a-license?orgId=1&amp;viewPanel=1">License Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="license_capacity_used_percent">license_capacity_used_percent<a class="headerlink" href="#license_capacity_used_percent" title="Permanent link">&para;</a></h3>
+<p>The percentage of the licensed capacity currently being used. This is calculated as (capacity_used_size / capacity_maximum_size) * 100 and is only applicable to capacity-based licenses.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/licensing/licenses</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/license.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>license_capacity_used_percent</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: License</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-license/ontap3a-license?orgId=1&amp;viewPanel=1">License Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="license_capacity_used_size">license_capacity_used_size<a class="headerlink" href="#license_capacity_used_size" title="Permanent link">&para;</a></h3>
+<p>The amount of capacity currently being used against the license limit in bytes. This metric is only applicable to capacity-based licenses.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/licensing/licenses</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/license.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>license_capacity_used_size</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: License</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-license/ontap3a-license?orgId=1&amp;viewPanel=1">License Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="license_expiry_time">license_expiry_time<a class="headerlink" href="#license_expiry_time" title="Permanent link">&para;</a></h3>
+<p>License expiration timestamp in Unix epoch milliseconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/licensing/licenses</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/license.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>license_expiry_time</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: License</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-license/ontap3a-license?orgId=1&amp;viewPanel=1">License Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="license_labels">license_labels<a class="headerlink" href="#license_labels" title="Permanent link">&para;</a></h3>
+<p>Detailed information about licenses installed on the cluster.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/licensing/licenses</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/license.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>license_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: License</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-license/ontap3a-license?orgId=1&amp;viewPanel=1">License Details</a></td>
 </tr>
 </tbody>
 </table>
