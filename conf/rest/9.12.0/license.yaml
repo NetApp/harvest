@@ -1,0 +1,17 @@
+name: License
+query: api/cluster/licensing/licenses
+object: license
+
+counters:
+  - ^^name                        => license
+  - ^description
+  - ^entitlement.action           => entitlement_action
+  - ^entitlement.risk             => entitlement_risk
+  - ^licenses
+  - ^scope
+  - ^state
+
+plugins:
+  - License
+
+export_data: false

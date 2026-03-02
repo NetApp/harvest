@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Feb-23
+Creation Date : 2026-Mar-02
 ONTAP Version: 9.16.1
 ```
 
@@ -1225,6 +1225,8 @@ The `aggr_space_available` metric is visualized in the following Grafana dashboa
 | ONTAP: Cluster | Highlights | stat | [Available Space](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=278) |
 | ONTAP: Datacenter | Highlights | stat | [Available Space](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=613) |
 | ONTAP: Datacenter | Highlights | timeseries | [Top $TopResources Available Space by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=657) |
+| ONTAP: Time Till Full | Aggregate | timeseries | [Top $TopResources Time Till Full by Aggregate](/d/cdot-timetillfull/ontap3a-time till full?orgId=1&viewPanel=17) |
+| ONTAP: Time Till Full | Aggregate | table | [Top $TopResources Time Till Full by Aggregate](/d/cdot-timetillfull/ontap3a-time till full?orgId=1&viewPanel=18) |
 | ONTAP: StorageGrid FabricPool | Highlights | stat | [Available Space](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=25) |
 | ONTAP: StorageGrid FabricPool | Highlights | timeseries | [Space Available](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=14) |
 ///
@@ -2071,6 +2073,8 @@ The `cluster_space_available` metric is visualized in the following Grafana dash
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ASAr2: Overview | Highlights | stat | [Available](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=4) |
+| ONTAP: Time Till Full | Cluster | timeseries | [Top $TopResources Time Till Full by Cluster](/d/cdot-timetillfull/ontap3a-time till full?orgId=1&viewPanel=12) |
+| ONTAP: Time Till Full | Cluster | table | [Top $TopResources Time Till Full by Cluster](/d/cdot-timetillfull/ontap3a-time till full?orgId=1&viewPanel=14) |
 ///
 
 
@@ -6603,6 +6607,96 @@ The `iw_write_ops` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: MetroCluster | MetroCluster Iwarp | timeseries | [Write IOPs](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=109) |
+///
+
+
+
+### license_capacity_maximum_size
+
+Maximum licensed capacity in bytes for capacity-based licenses. This metric is only applicable to licenses that have capacity limits.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/licensing/licenses` | `Harvest generated` | conf/rest/9.12.0/license.yaml |
+
+The `license_capacity_maximum_size` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: License | Highlights | table | [License Details](/d/cdot-license/ontap3a-license?orgId=1&viewPanel=1) |
+///
+
+
+
+### license_capacity_used_percent
+
+The percentage of the licensed capacity currently being used. This is calculated as (capacity_used_size / capacity_maximum_size) * 100 and is only applicable to capacity-based licenses.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/licensing/licenses` | `Harvest generated` | conf/rest/9.12.0/license.yaml |
+
+The `license_capacity_used_percent` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: License | Highlights | table | [License Details](/d/cdot-license/ontap3a-license?orgId=1&viewPanel=1) |
+///
+
+
+
+### license_capacity_used_size
+
+The amount of capacity currently being used against the license limit in bytes. This metric is only applicable to capacity-based licenses.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/licensing/licenses` | `Harvest generated` | conf/rest/9.12.0/license.yaml |
+
+The `license_capacity_used_size` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: License | Highlights | table | [License Details](/d/cdot-license/ontap3a-license?orgId=1&viewPanel=1) |
+///
+
+
+
+### license_expiry_time
+
+License expiration timestamp in Unix epoch seconds. This metric indicates when the license will expire. For perpetual licenses, this metric will not be present.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/licensing/licenses` | `Harvest generated` | conf/rest/9.12.0/license.yaml |
+
+The `license_expiry_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: License | Highlights | table | [License Details](/d/cdot-license/ontap3a-license?orgId=1&viewPanel=1) |
+///
+
+
+
+### license_labels
+
+Detailed information about licenses installed on the cluster.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/licensing/licenses` | `Harvest generated` | conf/rest/9.12.0/license.yaml |
+
+The `license_labels` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: License | Highlights | table | [License Details](/d/cdot-license/ontap3a-license?orgId=1&viewPanel=1) |
 ///
 
 
@@ -23328,6 +23422,8 @@ The `volume_size_available` metric is visualized in the following Grafana dashbo
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: File System Analytics (FSA) | Highlights | stat | [Available](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=96) |
+| ONTAP: Time Till Full | Volume | timeseries | [Top $TopResources Time Till Full by Volume](/d/cdot-timetillfull/ontap3a-time till full?orgId=1&viewPanel=15) |
+| ONTAP: Time Till Full | Volume | table | [Top $TopResources Time Till Full by Volume](/d/cdot-timetillfull/ontap3a-time till full?orgId=1&viewPanel=16) |
 ///
 
 
@@ -23958,7 +24054,7 @@ This metric measures the amount of data read by users from a specific volume.
 | KeyPerf | `api/storage/volumes/*/top-metrics/users` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_read_data` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -23976,7 +24072,7 @@ This metric tracks the number of read operations performed by users on a specifi
 | KeyPerf | `api/storage/volumes/*/top-metrics/users` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_read_ops` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -23994,7 +24090,7 @@ This metric measures the amount of data written by users to a specific volume.
 | KeyPerf | `api/storage/volumes/*/top-metrics/users` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_write_data` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -24012,7 +24108,7 @@ This metric tracks the number of write operations performed by users on a specif
 | KeyPerf | `api/storage/volumes/*/top-metrics/users` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 The `volume_top_users_write_ops` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
