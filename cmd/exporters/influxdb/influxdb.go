@@ -47,6 +47,7 @@ var protectedFieldNames = map[string]string{
 	"time":         "harvest_time",
 	"_measurement": "harvest_measurement",
 	"_field":       "harvest_field",
+	"expiry_time":  "harvest_expiry_time",
 }
 
 type InfluxDB struct {
