@@ -122,7 +122,7 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 	s.Logger.Debug(
 		"initialized cache",
 		slog.Int("numMetrics", len(s.Prop.Metrics)),
-		slog.String("timeout", s.Client.Timeout.String()),
+		slog.String("timeout", s.Client.GetTimeout().String()),
 	)
 
 	return nil
