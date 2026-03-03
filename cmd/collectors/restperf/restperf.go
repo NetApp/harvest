@@ -155,7 +155,7 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	r.Logger.Debug(
 		"initialized cache",
 		slog.Int("numMetrics", len(r.Prop.Metrics)),
-		slog.String("timeout", r.Client.Timeout.String()),
+		slog.String("timeout", r.Client.GetTimeout().String()),
 	)
 
 	return nil

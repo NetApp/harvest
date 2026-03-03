@@ -181,7 +181,7 @@ func (r *Rest) Init(a *collector.AbstractCollector) error {
 	r.Logger.Debug(
 		"initialized cache",
 		slog.Int("numMetrics", len(r.Prop.Metrics)),
-		slog.String("timeout", r.Client.Timeout.String()),
+		slog.String("timeout", r.Client.GetTimeout().String()),
 	)
 
 	return nil
@@ -198,7 +198,7 @@ func (r *Rest) InitVars(config *node.Node) {
 
 	duration, err := time.ParseDuration(clientTimeout)
 	if err == nil {
-		r.Client.Timeout = duration
+		r.Client.SetTimeout(duration)
 	} else {
 		r.Logger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
 	}
@@ -798,7 +798,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 			List:  counters,
 		},
 		Schedules:     schedules,
-		ClientTimeout: r.Client.Timeout.String(),
+		ClientTimeout: r.Client.GetTimeout().String(),
 		InstanceInfo:  &info,
 	})
 

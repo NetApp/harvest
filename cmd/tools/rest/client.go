@@ -36,7 +36,6 @@ type Client struct {
 	baseURL  string
 	remote   conf.Remote
 	token    string
-	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
 	auth     *auth.Credentials
 	Metadata *collector.Metadata
@@ -68,7 +67,6 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 		url = "https://" + addr + "/"
 	}
 	client.baseURL = url
-	client.Timeout = timeout
 
 	transport, err = credentials.Transport(nil, poller)
 	if err != nil {
@@ -83,6 +81,19 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	}
 
 	return &client, nil
+}
+
+func (c *Client) SetTimeout(d time.Duration) {
+	if c.client != nil {
+		c.client.Timeout = d
+	}
+}
+
+func (c *Client) GetTimeout() time.Duration {
+	if c.client != nil {
+		return c.client.Timeout
+	}
+	return 0
 }
 
 func (c *Client) printRequestAndResponse(req string, response []byte) {

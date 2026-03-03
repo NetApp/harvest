@@ -103,7 +103,7 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 	kp.Logger.Debug(
 		"initialized cache",
 		slog.Int("numMetrics", len(kp.Prop.Metrics)),
-		slog.String("timeout", kp.Client.Timeout.String()),
+		slog.String("timeout", kp.Client.GetTimeout().String()),
 	)
 	return nil
 }
