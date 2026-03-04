@@ -11,6 +11,7 @@ counters:
   - ^destination_volume                      => destination_volume
   - ^destination_volume_node                 => destination_node
   - ^destination_vserver                     => destination_vserver
+  - ^fl_status                               => fl_status
   - ^healthy                                 => healthy
   - ^last_transfer_type                      => last_transfer_type
   - ^policy_type                             => policy_type
@@ -64,6 +65,7 @@ export_options:
   instance_labels:
     - derived_relationship_type
     - destination_cg_name
+    - fl_healthy
     - group_type
     - healthy
     - last_transfer_error
