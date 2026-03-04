@@ -109,6 +109,8 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		}
 	}
 
+	m.checkFabricLinkStatus(data)
+
 	// update volume instance labels
 	m.updateSMLabels(data)
 	m.currentVal++
@@ -309,7 +311,7 @@ func (m *SnapMirror) checkFabricLinkStatus(data *matrix.Matrix) {
 		// Unhealthy looks like this:
 		// - FabricLink Status: 20m overdue: 9 objects to transfer, pushing 9.4kb
 
-		flIsHealthy := flStatus == "" || strings.Contains(flStatus, "ok") || strings.Contains(flStatus, "active")
+		flIsHealthy := flStatus == "" || strings.HasPrefix(flStatus, "ok") || strings.Contains(flStatus, "active")
 		health := instance.GetLabel("healthy")
 
 		// Then set fl_healthy label to true only if healthy label is also true and fabric link status is healthy. Otherwise, set it to false.
