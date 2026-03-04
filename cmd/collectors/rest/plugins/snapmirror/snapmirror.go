@@ -113,6 +113,8 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	m.updateSMLabels(data)
 	m.currentVal++
 
+	m.checkFabricLinkStatus(data)
+
 	return []*matrix.Matrix{m.data}, m.client.Metadata, nil
 }
 
@@ -288,6 +290,32 @@ func (m *SnapMirror) handleSVMDRRelationships(data *matrix.Matrix, keys []string
 
 		if sourceVolume != "" && destinationVolume != "" {
 			svmDrInstance.SetLabel("relationship_id", "")
+		}
+	}
+}
+
+func (m *SnapMirror) checkFabricLinkStatus(data *matrix.Matrix) {
+	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
+		flStatus := strings.TrimSpace(instance.GetLabel("fl_status"))
+		// check if the fabric link status is healthy or not. Healthy looks like this:
+		// - FabricLink Status: active: 33 objects to transfer, pushing 19.9MB; throughput 25.5MB/sec, 16 ops/sec
+		// - FabricLink Status: ok; throughput 11.9MB/sec, 11 ops/sec
+		// - FabricLink Status: ok; throughput 11.9MB/sec, 11 ops/sec
+		// - FabricLink Status: ok
+		// - FabricLink Status is empty
+		// Unhealthy looks like this:
+		// - FabricLink Status: 20m overdue: 9 objects to transfer, pushing 9.4kb
+
+		flIsHealthy := flStatus == "" || strings.Contains(flStatus, "ok") || strings.Contains(flStatus, "active")
+		health := instance.GetLabel("healthy")
+
+		// Then set fl_healthy label to true only if healthy label is also true and fabric link status is healthy. Otherwise, set it to false.
+		instance.SetLabel("fl_healthy", "false")
+		if flIsHealthy && health == "true" {
+			instance.SetLabel("fl_healthy", "true")
 		}
 	}
 }
