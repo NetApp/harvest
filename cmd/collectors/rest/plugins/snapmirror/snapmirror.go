@@ -109,14 +109,11 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		}
 	}
 
-	m.checkFabricLinkStatus(data)
-
 	// update volume instance labels
 	m.updateSMLabels(data)
 	m.currentVal++
 
 	m.checkFabricLinkStatus(data)
-
 	return []*matrix.Matrix{m.data}, m.client.Metadata, nil
 }
 
