@@ -78,7 +78,9 @@ func (l *License) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 		licensesData := gjson.Result{Type: gjson.JSON, Raw: "[" + rawLicenses + "]"}
 		for _, lic := range licensesData.Array() {
 			owner := lic.Get("owner").ClonedString()
-			instanceKey := licenseName + "_" + scope + "_" + owner
+			serialNumber := lic.Get("serial_number").ClonedString()
+
+			instanceKey := licenseName + "_" + scope + "_" + owner + "_" + serialNumber
 
 			newInstance, err := l.data.NewInstance(instanceKey)
 			if err != nil {
@@ -93,7 +95,7 @@ func (l *License) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 			newInstance.SetLabel("entitlement_risk", entitlementRisk)
 
 			newInstance.SetLabel("owner", owner)
-			newInstance.SetLabel("serial_number", lic.Get("serial_number").ClonedString())
+			newInstance.SetLabel("serial_number", serialNumber)
 			newInstance.SetLabel("installed_license", lic.Get("installed_license").ClonedString())
 			newInstance.SetLabel("host_id", lic.Get("host_id").ClonedString())
 			newInstance.SetLabel("active", lic.Get("active").ClonedString())
