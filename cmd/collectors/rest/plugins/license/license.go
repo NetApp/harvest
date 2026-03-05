@@ -33,13 +33,13 @@ func (l *License) Init(_ conf.Remote) error {
 
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	for _, k := range []string{"license", "scope", "owner"} {
+	for _, k := range []string{"license", "scope", "owner", "serial_number"} {
 		instanceKeys.NewChildS("", k)
 	}
 	instanceLabels := exportOptions.NewChildS("instance_labels", "")
 	for _, il := range []string{
 		"description", "entitlement_action", "entitlement_risk",
-		"serial_number", "installed_license", "host_id",
+		"installed_license", "host_id",
 		"active", "evaluation", "compliance_state",
 	} {
 		instanceLabels.NewChildS("", il)

@@ -554,7 +554,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "label_join(\n  license_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\"\n)",
+          "expr": "label_join(\n  license_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\",\n  \"serial_number\"\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -563,7 +563,7 @@
         },
         {
           "exemplar": false,
-          "expr": "label_join(\n  license_capacity_maximum_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\"\n)",
+          "expr": "label_join(\n  license_capacity_maximum_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\",\n  \"serial_number\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -573,7 +573,7 @@
         },
         {
           "exemplar": false,
-          "expr": "label_join(\n  license_expiry_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\"\n)",
+          "expr": "label_join(\n  license_expiry_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\",\n  \"serial_number\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -583,7 +583,7 @@
         },
         {
           "exemplar": false,
-          "expr": "label_join(\n  license_capacity_used_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\"\n)",
+          "expr": "label_join(\n  license_capacity_used_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\",\n  \"serial_number\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -593,7 +593,7 @@
         },
         {
           "exemplar": false,
-          "expr": "label_join(\n  license_capacity_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\"\n)",
+          "expr": "label_join(\n  license_capacity_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"license\",\n  \"scope\",\n  \"owner\",\n  \"serial_number\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
