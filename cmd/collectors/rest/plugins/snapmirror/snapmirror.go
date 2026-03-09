@@ -335,25 +335,36 @@ func (m *SnapMirror) checkFabricLinkStatus(data *matrix.Matrix) {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			m.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			m.SLogger.Error("Failed to collect object store data", slogx.Err(err))
+			m.SLogger.Error("Failed to query fabriclink direction via private CLI", slogx.Err(err))
 		}
 		return
 	}
 
+	// build a map of link_uuid to direction from the records
+	reverseLinkUUIDs := make(map[string]struct{})
 	for _, record := range records {
 		direction := record.Get("direction").ClonedString()
+		if direction != "reverse" {
+			continue
+		}
 		linkUUID := record.Get("link_uuid").ClonedString()
+		if linkUUID == "" {
+			continue
+		}
+		reverseLinkUUIDs[linkUUID] = struct{}{}
+	}
+	if len(reverseLinkUUIDs) == 0 {
+		return
+	}
 
-		if direction == "reverse" {
-			// find the instance with the same link_uuid and do not export
-			for _, instance := range data.GetInstances() {
-				if !instance.IsExportable() {
-					continue
-				}
-				if instance.GetLabel("relationship_id") == linkUUID {
-					instance.SetExportable(false)
-				}
-			}
+	// Hide instances whose relationship_id matches a reverse link UUID.
+	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
+		relationshipID := instance.GetLabel("relationship_id")
+		if _, isReverse := reverseLinkUUIDs[relationshipID]; isReverse {
+			instance.SetExportable(false)
 		}
 	}
 }
