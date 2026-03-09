@@ -29,8 +29,8 @@ github.com/modelcontextprotocol/go-sdk/oauthex
 # github.com/netapp/harvest/v2 v2.0.0-20260305093345-fcd25daa22bf => ../
 ## explicit; go 1.26.0
 github.com/netapp/harvest/v2/pkg/slogx
-# github.com/segmentio/asm v1.1.3
-## explicit; go 1.17
+# github.com/segmentio/asm v1.2.1
+## explicit; go 1.18
 github.com/segmentio/asm/ascii
 github.com/segmentio/asm/base64
 github.com/segmentio/asm/cpu
@@ -54,8 +54,8 @@ github.com/spf13/pflag
 # github.com/yosida95/uritemplate/v3 v3.0.2
 ## explicit; go 1.14
 github.com/yosida95/uritemplate/v3
-# golang.org/x/oauth2 v0.35.0
-## explicit; go 1.24.0
+# golang.org/x/oauth2 v0.36.0
+## explicit; go 1.25.0
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
 # golang.org/x/sys v0.42.0
