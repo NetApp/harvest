@@ -148,7 +148,7 @@ func (m *Manager) createBackup(filename string) error {
 	}
 
 	// Write backup (this overwrites any existing .old file)
-	if err := os.WriteFile(backupPath, data, 0600); err != nil {
+	if err := os.WriteFile(backupPath, data, 0600); err != nil { //nolint:gosec
 		return fmt.Errorf("failed to write backup file: %w", err)
 	}
 
