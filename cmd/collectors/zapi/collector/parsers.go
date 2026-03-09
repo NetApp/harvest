@@ -25,6 +25,15 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 		keys = append(keys, strings.Split(key, "."))
 	}
 
+	// The last segment of every key is the leaf field name (e.g. "cluster-uuid"),
+	// not a container. Strip it so we only compute the common prefix of the
+	// container paths. Flat keys (length 1) have no container — leave them as-is
+	for i, key := range keys {
+		if len(key) > 1 {
+			keys[i] = key[:len(key)-1]
+		}
+	}
+
 	minLen := node.MinLen(keys)
 
 	for i := range minLen {

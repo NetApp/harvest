@@ -440,6 +440,9 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 }
 
 func (n *Node) SearchChildren(path []string) []*Node {
+	if len(path) == 0 {
+		return nil
+	}
 
 	var (
 		search  func(*Node, []string)

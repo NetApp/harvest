@@ -4,7 +4,8 @@ query:      cluster-identity-get
 object:     security
 
 counters:
-  - ^^cluster-uuid             =>  uuid
+  - cluster-identity-info:
+      - ^^cluster-uuid  =>  uuid
 
 collect_only_labels: true
 no_max_records: true
