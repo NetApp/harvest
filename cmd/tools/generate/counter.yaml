@@ -800,6 +800,15 @@ counters:
   - Name: snapmirror_break_successful_count
     Description: The number of successful SnapMirror break operations for the relationship
 
+  - Name: snapmirror_fl_pending_work_task_count
+    Description: The number of fabriclink pending work tasks for the relationship
+
+  - Name: snapmirror_fl_pull_byte_count
+    Description: The number of bytes pulled over fabriclink for the relationship
+
+  - Name: snapmirror_fl_push_byte_count
+    Description: The number of bytes pushed over fabriclink for the relationship
+
   - Name: snapmirror_lag_time
     Description: Amount of time since the last snapmirror transfer in seconds
 
