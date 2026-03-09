@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -315,6 +316,44 @@ func (m *SnapMirror) checkFabricLinkStatus(data *matrix.Matrix) {
 		instance.SetLabel("fl_healthy", "false")
 		if flIsHealthy && health == "true" {
 			instance.SetLabel("fl_healthy", "true")
+		}
+	}
+
+	// call fabriclink show to get the direction of the relationship so we can hide
+	// instances where the fabric link direction is reverse. This way we don't publish both
+	// sides of the relationship and avoid confusion for customers.
+	fields := []string{"direction", "link_uuid"}
+	query := "private/cli/fabriclink"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
+		Build()
+
+	records, err := collectors.InvokeRestCall(m.client, href)
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			m.SLogger.Debug("API not found", slogx.Err(err))
+		} else {
+			m.SLogger.Error("Failed to collect object store data", slogx.Err(err))
+		}
+		return
+	}
+
+	for _, record := range records {
+		direction := record.Get("direction").ClonedString()
+		linkUUID := record.Get("link_uuid").ClonedString()
+
+		if direction == "reverse" {
+			// find the instance with the same link_uuid and do not export
+			for _, instance := range data.GetInstances() {
+				if !instance.IsExportable() {
+					continue
+				}
+				if instance.GetLabel("relationship_id") == linkUUID {
+					instance.SetExportable(false)
+				}
+			}
 		}
 	}
 }
