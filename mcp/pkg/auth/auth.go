@@ -71,9 +71,15 @@ func LoadAuthConfig() Config {
 		}
 
 	case Cert:
-		config.CertFile = os.Getenv("HARVEST_TSDB_CERT_FILE")
-		config.KeyFile = os.Getenv("HARVEST_TSDB_KEY_FILE")
-		config.CAFile = os.Getenv("HARVEST_TSDB_CA_FILE")
+		if v := os.Getenv("HARVEST_TSDB_CERT_FILE"); v != "" {
+			config.CertFile = filepath.Clean(v)
+		}
+		if v := os.Getenv("HARVEST_TSDB_KEY_FILE"); v != "" {
+			config.KeyFile = filepath.Clean(v)
+		}
+		if v := os.Getenv("HARVEST_TSDB_CA_FILE"); v != "" {
+			config.CAFile = filepath.Clean(v)
+		}
 
 		if config.CertFile == "" || config.KeyFile == "" {
 			logger.Warn("certificate auth configured but cert file or key file missing",
