@@ -1,6 +1,6 @@
 module github.com/Netapp/harvest-automation
 
-go 1.26.0
+go 1.26.1
 
 replace github.com/netapp/harvest/v2 => ../
 
@@ -17,6 +17,6 @@ require (
 	github.com/spf13/cobra v1.10.2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	golang.org/x/net v0.50.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
