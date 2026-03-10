@@ -211,20 +211,36 @@ func AddPrometheusToGrafana() {
 
 func CreateGrafanaToken() string {
 	slog.Info("Creating grafana API Key.")
-	url := GetGrafanaHTTPURL() + "/api/auth/keys"
-	method := "POST"
+
+	// Create a service account
+	url := GetGrafanaHTTPURL() + "/api/serviceaccounts"
+
 	name := strconv.FormatInt(time.Now().Unix(), 10)
 	values := map[string]string{"name": name, "role": "Admin"}
 	jsonValue, err := json.Marshal(values)
 	if err != nil {
 		panic(err)
 	}
-	data := request.SendReqAndGetRes(url, method, jsonValue)
-	key := fmt.Sprintf("%v", data["key"])
-	if key != "" {
-		slog.Info("Grafana: Token has been created successfully.")
-		return key
+	data := request.SendReqAndGetRes(url, "POST", jsonValue)
+	id, ok := data["id"]
+	if !ok {
+		panic(errors.New("ERROR: unable to create grafana token"))
 	}
+
+	// Create a token for the service account
+	url = GetGrafanaHTTPURL() + fmt.Sprintf("/api/serviceaccounts/%v/tokens", id)
+	values = map[string]string{"name": "harvest"}
+	jsonValue, err = json.Marshal(values)
+	if err != nil {
+		panic(err)
+	}
+	data = request.SendReqAndGetRes(url, "POST", jsonValue)
+	key, ok := data["key"]
+	if ok {
+		slog.Info("Grafana API token has been created successfully.")
+		return fmt.Sprintf("%v", key)
+	}
+
 	panic(errors.New("ERROR: unable to create grafana token"))
 }
 
