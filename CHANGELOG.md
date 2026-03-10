@@ -1,6 +1,12 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 26.05.0 / 2026-05-11 Release
+
+## Announcements
+
+:bulb: **IMPORTANT** Harvest is only tested with [supported versions of Grafana](https://endoflife.date/grafana). Harvest release 26.05.0 supports Grafana versions 11.6+. After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
 ## 26.02.0 / 2026-02-11 Release
 :pushpin: Highlights of this major release include:
 ## :star: New Features
