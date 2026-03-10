@@ -21,6 +21,7 @@ counters:
   - ^source_path                             => source_location
   - ^source_volume                           => source_volume
   - ^source_vserver                          => source_vserver
+  - ^state                                   => relationship_state
   - ^status                                  => relationship_status
   - ^unhealthy_reason                        => unhealthy_reason
   - break_failed_count                       => break_failed_count
@@ -48,7 +49,6 @@ endpoints:
       - ^^destination.path                   => destination_location
       - ^^uuid                               => relationship_id
       - ^source.cluster.name                 => source_cluster
-      - ^state                               => relationship_state
       - ^unhealthy_reason.#.message          => last_transfer_error
 
 plugins:
