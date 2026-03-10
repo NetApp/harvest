@@ -1702,7 +1702,7 @@
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
+        "sort": 7,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -1731,7 +1731,7 @@
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
+        "sort": 7,
         "type": "query"
       },
       {
@@ -1756,7 +1756,7 @@
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
+        "sort": 7,
         "type": "query"
       },
       {
@@ -1781,7 +1781,7 @@
         "refresh_on_load": false,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 1,
+        "sort": 7,
         "type": "query"
       },
       {

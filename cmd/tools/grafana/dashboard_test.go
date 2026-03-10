@@ -728,7 +728,7 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 		}
 
 		sortVal := value.Get("sort").Int()
-		if sortVal != 1 {
+		if sortVal != 7 { // Use natural ascending sort order in Grafana
 			varName := value.Get("name").ClonedString()
 			t.Errorf("dashboard=%s path=templating.list[%s].sort variable=%s is not 1. Should be \"sort\": 1,",
 				ShortPath(path), key.ClonedString(), varName)

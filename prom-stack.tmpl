@@ -13,7 +13,7 @@ networks:
 services:
     prometheus:
         container_name: prometheus
-        image: prom/prometheus:v2.55.0
+        image: prom/prometheus:v3.5.1
         volumes:
             - ./container/prometheus/:/etc/prometheus/
             - prometheus_data:/prometheus
@@ -34,7 +34,7 @@ services:
 
     grafana:
         container_name: grafana
-        image: grafana/grafana:8.3.4
+        image: grafana/grafana:12.3.2
         depends_on:
             - prometheus
         ports:
