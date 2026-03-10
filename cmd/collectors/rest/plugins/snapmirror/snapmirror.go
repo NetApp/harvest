@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -315,6 +316,55 @@ func (m *SnapMirror) checkFabricLinkStatus(data *matrix.Matrix) {
 		instance.SetLabel("fl_healthy", "false")
 		if flIsHealthy && health == "true" {
 			instance.SetLabel("fl_healthy", "true")
+		}
+	}
+
+	// call fabriclink show to get the direction of the relationship so we can hide
+	// instances where the fabric link direction is reverse. This way we don't publish both
+	// sides of the relationship and avoid confusion for customers.
+	fields := []string{"direction", "link_uuid"}
+	query := "private/cli/fabriclink"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
+		Build()
+
+	records, err := collectors.InvokeRestCall(m.client, href)
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			m.SLogger.Debug("API not found", slogx.Err(err))
+		} else {
+			m.SLogger.Error("Failed to query fabriclink direction via private CLI", slogx.Err(err))
+		}
+		return
+	}
+
+	// build a map of link_uuid to direction from the records
+	reverseLinkUUIDs := make(map[string]struct{})
+	for _, record := range records {
+		direction := record.Get("direction").ClonedString()
+		if direction != "reverse" {
+			continue
+		}
+		linkUUID := record.Get("link_uuid").ClonedString()
+		if linkUUID == "" {
+			continue
+		}
+		reverseLinkUUIDs[linkUUID] = struct{}{}
+	}
+	if len(reverseLinkUUIDs) == 0 {
+		return
+	}
+
+	// Hide instances whose relationship_id matches a reverse link UUID.
+	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
+		relationshipID := instance.GetLabel("relationship_id")
+		if _, isReverse := reverseLinkUUIDs[relationshipID]; isReverse {
+			instance.SetExportable(false)
 		}
 	}
 }

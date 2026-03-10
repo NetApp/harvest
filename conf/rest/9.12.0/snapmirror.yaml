@@ -25,6 +25,9 @@ counters:
   - ^unhealthy_reason                        => unhealthy_reason
   - break_failed_count                       => break_failed_count
   - break_successful_count                   => break_successful_count
+  - fl_pending_work_task_count               => fl_pending_work_task_count
+  - fl_pull_byte_count                       => fl_pull_byte_count
+  - fl_push_byte_count                       => fl_push_byte_count
   - lag_time(duration)                       => lag_time
   - last_transfer_duration(duration)         => last_transfer_duration
   - last_transfer_end_timestamp(timestamp)   => last_transfer_end_timestamp
