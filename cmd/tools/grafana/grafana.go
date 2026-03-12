@@ -1322,7 +1322,7 @@ func addPrefixToMetricNames(expr, prefix string) string {
 		return rewritten + sub[2]
 	})
 
-	// handle the case where __name___ is used in the query
+	// handle the case where __name__ is used in the query
 	regex = regexp.MustCompile(`{__name__=~"([a-zA-Z0-9_.+-]+)\s?"`)
 	match := regex.FindAllStringSubmatch(expr, -1)
 	visitedMap = make(map[string]bool)
