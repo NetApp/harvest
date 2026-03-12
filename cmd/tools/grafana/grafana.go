@@ -1286,10 +1286,9 @@ func handlingPanels(p any, prefix string) {
 // this function as well (or come up with a better solution).
 func addPrefixToMetricNames(expr, prefix string) string {
 	var (
-		match      [][]string
-		submatch   []string
 		isMatch    bool
 		regex      *regexp.Regexp
+		tokenRegex = regexp.MustCompile(`[a-zA-Z0-9_]+`)
 		err        error
 		visitedMap map[string]bool // handles if the same query exists in multiple times in one expression.
 	)
@@ -1305,28 +1304,31 @@ func addPrefixToMetricNames(expr, prefix string) string {
 		return expr
 	}
 	// everything else is for graph queries
-	regex = regexp.MustCompile(`([a-zA-Z0-9_+-]+)\s?{.+?}`)
-	match = regex.FindAllStringSubmatch(expr, -1)
+	regex = regexp.MustCompile(`([a-zA-Z0-9_+\- ]+)(\s?{.+?})`)
+	expr = regex.ReplaceAllStringFunc(expr, func(segment string) string {
+		sub := regex.FindStringSubmatch(segment)
+		if len(sub) < 3 {
+			return segment
+		}
+
+		metricExpr := sub[1]
+		rewritten := tokenRegex.ReplaceAllStringFunc(metricExpr, func(token string) string {
+			if strings.HasPrefix(token, prefix) {
+				return token
+			}
+			return prefix + token
+		})
+
+		return rewritten + sub[2]
+	})
+
+	// handle the case where __name___ is used in the query
+	regex = regexp.MustCompile(`{__name__=~"([a-zA-Z0-9_.+-]+)\s?"`)
+	match := regex.FindAllStringSubmatch(expr, -1)
 	visitedMap = make(map[string]bool)
 	for _, m := range match {
 		if _, has := visitedMap[m[1]]; !has {
-			// multiple metrics used with `+`
-			switch {
-			case strings.Contains(m[1], "+"):
-				submatch = strings.Split(m[1], "+")
-				for i := range submatch {
-					submatch[i] = prefix + submatch[i]
-				}
-				expr = strings.ReplaceAll(expr, m[1], strings.Join(submatch, "+"))
-			case strings.Contains(m[1], "-"):
-				submatch = strings.Split(m[1], "-")
-				for i := range submatch {
-					submatch[i] = prefix + submatch[i]
-				}
-				expr = strings.ReplaceAll(expr, m[1], strings.Join(submatch, "-"))
-			default:
-				expr = strings.ReplaceAll(expr, m[1], prefix+m[1])
-			}
+			expr = strings.ReplaceAll(expr, `__name__=~"`+m[1]+`"`, `__name__=~"`+prefix+m[1]+`"`)
 			visitedMap[m[1]] = true
 		}
 	}
