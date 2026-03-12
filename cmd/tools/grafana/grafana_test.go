@@ -68,6 +68,71 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 		})
 }
 
+func TestAddPrefixToMetricNamesTable(t *testing.T) {
+	tests := []struct {
+		name   string
+		expr   string
+		prefix string
+		want   string
+	}{
+		{
+			name:   "single metric selector",
+			expr:   `sum(node_cpu_seconds_total{cluster=~"$Cluster"})`,
+			prefix: "xx_",
+			want:   `sum(xx_node_cpu_seconds_total{cluster=~"$Cluster"})`,
+		},
+		{
+			name:   "multiple metrics with plus",
+			expr:   `rate(read_ops+write_ops{cluster=~"$Cluster"}[5m])`,
+			prefix: "xx_",
+			want:   `rate(xx_read_ops+xx_write_ops{cluster=~"$Cluster"}[5m])`,
+		},
+		{
+			name:   "multiple metrics with plus and space",
+			expr:   `sum(qos_read_data + qos_write_data{cluster=~"$Cluster",datacenter=~"$Datacenter",svm=~"$SVM"})`,
+			prefix: "xx_",
+			want:   `sum(xx_qos_read_data + xx_qos_write_data{cluster=~"$Cluster",datacenter=~"$Datacenter",svm=~"$SVM"})`,
+		},
+		{
+			name:   "multiple metrics with minus",
+			expr:   `rate(read_ops-write_ops{cluster=~"$Cluster"}[5m])`,
+			prefix: "xx_",
+			want:   `rate(xx_read_ops-xx_write_ops{cluster=~"$Cluster"}[5m])`,
+		},
+		{
+			name:   "label values with metric and selector",
+			expr:   `label_values(cluster_new_status{system_type!="7mode"},datacenter)`,
+			prefix: "xx_",
+			want:   `label_values(xx_cluster_new_status{system_type!="7mode"},datacenter)`,
+		},
+		{
+			name:   "label values without metric remains unchanged",
+			expr:   `label_values(datacenter)`,
+			prefix: "xx_",
+			want:   `label_values(datacenter)`,
+		},
+		{
+			name:   "name matcher",
+			expr:   `{__name__=~"poller_status",cluster=~"$Cluster"}`,
+			prefix: "xx_",
+			want:   `{__name__=~"xx_poller_status",cluster=~"$Cluster"}`,
+		},
+		{
+			name:   "non matching expression remains unchanged",
+			expr:   `up`,
+			prefix: "xx_",
+			want:   `up`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := addPrefixToMetricNames(tt.expr, tt.prefix)
+			assert.Equal(t, got, tt.want)
+		})
+	}
+}
+
 func TestAddSvmRegex(t *testing.T) {
 
 	regex := ".*ABC.*"
