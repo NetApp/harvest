@@ -1,0 +1,109 @@
+# CI test: multiple pollers with nested per-poller secret env, collector extensions,
+# and PodMonitor overrides, plus shared resources/affinity/probes.
+harvestConfig:
+  Exporters:
+    prometheus:
+      exporter: Prometheus
+      add_meta_tags: true
+      sort_labels: true
+  Defaults:
+    exporters:
+      - prometheus
+  Pollers:
+    cluster-a:
+      datacenter: dc-a
+      addr: cluster-a.dc-a.example.com
+      auth_style: basic_auth
+      collectors:
+        - Rest
+        - RestPerf
+        - Ems
+      username: harvest
+      password: ${CLUSTER_A_PASSWORD}
+      prom_port: 13000
+      use_insecure_tls: false
+      tls_min_version: tls12
+      # chart-only keys (stripped from harvest.yml):
+      extraEnvVars:
+        - name: CLUSTER_A_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ontap-cluster-a
+              key: password
+      collectorsExtensions:
+        Rest:
+          jitter: 1m
+          objects:
+            NFSClients: nfs_clients.yaml
+        RestPerf:
+          jitter: 1m
+          objects:
+            OntapS3SVM: ontap_s3_svm.yaml
+            Qtree: qtree.yaml
+      podMonitor:
+        interval: 15s
+        scrapeTimeout: 10s
+    cluster-b:
+      datacenter: dc-b
+      addr: cluster-b.dc-b.example.com
+      auth_style: basic_auth
+      collectors:
+        - Zapi
+        - ZapiPerf
+      username: harvest
+      password: ${CLUSTER_B_PASSWORD}
+      prom_port: 13001
+      extraEnvVars:
+        - name: CLUSTER_B_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ontap-shared
+              key: cluster-b-password
+      collectorsExtensions:
+        ZapiPerf:
+          jitter: 1m
+          objects:
+            NFSv4Pool: nfsv4_pool.yaml
+
+poller:
+  # env shared by all pollers
+  extraEnvVars:
+    - name: HTTP_PROXY
+      value: http://proxy.example.com:8080
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: harvest
+            topologyKey: kubernetes.io/hostname
+  nodeSelector:
+    kubernetes.io/os: linux
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: monitoring
+      effect: NoSchedule
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /metrics
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 15
+
+monitoring:
+  scrape:
+    podMonitor:
+      enabled: true
+      labels:
+        release: prometheus-operator

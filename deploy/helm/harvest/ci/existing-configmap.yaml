@@ -1,0 +1,15 @@
+# CI test: bring-your-own config ConfigMap — chart skips generating harvest.yml
+# and mounts a ConfigMap the user manages.
+config:
+  existingConfigMap: my-harvest-config
+
+harvestConfig:
+  Pollers:
+    cluster-a:
+      addr: 192.168.0.1
+      prom_port: 12990
+
+monitoring:
+  scrape:
+    podMonitor:
+      enabled: true
