@@ -125,9 +125,9 @@ func TestAddPrefixToMetricNamesTable(t *testing.T) {
 		},
 		{
 			name:   "computed metric name",
-			expr:   `"headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"latency\"}"`,
+			expr:   `"headroom_cpu_ewma_${Interval}{cluster=~"$Cluster",datacenter=~"$Datacenter",metric="latency"}"`,
 			prefix: "xx_",
-			want:   `"xx_headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"latency\"}"`,
+			want:   `"xx_headroom_cpu_ewma_${Interval}{cluster=~"$Cluster",datacenter=~"$Datacenter",metric="latency"}"`,
 		},
 	}
 
