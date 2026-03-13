@@ -1,0 +1,17 @@
+{{- if .Values.monitoring.scrape.adminSD.enabled | default false -}}
+
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: {{ include "harvest.fullname" $ }}-admin-http-sd
+  labels:
+    {{- include "harvest.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: admin
+    {{- with .Values.monitoring.scrape.adminSD.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  httpSDConfigs:
+    - url: "http://{{ include "harvest.fullname" $ }}-admin-sd.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.admin.service.ports.httpsd }}/api/v1/sd"
+
+{{ end }}

@@ -1,0 +1,23 @@
+{{- /* Headless ClusterIP fronting the admin SD endpoint — an internal scrape target
+       for the ScrapeConfig, not meant to be exposed outside the cluster. */ -}}
+{{- if .Values.monitoring.scrape.adminSD.enabled | default false -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "harvest.fullname" $ }}-admin-sd
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "harvest.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: admin
+spec:
+  type: {{ .Values.admin.service.type }}
+  {{- if and .Values.admin.service.clusterIP (eq .Values.admin.service.type "ClusterIP") }}
+  clusterIP: {{ .Values.admin.service.clusterIP }}
+  {{- end }}
+  ports:
+    - name: httpsd
+      port: {{ .Values.admin.service.ports.httpsd }}
+      targetPort: {{ .Values.admin.containerPorts.httpsd }}
+      protocol: TCP
+  selector: {{- include "harvest.selectorLabels" $ | nindent 4 }}
+    app.kubernetes.io/component: admin
+{{- end }}
