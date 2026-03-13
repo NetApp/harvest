@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strings"
-	"time"
 )
 
 const (
@@ -34,7 +33,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Version{AbstractPlugin: p}
 }
 
-func (v *Version) Init(_ conf.Remote) error {
+func (v *Version) Init(remote conf.Remote) error {
 	var (
 		client *rest.Client
 		err    error
@@ -44,10 +43,12 @@ func (v *Version) Init(_ conf.Remote) error {
 		return fmt.Errorf("failed to initialize AbstractPlugin: %w", err)
 	}
 
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-
-	if client, err = rest.New(conf.ZapiPoller(v.ParentParams), timeout, v.Auth); err != nil {
+	if client, err = rest.New(conf.ZapiPoller(v.ParentParams), v.Auth); err != nil {
 		return fmt.Errorf("error creating new client: %w", err)
+	}
+
+	if err := client.Init(2, remote); err != nil {
+		return err
 	}
 
 	v.client = client
@@ -110,6 +111,10 @@ func (v *Version) parseVersionAndBanner(output gjson.Result, versionMat *matrix.
 	chassis := versionOutput.Get("chassis_id").ClonedString()
 	hostname := versionOutput.Get("host_name").ClonedString()
 	osVersion := versionOutput.Get("nxos_ver_str").ClonedString()
+	if osVersion == "" {
+		// This happens on older versions of NX-OS where the version is in the sys_ver_str field
+		osVersion = versionOutput.Get("sys_ver_str").ClonedString()
+	}
 
 	uptmDays := versionOutput.Get("kern_uptm_days").Float()
 	uptmHrs := versionOutput.Get("kern_uptm_hrs").Float()

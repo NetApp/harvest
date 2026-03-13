@@ -498,6 +498,21 @@ func (c *Credentials) Transport(request *http.Request, poller *conf.Poller) (htt
 		}
 	}
 
+	if strings.EqualFold(poller.TLSMinVersion, "tls10") {
+		transport.TLSClientConfig.CipherSuites = []uint16{
+			// Prefer ECDHE suites, but keep RSA suites for legacy compatibility (TLS 1.0 - 1.2).
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+			tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+			tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
+			tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+		}
+	}
+
 	if !poller.IsRecording() {
 		return transport, nil
 	}
