@@ -1293,6 +1293,15 @@ func addPrefixToMetricNames(expr, prefix string) string {
 		visitedMap map[string]bool // handles if the same query exists in multiple times in one expression.
 	)
 
+	rewriteMetricExprTokens := func(metricExpr string) string {
+		return tokenRegex.ReplaceAllStringFunc(metricExpr, func(token string) string {
+			if strings.HasPrefix(token, prefix) {
+				return token
+			}
+			return prefix + token
+		})
+	}
+
 	// variable queries
 	if strings.HasPrefix(expr, "label_values(") {
 		if isMatch, err = regexp.MatchString(`^label_values\s?\(([a-zA-Z_])+(\s?{.+?})?,\s?[a-zA-Z_]+\)$`, expr); err != nil {
@@ -1304,6 +1313,19 @@ func addPrefixToMetricNames(expr, prefix string) string {
 		return expr
 	}
 	// everything else is for graph queries
+	regex = regexp.MustCompile(`([a-zA-Z0-9_+\- ]+)(\$\{[^}]+})(\s?{.+?})`)
+	expr = regex.ReplaceAllStringFunc(expr, func(segment string) string {
+		sub := regex.FindStringSubmatch(segment)
+		if len(sub) < 4 {
+			return segment
+		}
+
+		metricExpr := sub[1]
+		rewritten := rewriteMetricExprTokens(metricExpr)
+
+		return rewritten + sub[2] + sub[3]
+	})
+
 	regex = regexp.MustCompile(`([a-zA-Z0-9_+\- ]+)(\s?{.+?})`)
 	expr = regex.ReplaceAllStringFunc(expr, func(segment string) string {
 		sub := regex.FindStringSubmatch(segment)
@@ -1312,12 +1334,7 @@ func addPrefixToMetricNames(expr, prefix string) string {
 		}
 
 		metricExpr := sub[1]
-		rewritten := tokenRegex.ReplaceAllStringFunc(metricExpr, func(token string) string {
-			if strings.HasPrefix(token, prefix) {
-				return token
-			}
-			return prefix + token
-		})
+		rewritten := rewriteMetricExprTokens(metricExpr)
 
 		return rewritten + sub[2]
 	})
