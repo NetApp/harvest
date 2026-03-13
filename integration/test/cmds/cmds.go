@@ -210,7 +210,7 @@ func AddPrometheusToGrafana() {
 }
 
 func CreateGrafanaToken() string {
-	slog.Info("Creating Grafana service account and API tokens.")
+	slog.Info("Creating Grafana service account and API token.")
 
 	// Create a service account
 	url := GetGrafanaHTTPURL() + "/api/serviceaccounts"
@@ -276,7 +276,7 @@ func WriteToken(token string) {
 	tools := conf.Config.Tools
 	if tools != nil {
 		if tools.GrafanaAPIToken != "" {
-			slog.Error("Harvest.yml contains a Grafana token", slog.String("path", abs))
+			slog.Error("harvest.yml contains a Grafana token", slog.String("path", abs))
 			return
 		}
 	}
