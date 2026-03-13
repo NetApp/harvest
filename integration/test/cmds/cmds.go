@@ -206,11 +206,11 @@ func AddPrometheusToGrafana() {
 		slog.Info("Prometheus has been added successfully into Grafana .")
 		return
 	}
-	panic(errors.New("ERROR: unable to add Prometheus into grafana"))
+	panic(errors.New("ERROR: unable to add Prometheus into Grafana"))
 }
 
 func CreateGrafanaToken() string {
-	slog.Info("Creating grafana API Key.")
+	slog.Info("Creating Grafana service account and API token.")
 
 	// Create a service account
 	url := GetGrafanaHTTPURL() + "/api/serviceaccounts"
@@ -224,7 +224,7 @@ func CreateGrafanaToken() string {
 	data := request.SendReqAndGetRes(url, "POST", jsonValue)
 	id, ok := data["id"]
 	if !ok {
-		panic(errors.New("ERROR: unable to create grafana token"))
+		panic(errors.New("ERROR: unable to create Grafana service account"))
 	}
 
 	// Create a token for the service account
@@ -241,7 +241,7 @@ func CreateGrafanaToken() string {
 		return fmt.Sprintf("%v", key)
 	}
 
-	panic(errors.New("ERROR: unable to create grafana token"))
+	panic(errors.New("ERROR: unable to create Grafana token"))
 }
 
 func GetOutboundIP() string {
@@ -276,7 +276,7 @@ func WriteToken(token string) {
 	tools := conf.Config.Tools
 	if tools != nil {
 		if tools.GrafanaAPIToken != "" {
-			slog.Error("Harvest.yml contains a grafana token", slog.String("path", abs))
+			slog.Error("harvest.yml contains a Grafana token", slog.String("path", abs))
 			return
 		}
 	}
