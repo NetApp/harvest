@@ -1,0 +1,5 @@
+{{- range $name, $poller := .Values.harvestConfig.Pollers }}
+{{- $ctx := dict "root" $ "pollerName" $name "poller" $poller -}}
+{{ include "harvest.poller.deployment" $ctx }}
+---
+{{ end }}
