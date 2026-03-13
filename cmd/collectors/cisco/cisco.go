@@ -180,13 +180,12 @@ func (c *CiscoRest) getClient(a *collector.AbstractCollector) (*rest.Client, err
 		c.Logger.Error("Address is empty", slog.String("poller", opt.Poller))
 		return nil, errs.New(errs.ErrMissingParam, "addr")
 	}
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 
 	if a.Options.IsTest {
 		return nil, nil
 	}
 
-	if client, err = rest.New(conf.ZapiPoller(c.Params), timeout, c.Auth); err != nil {
+	if client, err = rest.New(conf.ZapiPoller(c.Params), c.Auth); err != nil {
 		return nil, fmt.Errorf("error creating new client: %w", err)
 	}
 

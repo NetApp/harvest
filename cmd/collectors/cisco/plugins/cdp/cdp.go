@@ -11,7 +11,6 @@ import (
 	"log/slog"
 	"slices"
 	"strings"
-	"time"
 )
 
 const (
@@ -39,9 +38,7 @@ func (c *CDP) Init(remote conf.Remote) error {
 		return fmt.Errorf("failed to initialize AbstractPlugin: %w", err)
 	}
 
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-
-	if client, err = rest.New(conf.ZapiPoller(c.ParentParams), timeout, c.Auth); err != nil {
+	if client, err = rest.New(conf.ZapiPoller(c.ParentParams), c.Auth); err != nil {
 		return fmt.Errorf("error creating new client: %w", err)
 	}
 

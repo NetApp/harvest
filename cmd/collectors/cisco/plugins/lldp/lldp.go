@@ -12,7 +12,6 @@ import (
 	"log/slog"
 	"slices"
 	"strings"
-	"time"
 )
 
 const (
@@ -41,9 +40,7 @@ func (l *LLDP) Init(remote conf.Remote) error {
 		return fmt.Errorf("failed to initialize AbstractPlugin: %w", err)
 	}
 
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-
-	if client, err = rest.New(conf.ZapiPoller(l.ParentParams), timeout, l.Auth); err != nil {
+	if client, err = rest.New(conf.ZapiPoller(l.ParentParams), l.Auth); err != nil {
 		return fmt.Errorf("error creating new client: %w", err)
 	}
 
