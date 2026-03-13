@@ -1,0 +1,191 @@
+{{ template "chart.header" . }}
+
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.sourcesSection" . }}
+
+{{ template "chart.requirementsSection" . }}
+
+## Overview
+
+This chart deploys [NetApp Harvest](https://github.com/NetApp/harvest) on Kubernetes. It supports two scrape modes:
+
+1. **Per-poller Prometheus port** (default): each poller gets its own container port and a `PodMonitor`, more info at [per-poller-prom_port](https://netapp.github.io/harvest/latest/prometheus-exporter/#per-poller-prom_port).
+2. **HTTP Service Discovery** (optional): `admin` Deployment exposes Harvest's `/api/v1/sd` endpoint. A `ScrapeConfig` points Prometheus at it so new pollers are discovered automatically, more info at [enable-http-service-discovery-in-harvest](https://netapp.github.io/harvest/latest/prometheus-exporter/#enable-http-service-discovery-in-harvest).
+
+For each entry under `harvestConfig.Pollers`, the chart declares:
+- a `Deployment` named `<release>-poller-<name>` (1 replica)
+- a `PodMonitor` that scrapes the pod on the poller's `prom_port`
+- optional collector-extension `ConfigMap`s, if a poller sets `collectorsExtensions`
+
+## Prerequisites
+
+- Kubernetes 1.21+
+- Helm 3.10+
+- [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for `PodMonitor` (and `ScrapeConfig`, which needs Operator v0.65+)
+
+## Installing the Chart
+
+```bash
+helm install harvest ./deploy/helm/harvest \
+  --set "harvestConfig.Pollers.ontap-prod.addr=10.0.0.1" \
+  --set "harvestConfig.Pollers.ontap-prod.prom_port=12990" \
+  --set "harvestConfig.Pollers.ontap-prod.username=harvest" \
+  --set "harvestConfig.Pollers.ontap-prod.password=secret"
+```
+
+Or with a values file: `helm install harvest ./deploy/helm/harvest --values my-values.yaml`.
+
+> The inline password above is only for a quick test; it ends up in a ConfigMap. For anything
+> real, keep credentials out of the config and source them from a Secret (see [Credentials & Secrets](#credentials--secrets)).
+
+## Configuration
+
+### Adding a poller
+
+Each key under `harvestConfig.Pollers` becomes a separate Deployment. Pick a unique `prom_port` per poller.
+
+```yaml
+harvestConfig:
+  Pollers:
+    ontap-prod-1:
+      addr: 10.0.0.1
+      username: harvest
+      password: secret
+      prom_port: 12990
+
+    ontap-prod-2:
+      addr: 10.0.0.2
+      username: harvest
+      password: secret
+      prom_port: 12991
+```
+
+Each entry holds the native Harvest poller config (written to `harvest.yml`) plus a few chart-only keys (stripped before `harvest.yml` is written).
+
+Native Harvest fields (see the [poller docs](https://netapp.github.io/harvest/latest/prometheus-exporter/#per-poller-prom_port) for the full list):
+
+| Field | Notes |
+|-------|-------|
+| `addr` | ONTAP management LIF FQDN/IP (required) |
+| `prom_port` | Prometheus port, unique per poller; also drives the container port and PodMonitor target (required) |
+| `username` | ONTAP user |
+| `password` | ONTAP password; use `${VAR}` and a Secret, see [Credentials & Secrets](#credentials--secrets) |
+| `collectors` | list of collectors (e.g. `Rest`, `RestPerf`, `Zapi`, `ZapiPerf`, `Ems`) |
+| `datacenter`, `auth_style`, `use_insecure_tls`, `tls_min_version`, … | other Harvest poller fields |
+
+Chart-only keys, not sent to Harvest:
+
+| Key | Purpose |
+|-----|---------|
+| `extraEnvVars` | env injected into this poller's pod only |
+| `collectorsExtensions` | per-collector `{objects: {<Name>: <file>.yaml}}`, generates and mounts a `custom.yaml` |
+| `podMonitor` | per-poller PodMonitor overrides: `enabled`, `path`, `portName`, `interval`, `scrapeTimeout`, `honorLabels`, `relabelings`, `metricRelabelings` |
+
+To prepare an ONTAP cluster for Harvest see [Prepare cDOT clusters](https://netapp.github.io/harvest/latest/prepare-cdot-clusters/).
+
+### Credentials & Secrets
+
+The chart doesn't manage ONTAP credentials. Manage the Secret separately; the chart only references it.
+
+Keep passwords out of `harvest.yml` and out of Helm values. Put a `${VAR}` placeholder in the
+poller's `password` and supply the real value from a Secret through the poller's `extraEnvVars`.
+Harvest resolves `${VAR}` from the environment at startup
+([variable expansion](https://netapp.github.io/harvest/latest/configure-harvest-advanced/#variable-expansion)),
+so only the placeholder lands in `harvest.yml` and the password reaches that poller's pod, and no other.
+
+Create the Secret with `kubectl`, Vault, External Secrets, or sealed-secrets.
+For example, with `kubectl`:
+
+```bash
+kubectl create secret generic ontap-prod-credentials \
+  --namespace <release-namespace> \
+  --from-literal=password='<ontap-password>'
+```
+
+Then reference it:
+
+```yaml
+harvestConfig:
+  Pollers:
+    ontap-prod:
+      addr: 10.0.0.1
+      username: harvest
+      password: ${ONTAP_PASSWORD}
+      prom_port: 12990
+      extraEnvVars:
+        - name: ONTAP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ontap-prod-credentials
+              key: password
+```
+
+Environment variables shared by every poller (a proxy, for example) go in the top-level `poller.extraEnvVars`.
+For credentials that rotate, point the poller at Harvest's
+[`credentials_script`](https://netapp.github.io/harvest/latest/configure-harvest-basic/#credentials-script) instead.
+
+To manage `harvest.yml` outside the chart (e.g. a ConfigMap
+rendered by GitOps tooling), set `config.existingConfigMap` to a ConfigMap containing a
+`harvest.yml` key; the chart mounts it and skips generation:
+
+```yaml
+config:
+  existingConfigMap: my-harvest-config
+```
+
+### Extending collector objects
+
+`collectorsExtensions` writes each collector's block straight to a `custom.yaml`, mounted at `conf/<collector>/custom.yaml`, which Harvest merges with the collector's `default.yaml`.
+
+```yaml
+harvestConfig:
+  Pollers:
+    ontap-prod:
+      addr: 10.0.0.1
+      prom_port: 12990
+      collectors:
+        - Rest
+        - RestPerf
+      collectorsExtensions:
+        Rest:
+          objects:
+            NFSClients: nfs_clients.yaml
+        RestPerf:
+          objects:
+            Qtree: qtree.yaml
+```
+
+See [Extend an existing object template](https://netapp.github.io/harvest/latest/configure-templates/#extend-an-existing-object-template).
+
+> The chart mounts `custom.yaml` but not the object template `.yaml` files it references.
+> Enabling an object the image already ships works (many built-in objects are disabled by default).
+> A brand-new object whose template is not in the image needs that template baked into the image (left as a follow-up).
+
+### Enabling HTTP Service Discovery (admin mode)
+
+> Currently experimental
+
+To use Harvest's admin SD endpoint instead of per-poller PodMonitors, enable `adminSD` to
+bring up the admin component and turn off per-poller PodMonitors:
+
+```yaml
+monitoring:
+  scrape:
+    adminSD:
+      enabled: true
+    podMonitor:
+      enabled: false
+```
+
+This creates an `admin` Deployment, a headless `Service`, and a `ScrapeConfig` pointing Prometheus at the SD endpoint. Tune the admin workload under the `admin` values.
+
+See [Enable HTTP Service Discovery](https://netapp.github.io/harvest/latest/prometheus-exporter/#enable-http-service-discovery-in-harvest).
+
+{{ template "chart.valuesSection" . }}

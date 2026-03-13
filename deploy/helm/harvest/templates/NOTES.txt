@@ -1,0 +1,33 @@
+NetApp Harvest has been deployed!
+
+Check poller pods:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+{{- if eq (len .Values.harvestConfig.Pollers) 0 }}
+
+WARNING: No pollers configured. Add ONTAP clusters under harvestConfig.Pollers in your values:
+  harvestConfig:
+    Pollers:
+      cluster-a:
+        addr: <ontap-mgmt-ip>
+        prom_port: 12990
+{{- else }}
+
+Pollers configured: {{ len .Values.harvestConfig.Pollers }}
+{{- range $name, $p := .Values.harvestConfig.Pollers }}
+  - {{ $name }} (port {{ $p.prom_port }})
+{{- end }}
+
+Verify metrics are being scraped (from inside the cluster):
+{{- range $name, $p := .Values.harvestConfig.Pollers }}
+  kubectl exec -n {{ $.Release.Namespace }} deploy/{{ include "harvest.fullname" $ }}-poller-{{ $name }} -- wget -qO- http://localhost:{{ $p.prom_port }}/metrics | head -5
+{{- end }}
+{{- end }}
+
+{{- if .Values.monitoring.scrape.podMonitor.enabled }}
+
+PodMonitor resources created — ensure your Prometheus Operator selects them via:
+  podMonitorSelector or podMonitorNamespaceSelector
+{{- end }}
+
+Visit https://netapp.github.io/harvest/latest for instructions on how to create & configure Harvest.
