@@ -1304,6 +1304,24 @@ func addPrefixToMetricNames(expr, prefix string) string {
 		return expr
 	}
 	// everything else is for graph queries
+	regex = regexp.MustCompile(`([a-zA-Z0-9_+\- ]+)(\$\{[^}]+})(\s?{.+?})`)
+	expr = regex.ReplaceAllStringFunc(expr, func(segment string) string {
+		sub := regex.FindStringSubmatch(segment)
+		if len(sub) < 4 {
+			return segment
+		}
+
+		metricExpr := sub[1]
+		rewritten := tokenRegex.ReplaceAllStringFunc(metricExpr, func(token string) string {
+			if strings.HasPrefix(token, prefix) {
+				return token
+			}
+			return prefix + token
+		})
+
+		return rewritten + sub[2] + sub[3]
+	})
+
 	regex = regexp.MustCompile(`([a-zA-Z0-9_+\- ]+)(\s?{.+?})`)
 	expr = regex.ReplaceAllStringFunc(expr, func(segment string) string {
 		sub := regex.FindStringSubmatch(segment)
