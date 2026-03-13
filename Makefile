@@ -7,6 +7,7 @@ SHELL := /bin/bash
 GOLANGCI_LINT_VERSION := v2.12.1
 GOVULNCHECK_VERSION := latest
 HARVEST_ENV := .harvest.env
+HELM_CHART_DIR := deploy/helm/harvest
 
 # Read the environment file if it exists and export the uncommented variables
 ifneq (,$(wildcard $(HARVEST_ENV)))
@@ -179,3 +180,17 @@ else
 	VERSION=${VERSION} FORMAT_PROMQL=1 ./integration/test/test.sh
 	bin/harvest generate metrics --config "${ci}" --poller dc1 --prom-url http://localhost:9090
 endif
+
+helm-lint: ## Lint Helm chart against all CI values files
+	@echo "Linting Helm chart"
+	helm lint --strict $(HELM_CHART_DIR)
+
+	@echo "Linting Helm chart with CI values files"
+	@for f in $(HELM_CHART_DIR)/ci/*.yaml; do \
+		echo "case: $$f"; \
+		helm lint --strict $(HELM_CHART_DIR) --values $$f || exit 1; \
+	done
+
+helm-docs: ## Generate Helm chart documentation
+	@echo "Generating Helm chart documentation"
+	helm-docs --chart-search-root $(HELM_CHART_DIR)
