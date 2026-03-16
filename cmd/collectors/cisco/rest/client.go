@@ -9,10 +9,13 @@ import (
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
 	"log/slog"
 	"net/http"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -51,7 +54,7 @@ type PostCmd struct {
 }
 
 // CLIShow uses the cli_show command type when talking to the switch.
-// This was needed because cli_show_array does not support sending multiple commands
+// This is needed because cli_show_array does not support sending multiple commands
 // (e.g. `show version ; show banner motd`)
 // When sending multiple commands with type=cli_show_array, the response is invalid JSON
 func (c *Client) CLIShow(command string) (gjson.Result, error) {
@@ -59,7 +62,7 @@ func (c *Client) CLIShow(command string) (gjson.Result, error) {
 }
 
 // CLIShowArray uses the cli_show_array command type when talking to the switch.
-// This was needed because the cli_show output truncated tx_pwr when calling `show interface transceiver details`
+// This is needed because the cli_show output truncated tx_pwr when calling `show interface transceiver details`
 func (c *Client) CLIShowArray(command string) (gjson.Result, error) {
 	return c.callAPI(command, cliShowArray)
 }
@@ -68,6 +71,11 @@ func (c *Client) callAPI(command string, callType apiType) (gjson.Result, error)
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
 		return gjson.Result{}, err
+	}
+
+	// Older versions of NX-OS do not support the cli_show_array command type, so use cli_show instead.
+	if callType == cliShowArray && !c.supportsCliShowArray() {
+		callType = cliShow
 	}
 
 	result, err := c.callWithAuthRetry(command, callType)
@@ -180,7 +188,7 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 	)
 
 	for range retries {
-		output, err = c.CLIShowArray("show version")
+		output, err = c.CLIShow("show version")
 		if err != nil {
 			if errors.Is(err, errs.ErrPermissionDenied) {
 				return err
@@ -192,9 +200,14 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 		if strings.Contains(header, "NX-OS") {
 			c.remote.Model = "nxos"
 			version := content.Get("nxos_ver_str").String()
-			version = strings.Replace(version, "(", ".", 1)
-			version = strings.Replace(version, ")", "", 1)
-			c.remote.Version = version
+			if version == "" {
+				// This happens on older versions of NX-OS where the version is in the sys_ver_str field
+				version = content.Get("sys_ver_str").String()
+				if version == "" {
+					c.Logger.Warn("Unable to determine version from output. No nxos_ver_str or sys_ver_str field")
+				}
+			}
+			c.remote.Version = ciscoVersion(version)
 		} else {
 			before, _, found := strings.Cut(header, "\n")
 			if found {
@@ -213,11 +226,40 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 	return err
 }
 
+// 10.3(4a)    => 10.3.4
+// 7.3(8)N1(1) => 7.3.8
+var versionRe = regexp.MustCompile(`^(\d+\.\d+\.\d+)`)
+
+func ciscoVersion(raw string) string {
+	version := strings.Replace(raw, "(", ".", 1)
+	version = strings.Replace(version, ")", "", 1)
+
+	submatch := versionRe.FindStringSubmatch(version)
+
+	if len(submatch) < 2 {
+		return version
+	}
+
+	return submatch[1]
+}
+
 func (c *Client) Remote() conf.Remote {
 	return c.remote
 }
 
-func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials) (*Client, error) {
+func (c *Client) supportsCliShowArray() bool {
+	before, _, found := strings.Cut(c.remote.Version, ".")
+	if !found {
+		return false
+	}
+	major, err := strconv.Atoi(before)
+	if err != nil {
+		return false
+	}
+	return major >= 9
+}
+
+func New(poller *conf.Poller, credentials *auth.Credentials) (*Client, error) {
 	var (
 		client     Client
 		httpclient *http.Client
@@ -237,13 +279,27 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	}
 
 	client.baseURL = "https://" + addr + "/ins"
-	client.Timeout = timeout
 
 	transport, err = credentials.Transport(nil, poller)
 	if err != nil {
 		return nil, err
 	}
 
+	timeout, _ := time.ParseDuration(DefaultTimeout)
+	if poller.ClientTimeout != "" {
+		duration, err := time.ParseDuration(poller.ClientTimeout)
+		if err == nil {
+			timeout = duration
+		} else {
+			client.Logger.Warn("Invalid client timeout, using default",
+				slog.String("configured_timeout", poller.ClientTimeout),
+				slog.String("default_timeout", timeout.String()),
+				slogx.Err(err),
+			)
+		}
+	}
+
+	client.Timeout = timeout
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient
 

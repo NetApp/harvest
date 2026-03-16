@@ -1,4 +1,4 @@
-name:               Interface
+name:               Optic
 query:              "show interface transceiver details"
 object:             cisco_optic
 

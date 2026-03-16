@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strings"
-	"time"
 )
 
 const (
@@ -56,7 +55,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Interface{AbstractPlugin: p}
 }
 
-func (i *Interface) Init(_ conf.Remote) error {
+func (i *Interface) Init(remote conf.Remote) error {
 	var (
 		client *rest.Client
 		err    error
@@ -66,10 +65,12 @@ func (i *Interface) Init(_ conf.Remote) error {
 		return fmt.Errorf("failed to initialize AbstractPlugin: %w", err)
 	}
 
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-
-	if client, err = rest.New(conf.ZapiPoller(i.ParentParams), timeout, i.Auth); err != nil {
+	if client, err = rest.New(conf.ZapiPoller(i.ParentParams), i.Auth); err != nil {
 		return fmt.Errorf("error creating new client: %w", err)
+	}
+
+	if err := client.Init(2, remote); err != nil {
+		return err
 	}
 
 	i.client = client
@@ -138,6 +139,10 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		interfaceName := value.Get("interface").ClonedString()
 		macAddr := value.Get("eth_hw_addr").ClonedString()
 		desc := value.Get("desc").ClonedString()
+		if desc == "" {
+			// Cisco 5K
+			desc = value.Get("eth_hw_desc").ClonedString()
+		}
 		ethSpeed := value.Get("eth_speed").ClonedString()
 		adminState := value.Get("admin_state").ClonedString()
 		state := value.Get("state").ClonedString()

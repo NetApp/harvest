@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
-	"time"
+	"strings"
 )
 
 const (
@@ -33,7 +33,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Optic{AbstractPlugin: p}
 }
 
-func (o *Optic) Init(_ conf.Remote) error {
+func (o *Optic) Init(remote conf.Remote) error {
 	var (
 		client *rest.Client
 		err    error
@@ -43,10 +43,12 @@ func (o *Optic) Init(_ conf.Remote) error {
 		return fmt.Errorf("failed to initialize AbstractPlugin: %w", err)
 	}
 
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-
-	if client, err = rest.New(conf.ZapiPoller(o.ParentParams), timeout, o.Auth); err != nil {
+	if client, err = rest.New(conf.ZapiPoller(o.ParentParams), o.Auth); err != nil {
 		return fmt.Errorf("error creating new client: %w", err)
+	}
+
+	if err := client.Init(2, remote); err != nil {
+		return err
 	}
 
 	o.client = client
@@ -149,21 +151,40 @@ func NewOpticModel(output gjson.Result) Model {
 
 	var m Model
 
-	output.Get("TABLE_lane.ROW_lane").ForEach(func(_, value gjson.Result) bool {
-		rxVal := value.Get("rx_pwr")
-		if rxVal.Exists() {
-			m.Name = output.Get("interface").ClonedString()
-			m.RxPower = rxVal.Float()
-		}
+	// NX-API version 7.X returns optics data inline while later versions return a nested structure under TABLE_lane.ROW_lane
 
-		txVal := value.Get("tx_pwr")
-		if txVal.Exists() {
-			m.Name = output.Get("interface").ClonedString()
-			m.TxPower = txVal.Float()
-		}
+	list := output.Get("TABLE_lane.ROW_lane")
+	if list.Exists() {
+		list.ForEach(func(_, value gjson.Result) bool {
+			rxVal := value.Get("rx_pwr")
+			if rxVal.Exists() {
+				m.Name = strings.TrimSpace(output.Get("interface").ClonedString())
+				m.RxPower = rxVal.Float()
+			}
 
-		return false // Stop iterating after the first element
-	})
+			txVal := value.Get("tx_pwr")
+			if txVal.Exists() {
+				m.Name = strings.TrimSpace(output.Get("interface").ClonedString())
+				m.TxPower = txVal.Float()
+			}
+
+			return false // Stop iterating after the first element
+		})
+		return m
+	}
+
+	rxVal := output.Get("rx_pwr")
+	name := strings.TrimSpace(output.Get("interface").ClonedString())
+	if rxVal.Exists() {
+		m.Name = name
+		m.RxPower = rxVal.Float()
+	}
+
+	txVal := output.Get("tx_pwr")
+	if txVal.Exists() {
+		m.Name = name
+		m.TxPower = txVal.Float()
+	}
 
 	return m
 }

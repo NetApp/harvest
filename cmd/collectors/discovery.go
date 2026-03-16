@@ -151,8 +151,7 @@ func checkCiscoRest(pollerName string, cred *auth.Credentials) (conf.Remote, err
 		return conf.Remote{}, err
 	}
 
-	timeout, _ := time.ParseDuration(ciscorest.DefaultTimeout)
-	client, err = ciscorest.New(poller, timeout, cred)
+	client, err = ciscorest.New(poller, cred)
 	if err != nil {
 		return conf.Remote{}, err
 	}

@@ -13,7 +13,6 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"time"
 )
 
 var metrics = []string{
@@ -39,7 +38,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Environment{AbstractPlugin: p}
 }
 
-func (e *Environment) Init(_ conf.Remote) error {
+func (e *Environment) Init(remote conf.Remote) error {
 	var (
 		client *rest.Client
 		err    error
@@ -49,10 +48,12 @@ func (e *Environment) Init(_ conf.Remote) error {
 		return fmt.Errorf("failed to initialize AbstractPlugin: %w", err)
 	}
 
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-
-	if client, err = rest.New(conf.ZapiPoller(e.ParentParams), timeout, e.Auth); err != nil {
+	if client, err = rest.New(conf.ZapiPoller(e.ParentParams), e.Auth); err != nil {
 		return fmt.Errorf("error creating new client: %w", err)
+	}
+
+	if err := client.Init(2, remote); err != nil {
+		return err
 	}
 
 	e.client = client
@@ -130,7 +131,7 @@ func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matri
 	rows.ForEach(func(_, value gjson.Result) bool {
 		sensorName := value.Get("sensor").ClonedString()
 		sensorName = strings.ReplaceAll(sensorName, " ", "")
-		curTemp := value.Get("curtemp").ClonedString()
+		curTemp := strings.TrimSpace(value.Get("curtemp").ClonedString())
 
 		instanceKey := sensorName
 
