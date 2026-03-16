@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Mar-02
+Creation Date : 2026-Mar-16
 ONTAP Version: 9.16.1
 ```
 
@@ -18430,6 +18430,36 @@ The `snapmirror_break_successful_count` metric is visualized in the following Gr
 |--------|----------|--------|--------|
 | ONTAP: SnapMirror Sources | Highlights | stat | [Number of Successful SnapMirror Transfers](/d/cdot-snapmirror/ontap3a-snapmirror sources?orgId=1&viewPanel=137) |
 ///
+
+
+
+### snapmirror_fl_pending_work_task_count
+
+The number of fabriclink pending work tasks for the relationship
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapmirror` | `fl_pending_work_task_count` | conf/rest/9.12.0/snapmirror.yaml |
+
+
+
+### snapmirror_fl_pull_byte_count
+
+The number of bytes pulled over fabriclink for the relationship
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapmirror` | `fl_pull_byte_count` | conf/rest/9.12.0/snapmirror.yaml |
+
+
+
+### snapmirror_fl_push_byte_count
+
+The number of bytes pushed over fabriclink for the relationship
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapmirror` | `fl_push_byte_count` | conf/rest/9.12.0/snapmirror.yaml |
 
 
 

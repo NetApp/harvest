@@ -197,6 +197,17 @@ counters:
         Template: conf/eseries/11.80.0/hardware.yaml
 
   # =============================================================================
+  # IO Module / Host Board Metrics (Eseries Collector - Hardware)
+  # =============================================================================
+  - Name: eseries_host_board_labels
+    Description: This metric provides information about IO modules (host interface cards) installed in the controllers.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml
+
+  # =============================================================================
   # Host Metrics (Eseries Collector)
   # =============================================================================
   - Name: eseries_host_labels
