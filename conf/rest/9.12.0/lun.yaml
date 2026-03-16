@@ -4,14 +4,15 @@ query:                      api/private/cli/lun
 object:                     lun
 
 counters:
-  - ^^uuid
+  - ^^lun
+  - ^^qtree                 => qtree
+  - ^^volume                => volume
+  - ^^vserver               => svm
   - ^node                   => node
   - ^path                   => path
-  - ^qtree                  => qtree
   - ^serial_hex             => serial_hex
   - ^state                  => state
-  - ^volume                 => volume
-  - ^vserver                => svm
+  - ^uuid
   - size                    => size
   - size_used               => size_used
 
@@ -23,13 +24,6 @@ plugins:
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
-    # There are three flavors of path names
-    # /vol/volName/lunName
-    # /vol/volName/lun401/lunName
-    # /lunName
-      split_regex:
-        - path `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` volume,lun
-        - path `^([^/]+)$` lun
 
 export_options:
   instance_keys:
