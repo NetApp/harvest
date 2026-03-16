@@ -155,7 +155,7 @@ func NewOpticModel(output gjson.Result) Model {
 
 	list := output.Get("TABLE_lane.ROW_lane")
 	if list.Exists() {
-		output.Get("TABLE_lane.ROW_lane").ForEach(func(_, value gjson.Result) bool {
+		list.ForEach(func(_, value gjson.Result) bool {
 			rxVal := value.Get("rx_pwr")
 			if rxVal.Exists() {
 				m.Name = strings.TrimSpace(output.Get("interface").ClonedString())

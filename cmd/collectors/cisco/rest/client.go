@@ -286,15 +286,17 @@ func New(poller *conf.Poller, credentials *auth.Credentials) (*Client, error) {
 	}
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
-	duration, err := time.ParseDuration(poller.ClientTimeout)
-	if err == nil {
-		timeout = duration
-	} else {
-		client.Logger.Warn("Invalid client timeout, using default",
-			slog.String("configured_timeout", poller.ClientTimeout),
-			slog.String("default_timeout", timeout.String()),
-			slogx.Err(err),
-		)
+	if poller.ClientTimeout != "" {
+		duration, err := time.ParseDuration(poller.ClientTimeout)
+		if err == nil {
+			timeout = duration
+		} else {
+			client.Logger.Warn("Invalid client timeout, using default",
+				slog.String("configured_timeout", poller.ClientTimeout),
+				slog.String("default_timeout", timeout.String()),
+				slogx.Err(err),
+			)
+		}
 	}
 
 	client.Timeout = timeout
