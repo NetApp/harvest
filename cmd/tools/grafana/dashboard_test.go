@@ -1934,10 +1934,19 @@ func checkTags(t *testing.T, path string, data []byte) {
 
 func TestFormatedPromQL(t *testing.T) {
 	SkipIfMissing(t, FormatPromQL)
+	// This is needed because the "time to full" dashboards uses a VM function that promtool does not understand
+
+	excludeList := map[string]bool{
+		"cmode/timetillfull.json": true,
+	}
 
 	VisitDashboards(
 		Dashboards,
 		func(path string, data []byte) {
+			_, ok := excludeList[ShortPath(path)]
+			if ok {
+				return
+			}
 			checkIfPromQLIsFormatted(t, path, data)
 		},
 	)
