@@ -12,7 +12,7 @@ jobs:
       pull-requests: write
     name: Prune untagged images
     runs-on: ubuntu-latest
-    environment: production
+    environment: scheduled
     steps:
       - name: Delete all containers from repository without tags
         uses: Chizkiyahu/delete-untagged-ghcr-action@cbb5ffeb3e19c91ca5b98afd5a7818daeb3cd689
