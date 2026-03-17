@@ -141,6 +141,7 @@ func (h *Hardware) initHostInterfaceMatrix() {
 	instanceLabels.NewChildS("", "physical_port_state")
 	instanceLabels.NewChildS("", "nvme_supported")
 	instanceLabels.NewChildS("", "max_transmission_unit")
+	instanceLabels.NewChildS("", "ip_address")
 
 	mat.SetExportOptions(exportOptions)
 
@@ -319,6 +320,48 @@ func (h *Hardware) processController(controller gjson.Result, controllerID strin
 	h.SLogger.Debug("Processed controller", slog.String("id", controllerID))
 }
 
+func extractPortIPAddress(iface gjson.Result, interfaceType string, interfaceData gjson.Result) string {
+	// iSCSI: IPv4 address is directly inside the iscsi interface type data.
+	if interfaceType == "iscsi" {
+		return interfaceData.Get("ipv4Data.ipv4AddressData.ipv4Address").ClonedString()
+	}
+
+	// All other protocols: IP (if any) is carried inside commandProtocolPropertiesList
+	// at the top level of the IoInterface object.
+	cmdProtoList := iface.Get("commandProtocolPropertiesList.commandProtocolProperties")
+	if !cmdProtoList.Exists() || !cmdProtoList.IsArray() {
+		return ""
+	}
+
+	for _, cp := range cmdProtoList.Array() {
+		switch cp.Get("commandProtocol").ClonedString() {
+		case "nvme":
+			nvmeofProps := cp.Get("nvmeProperties.nvmeofProperties")
+			if !nvmeofProps.Exists() || nvmeofProps.Type == gjson.Null {
+				continue
+			}
+			provider := nvmeofProps.Get("provider").ClonedString()
+			switch provider {
+			case "providerRocev2", "providerRoce", "providerIwarp":
+				if ip := nvmeofProps.Get("roceV2Properties.ipv4Data.ipv4AddressData.ipv4Address").ClonedString(); ip != "" {
+					return ip
+				}
+			case "providerInfiniband":
+				if ip := nvmeofProps.Get("ibProperties.ipAddressData.ipv4Data.ipv4Address").ClonedString(); ip != "" {
+					return ip
+				}
+			}
+		case "scsi":
+			if cp.Get("scsiProperties.scsiProtocolType").ClonedString() == "iser" {
+				if ip := cp.Get("scsiProperties.iserProperties.ipv4Data.ipv4AddressData.ipv4Address").ClonedString(); ip != "" {
+					return ip
+				}
+			}
+		}
+	}
+	return ""
+}
+
 // processHostInterfacesFromAPI processes host interfaces from the /interfaces?channelType=hostside API endpoint
 func (h *Hardware) processHostInterfacesFromAPI(results []gjson.Result, controllerLabelMap, portLabelMap map[string]string) {
 	mat := h.data[hostInterfaceMatrix]
@@ -364,6 +407,7 @@ func (h *Hardware) processHostInterfacesFromAPI(results []gjson.Result, controll
 		inst.SetLabelTrimmed("physical_port_state", cleanLinkState(interfaceData.Get("physPortState").ClonedString()))
 		inst.SetLabelTrimmed("nvme_supported", interfaceData.Get("isNVMeSupported").ClonedString())
 		inst.SetLabelTrimmed("max_transmission_unit", interfaceData.Get("maximumTransmissionUnit").ClonedString())
+		inst.SetLabelTrimmed("ip_address", extractPortIPAddress(iface, interfaceType, interfaceData))
 	}
 
 	h.SLogger.Debug("Processed host interfaces from API", slog.Int("count", len(results)))

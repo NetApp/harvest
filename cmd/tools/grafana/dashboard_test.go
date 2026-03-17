@@ -215,45 +215,27 @@ func TestDatasource(t *testing.T) {
 	})
 }
 
+func isDSPrometheus(ds gjson.Result) bool {
+	if ds.ClonedString() == "${DS_PROMETHEUS}" {
+		return true
+	}
+	return ds.Get("uid").ClonedString() == "${DS_PROMETHEUS}"
+}
+
 func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
-	// visit all panels for datasource test
 	VisitAllPanels(data, func(p string, _, value gjson.Result) {
-		dsResult := value.Get("datasource")
-		panelTitle := value.Get("title").ClonedString()
-		if !dsResult.Exists() {
-			t.Errorf(`dashboard="%s" panel="%s" doesn't have a datasource`, path, panelTitle)
+		// if the panel is a row, it is OK if there is no datasource
+		if value.Get("type").ClonedString() == "row" {
 			return
 		}
-
-		if dsResult.Type == gjson.Null {
-			// if the panel is a row, it is OK if there is no datasource
-			if value.Get("type").ClonedString() == "row" {
-				return
-			}
-			t.Errorf(`dashboard=%s panel="%s" has a null datasource, should be ${DS_PROMETHEUS}`, path, panelTitle)
-		} else if dsResult.ClonedString() != "${DS_PROMETHEUS}" {
-			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", path, panelTitle, dsResult.ClonedString())
+		panelTitle := value.Get("title").ClonedString()
+		if !isDSPrometheus(value.Get("datasource")) {
+			t.Errorf("dashboard=%s panel=%s datasource should be ${DS_PROMETHEUS}", path, panelTitle)
 		}
-
-		// Later versions of Grafana introduced a different datasource shape which causes errors
-		// when used in older versions. Detect that here
-		// GOOD "datasource": "${DS_PROMETHEUS}",
-		// BAD  "datasource": {
-		//            "type": "prometheus",
-		//            "uid": "EO6UabnVz"
-		//          },
-		dses := value.Get("targets.#.datasource").Array()
-		for i, ds := range dses {
-			if ds.ClonedString() != "${DS_PROMETHEUS}" {
-				targetPath := fmt.Sprintf("%s.target[%d].datasource", p, i)
-				t.Errorf(
-					"dashboard=%s path=%s panel=%s has %s datasource shape that breaks older versions of Grafana",
-					path,
-					targetPath,
-					panelTitle,
-					dsResult.ClonedString(),
-				)
+		for i, ds := range value.Get("targets.#.datasource").Array() {
+			if !isDSPrometheus(ds) {
+				t.Errorf("dashboard=%s path=%s.target[%d].datasource panel=%s should be ${DS_PROMETHEUS}", path, p, i, panelTitle)
 			}
 		}
 	})
@@ -299,9 +281,9 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 				)
 			}
 			ttype := value.Get("type").ClonedString()
-			datasource := value.Get("datasource").ClonedString()
-			if !excludeTypes[ttype] && datasource != "${DS_PROMETHEUS}" {
-				t.Errorf("dashboard=%s var=%s has %s datasource should be ${DS_PROMETHEUS}", path, name, datasource)
+			datasource := value.Get("datasource")
+			if !excludeTypes[ttype] && !isDSPrometheus(datasource) {
+				t.Errorf("dashboard=%s var=%s has %s datasource should be ${DS_PROMETHEUS}", path, name, datasource.ClonedString())
 			}
 		}
 		return true

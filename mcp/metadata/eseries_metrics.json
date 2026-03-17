@@ -36,6 +36,7 @@
   "eseries_drive_labels": "This metric provides information about drives.",
   "eseries_drive_percent_endurance_used": "Percentage of SSD endurance used for solid state drives",
   "eseries_fan_labels": "This metric provides information about fans.",
+  "eseries_host_board_labels": "This metric provides information about IO modules (host interface cards) installed in the controllers.",
   "eseries_host_labels": "This metric provides information about hosts connected to the storage array.",
   "eseries_power_supply_labels": "This metric provides information about power supplies.",
   "eseries_sfp_labels": "This metric provides information about SFP transceivers.",

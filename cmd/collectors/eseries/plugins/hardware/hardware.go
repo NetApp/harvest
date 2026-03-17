@@ -32,6 +32,7 @@ const (
 	driveMatrix             = "eseries_drive"
 	fanMatrix               = "eseries_fan"
 	powerSupplyMatrix       = "eseries_power_supply"
+	hostBoardMatrix         = "eseries_host_board"
 	sfpMatrix               = "eseries_sfp"
 	thermalSensorMatrix     = "eseries_thermal_sensor"
 )
@@ -70,6 +71,7 @@ func (h *Hardware) Init(_ conf.Remote) error {
 	h.initDriveMatrix()
 	h.initFanMatrix()
 	h.initPowerSupplyMatrix()
+	h.initHostBoardMatrix()
 	h.initSFPMatrix()
 	h.initThermalSensorMatrix()
 
@@ -156,6 +158,7 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 	h.processDrives(response, trayLabelMap, poolNames)
 	h.processFans(response, controllerLabelMap)
 	h.processPowerSupplies(response)
+	h.processHostBoards(response, controllerLabelMap)
 	h.processSFPs(response, controllerLabelMap, portLabelMap)
 	h.processThermalSensors(response)
 
@@ -196,6 +199,7 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 		slog.Int("drives", len(h.data[driveMatrix].GetInstances())),
 		slog.Int("fans", len(h.data[fanMatrix].GetInstances())),
 		slog.Int("powerSupplies", len(h.data[powerSupplyMatrix].GetInstances())),
+		slog.Int("hostBoards", len(h.data[hostBoardMatrix].GetInstances())),
 		slog.Int("sfps", len(h.data[sfpMatrix].GetInstances())),
 		slog.Int("thermalSensors", len(h.data[thermalSensorMatrix].GetInstances())),
 	)

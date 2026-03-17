@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Mar-02
+Creation Date : 2026-Mar-16
 E-Series Version: 11.80.0
 ```
 
@@ -722,6 +722,25 @@ The `eseries_fan_labels` metric is visualized in the following Grafana dashboard
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Hardware | Fan | table | [Fan](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=103) |
+///
+
+
+
+### eseries_host_board_labels
+
+This metric provides information about IO modules (host interface cards) installed in the controllers.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/hardware-inventory` | `Harvest generated` | conf/eseries/11.80.0/hardware.yaml |
+
+The `eseries_host_board_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Hardware | IO Module / Host Board | table | [IO Module / Host Board](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=111) |
 ///
 
 
