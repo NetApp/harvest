@@ -2046,6 +2046,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#eseries_host_board_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_host_board_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#eseries_host_labels" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_host_labels
@@ -2847,6 +2856,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#eseries_host_board_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_host_board_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#eseries_host_labels" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_host_labels
@@ -3045,7 +3063,7 @@
 These can be generated on demand by running <code>bin/harvest grafana metrics</code>. See
 <a href="https://github.com/NetApp/harvest/issues/1577#issue-1471478260">#1577</a> for details.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2026-Mar-17
+<div class="highlight"><pre><span></span><code>Creation Date : 2026-Mar-18
 E-Series Version: 11.80.0
 </code></pre></div>
 <details>
@@ -4596,6 +4614,47 @@ E-Series Version: 11.80.0
 <td>Fan</td>
 <td>table</td>
 <td><a href="/d/eseries-hardware/e-series3a-hardware?orgId=1&amp;viewPanel=103">Fan</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="eseries_host_board_labels">eseries_host_board_labels<a class="headerlink" href="#eseries_host_board_labels" title="Permanent link">&para;</a></h3>
+<p>This metric provides information about IO modules (host interface cards) installed in the controllers.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>storage-systems/{array_id}/hardware-inventory</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/eseries/11.80.0/hardware.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>eseries_host_board_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-Series: Hardware</td>
+<td>IO Module / Host Board</td>
+<td>table</td>
+<td><a href="/d/eseries-hardware/e-series3a-hardware?orgId=1&amp;viewPanel=111">IO Module / Host Board</a></td>
 </tr>
 </tbody>
 </table>
