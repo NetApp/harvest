@@ -299,8 +299,8 @@ func (c *AbstractCollector) GetRemote() conf.Remote {
 
 // Start will run the collector in an infinite loop
 func (c *AbstractCollector) Start(
-	wg *sync.WaitGroup, // lifecycle: wait for completion
-	semaphore chan struct{}, // concurrency: limit active collectors
+	wg *sync.WaitGroup,             // lifecycle: wait for completion
+	semaphore chan struct{},        // concurrency: limit active collectors
 	activeCollectors *atomic.Int32, // monitoring: track active collector count
 ) {
 	defer wg.Done()
@@ -426,6 +426,14 @@ func (c *AbstractCollector) Start(
 				case errors.Is(err, errs.ErrMetroClusterNotConfigured):
 					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 					c.SetStatus(1, errs.ErrNoInstance.Error())
+
+				case errors.Is(err, errs.ErrMetroClusterCheckInProgress):
+					// MCC checks in ONTAP run automatically every 15 minutes.
+					// While the check is running, check status can't be collected via CLI or API.
+					// When this happens, reschedule the collector to run and suppress error logging since this is not
+					// an error. See https://github.com/NetApp/harvest/issues/4197 for details
+					c.Schedule.SetStandByModeMax(task, 10*time.Minute)
+					c.SetStatus(1, errs.ErrMetroClusterCheckInProgress.Error())
 
 				// not an error we are expecting, so enter failed or standby state
 				default:
