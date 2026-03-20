@@ -22,8 +22,9 @@ import (
 
 type Certificate struct {
 	*plugin.AbstractPlugin
-	currentVal int
-	client     *rest.Client
+	currentVal         int
+	client             *rest.Client
+	adminVserverSerial string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -57,74 +58,75 @@ func (c *Certificate) Init(remote conf.Remote) error {
 func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var (
-		adminVserver       string
-		adminVserverSerial string
-		expiryTimeMetric   *matrix.Metric
-		unixTime           time.Time
-		err                error
+		expiryTimeMetric *matrix.Metric
+		unixTime         time.Time
 	)
 	data := dataMap[c.Object]
 	c.client.Metadata.Reset()
 
 	if c.currentVal >= c.PluginInvocationRate {
 		c.currentVal = 0
+		c.adminVserverSerial = ""
+		c.refreshAdminSerial()
+	}
 
-		// invoke private vserver cli rest and get admin vserver name
-		if adminVserver, err = c.GetAdminVserver(); err != nil {
-			if ontap.IsRestErr(err, ontap.APINotFound) {
-				c.SLogger.Debug("Failed to collect admin SVM", slogx.Err(err))
-			} else {
-				c.SLogger.Error("Failed to collect admin SVM", slogx.Err(err))
-			}
-			return nil, nil, nil
+	// update certificate instance based on admin vserver serial
+	for _, certificateInstance := range data.GetInstances() {
+		if !certificateInstance.IsExportable() {
+			continue
+		}
+		serialNumber := certificateInstance.GetLabel("serial_number")
+		certType := certificateInstance.GetLabel("type")
+
+		if expiryTimeMetric = data.GetMetric("expiration"); expiryTimeMetric == nil {
+			c.SLogger.Error("missing expiry time metric")
+			continue
 		}
 
-		// invoke private ssl cli rest when admin SVM is non-empty and get the admin SVM's serial number
-		if adminVserver == "" {
-			c.SLogger.Error("Admin SVM is missing in the cluster")
-			return nil, nil, nil
+		if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
+			// convert expiryTime from float64 to int64 and then to unix Time
+			unixTime = time.Unix(int64(expiryTime), 0)
+			certificateInstance.SetLabel("expiry_time", unixTime.UTC().Format(time.RFC3339))
+		} else {
+			// This is fail-safe case
+			unixTime = time.Now()
 		}
 
-		if adminVserverSerial, err = c.GetSecuritySsl(adminVserver); err != nil {
-			if ontap.IsRestErr(err, ontap.APINotFound) {
-				c.SLogger.Debug("Failed to collect admin SVM's serial number", slogx.Err(err))
-			} else {
-				c.SLogger.Error("Failed to collect admin SVM's serial number", slogx.Err(err))
-			}
-			return nil, nil, nil
-		}
-
-		// update certificate instance based on admin vserver serial
-		for _, certificateInstance := range data.GetInstances() {
-			if !certificateInstance.IsExportable() {
-				continue
-			}
-			serialNumber := certificateInstance.GetLabel("serial_number")
-			certType := certificateInstance.GetLabel("type")
-
-			if expiryTimeMetric = data.GetMetric("expiration"); expiryTimeMetric == nil {
-				c.SLogger.Error("missing expiry time metric")
-				continue
-			}
-
-			if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
-				// convert expiryTime from float64 to int64 and then to unix Time
-				unixTime = time.Unix(int64(expiryTime), 0)
-				certificateInstance.SetLabel("expiry_time", unixTime.UTC().Format(time.RFC3339))
-			} else {
-				// This is fail-safe case
-				unixTime = time.Now()
-			}
-
-			if serialNumber == adminVserverSerial && certType == "server" {
-				c.setCertificateIssuerType(certificateInstance)
-				c.setCertificateValidity(unixTime, certificateInstance)
-			}
+		if c.adminVserverSerial != "" && serialNumber == c.adminVserverSerial && certType == "server" {
+			c.setCertificateIssuerType(certificateInstance)
+			c.setCertificateValidity(unixTime, certificateInstance)
 		}
 	}
 
 	c.currentVal++
 	return nil, c.client.Metadata, nil
+}
+
+func (c *Certificate) refreshAdminSerial() {
+	adminVserver, err := c.GetAdminVserver()
+	if err != nil {
+		if ontap.IsRestErr(err, ontap.APINotFound) {
+			c.SLogger.Debug("Failed to collect admin SVM", slogx.Err(err))
+		} else {
+			c.SLogger.Error("Failed to collect admin SVM", slogx.Err(err))
+		}
+		return
+	}
+	if adminVserver == "" {
+		c.SLogger.Error("Admin SVM is missing in the cluster")
+		return
+	}
+	// invoke private ssl cli rest and get the admin SVM's serial number
+	serial, err := c.GetSecuritySsl(adminVserver)
+	if err != nil {
+		if ontap.IsRestErr(err, ontap.APINotFound) {
+			c.SLogger.Debug("Failed to collect admin SVM's serial number", slogx.Err(err))
+		} else {
+			c.SLogger.Error("Failed to collect admin SVM's serial number", slogx.Err(err))
+		}
+		return
+	}
+	c.adminVserverSerial = serial
 }
 
 func (c *Certificate) setCertificateIssuerType(instance *matrix.Instance) {
