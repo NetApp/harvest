@@ -751,6 +751,8 @@ func (r *Rest) handleError(err error) ([]gjson.Result, error) {
 	if errs.IsRestErr(err, errs.MetroClusterNotConfigured) {
 		// MetroCluster is not configured, return ErrMetroClusterNotConfigured
 		return nil, errors.Join(errs.ErrAPIRequestRejected, errs.New(errs.ErrMetroClusterNotConfigured, err.Error()))
+	} else if errs.IsRestErr(err, errs.MetroClusterCheckInProgress) {
+		return nil, errors.Join(errs.ErrAPIRequestRejected, errs.New(errs.ErrMetroClusterCheckInProgress, err.Error()))
 	}
 	return nil, fmt.Errorf("failed to fetch data: %w", err)
 }

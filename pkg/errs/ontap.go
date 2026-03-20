@@ -90,11 +90,12 @@ type OntapRestCode struct {
 }
 
 var (
-	APINotFound               = OntapRestCode{"API not found", 3}
-	EntryNotExist             = OntapRestCode{"Entry does not exist", 4}
-	TableNotFound             = OntapRestCode{"Table is not found", 8585320}
-	MetroClusterNotConfigured = OntapRestCode{"MetroCluster is not configured in cluster", 2426405}
-	CMReject                  = OntapRestCode{"CM reject", 8585368}
+	APINotFound                 = OntapRestCode{"API not found", 3}
+	EntryNotExist               = OntapRestCode{"Entry does not exist", 4}
+	TableNotFound               = OntapRestCode{"Table is not found", 8585320}
+	MetroClusterNotConfigured   = OntapRestCode{"MetroCluster is not configured in cluster", 2426405}
+	MetroClusterCheckInProgress = OntapRestCode{"MetroCluster check in progress", 2428841}
+	CMReject                    = OntapRestCode{"CM reject", 8585368}
 )
 
 func IsRestErr(err error, sentinel OntapRestCode) bool {
