@@ -299,8 +299,8 @@ func (c *AbstractCollector) GetRemote() conf.Remote {
 
 // Start will run the collector in an infinite loop
 func (c *AbstractCollector) Start(
-	wg *sync.WaitGroup,             // lifecycle: wait for completion
-	semaphore chan struct{},        // concurrency: limit active collectors
+	wg *sync.WaitGroup, // lifecycle: wait for completion
+	semaphore chan struct{}, // concurrency: limit active collectors
 	activeCollectors *atomic.Int32, // monitoring: track active collector count
 ) {
 	defer wg.Done()

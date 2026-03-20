@@ -25,9 +25,10 @@ const BatchSize = "500"
 
 type Certificate struct {
 	*plugin.AbstractPlugin
-	currentVal int
-	batchSize  string
-	client     *zapi.Client
+	currentVal         int
+	batchSize          string
+	client             *zapi.Client
+	adminVserverSerial string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -67,11 +68,8 @@ func (c *Certificate) Init(remote conf.Remote) error {
 func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var (
-		adminVserver       string
-		adminVserverSerial string
-		expiryTimeMetric   *matrix.Metric
-		unixTime           time.Time
-		err                error
+		expiryTimeMetric *matrix.Metric
+		unixTime         time.Time
 	)
 
 	data := dataMap[c.Object]
@@ -79,60 +77,66 @@ func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 
 	if c.currentVal >= c.PluginInvocationRate {
 		c.currentVal = 0
+		c.adminVserverSerial = ""
+		c.refreshAdminSerial()
+	}
 
-		// invoke vserver-get-iter zapi and get admin vserver name
-		if adminVserver, err = c.GetAdminVserver(); err != nil {
-			if errors.Is(err, errs.ErrNoInstance) {
-				c.SLogger.Debug("Failed to collect admin SVM", slogx.Err(err))
-			} else {
-				c.SLogger.Error("Failed to collect admin SVM", slogx.Err(err))
-			}
-			return nil, nil, nil
+	// update certificate instance based on admin vserver serial
+	for certificateInstanceKey, certificateInstance := range data.GetInstances() {
+		if !certificateInstance.IsExportable() {
+			continue
+		}
+		name := certificateInstance.GetLabel("name")
+		serialNumber := certificateInstance.GetLabel("serial_number")
+		svm := certificateInstance.GetLabel("svm")
+		certType := certificateInstance.GetLabel("type")
+		certificateInstance.SetLabel("uuid", name+serialNumber+svm)
+
+		if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
+			c.SLogger.Error("missing expiry time metric")
+			continue
+		}
+		if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
+			// convert expiryTime from float64 to int64 and then to unix Time
+			unixTime = time.Unix(int64(expiryTime), 0)
+			certificateInstance.SetLabel("expiry_time", unixTime.UTC().Format(time.RFC3339))
+		} else {
+			// This is fail-safe case
+			unixTime = time.Now()
 		}
 
-		// invoke security-ssl-get-iter zapi and get admin vserver's serial number
-		if adminVserverSerial, err = c.GetSecuritySsl(adminVserver); err != nil {
-			if errors.Is(err, errs.ErrNoInstance) {
-				c.SLogger.Debug("Failed to collect admin SVM's serial number", slogx.Err(err))
-			} else {
-				c.SLogger.Error("Failed to collect admin SVM's serial number", slogx.Err(err))
-			}
-			return nil, nil, nil
-		}
-
-		// update certificate instance based on admin vserver serial
-		for certificateInstanceKey, certificateInstance := range data.GetInstances() {
-			if !certificateInstance.IsExportable() {
-				continue
-			}
-			name := certificateInstance.GetLabel("name")
-			serialNumber := certificateInstance.GetLabel("serial_number")
-			svm := certificateInstance.GetLabel("svm")
-			certType := certificateInstance.GetLabel("type")
-			certificateInstance.SetLabel("uuid", name+serialNumber+svm)
-
-			if expiryTimeMetric = data.GetMetric("certificate-info.expiration-date"); expiryTimeMetric == nil {
-				c.SLogger.Error("missing expiry time metric")
-				continue
-			}
-			if expiryTime, ok := expiryTimeMetric.GetValueFloat64(certificateInstance); ok {
-				// convert expiryTime from float64 to int64 and then to unix Time
-				unixTime = time.Unix(int64(expiryTime), 0)
-				certificateInstance.SetLabel("expiry_time", unixTime.UTC().Format(time.RFC3339))
-			} else {
-				// This is fail-safe case
-				unixTime = time.Now()
-			}
-
-			if serialNumber == adminVserverSerial && certType == "server" {
-				c.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
-				c.setCertificateValidity(unixTime, certificateInstance)
-			}
+		if c.adminVserverSerial != "" && serialNumber == c.adminVserverSerial && certType == "server" {
+			c.setCertificateIssuerType(certificateInstance, certificateInstanceKey)
+			c.setCertificateValidity(unixTime, certificateInstance)
 		}
 	}
 
 	c.currentVal++
 	return nil, c.client.Metadata, nil
+}
+
+func (c *Certificate) refreshAdminSerial() {
+	// invoke vserver-get-iter zapi and get admin vserver name
+	adminVserver, err := c.GetAdminVserver()
+	if err != nil {
+		if errors.Is(err, errs.ErrNoInstance) {
+			c.SLogger.Debug("Failed to collect admin SVM", slogx.Err(err))
+		} else {
+			c.SLogger.Error("Failed to collect admin SVM", slogx.Err(err))
+		}
+		return
+	}
+	// invoke security-ssl-get-iter zapi and get admin vserver's serial number
+	serial, err := c.GetSecuritySsl(adminVserver)
+	if err != nil {
+		if errors.Is(err, errs.ErrNoInstance) {
+			c.SLogger.Debug("Failed to collect admin SVM's serial number", slogx.Err(err))
+		} else {
+			c.SLogger.Error("Failed to collect admin SVM's serial number", slogx.Err(err))
+		}
+		return
+	}
+	c.adminVserverSerial = serial
 }
 
 func (c *Certificate) setCertificateIssuerType(instance *matrix.Instance, certificateInstanceKey string) {
