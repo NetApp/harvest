@@ -1914,6 +1914,38 @@ func checkTags(t *testing.T, path string, data []byte) {
 	}
 }
 
+func TestIntervalIsSet(t *testing.T) {
+
+	VisitDashboards(
+		[]string{"../../../grafana/dashboards/cisco"},
+		func(path string, data []byte) {
+			checkTestIntervalIsSet(t, path, data)
+		},
+	)
+}
+
+func checkTestIntervalIsSet(t *testing.T, path string, data []byte) {
+	path = ShortPath(path)
+
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
+		title := value.Get("title").ClonedString()
+		kind := value.Get("type").String()
+		if kind != "timeseries" {
+			return
+		}
+
+		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
+			interval := target.Get("interval")
+			if !interval.Exists() {
+				t.Errorf(`dashboard=%s panel="%s" target[%s] has no interval set, want interval="3m"`, path, title, targetKey.ClonedString())
+			} else if interval.Exists() && interval.String() != "3m" {
+				t.Errorf(`dashboard=%s panel="%s" target[%s] has interval=%s, want interval="3m"`, path, title, targetKey.ClonedString(), interval.String())
+			}
+			return true
+		})
+	})
+}
+
 func TestFormatedPromQL(t *testing.T) {
 	SkipIfMissing(t, FormatPromQL)
 	// This is needed because the "time to full" dashboard uses a VM function that promtool does not understand
