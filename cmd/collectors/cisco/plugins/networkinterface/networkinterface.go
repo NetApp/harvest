@@ -210,7 +210,7 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 
 		if spuriousZero {
 			instance.SetExportable(false)
-			i.SLogger.Error(
+			i.SLogger.Warn(
 				"Skipping invalid zero samples",
 				slog.String("interface", interfaceName),
 				slog.Float64("eth_inbytes", ethInBytes),
