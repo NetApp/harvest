@@ -1,6 +1,7 @@
 package networkinterface
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -77,5 +78,105 @@ func TestInterface_parseInterface(t *testing.T) {
 				assert.Equal(t, valueString, metric.value)
 			})
 		}
+	}
+}
+
+func TestInterface_ZeroHandling(t *testing.T) {
+	type testCase struct {
+		name           string
+		clearCounters  string
+		inBytes        float64
+		outBytes       float64
+		wantExportable bool
+	}
+
+	tests := []testCase{
+		{
+			name:           "never cleared, both zero bytes",
+			clearCounters:  "never",
+			inBytes:        0,
+			outBytes:       0,
+			wantExportable: false,
+		},
+		{
+			name:           "never cleared, inBytes zero",
+			clearCounters:  "never",
+			inBytes:        0,
+			outBytes:       100,
+			wantExportable: false,
+		},
+		{
+			name:           "never cleared, outBytes zero",
+			clearCounters:  "never",
+			inBytes:        100,
+			outBytes:       0,
+			wantExportable: false,
+		},
+		{
+			name:           "never cleared, both non-zero bytes",
+			clearCounters:  "never",
+			inBytes:        100,
+			outBytes:       100,
+			wantExportable: true,
+		},
+		{
+			name:           "cleared before, both zero bytes",
+			clearCounters:  "Sun Jul 05 12:00:00 2020",
+			inBytes:        0,
+			outBytes:       0,
+			wantExportable: true,
+		},
+		{
+			name:           "cleared before, inBytes zero",
+			clearCounters:  "Sun Jul 05 12:00:00 2020",
+			inBytes:        0,
+			outBytes:       100,
+			wantExportable: true,
+		},
+		{
+			name:           "cleared before, outBytes zero",
+			clearCounters:  "Sun Jul 05 12:00:00 2020",
+			inBytes:        100,
+			outBytes:       0,
+			wantExportable: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			jsonStr := fmt.Sprintf(`{
+				"output": {
+					"body": {
+						"TABLE_interface": {
+							"ROW_interface": [{
+								"interface": "Ethernet1/1",
+								"eth_hw_addr": "dead.beef.0001",
+								"admin_state": "up",
+								"state": "up",
+								"eth_inbytes": %g,
+								"eth_outbytes": %g,
+								"eth_clear_counters": "%s"
+							}]
+						}
+					}
+				}
+			}`, tt.inBytes, tt.outBytes, tt.clearCounters)
+
+			result := gjson.Parse(jsonStr)
+
+			i := &Interface{AbstractPlugin: plugin.New("cisco_interface", options.New(), nil, nil, "cisco_interface", nil)}
+			i.SLogger = slog.Default()
+			m, err := i.initMatrix("cisco_interface")
+			assert.Nil(t, err)
+			i.matrix = m
+
+			i.parseInterface(result, m)
+
+			assert.Equal(t, len(m.GetInstances()), 1)
+
+			instance := m.GetInstance("Ethernet1/1_dead.beef.0001")
+			assert.NotNil(t, instance)
+			assert.Equal(t, instance.IsExportable(), tt.wantExportable)
+		})
 	}
 }

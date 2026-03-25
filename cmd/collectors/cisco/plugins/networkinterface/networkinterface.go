@@ -206,15 +206,17 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 			envMat.GetMetric(errorStatus).SetValueFloat64(instance, 0)
 		}
 
-		spuriousZero := ethInBytes == 0 && ethClearCounters == "never"
-
-		if ethOutBytes == 0 && ethClearCounters == "never" {
-			spuriousZero = true
-		}
+		spuriousZero := ethClearCounters == "never" && (ethInBytes == 0 || ethOutBytes == 0)
 
 		if spuriousZero {
 			instance.SetExportable(false)
-			i.SLogger.Error("Skipping invalid zero samples", slog.String("interface", interfaceName))
+			i.SLogger.Error(
+				"Skipping invalid zero samples",
+				slog.String("interface", interfaceName),
+				slog.Float64("eth_inbytes", ethInBytes),
+				slog.Float64("eth_outbytes", ethOutBytes),
+				slog.String("eth_clear_counters", ethClearCounters),
+			)
 		}
 
 		return true
