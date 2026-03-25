@@ -7,10 +7,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
-	"os"
 	"strings"
 )
 
@@ -159,6 +157,7 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		ethInDrops := value.Get("eth_in_ifdown_drops").Float()
 		ethOutDrops := value.Get("eth_out_drops").Float()
 		ethOutDiscards := value.Get("eth_outdiscard").Float()
+		ethClearCounters := value.Get("eth_clear_counters").String()
 
 		instanceKey := interfaceName + "_" + macAddr
 
@@ -207,36 +206,17 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 			envMat.GetMetric(errorStatus).SetValueFloat64(instance, 0)
 		}
 
-		inExists := value.Get("eth_inbytes").Exists()
-		outExists := value.Get("eth_outbytes").Exists()
-		if !inExists || !outExists {
-			i.debugMissingBytes(output, interfaceName)
+		spuriousZero := ethInBytes == 0 && ethClearCounters == "never"
+
+		if ethOutBytes == 0 && ethClearCounters == "never" {
+			spuriousZero = true
+		}
+
+		if spuriousZero {
+			instance.SetExportable(false)
+			i.SLogger.Error("Skipping invalid zero samples", slog.String("interface", interfaceName))
 		}
 
 		return true
 	})
-}
-
-// Debug code to understand why ethInBytes|ethOutBytes are sometimes zero
-func (i *Interface) debugMissingBytes(output gjson.Result, name string) {
-	i.SLogger.Error("unexpected zero bytes", slog.String("name", name))
-
-	filename := "/tmp/interface_debug.txt"
-	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
-		i.SLogger.Error("Error opening debug file",
-			slog.String("name", name),
-			slog.String("filename", filename),
-			slogx.Err(err),
-		)
-		return
-	}
-	defer f.Close()
-	if _, err = f.WriteString(output.String()); err != nil {
-		i.SLogger.Error("Error writing to debug file",
-			slog.String("name", name),
-			slog.String("filename", filename),
-			slogx.Err(err),
-		)
-	}
 }
