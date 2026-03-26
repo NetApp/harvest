@@ -83,9 +83,9 @@ func (m *Manager) readRuleFile(filename string) (*RuleFile, error) {
 	}
 	// Initialize RulesMap for each group
 	for i := range ruleFile.Groups {
-		ruleFile.Groups[i].RulesMap = make(map[string]AlertRule)
+		ruleFile.Groups[i].rulesMap = make(map[string]AlertRule)
 		for _, rule := range ruleFile.Groups[i].Rules {
-			ruleFile.Groups[i].RulesMap[rule.Alert] = rule
+			ruleFile.Groups[i].rulesMap[rule.Alert] = rule
 		}
 	}
 
@@ -206,7 +206,7 @@ func (m *Manager) findRuleInFile(filename, ruleName string) (*AlertRule, error) 
 	}
 
 	for _, group := range ruleFile.Groups {
-		r, ok := group.RulesMap[ruleName]
+		r, ok := group.rulesMap[ruleName]
 		if ok {
 			return &r, nil
 		}
