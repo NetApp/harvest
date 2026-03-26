@@ -59,6 +59,7 @@ plugins:
         - volume `sdw_cl_.+`
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
+        - volume `cohesity_.+`
 
 export_options:
   instance_keys:
