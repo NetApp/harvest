@@ -105,6 +105,7 @@ plugins:
         - volume `sdw_cl_.+`
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
+        - volume `cohesity_.+`
       replace:
         - node_root root_volume `false` `No`
         - svm_root root_volume `false` `No`

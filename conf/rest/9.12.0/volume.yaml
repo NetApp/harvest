@@ -123,6 +123,7 @@ plugins:
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
         - volume `^fg_oss_`
+        - volume `cohesity_.+`
       exclude_equals:
         - type `tmp`
         - node_root `true`

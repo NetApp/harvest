@@ -80,6 +80,7 @@ plugins:
         - volume `sdw_cl_.+`
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
+        - volume `cohesity_.+`
 
 #  - VolumeTopClients:
 #      # `max_volumes` is the maximum number of volumes to consider for top client metrics. This value is capped at 50, even if a higher number is specified.
