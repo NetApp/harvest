@@ -371,6 +371,9 @@ pipeline {
     }
 
     post {
+        always {
+            stopAndRemoveDockers()
+        }
         failure {
             sendNotification("FAILED")
         }
@@ -396,7 +399,7 @@ def void stopAndRemoveDockers() {
         fi
 
         # Remove all images
-        images=$(docker images -q)
+        images=$(docker images -q | sort -u)
         if [ -n "$images" ]; then
             echo "$images" | xargs docker rmi -f
         fi
