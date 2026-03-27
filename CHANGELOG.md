@@ -1122,7 +1122,6 @@ this release:
 - Bump Gopsutil ([#3185](https://github.com/NetApp/harvest/pull/3185))
 - Bump Go ([#3187](https://github.com/NetApp/harvest/pull/3187))
 - Add Missing Dependency Of Purego ([#3189](https://github.com/NetApp/harvest/pull/3189))
-- Add Trivy To Ci ([#3217](https://github.com/NetApp/harvest/pull/3217))
 - Embusalacchi Has Signed The Ccla ([#3224](https://github.com/NetApp/harvest/pull/3224))
 - Add Docker Login To Ci ([#3237](https://github.com/NetApp/harvest/pull/3237))
 - Harvest Should Lint Metrics With Promtool ([#3246](https://github.com/NetApp/harvest/pull/3246))
