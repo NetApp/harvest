@@ -29,12 +29,12 @@ More details can be found in the [installation](https://netapp.github.io/harvest
 
 For this guide, we'll use the tarball package as an example.
 
-Visit the releases page and take note of the latest release. Update the `HARVEST_VERSION` environment variable with the latest release in the script below. For example, to download the `24.11.0` release you would use `HARVEST_VERSION=24.11.0`.
+Visit the releases page and take note of the latest release. Update the `HARVEST_VERSION` environment variable with the latest release in the script below. For example, to download the `26.02.0` release you would use `HARVEST_VERSION=26.02.0`.
 
 After updating the `HARVEST_VERSION` environment variable, run the bash script to download Harvest and untar it into your `HARVEST_INSTALL_PATH` directory.
 
 ```bash
-HARVEST_VERSION=24.11.0
+HARVEST_VERSION=26.02.0
 cd ${HARVEST_INSTALL_PATH}
 wget https://github.com/NetApp/harvest/releases/download/v${HARVEST_VERSION}/harvest-${HARVEST_VERSION}-1_linux_amd64.tar.gz
 tar -xvf harvest-${HARVEST_VERSION}-1_linux_amd64.tar.gz
@@ -51,7 +51,7 @@ sudo chown -R harvest:harvest ${HARVEST_INSTALL_PATH}
 To install Prometheus, follow these steps. For more details see [Prometheus installation](https://prometheus.io/docs/prometheus/latest/installation/).
 
 ```bash
-PROMETHEUS_VERSION=2.49.1
+PROMETHEUS_VERSION=3.5.1
 cd ${HARVEST_INSTALL_PATH}
 wget https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz
 tar -xvf prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz
@@ -114,7 +114,7 @@ You should see output indicating that the Prometheus service is active and runni
 To install Grafana, follow these steps:
 
 ```bash
-GRAFANA_VERSION=10.4.5
+GRAFANA_VERSION=12.3.2
 cd ${HARVEST_INSTALL_PATH}
 wget https://dl.grafana.com/oss/release/grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz
 tar -xvf grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz
@@ -135,7 +135,7 @@ After=network-online.target
 [Service]
 User=root
 Restart=on-failure
-ExecStart=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}
+ExecStart=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}
 
 [Install]
 WantedBy=multi-user.target
@@ -164,7 +164,7 @@ You should see output indicating that the Grafana service is active and running.
   If you would rather start Grafana directly and kick the tires before creating a service file, you can run the following command to start Grafana in the background:
 
   ```bash
-  nohup ${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION} > grafana.log 2>&1 &
+  nohup ${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION} > grafana.log 2>&1 &
   ```
 
   This command uses <code>nohup</code> to run Grafana in the background and redirects the output to <code>grafana.log</code>.
