@@ -26,7 +26,7 @@ github.com/modelcontextprotocol/go-sdk/internal/xcontext
 github.com/modelcontextprotocol/go-sdk/jsonrpc
 github.com/modelcontextprotocol/go-sdk/mcp
 github.com/modelcontextprotocol/go-sdk/oauthex
-# github.com/netapp/harvest/v2 v2.0.0-20260313132518-9da1f40ecd71 => ../
+# github.com/netapp/harvest/v2 v2.0.0-20260327161100-5f32698d9c23 => ../
 ## explicit; go 1.26.1
 github.com/netapp/harvest/v2/pkg/slogx
 # github.com/segmentio/asm v1.2.1
