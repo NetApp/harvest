@@ -6,6 +6,7 @@
     ":semanticCommitScopeDisabled",
     "docker:disable"
   ],
+  "minimumReleaseAge": "7 days",
   "ignorePaths": ["**/integration/**"],
   "schedule": ["before 4am on monday"],
   "groupName": "all dependencies",
