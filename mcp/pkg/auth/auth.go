@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"mcp-server/cmd/version"
 	"net/http"
@@ -296,10 +297,11 @@ func MakeRequest(config TSDBConfig, url string) (*http.Response, error) {
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
 		if closeErr := resp.Body.Close(); closeErr != nil {
 			logger.Warn("failed to close response body after HTTP error", slog.Any("error", closeErr))
 		}
-		return nil, fmt.Errorf("HTTP request failed with status %d: %s", resp.StatusCode, resp.Status)
+		return nil, fmt.Errorf("HTTP request failed with status %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
 	}
 
 	return resp, nil
