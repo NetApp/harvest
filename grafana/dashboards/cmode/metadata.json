@@ -305,7 +305,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Failed Object Count Across Collectors.",
+      "description": "Failed Object Count Across Collectors. See the Collectors panel below for details on which collectors are failing.",
       "fieldConfig": {
         "defaults": {
           "color": {
