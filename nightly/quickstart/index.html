@@ -2250,9 +2250,9 @@ sudo<span class="w"> </span>useradd<span class="w"> </span>-r<span class="w"> </
 <p>Harvest is distributed as a container, native tarball, and RPM and Debs. Pick the one that works best for you.
 More details can be found in the <a href="https://netapp.github.io/harvest/latest/install/overview/">installation</a> documentation.</p>
 <p>For this guide, we'll use the tarball package as an example.</p>
-<p>Visit the releases page and take note of the latest release. Update the <code>HARVEST_VERSION</code> environment variable with the latest release in the script below. For example, to download the <code>24.11.0</code> release you would use <code>HARVEST_VERSION=24.11.0</code>.</p>
+<p>Visit the releases page and take note of the latest release. Update the <code>HARVEST_VERSION</code> environment variable with the latest release in the script below. For example, to download the <code>26.02.0</code> release you would use <code>HARVEST_VERSION=26.02.0</code>.</p>
 <p>After updating the <code>HARVEST_VERSION</code> environment variable, run the bash script to download Harvest and untar it into your <code>HARVEST_INSTALL_PATH</code> directory.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">HARVEST_VERSION</span><span class="o">=</span><span class="m">24</span>.11.0
+<div class="highlight"><pre><span></span><code><span class="nv">HARVEST_VERSION</span><span class="o">=</span><span class="m">26</span>.02.0
 <span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
 wget<span class="w"> </span>https://github.com/NetApp/harvest/releases/download/v<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>/harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
 tar<span class="w"> </span>-xvf<span class="w"> </span>harvest-<span class="si">${</span><span class="nv">HARVEST_VERSION</span><span class="si">}</span>-1_linux_amd64.tar.gz
@@ -2262,7 +2262,7 @@ tar<span class="w"> </span>-xvf<span class="w"> </span>harvest-<span class="si">
 </code></pre></div>
 <h3 id="4-install-prometheus">4. Install Prometheus<a class="headerlink" href="#4-install-prometheus" title="Permanent link">&para;</a></h3>
 <p>To install Prometheus, follow these steps. For more details see <a href="https://prometheus.io/docs/prometheus/latest/installation/">Prometheus installation</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">PROMETHEUS_VERSION</span><span class="o">=</span><span class="m">2</span>.49.1
+<div class="highlight"><pre><span></span><code><span class="nv">PROMETHEUS_VERSION</span><span class="o">=</span><span class="m">3</span>.5.1
 <span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
 wget<span class="w"> </span>https://github.com/prometheus/prometheus/releases/download/v<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>/prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
 tar<span class="w"> </span>-xvf<span class="w"> </span>prometheus-<span class="si">${</span><span class="nv">PROMETHEUS_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
@@ -2309,7 +2309,7 @@ sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w
 
 <h3 id="5-install-grafana">5. Install Grafana<a class="headerlink" href="#5-install-grafana" title="Permanent link">&para;</a></h3>
 <p>To install Grafana, follow these steps:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">GRAFANA_VERSION</span><span class="o">=</span><span class="m">10</span>.4.5
+<div class="highlight"><pre><span></span><code><span class="nv">GRAFANA_VERSION</span><span class="o">=</span><span class="m">12</span>.3.2
 <span class="nb">cd</span><span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>
 wget<span class="w"> </span>https://dl.grafana.com/oss/release/grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
 tar<span class="w"> </span>-xvf<span class="w"> </span>grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>.linux-amd64.tar.gz
@@ -2326,7 +2326,7 @@ A service file will attempt to restart Grafana automatically when the machine is
 <span class="s">[Service]</span>
 <span class="s">User=root</span>
 <span class="s">Restart=on-failure</span>
-<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-v${GRAFANA_VERSION}</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}/bin/grafana-server --config=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}/conf/defaults.ini --homepath=${HARVEST_INSTALL_PATH}/grafana-${GRAFANA_VERSION}</span>
 
 <span class="s">[Install]</span>
 <span class="s">WantedBy=multi-user.target</span>
@@ -2346,7 +2346,7 @@ sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w
 
   If you would rather start Grafana directly and kick the tires before creating a service file, you can run the following command to start Grafana in the background:
 
-  <div class="highlight"><pre><span></span><code>nohup<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/bin/grafana-server<span class="w"> </span>--config<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/conf/defaults.ini<span class="w"> </span>--homepath<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-v<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span>grafana.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
+  <div class="highlight"><pre><span></span><code>nohup<span class="w"> </span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/bin/grafana-server<span class="w"> </span>--config<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span>/conf/defaults.ini<span class="w"> </span>--homepath<span class="o">=</span><span class="si">${</span><span class="nv">HARVEST_INSTALL_PATH</span><span class="si">}</span>/grafana-<span class="si">${</span><span class="nv">GRAFANA_VERSION</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span>grafana.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">&amp;</span>
 </code></pre></div>
 
   This command uses <code>nohup</code> to run Grafana in the background and redirects the output to <code>grafana.log</code>.
