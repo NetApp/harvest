@@ -14,8 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: scheduled
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
       - name: Delete all containers from repository without tags
-        uses: Chizkiyahu/delete-untagged-ghcr-action@cbb5ffeb3e19c91ca5b98afd5a7818daeb3cd689
+        uses: step-security/delete-untagged-ghcr-action@37825bcd9a94761395d78dd2e696baaa28288da3 # v6.1.0
         with:
           token: ${{ secrets.PAT_TOKEN }}
           package_name: 'harvest'
@@ -23,7 +28,7 @@ jobs:
           owner_type: user
 
       - name: Delete all containers from harvest-mcp repository without tags
-        uses: Chizkiyahu/delete-untagged-ghcr-action@cbb5ffeb3e19c91ca5b98afd5a7818daeb3cd689
+        uses: step-security/delete-untagged-ghcr-action@37825bcd9a94761395d78dd2e696baaa28288da3 # v6.1.0
         with:
           token: ${{ secrets.PAT_TOKEN }}
           package_name: 'harvest-mcp'
