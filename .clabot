@@ -24,6 +24,7 @@
         "$$$ Bots $$$",
         "dependabot",
         "dependabot[bot]",
-        "renovate[bot]"
+        "renovate[bot]",
+        "stepsecurity-app[bot]"
     ]
 }
