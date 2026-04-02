@@ -113,7 +113,7 @@
       },
       "id": 101,
       "options": {
-        "content": "This dashboard requires ONTAP 9.6+ and REST private CLI.\n\nSee <a target='blank' href='https://netapp.github.io/harvest/latest/power-algorithm'>power algorithm</a> for more details.\n\nPower and temperature metrics may not be visible for clusters with **embedded** disk shelves. Those metrics are computed at the cluster level, not at the level of individual shelves. Embedded shelf power is shared among the common nodes.",
+        "content": "This dashboard requires ONTAP 9.6+ and REST private CLI.\n\nSee <a target='blank' href='https://netapp.github.io/harvest/latest/resources/power-algorithm/'>power algorithm</a> for more details.\n\nPower and temperature metrics may not be visible for clusters with **embedded** disk shelves. Those metrics are computed at the cluster level, not at the level of individual shelves. Embedded shelf power is shared among the common nodes.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
