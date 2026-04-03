@@ -666,28 +666,12 @@ counters:
         ESeriesCounter: statistics.populateOnReads
         Template: conf/eseriesperf/11.80.0/ssd_cache.yaml
 
-  - Name: eseries_ssd_cache_populate_on_read_block_ops
-    Description: Number of populate-on-read block operations per controller
-    APIs:
-      - API: REST
-        Endpoint: storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics
-        ESeriesCounter: statistics.populateOnReadBlocks
-        Template: conf/eseriesperf/11.80.0/ssd_cache.yaml
-
   - Name: eseries_ssd_cache_populate_on_write_ops
     Description: Number of populate-on-write operations per controller
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics
         ESeriesCounter: statistics.populateOnWrites
-        Template: conf/eseriesperf/11.80.0/ssd_cache.yaml
-
-  - Name: eseries_ssd_cache_populate_on_write_block_ops
-    Description: Number of populate-on-write block operations per controller
-    APIs:
-      - API: REST
-        Endpoint: storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics
-        ESeriesCounter: statistics.populateOnWriteBlocks
         Template: conf/eseriesperf/11.80.0/ssd_cache.yaml
 
   - Name: eseries_ssd_cache_invalidate_ops
