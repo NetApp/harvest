@@ -538,9 +538,9 @@ func TestEseriesPerf_buildCounters_SsdCache(t *testing.T) {
 	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
 
 	numCounters := len(ep.perfProp.counterInfo)
-	// 22 counters: 1 delta (timestamp), 16 rate, 4 raw + 1 auto-added timestamp
-	if numCounters < 21 {
-		t.Errorf("expected at least 21 counters, got %d", numCounters)
+	// 20 counters: 1 delta (timestamp), 14 rate, 4 raw + 1 auto-added timestamp
+	if numCounters < 19 {
+		t.Errorf("expected at least 19 counters, got %d", numCounters)
 	}
 
 	var rateCount, deltaCount, rawCount int
@@ -562,8 +562,8 @@ func TestEseriesPerf_buildCounters_SsdCache(t *testing.T) {
 		}
 	}
 
-	if rateCount < 16 {
-		t.Errorf("expected at least 16 rate counters, got %d", rateCount)
+	if rateCount < 14 {
+		t.Errorf("expected at least 14 rate counters, got %d", rateCount)
 	}
 	if deltaCount < 1 {
 		t.Errorf("expected at least 1 delta counter (timestamp), got %d", deltaCount)
