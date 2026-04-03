@@ -401,6 +401,20 @@ Perform the following corrective actions:
   2. If the battery was replaced recently or the system was non-operational for an extended period of time, monitor the battery to verify that it is charging properly.
   3. Contact NetApp technical support if the battery runtime continues to decrease below critical levels, and the storage system shuts down automatically.
 
+### Data Outage Detected
+
+**Impact**: Availability
+
+**EMS Event**: `callhome.data.outage.detected`
+
+This message occurs when the system detects that it has encountered an outage prior to this boot.
+If your system is configured to do so, it generates and transmits an AutoSupport (or 'call home') message to NetApp technical support and to the configured destinations.
+Successful delivery of an AutoSupport message significantly improves problem determination and resolution.
+
+**Remediation**
+
+Contact NetApp technical support.
+
 ### NetBIOS Name Conflict
 
 **Impact**: Availability
