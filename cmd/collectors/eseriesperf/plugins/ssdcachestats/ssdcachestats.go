@@ -35,17 +35,6 @@ func (s *SsdCacheStats) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 	s.computePercent(data, "statistics.fullCacheHits", "statistics.reads", "full_cache_hit_percent")
 	s.computePercent(data, "statistics.partialCacheHits", "statistics.reads", "partial_cache_hit_percent")
 	s.computePercent(data, "statistics.completeCacheMiss", "statistics.reads", "complete_cache_miss_percent")
-	s.computePercent(data, "statistics.populateOnReads", "statistics.reads", "populate_on_read_percent")
-
-	s.computePercent(data, "statistics.fullCacheHitBlocks", "statistics.readBlocks", "full_cache_hit_block_percent")
-	s.computePercent(data, "statistics.partialCacheHitBlocks", "statistics.readBlocks", "partial_cache_hit_block_percent")
-	s.computePercent(data, "statistics.completeCacheMissBlocks", "statistics.readBlocks", "complete_cache_miss_block_percent")
-	s.computePercent(data, "statistics.populateOnReadBlocks", "statistics.readBlocks", "populate_on_read_block_percent")
-
-	s.computePercent(data, "statistics.populateOnWrites", "statistics.writes", "populate_on_write_percent")
-	s.computePercent(data, "statistics.invalidates", "statistics.writes", "invalidate_percent")
-
-	s.computePercent(data, "statistics.populateOnWriteBlocks", "statistics.writeBlocks", "populate_on_write_block_percent")
 
 	return nil, nil, nil
 }

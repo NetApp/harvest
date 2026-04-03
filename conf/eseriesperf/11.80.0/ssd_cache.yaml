@@ -14,9 +14,7 @@ counters:
   - statistics.invalidates                  => invalidate_ops
   - statistics.partialCacheHitBlocks        => partial_cache_hit_block_ops
   - statistics.partialCacheHits             => partial_cache_hit_ops
-  - statistics.populateOnReadBlocks         => populate_on_read_block_ops
   - statistics.populateOnReads              => populate_on_read_ops
-  - statistics.populateOnWriteBlocks        => populate_on_write_block_ops
   - statistics.populateOnWrites             => populate_on_write_ops
   - statistics.populatedCleanBytes          => populated_clean_size
   - statistics.populatedDirtyBytes          => populated_dirty_size

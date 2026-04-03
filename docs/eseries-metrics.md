@@ -1187,16 +1187,6 @@ The `eseries_ssd_cache_partial_cache_hit_percent` metric is visualized in the fo
 
 
 
-### eseries_ssd_cache_populate_on_read_block_ops
-
-Number of populate-on-read block operations per controller
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.populateOnReadBlocks` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
-
-
 ### eseries_ssd_cache_populate_on_read_ops
 
 Number of populate-on-read operations per controller
@@ -1214,16 +1204,6 @@ The `eseries_ssd_cache_populate_on_read_ops` metric is visualized in the followi
 | E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Populate-on-Read IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=56) |
 ///
 
-
-
-### eseries_ssd_cache_populate_on_write_block_ops
-
-Number of populate-on-write block operations per controller
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.populateOnWriteBlocks` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
 
 
 ### eseries_ssd_cache_populate_on_write_ops

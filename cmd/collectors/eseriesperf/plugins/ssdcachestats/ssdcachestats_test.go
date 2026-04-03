@@ -30,9 +30,7 @@ func createSsdCacheMatrix(t *testing.T) *matrix.Matrix {
 	_, _ = mat.NewMetricFloat64("statistics.completeCacheMiss")
 	_, _ = mat.NewMetricFloat64("statistics.completeCacheMissBlocks")
 	_, _ = mat.NewMetricFloat64("statistics.populateOnReads")
-	_, _ = mat.NewMetricFloat64("statistics.populateOnReadBlocks")
 	_, _ = mat.NewMetricFloat64("statistics.populateOnWrites")
-	_, _ = mat.NewMetricFloat64("statistics.populateOnWriteBlocks")
 	_, _ = mat.NewMetricFloat64("statistics.invalidates")
 	_, _ = mat.NewMetricFloat64("statistics.recycles")
 	_, _ = mat.NewMetricFloat64("statistics.availableBytes")
@@ -263,15 +261,6 @@ func TestSsdCacheStats_ComputePercent(t *testing.T) {
 			wantSet:    true,
 		},
 		{
-			name:       "invalidate_percent writes based",
-			numKey:     "statistics.invalidates",
-			denKey:     "statistics.writes",
-			resultName: "invalidate_percent",
-			numVal:     23.847,
-			denVal:     23.847,
-			wantSet:    true,
-		},
-		{
 			name:       "zero denominator",
 			numKey:     "statistics.fullCacheHits",
 			denKey:     "statistics.reads",
@@ -321,8 +310,8 @@ func TestSsdCacheStats_ZeroDenominator(t *testing.T) {
 		"statistics.fullCacheHits", "statistics.fullCacheHitBlocks",
 		"statistics.partialCacheHits", "statistics.partialCacheHitBlocks",
 		"statistics.completeCacheMiss", "statistics.completeCacheMissBlocks",
-		"statistics.populateOnReads", "statistics.populateOnReadBlocks",
-		"statistics.populateOnWrites", "statistics.populateOnWriteBlocks",
+		"statistics.populateOnReads",
+		"statistics.populateOnWrites",
 		"statistics.invalidates", "statistics.recycles",
 		"statistics.availableBytes", "statistics.allocatedBytes",
 		"statistics.populatedCleanBytes", "statistics.populatedDirtyBytes",
@@ -391,9 +380,7 @@ func TestSsdCacheStats_Run(t *testing.T) {
 	setMetric(t, mat, "statistics.completeCacheMiss", ctrl1, 0.0)
 	setMetric(t, mat, "statistics.completeCacheMissBlocks", ctrl1, 0.0)
 	setMetric(t, mat, "statistics.populateOnReads", ctrl1, 9.097)
-	setMetric(t, mat, "statistics.populateOnReadBlocks", ctrl1, 10678.44)
 	setMetric(t, mat, "statistics.populateOnWrites", ctrl1, 1.556)
-	setMetric(t, mat, "statistics.populateOnWriteBlocks", ctrl1, 2724.61)
 	setMetric(t, mat, "statistics.invalidates", ctrl1, 23.847)
 	setMetric(t, mat, "statistics.recycles", ctrl1, 0.0)
 	setMetric(t, mat, "statistics.availableBytes", ctrl1, 1599784091648.0)
@@ -412,9 +399,7 @@ func TestSsdCacheStats_Run(t *testing.T) {
 	setMetric(t, mat, "statistics.completeCacheMiss", ctrl2, 0.0)
 	setMetric(t, mat, "statistics.completeCacheMissBlocks", ctrl2, 0.0)
 	setMetric(t, mat, "statistics.populateOnReads", ctrl2, 7.521)
-	setMetric(t, mat, "statistics.populateOnReadBlocks", ctrl2, 8976.68)
 	setMetric(t, mat, "statistics.populateOnWrites", ctrl2, 0.592)
-	setMetric(t, mat, "statistics.populateOnWriteBlocks", ctrl2, 1012.73)
 	setMetric(t, mat, "statistics.invalidates", ctrl2, 25.592)
 	setMetric(t, mat, "statistics.recycles", ctrl2, 0.0)
 	setMetric(t, mat, "statistics.availableBytes", ctrl2, 1599784091648.0)
@@ -442,14 +427,6 @@ func TestSsdCacheStats_Run(t *testing.T) {
 		"full_cache_hit_percent",
 		"partial_cache_hit_percent",
 		"complete_cache_miss_percent",
-		"populate_on_read_percent",
-		"full_cache_hit_block_percent",
-		"partial_cache_hit_block_percent",
-		"complete_cache_miss_block_percent",
-		"populate_on_read_block_percent",
-		"populate_on_write_percent",
-		"invalidate_percent",
-		"populate_on_write_block_percent",
 	}
 
 	for _, name := range expectedMetrics {
@@ -480,7 +457,6 @@ func TestSsdCacheStats_Run(t *testing.T) {
 	checkMetricValue("allocation_percent", ctrl1, (alloc1/(alloc1+avail1))*100.0)
 	checkMetricValue("utilization_percent", ctrl1, (clean1/alloc1)*100.0)
 	checkMetricValue("full_cache_hit_percent", ctrl1, (hits1/reads1)*100.0)
-	checkMetricValue("invalidate_percent", ctrl1, 100.0)
 	checkMetricValue("hit_percent", ctrl2, (hits2/(reads2+writes2))*100.0)
 }
 
