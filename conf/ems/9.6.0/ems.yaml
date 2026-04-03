@@ -1045,5 +1045,5 @@ events:
 
   - name: callhome.data.outage.detected
     exports:
-      - ^^node.name => node
+      - ^^node.name        => node
       - parameters.subject => subject
