@@ -1859,6 +1859,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#data-outage-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Outage Detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#netbios-name-conflict" class="md-nav__link">
     <span class="md-ellipsis">
       NetBIOS Name Conflict
@@ -3002,6 +3011,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#data-outage-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Outage Detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#netbios-name-conflict" class="md-nav__link">
     <span class="md-ellipsis">
       NetBIOS Name Conflict
@@ -3755,6 +3773,14 @@ In some cases, clients operate as expected, but require a higher threshold. You 
 <li>If the battery was replaced recently or the system was non-operational for an extended period of time, monitor the battery to verify that it is charging properly.</li>
 <li>Contact NetApp technical support if the battery runtime continues to decrease below critical levels, and the storage system shuts down automatically.</li>
 </ol>
+<h3 id="data-outage-detected">Data Outage Detected<a class="headerlink" href="#data-outage-detected" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>callhome.data.outage.detected</code></p>
+<p>This message occurs when the system detects that it has encountered an outage prior to this boot.
+If your system is configured to do so, it generates and transmits an AutoSupport (or 'call home') message to NetApp technical support and to the configured destinations.
+Successful delivery of an AutoSupport message significantly improves problem determination and resolution.</p>
+<p><strong>Remediation</strong></p>
+<p>Contact NetApp technical support.</p>
 <h3 id="netbios-name-conflict">NetBIOS Name Conflict<a class="headerlink" href="#netbios-name-conflict" title="Permanent link">&para;</a></h3>
 <p><strong>Impact</strong>: Availability</p>
 <p><strong>EMS Event</strong>: <code>Nblade.cifsNbNameConflict</code></p>
