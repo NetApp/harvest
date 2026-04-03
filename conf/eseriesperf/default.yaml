@@ -10,3 +10,4 @@ objects:
 #  Drive:             drive.yaml
 #  Pool:              pool.yaml
   Array:             array.yaml
+  SsdCache:          ssd_cache.yaml

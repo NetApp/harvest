@@ -9,3 +9,4 @@ objects:
   Array:             array.yaml
   Host:              host.yaml
   Hardware:          hardware.yaml
+  SsdCache:          ssd_cache.yaml

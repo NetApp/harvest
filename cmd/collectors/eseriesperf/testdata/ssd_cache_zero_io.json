@@ -1,0 +1,54 @@
+[
+    {
+        "controllerId": "070000000000000000000001",
+        "statistics": {
+            "timestamp": "1773809598",
+            "reads": "0",
+            "readBlocks": "0",
+            "writes": "0",
+            "writeBlocks": "0",
+            "fullCacheHits": "0",
+            "fullCacheHitBlocks": "0",
+            "partialCacheHits": "0",
+            "partialCacheHitBlocks": "0",
+            "completeCacheMiss": "0",
+            "completeCacheMissBlocks": "0",
+            "populateOnReads": "0",
+            "populateOnReadBlocks": "0",
+            "populateOnWrites": "0",
+            "populateOnWriteBlocks": "0",
+            "invalidates": "0",
+            "recycles": "0",
+            "availableBytes": "1599784091648",
+            "allocatedBytes": "13316915200",
+            "populatedCleanBytes": "0",
+            "populatedDirtyBytes": "0"
+        }
+    },
+    {
+        "controllerId": "070000000000000000000002",
+        "statistics": {
+            "timestamp": "1773809598",
+            "reads": "0",
+            "readBlocks": "0",
+            "writes": "0",
+            "writeBlocks": "0",
+            "fullCacheHits": "0",
+            "fullCacheHitBlocks": "0",
+            "partialCacheHits": "0",
+            "partialCacheHitBlocks": "0",
+            "completeCacheMiss": "0",
+            "completeCacheMissBlocks": "0",
+            "populateOnReads": "0",
+            "populateOnReadBlocks": "0",
+            "populateOnWrites": "0",
+            "populateOnWriteBlocks": "0",
+            "invalidates": "0",
+            "recycles": "0",
+            "availableBytes": "1599784091648",
+            "allocatedBytes": "13421772800",
+            "populatedCleanBytes": "0",
+            "populatedDirtyBytes": "0"
+        }
+    }
+]

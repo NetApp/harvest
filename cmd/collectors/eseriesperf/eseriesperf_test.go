@@ -73,6 +73,15 @@ func jsonToPerfData(path string) []gjson.Result {
 	return []gjson.Result{result}
 }
 
+func jsonToArrayPerfData(path string) []gjson.Result {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	parsed := gjson.ParseBytes(data)
+	return parsed.Array()
+}
+
 func TestEseriesPerf_Init(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -505,5 +514,351 @@ func TestEseriesPerf_MultipleObjectTypes(t *testing.T) {
 				t.Errorf("should have instances for %s", tt.object)
 			}
 		})
+	}
+}
+
+func TestEseriesPerf_Init_SsdCache(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	assert.NotNil(t, ep)
+	assert.NotNil(t, ep.perfProp)
+	assert.NotNil(t, ep.perfProp.counterInfo)
+	assert.True(t, len(ep.perfProp.counterInfo) > 0)
+
+	// Timestamp metric should be statistics.timestamp (not observedTimeInMS)
+	if ep.perfProp.timestampMetricName != "statistics.timestamp" {
+		t.Errorf("timestampMetricName = %q, want %q", ep.perfProp.timestampMetricName, "statistics.timestamp")
+	}
+
+	// SSD cache should not have utilization calculation (that's for Drive)
+	assert.False(t, ep.perfProp.calculateUtilization)
+}
+
+func TestEseriesPerf_buildCounters_SsdCache(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	numCounters := len(ep.perfProp.counterInfo)
+	// 22 counters: 1 delta (timestamp), 16 rate, 4 raw + 1 auto-added timestamp
+	if numCounters < 21 {
+		t.Errorf("expected at least 21 counters, got %d", numCounters)
+	}
+
+	var rateCount, deltaCount, rawCount int
+	for _, ctr := range ep.perfProp.counterInfo {
+		switch ctr.counterType {
+		case "rate":
+			rateCount++
+		case "delta":
+			deltaCount++
+		case "raw":
+			rawCount++
+		case "average", "percent":
+			t.Errorf("unexpected counter type %q for SSD cache counter %s", ctr.counterType, ctr.name)
+		}
+
+		// SSD cache counters should have no denominators (no average/percent types)
+		if ctr.denominator != "" {
+			t.Errorf("counter %s should have no denominator, got %q", ctr.name, ctr.denominator)
+		}
+	}
+
+	if rateCount < 16 {
+		t.Errorf("expected at least 16 rate counters, got %d", rateCount)
+	}
+	if deltaCount < 1 {
+		t.Errorf("expected at least 1 delta counter (timestamp), got %d", deltaCount)
+	}
+	if rawCount < 4 {
+		t.Errorf("expected at least 4 raw counters (byte metrics), got %d", rawCount)
+	}
+}
+
+func TestEseriesPerf_PollData_SsdCache(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
+
+	// First poll — establishes baseline
+	pollData1 := jsonToArrayPerfData("testdata/ssd_cache1.json")
+	count1, partial1 := ep.pollData(mat, pollData1, set.New())
+
+	assert.True(t, count1 > 0)
+	assert.Equal(t, len(mat.GetInstances()), 2) // 2 controllers
+	assert.Equal(t, partial1, uint64(0))
+
+	// First cookCounters returns nil (cache empty)
+	got, err := ep.cookCounters(mat, mat)
+	assert.Nil(t, err)
+	assert.Nil(t, got)
+	assert.False(t, ep.perfProp.isCacheEmpty)
+
+	// Second poll
+	pollData2 := jsonToArrayPerfData("testdata/ssd_cache2.json")
+	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+
+	count2, partial2 := ep.pollData(curMat, pollData2, set.New())
+	assert.True(t, count2 > 0)
+	assert.Equal(t, partial2, uint64(0))
+
+	// Cook counters — should now produce results
+	got, err = ep.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+	assert.NotNil(t, got)
+
+	resultMat := got[ep.Object]
+	assert.NotNil(t, resultMat)
+
+	// Verify rate metrics for controller 1
+	// Delta: reads=3852, timestamp=72 → rate=53.5/s
+	ctrl1 := resultMat.GetInstance("070000000000000000000001")
+	if ctrl1 == nil {
+		t.Fatal("controller 1 instance not found")
+	}
+
+	readOps := resultMat.GetMetric("statistics.reads")
+	if readOps == nil {
+		t.Fatal("statistics.reads metric not found")
+	}
+
+	readOpsVal, readOpsOk := readOps.GetValueFloat64(ctrl1)
+	if !readOpsOk {
+		t.Fatal("could not get read_ops value for controller 1")
+	}
+	// Delta: reads=3852, timestamp=72
+	assert.Equal(t, readOpsVal, 3852.0/72.0)
+
+	writeOps := resultMat.GetMetric("statistics.writes")
+	if writeOps != nil {
+		writeOpsVal, ok := writeOps.GetValueFloat64(ctrl1)
+		if ok {
+			// Delta: writes=1717, timestamp=72
+			assert.Equal(t, writeOpsVal, 1717.0/72.0)
+		}
+	}
+
+	// Verify rate for controller 2
+	ctrl2 := resultMat.GetInstance("070000000000000000000002")
+	if ctrl2 == nil {
+		t.Fatal("controller 2 instance not found")
+	}
+
+	readOpsVal2, readOpsOk2 := readOps.GetValueFloat64(ctrl2)
+	if !readOpsOk2 {
+		t.Fatal("could not get read_ops value for controller 2")
+	}
+	// Delta: reads=3965, timestamp=71
+	assert.Equal(t, readOpsVal2, 3965.0/71.0)
+
+	// Verify raw metrics are NOT transformed (current-value passthrough)
+	availableBytes := resultMat.GetMetric("statistics.availableBytes")
+	if availableBytes != nil {
+		val, ok := availableBytes.GetValueFloat64(ctrl1)
+		if ok {
+			assert.Equal(t, val, 1599784091648.0)
+		}
+	}
+
+	// Verify timestamp metric is NOT exportable
+	timestamp := resultMat.GetMetric("statistics.timestamp")
+	if timestamp != nil {
+		assert.False(t, timestamp.IsExportable())
+	}
+
+	// Verify instances are exportable
+	for _, inst := range resultMat.GetInstances() {
+		if !inst.IsExportable() {
+			t.Error("instance should be exportable")
+		}
+	}
+}
+
+func TestEseriesPerf_SsdCache_NoTimestampConversion(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
+
+	pollData := jsonToArrayPerfData("testdata/ssd_cache1.json")
+	ep.pollData(mat, pollData, set.New())
+
+	// statistics.timestamp values are already in seconds (not milliseconds)
+	// They should be stored as-is, not divided by 1000
+	timestampMetric := mat.GetMetric("statistics.timestamp")
+	if timestampMetric == nil {
+		t.Skip("timestamp metric not found")
+	}
+
+	for _, instance := range mat.GetInstances() {
+		value, ok := timestampMetric.GetValueFloat64(instance)
+		if !ok {
+			continue
+		}
+		// Original value: 1773809538 (seconds since epoch)
+		// Should NOT be divided by 1000 — these are already seconds
+		if value < 1000000000.0 {
+			t.Errorf("timestamp should be >= 1e9 (seconds), got %f — appears to have been divided", value)
+		}
+		assert.Equal(t, value, 1773809538.0)
+	}
+}
+
+func TestEseriesPerf_SsdCache_ZeroIO(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
+
+	// Both polls use zero I/O data — deltas will be 0
+	pollData1 := jsonToArrayPerfData("testdata/ssd_cache_zero_io.json")
+	ep.pollData(mat, pollData1, set.New())
+	_, _ = ep.cookCounters(mat, mat)
+
+	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+
+	pollData2 := jsonToArrayPerfData("testdata/ssd_cache_zero_io.json")
+	ep.pollData(curMat, pollData2, set.New())
+
+	// Should not panic with zero deltas / zero denominators
+	_, err := ep.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+}
+
+func TestEseriesPerf_SsdCache_SingleController(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
+
+	pollData := jsonToArrayPerfData("testdata/ssd_cache_single_controller.json")
+	count, _ := ep.pollData(mat, pollData, set.New())
+
+	assert.True(t, count > 0)
+	assert.Equal(t, len(mat.GetInstances()), 1)
+}
+
+func TestEseriesPerf_SsdCache_NegativeDelta(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
+
+	// Load higher counters first (poll2), then lower counters (poll1)
+	// This simulates a counter reset scenario
+	pollData2 := jsonToArrayPerfData("testdata/ssd_cache2.json")
+	ep.pollData(mat, pollData2, set.New())
+	_, _ = ep.cookCounters(mat, mat)
+
+	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+
+	// Now poll with lower values — simulates counter reset
+	pollData1 := jsonToArrayPerfData("testdata/ssd_cache1.json")
+	ep.pollData(curMat, pollData1, set.New())
+
+	got, err := ep.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+
+	if got != nil {
+		resultMat := got[ep.Object]
+		if resultMat != nil {
+			for _, inst := range resultMat.GetInstances() {
+				readOps := resultMat.GetMetric("statistics.reads")
+				if readOps != nil {
+					val, ok := readOps.GetValueFloat64(inst)
+					if ok && val < 0 {
+						t.Error("should not have negative rate values after delta protection")
+					}
+				}
+			}
+		}
+	}
+}
+
+func TestEseriesPerf_SsdCache_NegativeDelta_SkipOnCounterReset(t *testing.T) {
+	ep := newEseriesPerf("SsdCache", "ssd_cache.yaml")
+
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
+
+	pollData1 := jsonToArrayPerfData("testdata/ssd_cache1.json")
+	count1, partial1 := ep.pollData(mat, pollData1, set.New())
+	assert.True(t, count1 > 0)
+	assert.Equal(t, len(mat.GetInstances()), 2)
+	assert.Equal(t, partial1, uint64(0))
+
+	got, err := ep.cookCounters(mat, mat)
+	assert.Nil(t, err)
+	assert.Nil(t, got)
+	assert.False(t, ep.perfProp.isCacheEmpty)
+
+	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+
+	pollData2 := jsonToArrayPerfData("testdata/ssd_cache_zero_io.json")
+	count2, partial2 := ep.pollData(curMat, pollData2, set.New())
+	assert.True(t, count2 > 0)
+	assert.Equal(t, partial2, uint64(0))
+
+	got, err = ep.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+
+	resultMat := got[ep.Object]
+
+	skippedMetrics := 0
+	for _, metricKey := range []string{"statistics.reads", "statistics.writes", "statistics.fullCacheHits", "statistics.partialCacheHits"} {
+		m := resultMat.GetMetric(metricKey)
+		if m == nil {
+			continue
+		}
+		for _, inst := range resultMat.GetInstances() {
+			_, ok := m.GetValueFloat64(inst)
+			if !ok {
+				skippedMetrics++
+			}
+		}
+	}
+	if skippedMetrics == 0 {
+		t.Error("expected rate metrics to have no recorded value (skipped) after negative delta from counter reset to zero")
+	}
+
+	for _, metricKey := range []string{"statistics.reads", "statistics.writes", "statistics.fullCacheHits"} {
+		m := resultMat.GetMetric(metricKey)
+		if m == nil {
+			continue
+		}
+		for _, inst := range resultMat.GetInstances() {
+			val, ok := m.GetValueFloat64(inst)
+			if ok && val < 0 {
+				t.Errorf("metric %s has negative value %f — negative delta must be suppressed", metricKey, val)
+			}
+		}
+	}
+
+	// Raw metrics (byte values) are NOT delta-ed — they pass through unchanged
+	// and must still have valid values after the negative delta cycle.
+	availBytes := resultMat.GetMetric("statistics.availableBytes")
+	if availBytes != nil {
+		for _, inst := range resultMat.GetInstances() {
+			val, ok := availBytes.GetValueFloat64(inst)
+			if !ok {
+				t.Error("raw metric statistics.availableBytes should still have a recorded value")
+			}
+			if val <= 0 {
+				t.Errorf("statistics.availableBytes should be positive, got %f", val)
+			}
+		}
 	}
 }

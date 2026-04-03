@@ -262,12 +262,6 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 		}
 
 		if res.StatusCode != http.StatusOK {
-			c.Logger.Error(
-				"API request failed",
-				slog.Int("status", res.StatusCode),
-				slog.String("url", url),
-				slog.String("body", string(innerBody)),
-			)
 			return nil, errs.NewRest().
 				StatusCode(res.StatusCode).
 				API(endpoint).
