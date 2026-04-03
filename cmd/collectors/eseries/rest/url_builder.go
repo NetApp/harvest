@@ -5,9 +5,10 @@ import (
 )
 
 type URLBuilder struct {
-	apiPath string
-	arrayID string
-	filters []string
+	apiPath    string
+	arrayID    string
+	ssdCacheID string
+	filters    []string
 }
 
 func NewURLBuilder() *URLBuilder {
@@ -24,6 +25,11 @@ func (b *URLBuilder) ArrayID(arrayID string) *URLBuilder {
 	return b
 }
 
+func (b *URLBuilder) SsdCacheID(ssdCacheID string) *URLBuilder {
+	b.ssdCacheID = ssdCacheID
+	return b
+}
+
 func (b *URLBuilder) Filter(filters []string) *URLBuilder {
 	b.filters = filters
 	return b
@@ -35,6 +41,11 @@ func (b *URLBuilder) Build() string {
 	// Replace {array_id} placeholder if arrayID is set
 	if b.arrayID != "" {
 		url = strings.ReplaceAll(url, "{array_id}", b.arrayID)
+	}
+
+	// Replace {ssd_cache_id} placeholder if ssdCacheID is set
+	if b.ssdCacheID != "" {
+		url = strings.ReplaceAll(url, "{ssd_cache_id}", b.ssdCacheID)
 	}
 
 	if len(b.filters) > 0 {

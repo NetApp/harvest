@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Mar-16
+Creation Date : 2026-Apr-03
 E-Series Version: 11.80.0
 ```
 
@@ -798,6 +798,601 @@ The `eseries_sfp_labels` metric is visualized in the following Grafana dashboard
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Hardware | SFP | table | [SFP](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=109) |
+///
+
+
+
+### eseries_ssd_cache_additional_capacity
+
+Additional SSD cache capacity that can still be added to the array in bytes (maximum capacity minus current capacity)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/capabilities` | `Harvest generated` | conf/eseries/11.80.0/ssd_cache.yaml (SsdCacheCapacity plugin) |
+
+The `eseries_ssd_cache_additional_capacity` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Capacity | table | [SSD Cache Overview](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=11) |
+| E-Series: SSD Cache | Capacity | timeseries | [Top $TopResources Additional Capacity Allowed](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=18) |
+///
+
+
+
+### eseries_ssd_cache_allocated_size
+
+Allocated size of the SSD cache per controller in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.allocatedBytes` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_allocated_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Capacity | timeseries | [Top $TopResources Allocated Size](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=13) |
+///
+
+
+
+### eseries_ssd_cache_allocation_percent
+
+SSD cache allocation percentage per controller, calculated as allocated bytes divided by total cache size (allocated + available bytes)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/ssd_cache.yaml (SsdCacheStats plugin) |
+
+The `eseries_ssd_cache_allocation_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Highlights | timeseries | [Top $TopResources Cache Allocation %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=83) |
+| E-Series: SSD Cache | Capacity | timeseries | [Top $TopResources Allocation %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=15) |
+///
+
+
+
+### eseries_ssd_cache_available_size
+
+Available size of the SSD cache per controller in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.availableBytes` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_available_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Capacity | timeseries | [Top $TopResources Available Size](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=14) |
+///
+
+
+
+### eseries_ssd_cache_complete_cache_miss_block_ops
+
+Number of complete cache miss block operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.completeCacheMissBlocks` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_complete_cache_miss_block_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Block Operations | timeseries | [Top $TopResources Cache Miss Block Ops/s](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=65) |
+///
+
+
+
+### eseries_ssd_cache_complete_cache_miss_ops
+
+Number of complete cache miss operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.completeCacheMiss` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_complete_cache_miss_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Cache Miss IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=55) |
+///
+
+
+
+### eseries_ssd_cache_complete_cache_miss_percent
+
+Percentage of read operations that resulted in a complete cache miss per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/ssd_cache.yaml (SsdCacheStats plugin) |
+
+The `eseries_ssd_cache_complete_cache_miss_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cache Hit Performance | timeseries | [Top $TopResources Complete Cache Miss %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=44) |
+///
+
+
+
+### eseries_ssd_cache_current_capacity
+
+Current used capacity of the SSD cache in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches` | `usedCapacity` | conf/eseries/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_current_capacity` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Capacity | table | [SSD Cache Overview](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=11) |
+| E-Series: SSD Cache | Capacity | timeseries | [Top $TopResources Current Capacity](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=12) |
+///
+
+
+
+### eseries_ssd_cache_drive_labels
+
+This metric provides information about drives assigned to an SSD cache.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/drives` | `Harvest generated` | conf/eseries/11.80.0/ssd_cache.yaml (SsdCacheCapacity plugin) |
+
+The `eseries_ssd_cache_drive_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Drives | table | [SSD Cache Drives](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=21) |
+///
+
+
+
+### eseries_ssd_cache_drive_raw_capacity
+
+Raw capacity of each drive contributing to the SSD cache in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/drives` | `rawCapacity` | conf/eseries/11.80.0/ssd_cache.yaml (SsdCacheCapacity plugin) |
+
+The `eseries_ssd_cache_drive_raw_capacity` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Drives | table | [SSD Cache Drives](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=21) |
+///
+
+
+
+### eseries_ssd_cache_full_cache_hit_block_ops
+
+Number of full cache hit block operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.fullCacheHitBlocks` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_full_cache_hit_block_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Block Operations | timeseries | [Top $TopResources Full Cache Hit Block Ops/s](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=63) |
+///
+
+
+
+### eseries_ssd_cache_full_cache_hit_ops
+
+Number of full cache hit operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.fullCacheHits` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_full_cache_hit_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Full Cache Hit IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=53) |
+///
+
+
+
+### eseries_ssd_cache_full_cache_hit_percent
+
+Percentage of read operations that resulted in a full cache hit per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/ssd_cache.yaml (SsdCacheStats plugin) |
+
+The `eseries_ssd_cache_full_cache_hit_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cache Hit Performance | timeseries | [Top $TopResources Full Cache Hit %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=42) |
+///
+
+
+
+### eseries_ssd_cache_hit_percent
+
+SSD cache hit percentage per controller, calculated as full cache hits divided by total I/O operations (reads + writes)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/ssd_cache.yaml (SsdCacheStats plugin) |
+
+The `eseries_ssd_cache_hit_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Highlights | timeseries | [Top $TopResources Cache Hit %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=2) |
+| E-Series: SSD Cache | Cache Hit Performance | timeseries | [Top $TopResources Cache Hit %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=41) |
+///
+
+
+
+### eseries_ssd_cache_invalidate_ops
+
+Number of cache invalidate operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.invalidates` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_invalidate_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cache Sizing | timeseries | [Top $TopResources Invalidate Ops/s](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=73) |
+///
+
+
+
+### eseries_ssd_cache_labels
+
+This metric provides information about SSD caches.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches` | `Harvest generated` | conf/eseries/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Capacity | table | [SSD Cache Overview](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=11) |
+///
+
+
+
+### eseries_ssd_cache_max_capacity
+
+Maximum SSD cache capacity allowed for the array in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/capabilities` | `featureParameters.maxFlashCacheSize` | conf/eseries/11.80.0/ssd_cache.yaml (SsdCacheCapacity plugin) |
+
+The `eseries_ssd_cache_max_capacity` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Capacity | table | [SSD Cache Overview](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=11) |
+| E-Series: SSD Cache | Capacity | timeseries | [Top $TopResources Maximum Capacity Allowed](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=17) |
+///
+
+
+
+### eseries_ssd_cache_partial_cache_hit_block_ops
+
+Number of partial cache hit block operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.partialCacheHitBlocks` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_partial_cache_hit_block_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Block Operations | timeseries | [Top $TopResources Partial Cache Hit Block Ops/s](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=64) |
+///
+
+
+
+### eseries_ssd_cache_partial_cache_hit_ops
+
+Number of partial cache hit operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.partialCacheHits` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_partial_cache_hit_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Partial Cache Hit IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=54) |
+///
+
+
+
+### eseries_ssd_cache_partial_cache_hit_percent
+
+Percentage of read operations that resulted in a partial cache hit per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/ssd_cache.yaml (SsdCacheStats plugin) |
+
+The `eseries_ssd_cache_partial_cache_hit_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cache Hit Performance | timeseries | [Top $TopResources Partial Cache Hit %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=43) |
+///
+
+
+
+### eseries_ssd_cache_populate_on_read_ops
+
+Number of populate-on-read operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.populateOnReads` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_populate_on_read_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Populate-on-Read IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=56) |
+///
+
+
+
+### eseries_ssd_cache_populate_on_write_ops
+
+Number of populate-on-write operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.populateOnWrites` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_populate_on_write_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Populate-on-Write IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=57) |
+///
+
+
+
+### eseries_ssd_cache_populated_clean_size
+
+Amount of clean (unmodified) data populated in the SSD cache per controller in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.populatedCleanBytes` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_populated_clean_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cache Sizing | timeseries | [Top $TopResources Populated Clean Size](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=71) |
+///
+
+
+
+### eseries_ssd_cache_populated_dirty_size
+
+Amount of dirty (modified) data populated in the SSD cache per controller in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.populatedDirtyBytes` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_populated_dirty_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cache Sizing | timeseries | [Top $TopResources Populated Dirty Size](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=72) |
+///
+
+
+
+### eseries_ssd_cache_read_block_ops
+
+SSD cache read block operations per second per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.readBlocks` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_read_block_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Block Operations | timeseries | [Top $TopResources Read Block Ops/s](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=61) |
+///
+
+
+
+### eseries_ssd_cache_read_ops
+
+SSD cache read operations per second per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.reads` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_read_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Read IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=51) |
+///
+
+
+
+### eseries_ssd_cache_recycle_ops
+
+Number of cache recycle operations per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.recycles` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_recycle_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cache Sizing | timeseries | [Top $TopResources Recycle Ops/s](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=74) |
+///
+
+
+
+### eseries_ssd_cache_utilization_percent
+
+SSD cache utilization percentage per controller, calculated as populated data (clean + dirty bytes) divided by allocated bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/ssd_cache.yaml (SsdCacheStats plugin) |
+
+The `eseries_ssd_cache_utilization_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Highlights | timeseries | [Top $TopResources Cache Utilization %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=84) |
+| E-Series: SSD Cache | Capacity | timeseries | [Top $TopResources Utilization %](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=16) |
+///
+
+
+
+### eseries_ssd_cache_volume_labels
+
+This metric provides information about volumes mapped to an SSD cache.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/volumes` | `Harvest generated` | conf/eseries/11.80.0/ssd_cache.yaml (SsdCacheCapacity plugin) |
+
+The `eseries_ssd_cache_volume_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Cached Volumes | table | [Cached Volumes](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=31) |
+///
+
+
+
+### eseries_ssd_cache_write_block_ops
+
+SSD cache write block operations per second per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.writeBlocks` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_write_block_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | Block Operations | timeseries | [Top $TopResources Write Block Ops/s](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=62) |
+///
+
+
+
+### eseries_ssd_cache_write_ops
+
+SSD cache write operations per second per controller
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics` | `statistics.writes` | conf/eseriesperf/11.80.0/ssd_cache.yaml |
+
+The `eseries_ssd_cache_write_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: SSD Cache | IOPS | timeseries | [Top $TopResources Write IOPS](/d/eseries-ssd-cache/e-series3a-ssd cache?orgId=1&viewPanel=52) |
 ///
 
 

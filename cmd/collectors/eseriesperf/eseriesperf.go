@@ -1,6 +1,7 @@
 package eseriesperf
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"strconv"
@@ -11,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/cachehitratio"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/controller"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/ssdcachestats"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -26,6 +28,7 @@ type EseriesPerf struct {
 	perfProp      *perfProp
 	pollDataCalls int
 	recordsToSave int
+	ssdCacheID    string
 }
 
 type counter struct {
@@ -181,6 +184,16 @@ func (ep *EseriesPerf) buildCounters() {
 		}
 	}
 
+	// Fallback: look for timestamp metric (e.g., statistics.timestamp for SSD cache)
+	if timestampMetric == "" {
+		for metricName := range ep.Prop.Metrics {
+			if strings.HasSuffix(metricName, "timestamp") {
+				timestampMetric = metricName
+				break
+			}
+		}
+	}
+
 	if timestampMetric != "" {
 		if _, exists := ep.Prop.Metrics[timestampMetric]; !exists {
 			ep.Prop.Metrics[timestampMetric] = &eseries.Metric{
@@ -209,7 +222,7 @@ func (ep *EseriesPerf) buildCounters() {
 		}
 
 		// Handle timestamp metric
-		if strings.Contains(k, "observedTimeInMS") {
+		if strings.Contains(k, "observedTimeInMS") || k == timestampMetric {
 			ep.perfProp.timestampMetricName = k
 		}
 
@@ -243,6 +256,8 @@ func (ep *EseriesPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.
 		return cachehitratio.New(p)
 	case "Controller":
 		return controller.New(p)
+	case "SsdCacheStats":
+		return ssdcachestats.New(p)
 	default:
 		ep.Logger.Info("No eseries plugin found", slog.String("kind", kind))
 	}
@@ -251,6 +266,41 @@ func (ep *EseriesPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.
 
 func (ep *EseriesPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	return ep.ESeries.PollCounter()
+}
+
+// discoverSsdCacheID fetches the SSD cache ID from the E-Series system.
+// There can only be one SSD cache per E-Series system.
+// Called every PollData cycle to handle SSD cache creation/removal.
+func (ep *EseriesPerf) discoverSsdCacheID() error {
+	systemID := ep.GetArray()
+	endpoint := fmt.Sprintf("%s/storage-systems/%s/ssd-caches", ep.Client.APIPath, systemID)
+
+	results, err := ep.Client.Fetch(endpoint, nil)
+	if err != nil {
+		ep.ssdCacheID = ""
+		return fmt.Errorf("failed to fetch ssd-caches: %w", err)
+	}
+
+	if len(results) == 0 {
+		ep.ssdCacheID = ""
+		return errs.New(errs.ErrNoInstance, "no SSD cache found")
+	}
+
+	ep.ssdCacheID = results[0].Get("id").ClonedString()
+	if ep.ssdCacheID == "" {
+		return errs.New(errs.ErrNoInstance, "SSD cache missing id")
+	}
+
+	cacheName := results[0].Get("name").ClonedString()
+	ep.Logger.Debug("discovered SSD cache",
+		slog.String("ssdCacheID", ep.ssdCacheID),
+		slog.String("name", cacheName))
+
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("ssd_cache_id", ep.ssdCacheID)
+	mat.SetGlobalLabel("ssd_cache", cacheName)
+
+	return nil
 }
 
 func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
@@ -292,6 +342,13 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	systemID := ep.GetArray()
 
+	objType := ep.Params.GetChildContentS("type")
+	if objType == "ssd_cache" {
+		if err := ep.discoverSsdCacheID(); err != nil {
+			return nil, err
+		}
+	}
+
 	// Build query - filters are intentionally disabled when using shared cache
 	// to prevent cache poisoning (subset of filtered data being cached for all consumers)
 	// See applyFilter() in template.go for the filter-disabling logic
@@ -300,6 +357,7 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 	query := rest.NewURLBuilder().
 		APIPath(ep.Prop.Query).
 		ArrayID(systemID).
+		SsdCacheID(ep.ssdCacheID).
 		Filter(filters).
 		Build()
 

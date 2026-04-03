@@ -1,0 +1,35 @@
+name: SsdCache
+query: storage-systems/{array_id}/ssd-caches/{ssd_cache_id}/statistics
+object: eseries_ssd_cache
+type: ssd_cache
+
+counters:
+  - ^^controllerId                          => controller_id
+  - statistics.allocatedBytes               => allocated_size
+  - statistics.availableBytes               => available_size
+  - statistics.completeCacheMiss            => complete_cache_miss_ops
+  - statistics.completeCacheMissBlocks      => complete_cache_miss_block_ops
+  - statistics.fullCacheHitBlocks           => full_cache_hit_block_ops
+  - statistics.fullCacheHits                => full_cache_hit_ops
+  - statistics.invalidates                  => invalidate_ops
+  - statistics.partialCacheHitBlocks        => partial_cache_hit_block_ops
+  - statistics.partialCacheHits             => partial_cache_hit_ops
+  - statistics.populateOnReads              => populate_on_read_ops
+  - statistics.populateOnWrites             => populate_on_write_ops
+  - statistics.populatedCleanBytes          => populated_clean_size
+  - statistics.populatedDirtyBytes          => populated_dirty_size
+  - statistics.readBlocks                   => read_block_ops
+  - statistics.reads                        => read_ops
+  - statistics.recycles                     => recycle_ops
+  - statistics.timestamp                    => timestamp
+  - statistics.writeBlocks                  => write_block_ops
+  - statistics.writes                       => write_ops
+
+plugins:
+  - Controller
+  - SsdCacheStats
+
+export_options:
+  instance_keys:
+    - controller
+    - controller_id

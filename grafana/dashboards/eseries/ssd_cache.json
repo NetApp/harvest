@@ -1,0 +1,3892 @@
+{
+  "__elements": {},
+  "__inputs": [
+    {
+      "description": "",
+      "label": "prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "12.3.2"
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "E-Series SSD Cache - Capacity and Performance",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "eseries",
+        "harvest"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Highlights",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Overall SSD cache hit percentage (full cache hits / total read+write ops).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "eseries_ssd_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller, ssd_cache_id, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller, ssd_cache_id, ssd_cache) (\n      avg_over_time(eseries_ssd_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Cache Hit %",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Percentage of SSD cache capacity currently allocated.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 1
+      },
+      "id": 83,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "max by (datacenter, array, controller, ssd_cache_id, ssd_cache) (\n    eseries_ssd_cache_allocation_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, controller, ssd_cache_id, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller, ssd_cache_id, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_allocation_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Cache Allocation %",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Percentage of allocated SSD cache that is actively used (populated dirty / allocated).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 84,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "max by (datacenter, array, controller, ssd_cache_id, ssd_cache) (\n    eseries_ssd_cache_utilization_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, controller, ssd_cache_id, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller, ssd_cache_id, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_utilization_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Cache Utilization %",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 10,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "SSD cache configuration and capacity summary per array.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Current Capacity"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Available Size"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Maximum Capacity Allowed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Additional Capacity Allowed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "DA Capable"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 11,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Array"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_ssd_cache_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"ssd_cache_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_ssd_cache_current_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"ssd_cache_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_ssd_cache_max_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"ssd_cache_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_ssd_cache_additional_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"ssd_cache_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "F"
+            }
+          ],
+          "title": "SSD Cache Overview",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "array",
+                    "datacenter",
+                    "ssd_cache",
+                    "status",
+                    "type",
+                    "security_level",
+                    "da_capable",
+                    "Value #B",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "Value #F",
+                    "Value #G"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "array 2": true,
+                  "array 3": true,
+                  "array 4": true,
+                  "array 5": true,
+                  "array 6": true,
+                  "array 7": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "datacenter 4": true,
+                  "datacenter 5": true,
+                  "datacenter 6": true,
+                  "datacenter 7": true,
+                  "ssd_cache 2": true,
+                  "ssd_cache 3": true,
+                  "ssd_cache 4": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Value #B": 8,
+                  "Value #D": 9,
+                  "Value #E": 7,
+                  "Value #F": 10,
+                  "Value #G": 11,
+                  "array": 1,
+                  "array 2": 12,
+                  "array 3": 15,
+                  "array 4": 17,
+                  "array 5": 20,
+                  "array 6": 23,
+                  "da_capable": 6,
+                  "datacenter": 0,
+                  "datacenter 2": 13,
+                  "datacenter 3": 16,
+                  "datacenter 4": 18,
+                  "datacenter 5": 21,
+                  "datacenter 6": 24,
+                  "security_level": 5,
+                  "ssd_cache": 2,
+                  "ssd_cache 2": 14,
+                  "ssd_cache 3": 19,
+                  "ssd_cache 4": 22,
+                  "status": 3,
+                  "type": 4
+                },
+                "renameByName": {
+                  "Value #B": "Current Capacity",
+                  "Value #C": "",
+                  "Value #D": "",
+                  "Value #E": "Maximum Capacity Allowed",
+                  "Value #F": "Additional Capacity Allowed",
+                  "Value #G": "",
+                  "array": "Array",
+                  "da_capable": "DA Capable",
+                  "datacenter": "Datacenter",
+                  "security_level": "Security Level",
+                  "ssd_cache": "Cache Name",
+                  "status": "Status",
+                  "type": "Type"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Maximum SSD cache capacity allowed per array.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 20
+          },
+          "id": 17,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_max_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(eseries_ssd_cache_max_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Maximum Capacity Allowed",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "SSD cache current capacity over time.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 20
+          },
+          "id": 12,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_current_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_current_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Current Capacity",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Additional SSD cache capacity that can still be added per array.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 28
+          },
+          "id": 18,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_additional_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_additional_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Additional Capacity Allowed",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "SSD cache allocated size.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 28
+          },
+          "id": 13,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "max by (array, datacenter, ssd_cache) (\n    eseries_ssd_cache_allocated_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_allocated_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Allocated Size",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "SSD cache available (free) size.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 36
+          },
+          "id": 14,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "max by (array, datacenter, ssd_cache) (\n    eseries_ssd_cache_available_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_available_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Available Size",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Percentage of SSD cache capacity that is allocated.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 36
+          },
+          "id": 15,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "max by (array, datacenter, ssd_cache) (\n    eseries_ssd_cache_allocation_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_allocation_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Allocation %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Percentage of allocated SSD cache that is actually populated with data.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "id": 16,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "max by (array, datacenter, ssd_cache) (\n    eseries_ssd_cache_utilization_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_utilization_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Utilization %",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Capacity",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 20,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "SSD drives contributing to the cache, with raw capacity per drive.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Raw Capacity"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 165
+          },
+          "id": 21,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Drive"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_ssd_cache_drive_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"ssd_cache\",\n  \"ssd_cache_id\",\n  \"drive\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_ssd_cache_drive_raw_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"ssd_cache\",\n  \"ssd_cache_id\",\n  \"drive\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "SSD Cache Drives",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "ssd_cache",
+                    "drive",
+                    "Value #B"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #B": 4,
+                  "array": 1,
+                  "datacenter": 0,
+                  "drive": 3,
+                  "ssd_cache": 2
+                },
+                "renameByName": {
+                  "Value #B": "Raw Capacity",
+                  "array": "Array",
+                  "datacenter": "Datacenter",
+                  "drive": "Drive",
+                  "ssd_cache": "Cache"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Drives",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 30,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Volumes that are cached by the SSD cache.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 194
+          },
+          "id": 31,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Volume"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_volume_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Cached Volumes",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true,
+                  "ssd_cache_id": true
+                },
+                "indexByName": {
+                  "array": 1,
+                  "datacenter": 0,
+                  "ssd_cache": 2,
+                  "volume": 3
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "datacenter": "Datacenter",
+                  "ssd_cache": "Cache",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Cached Volumes",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 40,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Full cache hits as a percentage of total read+write operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 195
+          },
+          "id": 41,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(eseries_ssd_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Cache Hit %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Full cache hits as a percentage of read operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 195
+          },
+          "id": 42,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_full_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_full_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Full Cache Hit %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Partial cache hits as a percentage of read operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 243
+          },
+          "id": 43,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_partial_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_partial_cache_hit_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Partial Cache Hit %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Complete cache misses as a percentage of read operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 243
+          },
+          "id": 44,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_complete_cache_miss_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_complete_cache_miss_percent{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Complete Cache Miss %",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Cache Hit Performance",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 50,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "SSD cache read operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 196
+          },
+          "id": 51,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(eseries_ssd_cache_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Read IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "SSD cache write operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 196
+          },
+          "id": 52,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(eseries_ssd_cache_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Write IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Full cache hit operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 0,
+            "y": 208
+          },
+          "id": 53,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_full_cache_hit_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_full_cache_hit_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Full Cache Hit IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Partial cache hit operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 8,
+            "y": 208
+          },
+          "id": 54,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_partial_cache_hit_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_partial_cache_hit_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Partial Cache Hit IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Complete cache miss operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 16,
+            "y": 208
+          },
+          "id": 55,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_complete_cache_miss_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_complete_cache_miss_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Cache Miss IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Populate-on-read operations per second: cache misses that trigger an SSD cache fill from disk.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 220
+          },
+          "id": 56,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_populate_on_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_populate_on_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Populate-on-Read IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Populate-on-write operations per second: write IOs that also fill in the SSD cache.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 220
+          },
+          "id": 57,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_populate_on_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_populate_on_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Populate-on-Write IOPS",
+          "type": "timeseries"
+        }
+      ],
+      "title": "IOPS",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 60,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Read block operations (cache block reads) per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 555
+          },
+          "id": 61,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_read_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_read_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Read Block Ops/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Write block operations (cache block writes) per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 555
+          },
+          "id": 62,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_write_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_write_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Write Block Ops/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Full cache hit block operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 0,
+            "y": 567
+          },
+          "id": 63,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_full_cache_hit_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_full_cache_hit_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Full Cache Hit Block Ops/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Partial cache hit block operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 8,
+            "y": 567
+          },
+          "id": 64,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_partial_cache_hit_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_partial_cache_hit_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Partial Cache Hit Block Ops/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Complete cache miss block operations per second per controller.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 16,
+            "y": 567
+          },
+          "id": 65,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_complete_cache_miss_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_complete_cache_miss_block_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Cache Miss Block Ops/s",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Block Operations",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 70,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Cache clean population (valid cached data not yet written back to disk).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 170
+          },
+          "id": 71,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "max by (array, datacenter, ssd_cache) (\n    eseries_ssd_cache_populated_clean_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_populated_clean_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Populated Clean Size",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Cache dirty population (modified data in cache not yet flushed to disk).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 170
+          },
+          "id": 72,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "max by (array, datacenter, ssd_cache) (\n    eseries_ssd_cache_populated_dirty_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, array, ssd_cache)\n  topk(\n    $TopResources,\n    max by (datacenter, array, ssd_cache) (\n      avg_over_time(\n        eseries_ssd_cache_populated_dirty_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Populated Dirty Size",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Cache invalidate operations per second: cache blocks explicitly invalidated.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 178
+          },
+          "id": 73,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_invalidate_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(\n        eseries_ssd_cache_invalidate_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Invalidate Ops/s",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "Cache recycle operations per second: cache blocks recycled/evicted to free space.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "showValues": false,
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 178
+          },
+          "id": 74,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_ssd_cache_recycle_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller) (\n      avg_over_time(eseries_ssd_cache_recycle_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}} - {{ssd_cache}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Recycle Ops/s",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Cache Sizing",
+      "type": "row"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [
+    "harvest",
+    "eseries"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 2,
+        "includeAll": false,
+        "label": "Data Source",
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(eseries_ssd_cache_labels, datacenter)",
+        "includeAll": true,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(eseries_ssd_cache_labels, datacenter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 7,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(eseries_ssd_cache_labels{datacenter=~\"$Datacenter\"}, array)",
+        "includeAll": true,
+        "multi": true,
+        "name": "Array",
+        "options": [],
+        "query": {
+          "query": "label_values(eseries_ssd_cache_labels{datacenter=~\"$Datacenter\"}, array)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 7,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "5",
+          "value": "5"
+        },
+        "includeAll": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "E-Series: SSD Cache",
+  "uid": "eseries-ssd-cache",
+  "version": 1,
+  "weekStart": ""
+}

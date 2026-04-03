@@ -112,3 +112,48 @@ objects:
         type: rate
       - name: cacheHitsIopsTotal
         type: rate
+
+  eseries_ssd_cache:
+    counter_definitions:
+      - name: statistics.timestamp
+        type: delta
+      - name: statistics.reads
+        type: rate
+      - name: statistics.writes
+        type: rate
+      - name: statistics.readBlocks
+        type: rate
+      - name: statistics.writeBlocks
+        type: rate
+      - name: statistics.fullCacheHits
+        type: rate
+      - name: statistics.fullCacheHitBlocks
+        type: rate
+      - name: statistics.partialCacheHits
+        type: rate
+      - name: statistics.partialCacheHitBlocks
+        type: rate
+      - name: statistics.completeCacheMiss
+        type: rate
+      - name: statistics.completeCacheMissBlocks
+        type: rate
+      - name: statistics.populateOnReads
+        type: rate
+      - name: statistics.populateOnReadBlocks
+        type: rate
+      - name: statistics.populateOnWrites
+        type: rate
+      - name: statistics.populateOnWriteBlocks
+        type: rate
+      - name: statistics.invalidates
+        type: rate
+      - name: statistics.recycles
+        type: rate
+      - name: statistics.availableBytes
+        type: raw
+      - name: statistics.allocatedBytes
+        type: raw
+      - name: statistics.populatedCleanBytes
+        type: raw
+      - name: statistics.populatedDirtyBytes
+        type: raw

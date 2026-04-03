@@ -1,0 +1,30 @@
+name: SsdCache
+query: storage-systems/{array_id}/ssd-caches
+object: eseries_ssd_cache
+
+counters:
+  - ^^id                                  => ssd_cache_id
+  - ^cachedVolumesIds                     => cached_volume_ids
+  - ^driveIds                             => drive_ids
+  - ^name                                 => ssd_cache
+  - ^protectionInformationCapable         => da_capable
+  - ^securityLevel                        => security_level
+  - ^securityType                         => security_type
+  - ^status
+  - ^type
+  - ^wwn
+  - usedCapacity                          => current_capacity
+
+plugins:
+  - SsdCacheCapacity
+
+export_options:
+  instance_keys:
+    - ssd_cache
+    - ssd_cache_id
+  instance_labels:
+    - status
+    - type
+    - security_level
+    - security_type
+    - da_capable

@@ -1,0 +1,54 @@
+[
+    {
+        "controllerId": "070000000000000000000001",
+        "statistics": {
+            "timestamp": "1773809538",
+            "reads": "133714",
+            "readBlocks": "118255320",
+            "writes": "74606",
+            "writeBlocks": "115136236",
+            "fullCacheHits": "39936",
+            "fullCacheHitBlocks": "6754778",
+            "partialCacheHits": "93778",
+            "partialCacheHitBlocks": "111500542",
+            "completeCacheMiss": "0",
+            "completeCacheMissBlocks": "0",
+            "populateOnReads": "25374",
+            "populateOnReadBlocks": "32872000",
+            "populateOnWrites": "6293",
+            "populateOnWriteBlocks": "10504192",
+            "invalidates": "74606",
+            "recycles": "0",
+            "availableBytes": "1599784091648",
+            "allocatedBytes": "13316915200",
+            "populatedCleanBytes": "3433431040",
+            "populatedDirtyBytes": "0"
+        }
+    },
+    {
+        "controllerId": "070000000000000000000002",
+        "statistics": {
+            "timestamp": "1773809538",
+            "reads": "123028",
+            "readBlocks": "108836415",
+            "writes": "69611",
+            "writeBlocks": "107436489",
+            "fullCacheHits": "30660",
+            "fullCacheHitBlocks": "4059429",
+            "partialCacheHits": "92368",
+            "partialCacheHitBlocks": "104776986",
+            "completeCacheMiss": "0",
+            "completeCacheMissBlocks": "0",
+            "populateOnReads": "21081",
+            "populateOnReadBlocks": "26726288",
+            "populateOnWrites": "4328",
+            "populateOnWriteBlocks": "7356640",
+            "invalidates": "69611",
+            "recycles": "0",
+            "availableBytes": "1599784091648",
+            "allocatedBytes": "13421772800",
+            "populatedCleanBytes": "1748148224",
+            "populatedDirtyBytes": "0"
+        }
+    }
+]
