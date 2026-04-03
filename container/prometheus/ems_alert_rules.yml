@@ -531,6 +531,30 @@ groups:
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#nvram-battery-low"
 
+      - alert: Data Outage Detected
+        expr: last_over_time(ems_events{message="callhome.data.outage.detected"}[1d]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Call home for {{ $labels.subject }} on node {{ $labels.node }}"
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#data-outage-detected"
+
       - alert: HA Interconnect Down
         expr: last_over_time(ems_events{message="callhome.hainterconnect.down"}[1d]) == 1
         labels:

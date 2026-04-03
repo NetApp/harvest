@@ -1042,3 +1042,8 @@ events:
   - name: smbc.pfo.completed
     exports:
       - parameters.dstpath => dst_path
+
+  - name: callhome.data.outage.detected
+    exports:
+      - ^^node.name        => node
+      - parameters.subject => subject
