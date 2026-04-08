@@ -862,3 +862,114 @@ func TestEseriesPerf_SsdCache_NegativeDelta_SkipOnCounterReset(t *testing.T) {
 		}
 	}
 }
+func TestEseriesPerf_QueueDepthAverage_Flag(t *testing.T) {
+	ep := newEseriesPerf("Volume", "volume.yaml")
+
+	assert.True(t, ep.perfProp.calculateQueueDepthAverage)
+	assert.False(t, ep.perfProp.calculateUtilization)
+}
+
+func TestEseriesPerf_QueueDepthAverage_Calculation(t *testing.T) {
+	ep := newEseriesPerf("Volume", "volume.yaml")
+	mat := ep.Matrix[ep.Object]
+
+	instance, err := mat.NewInstance("vol1")
+	if err != nil {
+		t.Fatalf("failed to create instance: %v", err)
+	}
+
+	queueDepthTotal, err := mat.NewMetricFloat64("queueDepthTotal")
+	if err != nil {
+		t.Fatalf("failed to create queueDepthTotal: %v", err)
+	}
+	readOps, err := mat.NewMetricFloat64("readOps")
+	if err != nil {
+		t.Fatalf("failed to create readOps: %v", err)
+	}
+	writeOps, err := mat.NewMetricFloat64("writeOps")
+	if err != nil {
+		t.Fatalf("failed to create writeOps: %v", err)
+	}
+	otherOps, err := mat.NewMetricFloat64("otherOps")
+	if err != nil {
+		t.Fatalf("failed to create otherOps: %v", err)
+	}
+
+	queueDepthTotal.SetValueFloat64(instance, 1500)
+	readOps.SetValueFloat64(instance, 300)
+	writeOps.SetValueFloat64(instance, 200)
+	otherOps.SetValueFloat64(instance, 0)
+
+	skips, err := ep.calculateQueueDepthAverage(mat)
+	assert.Nil(t, err)
+	assert.Equal(t, skips, 0)
+
+	avgMetric := mat.GetMetric("queue_depth_average")
+	assert.NotNil(t, avgMetric)
+
+	val, ok := avgMetric.GetValueFloat64(instance)
+	assert.True(t, ok)
+	assert.Equal(t, val, 3.0)
+}
+
+func TestEseriesPerf_QueueDepthAverage_ZeroTotalOps(t *testing.T) {
+	ep := newEseriesPerf("Volume", "volume.yaml")
+	mat := ep.Matrix[ep.Object]
+
+	instance, err := mat.NewInstance("vol1")
+	if err != nil {
+		t.Fatalf("failed to create instance: %v", err)
+	}
+
+	queueDepthTotal, _ := mat.NewMetricFloat64("queueDepthTotal")
+	readOps, _ := mat.NewMetricFloat64("readOps")
+	writeOps, _ := mat.NewMetricFloat64("writeOps")
+	otherOps, _ := mat.NewMetricFloat64("otherOps")
+
+	queueDepthTotal.SetValueFloat64(instance, 100)
+	readOps.SetValueFloat64(instance, 0)
+	writeOps.SetValueFloat64(instance, 0)
+	otherOps.SetValueFloat64(instance, 0)
+
+	skips, err := ep.calculateQueueDepthAverage(mat)
+	assert.Nil(t, err)
+	assert.Equal(t, skips, 1)
+
+	avgMetric := mat.GetMetric("queue_depth_average")
+	assert.NotNil(t, avgMetric)
+
+	_, ok := avgMetric.GetValueFloat64(instance)
+	assert.False(t, ok)
+}
+
+func TestEseriesPerf_QueueDepthTotal_NotExported(t *testing.T) {
+	ep := newEseriesPerf("Volume", "volume.yaml")
+	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "600a098000f63714000000005e5cf5d2")
+	mat.SetGlobalLabel("array", "eseries-test-system")
+
+	// First poll - establishes baseline; cookCounters returns nil when cache is empty
+	pollData1 := jsonToPerfData("testdata/perf1.json")
+	ep.pollData(mat, pollData1, set.New())
+	_, _ = ep.cookCounters(mat, mat)
+
+	// Second poll
+	pollData2 := jsonToPerfData("testdata/perf2.json")
+	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+	ep.pollData(curMat, pollData2, set.New())
+
+	got, err := ep.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+	assert.NotNil(t, got)
+
+	resultMat := got["Volume"]
+	assert.NotNil(t, resultMat)
+
+	qdt := resultMat.GetMetric("queueDepthTotal")
+	if qdt == nil {
+		t.Fatal("queueDepthTotal metric should exist in result matrix")
+	}
+	assert.False(t, qdt.IsExportable())
+}

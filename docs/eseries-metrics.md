@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Apr-03
+Creation Date : 2026-Apr-08
 E-Series Version: 11.80.0
 ```
 
@@ -1469,6 +1469,63 @@ The `eseries_volume_labels` metric is visualized in the following Grafana dashbo
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Volume | Volume Table | table | [Volumes](/d/eseries-volume/e-series3a-volume?orgId=1&viewPanel=18) |
+///
+
+
+
+### eseries_volume_other_ops
+
+Volume other I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `otherOps` | conf/eseriesperf/11.80.0/volume.yaml |
+
+The `eseries_volume_other_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Volume | Highlights | timeseries | [Top $TopResources Volumes by Other IOPs](/d/eseries-volume/e-series3a-volume?orgId=1&viewPanel=46) |
+///
+
+
+
+### eseries_volume_queue_depth_average
+
+Average queue depth per I/O operation
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/volume.yaml |
+
+The `eseries_volume_queue_depth_average` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Volume | Queue Depth | timeseries | [Top $TopResources Volumes by Queue Depth Average](/d/eseries-volume/e-series3a-volume?orgId=1&viewPanel=44) |
+///
+
+
+
+### eseries_volume_queue_depth_max
+
+Maximum queue depth seen over the observation window
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `queueDepthMax` | conf/eseriesperf/11.80.0/volume.yaml |
+
+The `eseries_volume_queue_depth_max` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Volume | Queue Depth | timeseries | [Top $TopResources Volumes by Queue Depth Max](/d/eseries-volume/e-series3a-volume?orgId=1&viewPanel=45) |
 ///
 
 

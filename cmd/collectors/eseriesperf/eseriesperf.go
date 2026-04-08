@@ -38,10 +38,11 @@ type counter struct {
 }
 
 type perfProp struct {
-	isCacheEmpty         bool
-	counterInfo          map[string]*counter
-	timestampMetricName  string
-	calculateUtilization bool
+	isCacheEmpty               bool
+	counterInfo                map[string]*counter
+	timestampMetricName        string
+	calculateUtilization       bool
+	calculateQueueDepthAverage bool
 }
 
 func init() {
@@ -156,6 +157,7 @@ func (ep *EseriesPerf) ParseTemplate() error {
 	}
 
 	ep.perfProp.calculateUtilization = config.CalculateUtilization
+	ep.perfProp.calculateQueueDepthAverage = config.CalculateQueueDepthAverage
 
 	return nil
 }
@@ -633,6 +635,12 @@ func (ep *EseriesPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matri
 		idleTime.SetExportable(false)
 	}
 
+	// Don't export queueDepthTotal it's only used to compute queue_depth_average
+	queueDepthTotal := curMat.GetMetric("queueDepthTotal")
+	if queueDepthTotal != nil {
+		queueDepthTotal.SetExportable(false)
+	}
+
 	err = ep.validateMatrix(prevMat, curMat)
 	if err != nil {
 		return nil, err
@@ -672,6 +680,15 @@ func (ep *EseriesPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matri
 	if ep.perfProp.calculateUtilization {
 		if skips, err := ep.calculateUtilization(curMat); err != nil {
 			ep.Logger.Error("Calculate utilization", slogx.Err(err))
+		} else {
+			totalSkips += skips
+		}
+	}
+
+	// Calculate queue depth average if template flag is set (after all deltas are done)
+	if ep.perfProp.calculateQueueDepthAverage {
+		if skips, err := ep.calculateQueueDepthAverage(curMat); err != nil {
+			ep.Logger.Error("Calculate queue depth average", slogx.Err(err))
 		} else {
 			totalSkips += skips
 		}
@@ -802,6 +819,7 @@ func (ep *EseriesPerf) calculateUtilization(curMat *matrix.Matrix) (int, error) 
 		idleTime, idleOk := idleTimeMetric.GetValueFloat64(instance)
 
 		if !readOk || !writeOk || !idleOk {
+			skips++
 			continue
 		}
 
@@ -814,6 +832,46 @@ func (ep *EseriesPerf) calculateUtilization(curMat *matrix.Matrix) (int, error) 
 			readUtilMetric.SetValueFloat64(instance, readUtilization)
 			writeUtilMetric.SetValueFloat64(instance, writeUtilization)
 			totalUtilMetric.SetValueFloat64(instance, totalUtilization)
+		} else {
+			skips++
+		}
+	}
+
+	return skips, nil
+}
+
+// calculateQueueDepthAverage calculates the average queue depth per I/O operation.
+func (ep *EseriesPerf) calculateQueueDepthAverage(curMat *matrix.Matrix) (int, error) {
+	queueDepthTotalMetric := curMat.GetMetric("queueDepthTotal")
+	readOpsMetric := curMat.GetMetric("readOps")
+	writeOpsMetric := curMat.GetMetric("writeOps")
+	otherOpsMetric := curMat.GetMetric("otherOps")
+
+	if queueDepthTotalMetric == nil || readOpsMetric == nil || writeOpsMetric == nil || otherOpsMetric == nil {
+		return 0, errs.New(errs.ErrMissingParam, "missing metrics (queueDepthTotal, readOps, writeOps, otherOps) for queue depth average")
+	}
+
+	queueDepthAvgMetric, err := curMat.NewMetricFloat64("queue_depth_average")
+	if err != nil {
+		return 0, err
+	}
+	queueDepthAvgMetric.SetProperty("average")
+
+	skips := 0
+	for _, instance := range curMat.GetInstances() {
+		qDepthTotal, qOk := queueDepthTotalMetric.GetValueFloat64(instance)
+		readOps, rOk := readOpsMetric.GetValueFloat64(instance)
+		writeOps, wOk := writeOpsMetric.GetValueFloat64(instance)
+		otherOps, oOk := otherOpsMetric.GetValueFloat64(instance)
+
+		if !qOk || !rOk || !wOk || !oOk {
+			skips++
+			continue
+		}
+
+		totalOps := readOps + writeOps + otherOps
+		if totalOps > 0 {
+			queueDepthAvgMetric.SetValueFloat64(instance, qDepthTotal/totalOps)
 		} else {
 			skips++
 		}

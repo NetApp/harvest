@@ -26,6 +26,12 @@ objects:
       - name: idleTime
         type: average
         base_counter: readOps
+      - name: otherOps
+        type: rate
+      - name: queueDepthTotal
+        type: delta
+      - name: queueDepthMax
+        type: raw
 
   eseries_controller:
     counter_definitions:
