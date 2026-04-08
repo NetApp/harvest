@@ -344,6 +344,30 @@ counters:
         ESeriesCounter: Harvest Generated
         Template: conf/eseriesperf/11.80.0/volume.yaml (CacheHitRatio plugin)
 
+  - Name: eseries_volume_other_ops
+    Description: Volume other I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: otherOps
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_queue_depth_average
+    Description: Average queue depth per I/O operation
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_queue_depth_max
+    Description: Maximum queue depth seen over the observation window
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: queueDepthMax
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
   # =============================================================================
   # Cache Backup Device Metrics (Hardware Plugin)
   # =============================================================================

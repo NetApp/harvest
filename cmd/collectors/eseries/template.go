@@ -36,32 +36,23 @@ func (e *ESeries) LoadTemplate() (string, error) {
 
 // ObjectConfig holds configuration for different object types
 type ObjectConfig struct {
-	ArrayPath            string
-	Filter               string
-	CalculateUtilization bool
-	UsesSharedCache      bool
-}
-
-// newObjectConfig creates an ObjectConfig with UsesSharedCache defaulted to true
-func newObjectConfig(arrayPath, filter string, calculateUtilization bool) ObjectConfig {
-	return ObjectConfig{
-		ArrayPath:            arrayPath,
-		Filter:               filter,
-		CalculateUtilization: calculateUtilization,
-		UsesSharedCache:      true,
-	}
+	ArrayPath                  string
+	Filter                     string
+	CalculateUtilization       bool
+	CalculateQueueDepthAverage bool
+	UsesSharedCache            bool
 }
 
 func GetESeriesPerfObjectConfig(objType string) ObjectConfig {
 	configs := map[string]ObjectConfig{
-		"controller":  newObjectConfig("controllerStats", "type=controller", false),
-		"pool":        newObjectConfig("poolStats", "type=storagePool", false),
-		"volume":      newObjectConfig("volumeStats", "type=volume", false),
-		"drive":       newObjectConfig("diskStats", "type=drive", true),
-		"interface":   newObjectConfig("interfaceStats", "type=ioInterface", false),
-		"application": newObjectConfig("applicationStats", "type=application", false),
-		"workload":    newObjectConfig("workloadStats", "type=workload", false),
-		"array":       newObjectConfig("systemStats", "type=storageSystem", false),
+		"controller":  {ArrayPath: "controllerStats", Filter: "type=controller", UsesSharedCache: true},
+		"pool":        {ArrayPath: "poolStats", Filter: "type=storagePool", UsesSharedCache: true},
+		"volume":      {ArrayPath: "volumeStats", Filter: "type=volume", UsesSharedCache: true, CalculateQueueDepthAverage: true},
+		"drive":       {ArrayPath: "diskStats", Filter: "type=drive", UsesSharedCache: true, CalculateUtilization: true},
+		"interface":   {ArrayPath: "interfaceStats", Filter: "type=ioInterface", UsesSharedCache: true},
+		"application": {ArrayPath: "applicationStats", Filter: "type=application", UsesSharedCache: true},
+		"workload":    {ArrayPath: "workloadStats", Filter: "type=workload", UsesSharedCache: true},
+		"array":       {ArrayPath: "systemStats", Filter: "type=storageSystem", UsesSharedCache: true},
 	}
 	if config, ok := configs[objType]; ok {
 		return config
