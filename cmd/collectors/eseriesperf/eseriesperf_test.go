@@ -945,20 +945,31 @@ func TestEseriesPerf_QueueDepthAverage_ZeroTotalOps(t *testing.T) {
 func TestEseriesPerf_QueueDepthTotal_NotExported(t *testing.T) {
 	ep := newEseriesPerf("Volume", "volume.yaml")
 	mat := ep.Matrix[ep.Object]
+	mat.SetGlobalLabel("array_id", "600a098000f63714000000005e5cf5d2")
+	mat.SetGlobalLabel("array", "eseries-test-system")
 
-	instance, err := mat.NewInstance("vol1")
-	if err != nil {
-		t.Fatalf("failed to create instance: %v", err)
+	// First poll - establishes baseline; cookCounters returns nil when cache is empty
+	pollData1 := jsonToPerfData("testdata/perf1.json")
+	ep.pollData(mat, pollData1, set.New())
+	_, _ = ep.cookCounters(mat, mat)
+
+	// Second poll
+	pollData2 := jsonToPerfData("testdata/perf2.json")
+	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+	ep.pollData(curMat, pollData2, set.New())
+
+	got, err := ep.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+	assert.NotNil(t, got)
+
+	resultMat := got["Volume"]
+	assert.NotNil(t, resultMat)
+
+	qdt := resultMat.GetMetric("queueDepthTotal")
+	if qdt == nil {
+		t.Fatal("queueDepthTotal metric should exist in result matrix")
 	}
-
-	m, _ := mat.NewMetricFloat64("queueDepthTotal")
-	m.SetValueFloat64(instance, 100)
-
-	mat2 := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-
-	qdt := mat2.GetMetric("queueDepthTotal")
-	if qdt != nil {
-		qdt.SetExportable(false)
-		assert.False(t, qdt.IsExportable())
-	}
+	assert.False(t, qdt.IsExportable())
 }
