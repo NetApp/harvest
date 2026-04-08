@@ -9,7 +9,7 @@ counters:
   - observedTimeInMS              => observed_time
   - otherOps                      => other_ops
   - queueDepthMax                 => queue_depth_max
-  - queueDepthTotal
+  - queueDepthTotal                                         # queueDepthTotal is only used to compute queue_depth_average. It is not exported
   - readBytes                     => read_data
   - readHitOps                    => read_hit_ops
   - readOps                       => read_ops
