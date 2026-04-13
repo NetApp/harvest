@@ -2169,3 +2169,54 @@ func checkMultiSelectEnabled(t *testing.T, path string, data []byte) {
 		return true
 	})
 }
+
+func TestTimeSeriesDefaults(t *testing.T) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
+		checkTimeSeriesDefaults(t, path, data)
+	})
+}
+
+func checkTimeSeriesDefaults(t *testing.T, path string, data []byte) {
+	path = ShortPath(path)
+
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
+		panelType := value.Get("type").ClonedString()
+		if panelType != "timeseries" {
+			return
+		}
+
+		title := value.Get("title").ClonedString()
+		lineWidth := value.Get("fieldConfig.defaults.custom.lineWidth")
+
+		if lineWidth.Exists() && lineWidth.Int() != 1 {
+			t.Errorf(`dashboard=%s title="%s" fieldConfig.defaults.custom.lineWidth got=[%d] want=1`,
+				path, title, lineWidth.Int())
+		}
+
+		showPoints := value.Get("fieldConfig.defaults.custom.showPoints")
+
+		if showPoints.Exists() && showPoints.String() != "never" {
+			t.Errorf(`dashboard=%s title="%s" fieldConfig.defaults.custom.showPoints got=[%s] want=never`,
+				path, title, showPoints.String())
+		}
+
+		// Check overrides
+		value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
+			anOverride.Get("properties").ForEach(func(_, propValue gjson.Result) bool {
+				id := propValue.Get("id").ClonedString()
+				switch id {
+				case "custom.showPoints":
+					if propValue.Get("value").String() != "never" {
+						t.Errorf(`dashboard=%s title="%s" has override for custom.showPoints with value=%s, want=never`, path, title, propValue.Get("value").String())
+					}
+				case "custom.lineWidth":
+					if propValue.Get("value").Int() != 1 {
+						t.Errorf(`dashboard=%s title="%s" has override for custom.lineWidth with value=%d, want=1`, path, title, propValue.Get("value").Int())
+					}
+				}
+				return true
+			})
+			return true
+		})
+	})
+}
