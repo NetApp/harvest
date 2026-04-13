@@ -710,7 +710,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -799,7 +799,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -2319,7 +2319,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -3000,30 +3000,7 @@
               },
               "unit": "µs"
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/.* - total/"
-                },
-                "properties": [
-                  {
-                    "id": "custom.lineWidth",
-                    "value": 0
-                  },
-                  {
-                    "id": "custom.lineStyle",
-                    "value": {
-                      "dash": [
-                        10,
-                        10
-                      ],
-                      "fill": "dash"
-                    }
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
             "h": 9,

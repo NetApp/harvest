@@ -2706,22 +2706,10 @@
             "overrides": [
               {
                 "matcher": {
-                  "id": "byName",
-                  "options": "HDD Reads Replaced"
+                  "id": "byFrameRefID",
+                  "options": "B"
                 },
                 "properties": [
-                  {
-                    "id": "custom.drawStyle",
-                    "value": "bars"
-                  },
-                  {
-                    "id": "custom.fillOpacity",
-                    "value": 100
-                  },
-                  {
-                    "id": "custom.lineWidth",
-                    "value": 0
-                  },
                   {
                     "id": "unit",
                     "value": "short"
@@ -2840,18 +2828,6 @@
                   "options": "B"
                 },
                 "properties": [
-                  {
-                    "id": "custom.drawStyle",
-                    "value": "bars"
-                  },
-                  {
-                    "id": "custom.fillOpacity",
-                    "value": 100
-                  },
-                  {
-                    "id": "custom.lineWidth",
-                    "value": 0
-                  },
                   {
                     "id": "unit",
                     "value": "short"

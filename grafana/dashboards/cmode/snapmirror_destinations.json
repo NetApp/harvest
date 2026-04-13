@@ -1180,7 +1180,7 @@
               "log": 10,
               "type": "log"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": true,
             "stacking": {
               "group": "A",
