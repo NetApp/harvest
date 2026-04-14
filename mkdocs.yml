@@ -22,6 +22,7 @@ nav:
   - Prepare Monitored Systems:
       - 'ONTAP cDOT': 'prepare-cdot-clusters.md'
       - 'ASA r2': 'asar2.md'
+      - "GCNV ONTAP Mode": 'gcnv-ontap-mode.md'
       - 'Amazon FSx for ONTAP': 'prepare-fsx-clusters.md'
       - 'ONTAP 7mode': 'prepare-7mode-clusters.md'
       - 'StorageGRID': 'prepare-storagegrid-clusters.md'

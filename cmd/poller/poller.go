@@ -717,6 +717,13 @@ func (p *Poller) ping() (float32, bool) {
 
 	// If the host includes a port, use that port, otherwise use portsToTry
 	target := p.target
+	// For GCNV ontap mode, addr contains the full resource path (host/path/...).
+	// Extract just the hostname for TCP ping.
+	if p.params.GCNVOntapMode {
+		if i := strings.IndexByte(target, '/'); i != -1 {
+			target = target[:i]
+		}
+	}
 	portsToTry := []int{443}
 
 	// Extract host and port. This also handles IPv6

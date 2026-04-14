@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1757501688710,
+  "iteration": 1775639972287,
   "links": [
     {
       "asDropdown": true,
@@ -927,7 +927,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -936,7 +936,7 @@
               "refId": "B"
             },
             {
-              "expr": "volume_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -946,7 +946,7 @@
               "refId": "A"
             },
             {
-              "expr": "volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -956,7 +956,7 @@
               "refId": "C"
             },
             {
-              "expr": "volume_size_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_size_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -967,7 +967,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_sis_dedup_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_sis_dedup_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -978,7 +978,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_sis_compress_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_sis_compress_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -989,7 +989,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_sis_dedup_saved\n+\n    volume_sis_compress_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_sis_dedup_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  +\n      volume_sis_compress_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (datacenter, cluster, svm, volume) group_left (node)\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1000,7 +1000,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1011,7 +1011,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1022,7 +1022,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_clone_split_estimate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "label_join(\n    volume_clone_split_estimate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (node)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1035,6 +1035,19 @@
           "timeShift": null,
           "title": "Volumes in Cluster",
           "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
             {
               "id": "filterFieldsByName",
               "options": {
@@ -1065,10 +1078,6 @@
               }
             },
             {
-              "id": "merge",
-              "options": {}
-            },
-            {
               "id": "organize",
               "options": {
                 "excludeByName": {
@@ -1076,11 +1085,65 @@
                   "Value": true,
                   "Value #C": false,
                   "__name__": true,
+                  "aggr 10": true,
+                  "aggr 2": true,
+                  "aggr 3": true,
+                  "aggr 4": true,
+                  "aggr 5": true,
+                  "aggr 6": true,
+                  "aggr 7": true,
+                  "aggr 8": true,
+                  "aggr 9": true,
                   "cluster": false,
+                  "cluster 10": true,
+                  "cluster 2": true,
+                  "cluster 3": true,
+                  "cluster 4": true,
+                  "cluster 5": true,
+                  "cluster 6": true,
+                  "cluster 7": true,
+                  "cluster 8": true,
+                  "cluster 9": true,
                   "datacenter": false,
+                  "datacenter 10": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "datacenter 4": true,
+                  "datacenter 5": true,
+                  "datacenter 6": true,
+                  "datacenter 7": true,
+                  "datacenter 8": true,
+                  "datacenter 9": true,
                   "instance": true,
                   "job": true,
-                  "state": true
+                  "node 10": true,
+                  "node 2": true,
+                  "node 3": true,
+                  "node 4": true,
+                  "node 5": true,
+                  "node 6": true,
+                  "node 7": true,
+                  "node 8": true,
+                  "node 9": true,
+                  "state": true,
+                  "svm 10": true,
+                  "svm 2": true,
+                  "svm 3": true,
+                  "svm 4": true,
+                  "svm 5": true,
+                  "svm 6": true,
+                  "svm 7": true,
+                  "svm 8": true,
+                  "svm 9": true,
+                  "volume 10": true,
+                  "volume 2": true,
+                  "volume 3": true,
+                  "volume 4": true,
+                  "volume 5": true,
+                  "volume 6": true,
+                  "volume 7": true,
+                  "volume 8": true,
+                  "volume 9": true
                 },
                 "indexByName": {
                   "Value #A": 6,
@@ -8669,7 +8732,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 28
       },
       "id": 92,
       "panels": [
@@ -9163,7 +9226,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 99,
       "panels": [
@@ -10390,7 +10453,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 30
       },
       "id": 98,
       "panels": [
@@ -10670,7 +10733,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 31
       },
       "id": 105,
       "panels": [
@@ -10979,7 +11042,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 32
       },
       "id": 135,
       "panels": [
@@ -11778,7 +11841,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 33
       },
       "id": 136,
       "panels": [
@@ -12168,7 +12231,8 @@
     "harvest",
     "ontap",
     "cdot",
-    "fsx"
+    "fsx",
+    "gcnv-ontap-mode"
   ],
   "templating": {
     "list": [
@@ -12462,5 +12526,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "cdot-volume",
-  "version": 37
+  "version": 38
 }

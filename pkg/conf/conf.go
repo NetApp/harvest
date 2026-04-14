@@ -638,6 +638,7 @@ type Poller struct {
 	IsDisabled        bool                 `yaml:"disabled,omitempty"`
 	ExporterDefs      []ExporterDef        `yaml:"exporters,omitempty"`
 	Exporters         []string             `yaml:"-"`
+	GCNVOntapMode     bool                 `yaml:"gcnv_ontap_mode,omitempty"`
 	IsKfs             bool                 `yaml:"is_kfs,omitempty"`
 	Labels            *[]map[string]string `yaml:"labels,omitempty"`
 	LogMaxBytes       int64                `yaml:"log_max_bytes,omitempty"`
@@ -669,6 +670,7 @@ func (p *Poller) Union(defaults *Poller) {
 
 	isInsecureNil := true
 
+	pGCNVOntapMode := p.GCNVOntapMode
 	pIsKfs := p.IsKfs
 	pIsDisabled := p.IsDisabled
 
@@ -690,6 +692,7 @@ func (p *Poller) Union(defaults *Poller) {
 		p.UseInsecureTLS = &pUseInsecureTLS
 	}
 
+	p.GCNVOntapMode = pGCNVOntapMode
 	p.IsKfs = pIsKfs
 	p.IsDisabled = pIsDisabled
 	p.Password = pPassword
@@ -724,6 +727,7 @@ func ZapiPoller(n *node.Node) *Poller {
 	if addr := n.GetChildContentS("addr"); addr != "" {
 		p.Addr = addr
 	}
+	p.GCNVOntapMode = n.GetChildContentS("gcnv_ontap_mode") == "true"
 	isKfs := n.GetChildContentS("is_kfs")
 	p.IsKfs = isKfs == "true"
 

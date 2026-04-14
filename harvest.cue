@@ -92,6 +92,7 @@ Pollers: [Name=_]: #Poller
 	datacenter?:         string
 	disabled?:           bool
 	exporters:           [...#ExporterDefs]
+	gcnv_ontap_mode?:    bool
 	is_kfs?:             bool
 	labels?:             [...label]
 	log:                 [...string]
