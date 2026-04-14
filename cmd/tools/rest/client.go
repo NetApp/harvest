@@ -183,7 +183,7 @@ func (c *Client) unwrapGCNVBody(data []byte) []byte {
 		return data
 	}
 	body := gjson.GetBytes(data, "body")
-	if body.Exists() && body.Type == gjson.JSON {
+	if body.IsObject() {
 		return []byte(body.Raw)
 	}
 	return data
