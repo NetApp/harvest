@@ -9,21 +9,25 @@
       
       
       
+        <link rel="prev" href="../asar2/">
       
       
-      <link rel="icon" href="../../assets/harvest.svg">
+        <link rel="next" href="../prepare-fsx-clusters/">
+      
+      
+      <link rel="icon" href="../assets/harvest.svg">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
-        <title>REST collector - Harvest</title>
+        <title>GCNV ONTAP Mode - Harvest</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -42,9 +46,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/extra.css">
+      <link rel="stylesheet" href="../assets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -70,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rest-collector" class="md-skip">
+        <a href="#poller-configuration" class="md-skip">
           Skip to content
         </a>
       
@@ -90,9 +94,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../../assets/harvest.svg" alt="logo">
+  <img src="../assets/harvest.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -109,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              REST collector
+              GCNV ONTAP Mode
             
           </span>
         </div>
@@ -232,9 +236,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../../assets/harvest.svg" alt="logo">
+  <img src="../assets/harvest.svg" alt="logo">
 
     </a>
     Harvest
@@ -261,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -281,7 +285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/" class="md-nav__link">
+      <a href="../concepts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -301,7 +305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -358,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/overview/" class="md-nav__link">
+      <a href="../install/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -379,7 +383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/package-managers/" class="md-nav__link">
+      <a href="../install/package-managers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -437,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/containers/" class="md-nav__link">
+      <a href="../install/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -458,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/k8/" class="md-nav__link">
+      <a href="../install/k8/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -479,7 +483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/podman/" class="md-nav__link">
+      <a href="../install/podman/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -500,7 +504,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/quadlet/" class="md-nav__link">
+      <a href="../install/quadlet/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -521,7 +525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/containerd/" class="md-nav__link">
+      <a href="../install/containerd/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -550,7 +554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/native/" class="md-nav__link">
+      <a href="../install/native/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -578,7 +582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system-requirements/" class="md-nav__link">
+      <a href="../system-requirements/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -595,19 +599,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -621,7 +627,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Prepare Monitored Systems
@@ -635,7 +641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -656,7 +662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../asar2/" class="md-nav__link">
+      <a href="../asar2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -674,10 +680,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../gcnv-ontap-mode/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    GCNV ONTAP Mode
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -686,6 +710,51 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#poller-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Poller Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-harvest-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Harvest Metrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-harvest-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Harvest Dashboards
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -698,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -719,7 +788,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -740,7 +809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -761,7 +830,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-eseries/" class="md-nav__link">
+      <a href="../prepare-eseries/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -782,7 +851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-cisco-switch/" class="md-nav__link">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -810,7 +879,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-harvest-basic/" class="md-nav__link">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -867,7 +936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prometheus-exporter/" class="md-nav__link">
+      <a href="../prometheus-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -888,7 +957,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../influxdb-exporter/" class="md-nav__link">
+      <a href="../influxdb-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -909,7 +978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../victoriametrics-exporter/" class="md-nav__link">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -937,7 +1006,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-grafana/" class="md-nav__link">
+      <a href="../configure-grafana/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -994,7 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-zapi/" class="md-nav__link">
+      <a href="../configure-zapi/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1015,7 +1084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-rest/" class="md-nav__link">
+      <a href="../configure-rest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1036,7 +1105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-keyperf/" class="md-nav__link">
+      <a href="../configure-keyperf/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1057,7 +1126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-statperf/" class="md-nav__link">
+      <a href="../configure-statperf/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1078,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-ems/" class="md-nav__link">
+      <a href="../configure-ems/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1099,7 +1168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-storagegrid/" class="md-nav__link">
+      <a href="../configure-storagegrid/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1120,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-eseries/" class="md-nav__link">
+      <a href="../configure-eseries/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1141,7 +1210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-unix/" class="md-nav__link">
+      <a href="../configure-unix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1162,7 +1231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-cisco-rest/" class="md-nav__link">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1190,7 +1259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-templates/" class="md-nav__link">
+      <a href="../configure-templates/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1210,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dashboards/" class="md-nav__link">
+      <a href="../dashboards/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1230,7 +1299,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../manage-harvest/" class="md-nav__link">
+      <a href="../manage-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1250,7 +1319,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-harvest-advanced/" class="md-nav__link">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1270,7 +1339,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../monitor-harvest/" class="md-nav__link">
+      <a href="../monitor-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1327,7 +1396,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mcp/overview/" class="md-nav__link">
+      <a href="../mcp/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1348,7 +1417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mcp/installation/" class="md-nav__link">
+      <a href="../mcp/installation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1369,7 +1438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mcp/examples/" class="md-nav__link">
+      <a href="../mcp/examples/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1434,7 +1503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/troubleshooting/" class="md-nav__link">
+      <a href="../help/troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1455,7 +1524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/faq/" class="md-nav__link">
+      <a href="../help/faq/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1476,7 +1545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/log-collection/" class="md-nav__link">
+      <a href="../help/log-collection/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1497,7 +1566,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/config-collection/" class="md-nav__link">
+      <a href="../help/config-collection/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1562,7 +1631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/ems-alert-runbook/" class="md-nav__link">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1583,7 +1652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/matrix/" class="md-nav__link">
+      <a href="../resources/matrix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1604,7 +1673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ontap-metrics/" class="md-nav__link">
+      <a href="../ontap-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1625,7 +1694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../storagegrid-metrics/" class="md-nav__link">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1646,7 +1715,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cisco-switch-metrics/" class="md-nav__link">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1667,7 +1736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../eseries-metrics/" class="md-nav__link">
+      <a href="../eseries-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1688,7 +1757,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/power-algorithm/" class="md-nav__link">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1709,7 +1778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../plugins/" class="md-nav__link">
+      <a href="../plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1730,7 +1799,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/rest-perf-metrics/" class="md-nav__link">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1751,7 +1820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rest-strategy/" class="md-nav__link">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1772,7 +1841,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/templates-and-metrics/" class="md-nav__link">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1793,7 +1862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../create-storagegrid-dashboard/" class="md-nav__link">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1814,7 +1883,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/zapi-and-rest-gap/" class="md-nav__link">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1879,7 +1948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../license/" class="md-nav__link">
+      <a href="../license/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1900,7 +1969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../release-notes/" class="md-nav__link">
+      <a href="../release-notes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1938,8 +2007,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1948,45 +2015,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#status" class="md-nav__link">
+  <a href="#poller-configuration" class="md-nav__link">
     <span class="md-ellipsis">
-      Status
+      Poller Configuration
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#context" class="md-nav__link">
+  <a href="#supported-harvest-metrics" class="md-nav__link">
     <span class="md-ellipsis">
-      Context
+      Supported Harvest Metrics
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#considered-options" class="md-nav__link">
+  <a href="#supported-harvest-dashboards" class="md-nav__link">
     <span class="md-ellipsis">
-      Considered Options
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#chosen-decision" class="md-nav__link">
-    <span class="md-ellipsis">
-      Chosen Decision
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#consequences" class="md-nav__link">
-    <span class="md-ellipsis">
-      Consequences
+      Supported Harvest Dashboards
     </span>
   </a>
   
@@ -2007,52 +2056,58 @@
                   
 
 
-<h1 id="rest-collector">REST collector<a class="headerlink" href="#rest-collector" title="Permanent link">&para;</a></h1>
-<h2 id="status">Status <!-- one of: In Progress, Accepted, Rejected, Superseded, Deprecated --><a class="headerlink" href="#status" title="Permanent link">&para;</a></h2>
-<p>~~Accepted~~
-Superseded by <a href="https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md">REST strategy</a></p>
-<p><img alt="🚧" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f6a7.svg" title=":construction:" /> The exact version of ONTAP that has full ZAPI parity is subject to change. 
-Everywhere you see version 9.12, may become 9.13 or later.</p>
-<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>We need to document and communicate to customers:
-- when they should switch from the ZAPI collectors to the REST ones
-- what versions of ONTAP are supported by Harvest's REST collectors
-- how to fill ONTAP gaps between the ZAPI and REST APIs</p>
-<p>The ONTAP version information is important because gaps are addressed in later versions of cDOT.</p>
-<h2 id="considered-options">Considered Options<a class="headerlink" href="#considered-options" title="Permanent link">&para;</a></h2>
-<ol>
-<li>
-<p><strong>Only REST</strong> A clean cut-over, stop using ZAPI, and switch completely to REST.</p>
-</li>
-<li>
-<p><strong>Both</strong> Support both ZAPI and REST collectors running at the same time, collecting the same objects. Flexible, but has the downside of last-write wins. Not recommended unless you selectively pick non-overlapping sets of objects.</p>
-</li>
-<li>
-<p><strong>Template change that supports both</strong> Change the template to break ties, priority, etc. Rejected because additional complexity not worth the benefits.</p>
-</li>
-<li>
-<p><strong>private-cli</strong> When there are REST gaps that have not been filled yet or will never be filled (WONTFIX), the Harvest REST collector will provide infrastructure and documentation on how to use private-cli pass-through to address gaps.</p>
-</li>
-</ol>
-<h2 id="chosen-decision">Chosen Decision<a class="headerlink" href="#chosen-decision" title="Permanent link">&para;</a></h2>
-<p>For clusters with ONTAP versions &lt; 9.12, we recommend customers use the ZAPI collectors. (#2) (#4)</p>
-<p>Once ONTAP 9.12+ is released and customers have upgraded to it, they should make a clean cut-over to the REST collectors (#1). 
-ONTAP 9.12 is the version of ONTAP that has the best parity with what Harvest collects in terms of config and performance counters. 
-Harvest REST collectors, templates, and dashboards are validated against ONTAP 9.12+. 
-Most of the REST config templates will work before 9.12, but unless you have specific needs, we recommend sticking with the ZAPI collectors until you upgrade to 9.12.</p>
-<p>There is little value in running both the ZAPI and REST collectors for an overlapping set of objects. 
-It's unlikely you want to collect the same object via REST and ZAPI at the same time. Harvest doesn't support this use-case, but does nothing to detect or prevent it.</p>
-<p>If you want to collect a non-overlapping set of objects with REST and ZAPI, you can. 
-If you do, we recommend you disable the ZAPI object collector. 
-For example, if you enable the REST <code>disk</code> template, you should disable the ZAPI <code>disk</code> template. 
-We do NOT recommend collecting an overlapping set of objects with both collectors since the last one to run will overwrite previously collected data.</p>
-<p>Harvest will document how to use the REST private cli pass-through to collect custom and non-public counters.</p>
-<p>The Harvest team recommends that customers open ONTAP issues for REST public API gaps that need filled.</p>
-<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
-<p>The Harvest REST collectors will work with limitations on earlier versions of ONTAP. 
-ONTAP 9.12+ is the minimally validated version. 
-We only validate the full set of templates, dashboards, counters, etc. on versions of ONTAP 9.12+</p>
-<p>Harvest does not prevent you from collecting the same resource with ZAPI and REST.</p>
+  <h1>GCNV ONTAP Mode</h1>
+
+<p>Harvest supports monitoring <a href="https://docs.cloud.google.com/netapp/volumes/docs/ontap/overview">Google Cloud NetApp Volumes (GCNV) in ONTAP mode</a>.</p>
+<h2 id="poller-configuration">Poller Configuration<a class="headerlink" href="#poller-configuration" title="Permanent link">&para;</a></h2>
+<p>Add a poller to your <code>harvest.yml</code> with the full GCNV resource path as <code>addr</code> and set <code>gcnv_ontap_mode: true</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my-gcnv-poller</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-us-central</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;host&gt;/v1beta1/projects/&lt;project_id&gt;/locations/&lt;location&gt;/storagePools/&lt;pool_name&gt;/ontap</span>
+<span class="w">    </span><span class="nt">gcnv_ontap_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">credentials_script</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/token-script.sh</span>
+<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">    </span><span class="nt">collectors</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rest</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KeyPerf</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ems</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prometheus1</span>
+</code></pre></div>
+<p><code>addr</code> must be the full GCNV resource path without a scheme — do not include <code>http://</code> or <code>https://</code>.</p>
+<p>GCNV uses Bearer token authentication. Use <a href="../configure-harvest-basic/#credentials-script"><code>credentials_script</code></a> to supply a token at runtime. The script must print <code>authToken: &lt;token&gt;</code> to stdout.</p>
+<p>Below is an example script using a GCP service account key file:</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+gcloud<span class="w"> </span>auth<span class="w"> </span>activate-service-account<span class="w"> </span>--key-file<span class="o">=</span>/path/to/service-account.json<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;authToken: </span><span class="k">$(</span>gcloud<span class="w"> </span>auth<span class="w"> </span>print-access-token<span class="k">)</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>For all poller parameters, see <a href="../configure-harvest-basic/#pollers">Poller configuration</a>.</p>
+<h2 id="supported-harvest-metrics">Supported Harvest Metrics<a class="headerlink" href="#supported-harvest-metrics" title="Permanent link">&para;</a></h2>
+<p>Capacity and configuration metrics are available via the <code>Rest</code> collector in GCNV ONTAP mode.
+However, some metrics may not be available due to permission limitations imposed by the GCNV ONTAP mode environment.
+Only limited performance metrics are supported because GCNV ONTAP mode does not support the <code>ZapiPerf</code> or <code>RestPerf</code> collectors.
+Instead, use the <a href="../configure-keyperf/">KeyPerf</a> collector to gather latency, IOPS, and throughput performance metrics for a limited set of objects.</p>
+<p>The following collectors are supported:</p>
+<ul>
+<li><code>Rest</code> — capacity, configuration, and inventory metrics</li>
+<li><a href="../configure-keyperf/"><code>KeyPerf</code></a> — latency, IOPS, and throughput performance metrics</li>
+<li><code>Ems</code> — events and alerts</li>
+</ul>
+<p>Performance metrics with the API name <code>KeyPerf</code> in the <a href="../ontap-metrics/">ONTAP metrics documentation</a> are supported in GCNV ONTAP mode systems.
+As a result, some panels in the dashboards may be missing information.</p>
+<h2 id="supported-harvest-dashboards">Supported Harvest Dashboards<a class="headerlink" href="#supported-harvest-dashboards" title="Permanent link">&para;</a></h2>
+<p>The dashboards that work with GCNV ONTAP mode are tagged with <code>gcnv-ontap-mode</code> and listed below:</p>
+<ul>
+<li>ONTAP: LUN</li>
+<li>ONTAP: Security</li>
+<li>ONTAP: SVM</li>
+<li>ONTAP: Volume</li>
+<li>ONTAP: Volume by SVM</li>
+<li>ONTAP: Volume Deep Dive</li>
+</ul>
 
 
 
@@ -2129,12 +2184,12 @@ We only validate the full set of templates, dashboards, counters, etc. on versio
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
-        <script src="../../javascripts/open-dashboards.js"></script>
+        <script src="../javascripts/open-dashboards.js"></script>
       
     
   </body>
