@@ -24,7 +24,15 @@ Pollers:
 
 `addr` must be the full GCNV resource path without a scheme — do not include `http://` or `https://`.
 
-GCNV uses Bearer token authentication. Use [`credentials_script`](configure-harvest-basic.md#credentials-script) to supply a token at runtime.
+GCNV uses Bearer token authentication. Use [`credentials_script`](configure-harvest-basic.md#credentials-script) to supply a token at runtime. The script must print `authToken: <token>` to stdout.
+
+Below is an example script using a GCP service account key file:
+
+```bash
+#!/bin/bash
+gcloud auth activate-service-account --key-file=/path/to/service-account.json 2>/dev/null
+echo "authToken: $(gcloud auth print-access-token)"
+```
 
 For all poller parameters, see [Poller configuration](configure-harvest-basic.md#pollers).
 

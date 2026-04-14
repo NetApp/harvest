@@ -85,10 +85,6 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	return &client, nil
 }
 
-func (c *Client) IsGCNVOntapMode() bool {
-	return c.isGCNVOntapMode
-}
-
 // rewriteFieldsParam rewrites the "fields" query parameter to "ontap_fields" for GCNV pollers.
 // Google's API framework reserves the "fields" keyword, so GCNV requires "ontap_fields" instead.
 func (c *Client) rewriteFieldsParam(request string) string {
