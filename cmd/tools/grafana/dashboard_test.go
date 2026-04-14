@@ -1889,14 +1889,15 @@ func TestTags(t *testing.T) {
 
 func checkTags(t *testing.T, path string, data []byte) {
 	allowedTagsMap := map[string]bool{
-		"asar2":       true,
-		"cdot":        true,
-		"cisco":       true,
-		"eseries":     true,
-		"fsx":         true,
-		"harvest":     true,
-		"ontap":       true,
-		"storagegrid": true,
+		"asar2":           true,
+		"cdot":            true,
+		"cisco":           true,
+		"eseries":         true,
+		"fsx":             true,
+		"gcnv-ontap-mode": true,
+		"harvest":         true,
+		"ontap":           true,
+		"storagegrid":     true,
 	}
 
 	path = ShortPath(path)

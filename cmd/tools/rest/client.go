@@ -29,16 +29,17 @@ const (
 )
 
 type Client struct {
-	client   *http.Client
-	request  *http.Request
-	buffer   *bytes.Buffer
-	Logger   *slog.Logger
-	baseURL  string
-	remote   conf.Remote
-	token    string
-	logRest  bool // used to log Rest request/response
-	auth     *auth.Credentials
-	Metadata *collector.Metadata
+	client          *http.Client
+	request         *http.Request
+	buffer          *bytes.Buffer
+	Logger          *slog.Logger
+	baseURL         string
+	remote          conf.Remote
+	token           string
+	logRest         bool // used to log Rest request/response
+	isGCNVOntapMode bool
+	auth            *auth.Credentials
+	Metadata        *collector.Metadata
 }
 
 func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials) (*Client, error) {
@@ -67,6 +68,7 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 		url = "https://" + addr + "/"
 	}
 	client.baseURL = url
+	client.isGCNVOntapMode = poller.GCNVOntapMode
 
 	transport, err = credentials.Transport(nil, poller)
 	if err != nil {
@@ -81,6 +83,21 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	}
 
 	return &client, nil
+}
+
+func (c *Client) IsGCNVOntapMode() bool {
+	return c.isGCNVOntapMode
+}
+
+// rewriteFieldsParam rewrites the "fields" query parameter to "ontap_fields" for GCNV pollers.
+// Google's API framework reserves the "fields" keyword, so GCNV requires "ontap_fields" instead.
+func (c *Client) rewriteFieldsParam(request string) string {
+	if !c.isGCNVOntapMode {
+		return request
+	}
+	request = strings.ReplaceAll(request, "?fields=", "?ontap_fields=")
+	request = strings.ReplaceAll(request, "&fields=", "&ontap_fields=")
+	return request
 }
 
 func (c *Client) SetTimeout(d time.Duration) {
@@ -119,6 +136,7 @@ func (c *Client) GetPlainRest(request string, encodeURL bool, headers ...map[str
 		}
 	}
 
+	request = c.rewriteFieldsParam(request)
 	u := c.baseURL + request
 	c.request, err = requests.New("GET", u, nil)
 	if err != nil {
@@ -153,7 +171,22 @@ func (c *Client) GetPlainRest(request string, encodeURL bool, headers ...map[str
 	c.Metadata.BytesRx += uint64(len(result))
 	c.Metadata.NumCalls++
 
+	result = c.unwrapGCNVBody(result)
+
 	return result, err
+}
+
+// unwrapGCNVBody extracts the "body" envelope from GCNV responses.
+// GCNV wraps all REST responses inside {"body": {...}}, while regular ONTAP returns data at the top level.
+func (c *Client) unwrapGCNVBody(data []byte) []byte {
+	if !c.isGCNVOntapMode || len(data) == 0 {
+		return data
+	}
+	body := gjson.GetBytes(data, "body")
+	if body.Exists() && body.Type == gjson.JSON {
+		return []byte(body.Raw)
+	}
+	return data
 }
 
 // GetRest makes a REST request to the cluster and returns a json response as a []byte

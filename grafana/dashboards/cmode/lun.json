@@ -1826,7 +1826,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lun_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
+              "expr": "label_join(\n  lun_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"lun\"\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1836,7 +1836,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
+              "expr": "label_join(\n  lun_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"lun\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1847,7 +1847,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
+              "expr": "label_join(\n  lun_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"lun\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1858,7 +1858,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
+              "expr": "label_join(\n  lun_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"lun\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1869,7 +1869,7 @@
             },
             {
               "exemplar": false,
-              "expr": "lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
+              "expr": "label_join(\n  lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"lun\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1882,26 +1882,37 @@
           "title": "LUNS in Cluster",
           "transformations": [
             {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
                   "names": [
+                    "datacenter",
+                    "cluster",
+                    "svm",
+                    "volume",
+                    "lun",
                     "node",
                     "serial_hex",
-                    "svm",
-                    "lun",
                     "Value #A",
                     "Value #C",
                     "Value #D",
-                    "Value #E",
-                    "volume"
+                    "Value #E"
                   ]
                 }
               }
-            },
-            {
-              "id": "merge",
-              "options": {}
             },
             {
               "id": "organize",
@@ -1910,26 +1921,48 @@
                   "Time": true,
                   "Value": true,
                   "__name__": true,
-                  "cluster": true,
-                  "datacenter": true,
+                  "cluster": false,
+                  "cluster 2": true,
+                  "cluster 3": true,
+                  "cluster 4": true,
+                  "cluster 5": true,
+                  "datacenter": false,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "datacenter 4": true,
+                  "datacenter 5": true,
                   "instance": true,
                   "job": true,
-                  "state": true
+                  "lun 2": true,
+                  "lun 3": true,
+                  "lun 4": true,
+                  "lun 5": true,
+                  "node 2": true,
+                  "node 3": true,
+                  "node 4": true,
+                  "node 5": true,
+                  "state": true,
+                  "svm 2": true,
+                  "svm 3": true,
+                  "svm 4": true,
+                  "svm 5": true,
+                  "volume 2": true,
+                  "volume 3": true,
+                  "volume 4": true,
+                  "volume 5": true
                 },
                 "indexByName": {
-                  "Time": 0,
-                  "Value": 12,
-                  "__name__": 1,
-                  "aggr": 4,
-                  "cluster": 5,
-                  "datacenter": 6,
-                  "instance": 7,
-                  "job": 8,
-                  "node": 2,
-                  "state": 9,
-                  "style": 11,
-                  "svm": 3,
-                  "volume": 10
+                  "Value #A": 7,
+                  "Value #C": 8,
+                  "Value #D": 9,
+                  "Value #E": 10,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "lun": 4,
+                  "node": 5,
+                  "serial_hex": 6,
+                  "svm": 2,
+                  "volume": 3
                 },
                 "renameByName": {
                   "serial_hex": "Serial Hex"
@@ -4151,7 +4184,8 @@
     "harvest",
     "ontap",
     "cdot",
-    "fsx"
+    "fsx",
+    "gcnv-ontap-mode"
   ],
   "templating": {
     "list": [
