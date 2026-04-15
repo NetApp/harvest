@@ -173,7 +173,7 @@ func (z *ZapiPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Pl
 	case "FlexCache":
 		return flexcache.New(abc)
 	default:
-		z.Logger.Info("no zapiPerf plugin found for %s", slog.String("kind", kind))
+		z.Logger.Info("no zapiPerf plugin found", slog.String("kind", kind))
 	}
 	return nil
 }

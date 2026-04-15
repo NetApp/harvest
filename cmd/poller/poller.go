@@ -25,6 +25,7 @@ package main
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"crypto/fips140"
 	"crypto/tls"
@@ -55,6 +56,7 @@ import (
 	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/cisco"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/cmperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseries"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseriesperf"
@@ -82,6 +84,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	harvestTemplate "github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	version2 "github.com/netapp/harvest/v2/pkg/version"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
@@ -905,6 +908,11 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 		}
 	}
 
+	// Build CmPerf manifest from the already-initialized CmPerf collectors.
+	if manifest := buildCmPerfManifest(cols, p.getCmManifestName()); manifest != nil {
+		deleteAndPostCmManifest(manifest)
+	}
+
 	p.collectors = append(p.collectors, cols...)
 	// link each collector with requested exporter & update metadata
 	for _, col := range cols {
@@ -942,6 +950,85 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	return nil
 }
 
+// cmPerfPresetDetail holds the per-object section of a CmPerf manifest.
+type cmPerfPresetDetail struct {
+	Object       string   `json:"object"`
+	SamplePeriod string   `json:"sample-period"`
+	Counters     []string `json:"counters"`
+}
+
+// cmPerfManifestJSON is the top-level CmPerf manifest structure.
+type cmPerfManifestJSON struct {
+	Preset        string               `json:"preset"`
+	PresetDetails []cmPerfPresetDetail `json:"preset_details"`
+}
+
+func deleteAndPostCmManifest(_ []byte) {
+	// TODO implement
+}
+
+// buildCmPerfManifest constructs a JSON manifest from the already-initialized CmPerf
+// collectors. It reads query, counters, and schedule from the collector's merged params
+// (i.e. default.yaml + per-object sub-template).
+// preset_details are sorted by object; counters within each entry are sorted.
+func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte {
+	const defaultDataPeriod = "1m"
+
+	var details []cmPerfPresetDetail
+	for _, col := range cols {
+		if col.GetName() != "CmPerf" {
+			continue
+		}
+		params := col.GetParams()
+
+		query := params.GetChildContentS("query")
+		if query == "" {
+			continue
+		}
+
+		// At the moment, only the defaultDataPeriod is supported by ONTAP
+		dataPeriod := defaultDataPeriod
+
+		var counters []string
+		if countersNode := params.GetChildS("counters"); countersNode != nil {
+			for _, raw := range countersNode.GetAllChildContentS() {
+				if raw == "" {
+					continue
+				}
+				name, _, _, _ := harvestTemplate.ParseMetric(raw)
+				counters = append(counters, name)
+			}
+		}
+		slices.Sort(counters)
+
+		details = append(details, cmPerfPresetDetail{
+			Object:       query,
+			SamplePeriod: dataPeriod,
+			Counters:     counters,
+		})
+	}
+
+	if len(details) == 0 {
+		return nil
+	}
+
+	slices.SortFunc(details, func(a, b cmPerfPresetDetail) int {
+		return strings.Compare(a.Object, b.Object)
+	})
+
+	manifest := cmPerfManifestJSON{
+		Preset:        manifestName,
+		PresetDetails: details,
+	}
+	data, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		logger.Error("buildCmPerfManifest: failed to marshal manifest", slogx.Err(err))
+		return nil
+	}
+	logger.Info("built CmPerf manifest", slog.Int("objects", len(details)))
+	return data
+}
+
 func nonOverlappingCollectors(objectCollectors []objectCollector) []objectCollector {
 	if len(objectCollectors) == 0 {
 		return []objectCollector{}
@@ -953,11 +1040,12 @@ func nonOverlappingCollectors(objectCollectors []objectCollector) []objectCollec
 	unique := make([]objectCollector, 0)
 	conflicts := map[string][]string{
 		"Zapi":     {"Rest"},
-		"ZapiPerf": {"RestPerf", "KeyPerf", "StatPerf"},
+		"ZapiPerf": {"RestPerf", "KeyPerf", "StatPerf", "CmPerf"},
 		"Rest":     {"Zapi"},
-		"RestPerf": {"ZapiPerf", "KeyPerf", "StatPerf"},
-		"KeyPerf":  {"ZapiPerf", "RestPerf", "StatPerf"},
-		"StatPerf": {"ZapiPerf", "RestPerf", "KeyPerf"},
+		"RestPerf": {"ZapiPerf", "KeyPerf", "StatPerf", "CmPerf"},
+		"KeyPerf":  {"ZapiPerf", "RestPerf", "StatPerf", "CmPerf"},
+		"StatPerf": {"ZapiPerf", "RestPerf", "KeyPerf", "CmPerf"},
+		"CmPerf":   {"ZapiPerf", "RestPerf", "KeyPerf", "StatPerf"},
 	}
 
 	// Sort collectors so native ones (viaRedirection=false) come before redirected ones
@@ -1892,6 +1980,10 @@ func (p *Poller) truncateReason(msg string) string {
 	msg, _, _ = strings.Cut(msg, ":")
 	// replace quotes with empty, in case of rest error may have quotes around endpoint which fails prometheus discovery
 	return strings.ReplaceAll(msg, "\"", "")
+}
+
+func (p *Poller) getCmManifestName() string {
+	return cmp.Or(p.params.CmPerfManifest, p.name)
 }
 
 func startPoller(_ *cobra.Command, _ []string) {

@@ -629,6 +629,7 @@ type Poller struct {
 	AuthStyle         string               `yaml:"auth_style,omitempty"`
 	CaCertPath        string               `yaml:"ca_cert,omitempty"`
 	CertificateScript CertificateScript    `yaml:"certificate_script,omitempty"`
+	CmPerfManifest    string               `yaml:"cm_perf_manifest,omitzero"`
 	ClientTimeout     string               `yaml:"client_timeout,omitempty"`
 	Collectors        []Collector          `yaml:"collectors,omitempty"`
 	ConfPath          string               `yaml:"conf_path,omitempty"`
