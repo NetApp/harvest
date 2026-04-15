@@ -236,6 +236,7 @@ var (
 	// Exclude extra metrics for ZAPI
 	excludeNotDocumentedZapiMetrics = []string{
 		"ALERTS",
+		"ems_events",
 		"hist_",
 		"security_",
 		"svm_ldap",
