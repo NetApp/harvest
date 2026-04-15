@@ -1067,6 +1067,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/switch.json":             2,
 		"cmode/workload.json":           2,
 		"storagegrid/fabricpool.json":   2,
+		"eseries/ssd_cache.json":        2,
 	}
 	// count the number of expanded sections in the dashboard and ensure num expanded = 1
 	VisitDashboards(

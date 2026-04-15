@@ -210,7 +210,7 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 	// get closest index
 	idx := getClosestIndex(versions, ontapVersion)
 	if idx >= 0 && idx < len(versions) {
-		selectedVersion = versions[idx].String()
+		selectedVersion = versions[idx].Original()
 	}
 
 	return filepath.Join(pathPrefix, selectedVersion), nil
