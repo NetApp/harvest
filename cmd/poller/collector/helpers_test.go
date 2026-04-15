@@ -4,6 +4,8 @@ import (
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/third_party/go-version"
+	"log/slog"
+	"path/filepath"
 	"sort"
 	"testing"
 )
@@ -118,4 +120,16 @@ func TestParseTemplateRef(t *testing.T) {
 			assert.Equal(t, isDelegated, tt.expectedIsDelegated)
 		})
 	}
+}
+
+func Test_findBestFit_LeadingZeroVersion(t *testing.T) {
+	repoRoot := "../../.."
+	c := &AbstractCollector{
+		Name:   "EseriesPerf",
+		Logger: slog.Default(),
+	}
+
+	got, err := c.findBestFit(repoRoot, "conf", "ssd_cache.yaml", "", buildVersion("12.00.0"))
+	assert.Nil(t, err)
+	assert.Equal(t, filepath.Base(got), "12.00.0")
 }

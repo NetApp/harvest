@@ -197,20 +197,23 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 		return "", errs.ErrNoTemplateMatch
 	}
 
-	versions := make([]*version.Version, len(availableVersions))
-	for i, raw := range availableVersions {
+	// original folder name to preserve leading zeros (e.g. "12.00.0")
+	originalName := make(map[string]string, len(availableVersions))
+	versions := make([]*version.Version, 0, len(availableVersions))
+	for _, raw := range availableVersions {
 		v, err := version.NewVersion(raw)
 		if err != nil {
 			continue
 		}
-		versions[i] = v
+		originalName[v.String()] = raw
+		versions = append(versions, v)
 	}
 	sort.Sort(version.Collection(versions))
 
 	// get closest index
 	idx := getClosestIndex(versions, ontapVersion)
 	if idx >= 0 && idx < len(versions) {
-		selectedVersion = versions[idx].String()
+		selectedVersion = originalName[versions[idx].String()]
 	}
 
 	return filepath.Join(pathPrefix, selectedVersion), nil
