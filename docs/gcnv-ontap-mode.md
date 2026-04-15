@@ -38,16 +38,16 @@ For all poller parameters, see [Poller configuration](configure-harvest-basic.md
 
 ## Supported Harvest Metrics
 
-Capacity and configuration metrics are available via the `Rest` collector in GCNV ONTAP mode.
+Capacity metrics are available via the `Rest` collector in GCNV ONTAP mode.
 However, some metrics may not be available due to permission limitations imposed by the GCNV ONTAP mode environment.
 Only limited performance metrics are supported because GCNV ONTAP mode does not support the `ZapiPerf` or `RestPerf` collectors.
 Instead, use the [KeyPerf](configure-keyperf.md) collector to gather latency, IOPS, and throughput performance metrics for a limited set of objects.
 
 The following collectors are supported:
 
-- `Rest` — capacity, configuration, and inventory metrics
-- [`KeyPerf`](configure-keyperf.md) — latency, IOPS, and throughput performance metrics
-- `Ems` — events and alerts
+- `Rest`
+- `KeyPerf`
+- `Ems`
 
 Performance metrics with the API name `KeyPerf` in the [ONTAP metrics documentation](ontap-metrics.md) are supported in GCNV ONTAP mode systems.
 As a result, some panels in the dashboards may be missing information.
