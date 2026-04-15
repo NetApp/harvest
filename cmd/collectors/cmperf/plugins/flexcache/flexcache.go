@@ -5,7 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 )
 
-// New This uses the statperf flexcahe plugin implementation as the functionality is identical
+// New This uses the statperf flexcache plugin implementation as the functionality is identical
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return flexcache.New(p)
 }
