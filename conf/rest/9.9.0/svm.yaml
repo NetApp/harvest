@@ -49,7 +49,7 @@ plugins:
         - type root_svm `admin` `Yes`
         - type root_svm `system` `Yes`
       value_to_num:
-        - new_status state online online `0`
+        - new_status state running running `0`
         - ldap_signed ldap_session_security sign sign `0`
         - ldap_encrypted ldap_session_security seal seal `0`
 #  - ChangeLog
