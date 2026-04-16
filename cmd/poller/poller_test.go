@@ -1,17 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
-	"strings"
-	"testing"
-
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	collectorPkg "github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"strings"
+	"testing"
 )
 
 func TestUnion2(t *testing.T) {
@@ -155,6 +156,18 @@ func Test_nonOverlappingCollectors(t *testing.T) {
 		{name: "w overlap StatPerf3", args: ocs("KeyPerf", "StatPerf"), want: ocs("KeyPerf")},
 		{name: "no overlap StatPerf", args: ocs("Rest", "StatPerf"), want: ocs("Rest", "StatPerf")},
 		{name: "overlap statperf", args: ocs("StatPerf", "StatPerf"), want: ocs("StatPerf")},
+
+		// CmPerf overlap tests
+		{name: "CmPerf alone", args: ocs("CmPerf"), want: ocs("CmPerf")},
+		{name: "CmPerf no overlap with Rest", args: ocs("Rest", "CmPerf"), want: ocs("Rest", "CmPerf")},
+		{name: "CmPerf overlap RestPerf", args: ocs("RestPerf", "CmPerf"), want: ocs("RestPerf")},
+		{name: "CmPerf overlap RestPerf reversed", args: ocs("CmPerf", "RestPerf"), want: ocs("CmPerf")},
+		{name: "CmPerf overlap KeyPerf", args: ocs("KeyPerf", "CmPerf"), want: ocs("KeyPerf")},
+		{name: "CmPerf overlap KeyPerf reversed", args: ocs("CmPerf", "KeyPerf"), want: ocs("CmPerf")},
+		{name: "CmPerf overlap StatPerf", args: ocs("StatPerf", "CmPerf"), want: ocs("StatPerf")},
+		{name: "CmPerf overlap ZapiPerf", args: ocs("ZapiPerf", "CmPerf"), want: ocs("ZapiPerf")},
+		{name: "CmPerf overlap CmPerf", args: ocs("CmPerf", "CmPerf"), want: ocs("CmPerf")},
+		{name: "CmPerf with Rest and RestPerf", args: ocs("Rest", "RestPerf", "CmPerf"), want: ocs("Rest", "RestPerf")},
 
 		// Test cases for viaRedirection flag behavior
 		{name: "native wins over redirected - same class",
@@ -679,6 +692,225 @@ func TestGetTemplatesForCollector(t *testing.T) {
 
 			result := poller.fetchCollectorTemplates(tt.collectorClass)
 			assert.Equal(t, result, tt.expectedTemplates)
+		})
+	}
+}
+
+// testCollector wraps AbstractCollector and provides the one method (Init) that
+// AbstractCollector omits. *testCollector satisfies the full collector.Collector interface.
+type testCollector struct {
+	*collectorPkg.AbstractCollector
+}
+
+func (t *testCollector) Init(*collectorPkg.AbstractCollector) error { return nil }
+
+// makeCmPerfCollector builds a minimal *testCollector whose Params contain
+// the query, counters, and (optionally) schedule sub-trees expected by buildCmPerfManifest.
+func makeCmPerfCollector(name, query, dataPeriod string, counters []string) *testCollector {
+	params := node.NewS("")
+	params.NewChildS("query", query)
+
+	if dataPeriod != "" {
+		sched := params.NewChildS("schedule", "")
+		dataTask := sched.NewChildS("data", "")
+		dataTask.SetContentS(dataPeriod)
+	}
+
+	cNode := params.NewChildS("counters", "")
+	for _, c := range counters {
+		cNode.NewChildS("", c)
+	}
+
+	return &testCollector{collectorPkg.New(name, query, &options.Options{}, params, nil, conf.Remote{})}
+}
+
+func TestBuildCmPerfManifest(t *testing.T) {
+	tests := []struct {
+		name     string
+		cols     []collectorPkg.Collector
+		wantNil  bool
+		wantJSON string
+	}{
+		{
+			name:    "empty input returns nil",
+			cols:    nil,
+			wantNil: true,
+		},
+		{
+			name:    "no CmPerf collectors returns nil",
+			cols:    []collectorPkg.Collector{makeCmPerfCollector("RestPerf", "nfsv3", "3m", []string{"ops"})},
+			wantNil: true,
+		},
+		{
+			name: "single CmPerf collector",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "nfsv3", "3m", []string{"ops", "read_ops"}),
+			},
+			wantJSON: `{
+    "preset": "harvest_overview",
+    "preset_details": [
+        {
+            "object": "nfsv3",
+            "sample-period": "1m",
+            "counters": [
+                "ops",
+                "read_ops"
+            ]
+        }
+    ]
+}`,
+		},
+		{
+			name: "multiple collectors sorted by object",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "zcifs", "1m", []string{"write_ops"}),
+				makeCmPerfCollector("CmPerf", "nfsv3", "1m", []string{"ops"}),
+			},
+			wantJSON: `{
+    "preset": "harvest_overview",
+    "preset_details": [
+        {
+            "object": "nfsv3",
+            "sample-period": "1m",
+            "counters": [
+                "ops"
+            ]
+        },
+        {
+            "object": "zcifs",
+            "sample-period": "1m",
+            "counters": [
+                "write_ops"
+            ]
+        }
+    ]
+}`,
+		},
+		{
+			name: "counters are sorted",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "workload", "5m", []string{"zz_counter", "aa_counter", "mm_counter"}),
+			},
+			wantJSON: `{
+    "preset": "harvest_overview",
+    "preset_details": [
+        {
+            "object": "workload",
+            "sample-period": "1m",
+            "counters": [
+                "aa_counter",
+                "mm_counter",
+                "zz_counter"
+            ]
+        }
+    ]
+}`,
+		},
+		{
+			name: "counter with rename arrow uses base name",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "nfsv3", "1m", []string{"nfsv3_ops => ops"}),
+			},
+			wantJSON: `{
+    "preset": "harvest_overview",
+    "preset_details": [
+        {
+            "object": "nfsv3",
+            "sample-period": "1m",
+            "counters": [
+                "nfsv3_ops"
+            ]
+        }
+    ]
+}`,
+		},
+		{
+			name: "default data period when schedule absent",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "nfsv3", "", []string{"ops"}),
+			},
+			wantJSON: `{
+    "preset": "harvest_overview",
+    "preset_details": [
+        {
+            "object": "nfsv3",
+            "sample-period": "1m",
+            "counters": [
+                "ops"
+            ]
+        }
+    ]
+}`,
+		},
+		{
+			name: "mixed collector names: only CmPerf included",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("RestPerf", "rest_obj", "1m", []string{"rest_ctr"}),
+				makeCmPerfCollector("CmPerf", "cm_obj", "2m", []string{"cm_ctr"}),
+				makeCmPerfCollector("ZapiPerf", "zapi_obj", "1m", []string{"zapi_ctr"}),
+			},
+			wantJSON: `{
+    "preset": "harvest_overview",
+    "preset_details": [
+        {
+            "object": "cm_obj",
+            "sample-period": "1m",
+            "counters": [
+                "cm_ctr"
+            ]
+        }
+    ]
+}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildCmPerfManifest(tt.cols, "harvest_overview")
+			if tt.wantNil {
+				if result != nil {
+					t.Errorf("expected nil, got %s", result)
+				}
+				return
+			}
+			var gotMap, wantMap any
+			if err := json.Unmarshal(result, &gotMap); err != nil {
+				t.Fatalf("result is not valid JSON: %v\n%s", err, result)
+			}
+			if err := json.Unmarshal([]byte(tt.wantJSON), &wantMap); err != nil {
+				t.Fatalf("wantJSON is not valid JSON: %v", err)
+			}
+			if diff := cmp.Diff(wantMap, gotMap); diff != "" {
+				t.Errorf("manifest mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestPoller_getCmManifestName(t *testing.T) {
+	tests := []struct {
+		name           string
+		pollerName     string
+		cmPerfManifest string
+		want           string
+	}{
+		{name: "empty", pollerName: "", cmPerfManifest: "", want: ""},
+		{name: "pollerName", pollerName: "sar", cmPerfManifest: "", want: "sar"},
+		{name: "cm", pollerName: "sar", cmPerfManifest: "moon", want: "moon"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &Poller{
+				name: tt.pollerName,
+				params: &conf.Poller{
+					CmPerfManifest: tt.cmPerfManifest,
+				},
+			}
+
+			if got := p.getCmManifestName(); got != tt.want {
+				t.Errorf("getCmManifestName() got [%v], want [%v]", got, tt.want)
+			}
 		})
 	}
 }

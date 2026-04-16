@@ -85,6 +85,7 @@ Pollers: [Name=_]: #Poller
 	ca_cert?:            string
 	certificate_script?: #CertificateScript
 	client_timeout?:     string
+	cm_perf_manifest?:   string
 	collectors?:         [...#CollectorDef] | [...string]
 	conf_path?:          string
 	credentials_file?:   string

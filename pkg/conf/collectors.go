@@ -11,6 +11,7 @@ func GetCollectorSlice() []string {
 
 var IsCollector = map[string]struct{}{
 	"CiscoRest":   {},
+	"CmPerf":      {},
 	"Ems":         {},
 	"Eseries":     {},
 	"EseriesPerf": {},
@@ -30,6 +31,7 @@ var IsONTAPCollector = map[string]struct{}{
 	"Zapi":     {},
 	"Rest":     {},
 	"RestPerf": {},
+	"CmPerf":   {},
 	"StatPerf": {},
 	"KeyPerf":  {},
 	"Ems":      {},
