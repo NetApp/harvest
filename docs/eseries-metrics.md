@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Apr-08
+Creation Date : 2026-Apr-20
 E-Series Version: 11.80.0
 ```
 
@@ -626,6 +626,7 @@ The `eseries_drive_block_size` metric is visualized in the following Grafana das
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
 | E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
 ///
 
@@ -645,6 +646,7 @@ The `eseries_drive_block_size_physical` metric is visualized in the following Gr
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
 | E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
 ///
 
@@ -664,9 +666,20 @@ The `eseries_drive_capacity` metric is visualized in the following Grafana dashb
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
 | E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
 ///
 
+
+
+### eseries_drive_idle_time
+
+Average drive idle time in microseconds; used internally to compute utilization metrics and not exported
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `idleTime` | conf/eseriesperf/11.80.0/drive.yaml |
 
 
 ### eseries_drive_labels
@@ -683,6 +696,7 @@ The `eseries_drive_labels` metric is visualized in the following Grafana dashboa
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
 | E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
 ///
 
@@ -702,7 +716,179 @@ The `eseries_drive_percent_endurance_used` metric is visualized in the following
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
 | E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
+///
+
+
+
+### eseries_drive_read_data
+
+Drive read throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readBytes` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_read_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Highlights | timeseries | [Top $TopResources Drives by Read Throughput](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=5) |
+///
+
+
+
+### eseries_drive_read_latency
+
+Average drive read latency in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readTimeTotal` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_read_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Highlights | timeseries | [Top $TopResources Drives by Read Latency](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=1) |
+///
+
+
+
+### eseries_drive_read_ops
+
+Drive read I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readOps` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_read_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Highlights | timeseries | [Top $TopResources Drives by Read IOPs](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=3) |
+///
+
+
+
+### eseries_drive_read_utilization
+
+Percentage of time the drive was busy servicing read I/O requests
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_read_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Utilization | timeseries | [Top $TopResources Drives by Read Utilization](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=8) |
+///
+
+
+
+### eseries_drive_total_utilization
+
+Percentage of time the drive was busy servicing all I/O requests (read and write combined)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_total_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Utilization | timeseries | [Top $TopResources Drives by Total Utilization](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=10) |
+///
+
+
+
+### eseries_drive_write_data
+
+Drive write throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeBytes` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_write_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Highlights | timeseries | [Top $TopResources Drives by Write Throughput](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=6) |
+///
+
+
+
+### eseries_drive_write_latency
+
+Average drive write latency in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeTimeTotal` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_write_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Highlights | timeseries | [Top $TopResources Drives by Write Latency](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=2) |
+///
+
+
+
+### eseries_drive_write_ops
+
+Drive write I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeOps` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_write_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Highlights | timeseries | [Top $TopResources Drives by Write IOPs](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=4) |
+///
+
+
+
+### eseries_drive_write_utilization
+
+Percentage of time the drive was busy servicing write I/O requests
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest generated` | conf/eseriesperf/11.80.0/drive.yaml |
+
+The `eseries_drive_write_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Utilization | timeseries | [Top $TopResources Drives by Write Utilization](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=9) |
 ///
 
 

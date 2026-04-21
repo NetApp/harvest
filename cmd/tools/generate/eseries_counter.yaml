@@ -509,6 +509,91 @@ counters:
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
   # =============================================================================
+  # Drive Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_drive_read_ops
+    Description: Drive read I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readOps
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_write_ops
+    Description: Drive write I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeOps
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_read_data
+    Description: Drive read throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytes
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_write_data
+    Description: Drive write throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytes
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_read_latency
+    Description: Average drive read latency in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readTimeTotal
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_write_latency
+    Description: Average drive write latency in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeTimeTotal
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_idle_time
+    Description: Average drive idle time in microseconds; used internally to compute
+      utilization metrics and not exported
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: idleTime
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_read_utilization
+    Description: Percentage of time the drive was busy servicing read I/O requests
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest generated
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_write_utilization
+    Description: Percentage of time the drive was busy servicing write I/O requests
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest generated
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  - Name: eseries_drive_total_utilization
+    Description: Percentage of time the drive was busy servicing all I/O requests
+      (read and write combined)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest generated
+        Template: conf/eseriesperf/11.80.0/drive.yaml
+
+  # =============================================================================
   # SSD Cache Metrics (Eseries Collector - Configuration)
   # =============================================================================
   - Name: eseries_ssd_cache_labels
