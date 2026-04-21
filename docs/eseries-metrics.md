@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Apr-20
+Creation Date : 2026-Apr-21
 E-Series Version: 11.80.0
 ```
 
@@ -627,7 +627,7 @@ The `eseries_drive_block_size` metric is visualized in the following Grafana das
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
-| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
+| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=112) |
 ///
 
 
@@ -647,7 +647,7 @@ The `eseries_drive_block_size_physical` metric is visualized in the following Gr
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
-| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
+| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=112) |
 ///
 
 
@@ -667,7 +667,7 @@ The `eseries_drive_capacity` metric is visualized in the following Grafana dashb
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
-| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
+| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=112) |
 ///
 
 
@@ -697,7 +697,7 @@ The `eseries_drive_labels` metric is visualized in the following Grafana dashboa
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
-| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
+| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=112) |
 ///
 
 
@@ -717,7 +717,7 @@ The `eseries_drive_percent_endurance_used` metric is visualized in the following
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
-| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=31) |
+| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=112) |
 ///
 
 
