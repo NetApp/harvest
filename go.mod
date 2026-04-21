@@ -3,6 +3,7 @@ module github.com/netapp/harvest/v2
 go 1.26.1
 
 require (
+	github.com/VictoriaMetrics/easyproto v1.2.0
 	github.com/goccy/go-yaml v1.19.2
 	github.com/google/go-cmp v0.7.0
 	github.com/rivo/uniseg v0.4.7
