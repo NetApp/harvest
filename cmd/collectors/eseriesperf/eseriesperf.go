@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/cachehitratio"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/controller"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/drive"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/ssdcachestats"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -258,6 +259,8 @@ func (ep *EseriesPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.
 		return cachehitratio.New(p)
 	case "Controller":
 		return controller.New(p)
+	case "Drive":
+		return drive.New(p)
 	case "SsdCacheStats":
 		return ssdcachestats.New(p)
 	default:

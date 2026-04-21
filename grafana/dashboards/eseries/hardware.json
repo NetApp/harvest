@@ -344,7 +344,11 @@
                 "cellOptions": {
                   "type": "auto"
                 },
-                "filterable": true
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
               },
               "mappings": [
                 {
@@ -363,7 +367,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   }
                 ]
               }
@@ -452,15 +457,16 @@
             ]
           },
           "gridPos": {
-            "h": 10,
+            "h": 11,
             "w": 24,
             "x": 0,
             "y": 18
           },
-          "id": 31,
+          "id": 112,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
+            "cellHeight": "sm",
             "showHeader": true,
             "sortBy": [
               {
@@ -469,13 +475,14 @@
               }
             ]
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
               "datasource": {
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
+              "editorMode": "code",
               "exemplar": false,
               "expr": "eseries_drive_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
               "format": "table",
@@ -489,6 +496,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
+              "editorMode": "code",
               "exemplar": false,
               "expr": "eseries_drive_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
               "format": "table",
@@ -502,6 +510,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
+              "editorMode": "code",
               "exemplar": false,
               "expr": "eseries_drive_percent_endurance_used{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
               "format": "table",
@@ -515,6 +524,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
+              "editorMode": "code",
               "exemplar": false,
               "expr": "eseries_drive_block_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
               "format": "table",
@@ -529,6 +539,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
+              "editorMode": "code",
               "exemplar": false,
               "expr": "eseries_drive_block_size_physical{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
               "format": "table",
@@ -548,11 +559,18 @@
               }
             },
             {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
                   "names": [
-                    "array 1",
+                    "array",
                     "assigned_to",
                     "current_speed",
                     "da_capable",
@@ -573,12 +591,13 @@
                     "serial_number",
                     "slot",
                     "status",
+                    "tray_id",
                     "wwid",
                     "Value #B",
                     "Value #C",
                     "Value #D",
                     "Value #E",
-                    "datacenter 1"
+                    "datacenter"
                   ]
                 }
               }
@@ -589,37 +608,51 @@
                 "excludeByName": {
                   "array 2": true,
                   "array 3": true,
+                  "array 4": true,
+                  "array 5": true,
                   "datacenter 2": true,
-                  "datacenter 3": true
+                  "datacenter 3": true,
+                  "datacenter 4": true,
+                  "datacenter 5": true
                 },
+                "includeByName": {},
                 "indexByName": {
-                  "Value #B": 13,
-                  "Value #C": 6,
-                  "Value #D": 11,
-                  "Value #E": 12,
-                  "array 1": 1,
-                  "assigned_to": 4,
-                  "current_speed": 9,
-                  "da_capable": 20,
-                  "datacenter 1": 0,
-                  "dulbe_capable": 21,
-                  "fips_capable": 22,
-                  "firmware_version": 14,
-                  "interface_type": 7,
-                  "manufacturer": 17,
-                  "max_speed": 10,
-                  "media_type": 5,
-                  "mode": 3,
-                  "pcie_generation": 8,
-                  "product_id": 15,
-                  "redundant_path": 24,
-                  "rw_accessible": 23,
-                  "secure_capable": 18,
-                  "secure_enabled": 19,
-                  "serial_number": 16,
-                  "slot": 26,
-                  "status": 2,
-                  "wwid": 25
+                  "Value #B": 15,
+                  "Value #C": 8,
+                  "Value #D": 13,
+                  "Value #E": 14,
+                  "array": 1,
+                  "array 2": 28,
+                  "array 3": 30,
+                  "array 4": 32,
+                  "array 5": 34,
+                  "assigned_to": 6,
+                  "current_speed": 11,
+                  "da_capable": 22,
+                  "datacenter": 0,
+                  "datacenter 2": 29,
+                  "datacenter 3": 31,
+                  "datacenter 4": 33,
+                  "datacenter 5": 35,
+                  "dulbe_capable": 23,
+                  "fips_capable": 24,
+                  "firmware_version": 16,
+                  "interface_type": 9,
+                  "manufacturer": 19,
+                  "max_speed": 12,
+                  "media_type": 7,
+                  "mode": 5,
+                  "pcie_generation": 10,
+                  "product_id": 17,
+                  "redundant_path": 26,
+                  "rw_accessible": 25,
+                  "secure_capable": 20,
+                  "secure_enabled": 21,
+                  "serial_number": 18,
+                  "slot": 3,
+                  "status": 4,
+                  "tray_id": 2,
+                  "wwid": 27
                 },
                 "renameByName": {
                   "Value #B": "Capacity",
@@ -651,6 +684,7 @@
                   "serial_number": "Serial Number",
                   "slot": "Slot",
                   "status": "Status",
+                  "tray_id": "Tray",
                   "wwid": "WWID"
                 }
               }
@@ -741,7 +775,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 29
           },
           "id": 3,
           "interval": "1m",
@@ -911,7 +945,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 63
           },
           "id": 12,
           "interval": "1m",
@@ -1065,7 +1099,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 61
+            "y": 71
           },
           "id": 13,
           "interval": "1m",
@@ -1249,7 +1283,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 69
+            "y": 79
           },
           "id": 4,
           "options": {
@@ -1358,7 +1392,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 69
+            "y": 79
           },
           "id": 10,
           "options": {
@@ -1467,7 +1501,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 81
+            "y": 91
           },
           "id": 11,
           "options": {
@@ -1565,7 +1599,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 30
           },
           "id": 5,
           "interval": "1m",
@@ -1759,7 +1793,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 47
+            "y": 57
           },
           "id": 6,
           "interval": "1m",
@@ -1999,7 +2033,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 58
           },
           "id": 7,
           "interval": "1m",
@@ -2138,7 +2172,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 68
           },
           "id": 8,
           "interval": "1m",
@@ -2264,7 +2298,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 49
+            "y": 59
           },
           "id": 105,
           "interval": "1m",
@@ -2390,7 +2424,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 50
+            "y": 60
           },
           "id": 103,
           "interval": "1m",
@@ -2510,7 +2544,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 51
+            "y": 61
           },
           "id": 107,
           "interval": "1m",
@@ -2624,7 +2658,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 52
+            "y": 62
           },
           "id": 101,
           "interval": "1m",
@@ -2747,7 +2781,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 63
           },
           "id": 109,
           "interval": "1m",
@@ -2876,7 +2910,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 28
+            "y": 38
           },
           "id": 111,
           "interval": "1m",

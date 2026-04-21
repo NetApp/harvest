@@ -18,6 +18,9 @@ counters:
   - writeOps                      => write_ops
   - writeTimeTotal                => write_latency
 
+plugins:
+  - Drive
+
 export_options:
   instance_keys:
     - id
