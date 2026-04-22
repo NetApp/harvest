@@ -358,9 +358,17 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 			}
 			counterSchema.DimY = val
 		case 6:
-			return counterSchema, errors.New("counter_x_labels not implemented yet")
+			val, ok := fc.String()
+			if !ok {
+				return counterSchema, errors.New("failed to read counter schema counter_x_labels")
+			}
+			counterSchema.LabelsX = append(counterSchema.LabelsX, val)
 		case 7:
-			return counterSchema, errors.New("counter_y_labels not implemented yet")
+			val, ok := fc.String()
+			if !ok {
+				return counterSchema, errors.New("failed to read counter schema counter_y_labels")
+			}
+			counterSchema.LabelsY = append(counterSchema.LabelsY, val)
 		}
 	}
 

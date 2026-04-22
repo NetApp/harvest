@@ -22,6 +22,14 @@ func appendVarintField(dst []byte, fieldNum uint64, value uint64) []byte {
 	return dst
 }
 
+func appendStringField(dst []byte, fieldNum uint64, value string) []byte {
+	tag := (fieldNum << 3) | 2 // wire type 2 for length-delimited
+	dst = binary.AppendUvarint(dst, tag)
+	dst = binary.AppendUvarint(dst, uint64(len(value)))
+	dst = append(dst, value...)
+	return dst
+}
+
 func mustStringValue(t *testing.T, counter CounterType) string {
 	t.Helper()
 	value, ok := counter.StringValue()
@@ -104,6 +112,8 @@ func TestMessages(t *testing.T) {
 	assert.True(t, b)
 	assert.Equal(t, listString, []string{"abc", "def", "ghi"})
 	assert.Equal(t, mustList32(t, obs[1].Data.Instances[0].Counters[4]), []uint32{100, 200, 300})
+
+	assert.Equal(t, obs[1].Schema.CounterSchema[2].LabelsX, []string{"opcode 1", "opcode 2"})
 }
 
 func TestCounterTypeAccessors(t *testing.T) {
@@ -156,6 +166,21 @@ func TestHandleArrayCountersUnpackedRepeatedFields(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, counters, []uint64{1, 1 << 33, 1 << 34})
 	})
+}
+
+func TestHandleCounterSchemaLabels(t *testing.T) {
+	payload := appendStringField(nil, 1, "counter-1")
+	payload = appendVarintField(payload, 2, 1)
+	payload = appendVarintField(payload, 3, 3)
+	payload = appendStringField(payload, 6, "node")
+	payload = appendStringField(payload, 6, "svm")
+	payload = appendStringField(payload, 7, "read")
+	payload = appendStringField(payload, 7, "write")
+
+	schema, err := handleCounterSchema(payload)
+	assert.Nil(t, err)
+	assert.Equal(t, schema.LabelsX, []string{"node", "svm"})
+	assert.Equal(t, schema.LabelsY, []string{"read", "write"})
 }
 
 func TestReadProtoRejectsMalformedNestedMessages(t *testing.T) {
