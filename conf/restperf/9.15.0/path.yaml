@@ -19,7 +19,7 @@ counters:
 plugins:
   LabelAgent:
     split:
-      - id `_` hostadapter,target_wwpn
+      - id `.` hostadapter,target_wwpn
 
 export_options:
   instance_keys:
