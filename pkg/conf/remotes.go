@@ -14,6 +14,7 @@ type Remote struct {
 	ZAPIsExist      bool
 	ZAPIsChecked    bool
 	HasREST         bool
+	HasRESTPerf     bool
 	IsClustered     bool
 }
 
@@ -38,7 +39,7 @@ func (r Remote) IsASAr2() bool {
 	return r.Model == ASAr2
 }
 
-func NewRemote(results gjson.Result) Remote {
+func NewRemote(results gjson.Result, tableResults gjson.Result) Remote {
 	var remote Remote
 	remote.Name = results.Get("name").ClonedString()
 	remote.UUID = results.Get("uuid").ClonedString()
@@ -54,6 +55,6 @@ func NewRemote(results gjson.Result) Remote {
 	if remote.IsDisaggregated && remote.IsSanOptimized {
 		remote.Model = ASAr2
 	}
-
+	remote.HasRESTPerf = tableResults.Get("num_records").Exists()
 	return remote
 }

@@ -359,16 +359,17 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 
 func (c *Client) UpdateClusterInfo(retries int) error {
 	var (
-		err     error
-		content []byte
+		err           error
+		content       []byte
+		contentTables []byte
 	)
 
 	for range retries {
-		href := NewHrefBuilder().
+		apiCluster := NewHrefBuilder().
 			APIPath("api/cluster").
 			Fields([]string{"*"}).
 			Build()
-		content, err = c.GetRest(href)
+		content, err = c.GetRest(apiCluster)
 		if err != nil {
 			if errors.Is(err, errs.ErrPermissionDenied) {
 				return err
@@ -376,8 +377,21 @@ func (c *Client) UpdateClusterInfo(retries int) error {
 			continue
 		}
 
-		results := gjson.ParseBytes(content)
-		c.remote = conf.NewRemote(results)
+		apiClusterResults := gjson.ParseBytes(content)
+
+		apiTables := NewHrefBuilder().
+			APIPath("api/cluster/counter/tables").
+			ReturnRecords(false).
+			Build()
+		contentTables, err = c.GetRest(apiTables)
+		if err != nil {
+			if errors.Is(err, errs.ErrPermissionDenied) {
+				return err
+			}
+		}
+		apiTableResults := gjson.ParseBytes(contentTables)
+
+		c.remote = conf.NewRemote(apiClusterResults, apiTableResults)
 
 		return nil
 	}
