@@ -92,11 +92,12 @@ func TestCollectorUpgrade(t *testing.T) {
 		remote        conf.Remote
 	}
 
-	ontap911 := conf.Remote{Version: "9.11.1", ZAPIsExist: true}
+	ontap911 := conf.Remote{Version: "9.11.1", ZAPIsExist: true, HasRESTPerf: true}
 	ontap917 := conf.Remote{Version: "9.17.1", ZAPIsExist: false}
 	asaR2 := conf.Remote{Version: "9.16.1", ZAPIsExist: false, IsDisaggregated: true, IsSanOptimized: true}
 	keyPerf := conf.Remote{Version: "9.17.1", ZAPIsExist: false, IsDisaggregated: true}
 	keyPerfWithZapi := conf.Remote{Version: "9.17.1", ZAPIsExist: true, IsDisaggregated: true}
+	afxWithRestPerf := conf.Remote{Version: "9.17.1", ZAPIsExist: false, IsDisaggregated: true, HasRESTPerf: true}
 
 	tests := []test{
 		{name: "9.11 w/ ZAPI", remote: ontap911, askFor: "Zapi", wantCollector: "Zapi"},
@@ -119,6 +120,10 @@ func TestCollectorUpgrade(t *testing.T) {
 
 		{name: "ASA R2", remote: asaR2, askFor: "Zapi", wantCollector: "Rest"},
 		{name: "ASA R2", remote: asaR2, askFor: "RestPerf", wantCollector: "KeyPerf"},
+
+		{name: "AFX", remote: afxWithRestPerf, askFor: "RestPerf", wantCollector: "RestPerf"},
+		{name: "AFX", remote: afxWithRestPerf, askFor: "ZapiPerf", wantCollector: "RestPerf"},
+		{name: "AFX", remote: afxWithRestPerf, askFor: "KeyPerf", wantCollector: "KeyPerf"},
 	}
 
 	for _, tt := range tests {

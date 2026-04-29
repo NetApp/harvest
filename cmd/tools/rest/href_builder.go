@@ -11,15 +11,16 @@ const URLMaxLimit = 8 * 1024
 
 type HrefBuilder struct {
 	apiPath                      string
-	fields                       []string
-	hiddenFields                 []string
 	counterSchema                string
+	fields                       []string
 	filter                       []string
+	hiddenFields                 []string
+	isIgnoreUnknownFieldsEnabled bool
+	maxRecords                   string
 	queryFields                  string
 	queryValue                   string
-	maxRecords                   string
+	returnRecords                *bool
 	returnTimeout                *int
-	isIgnoreUnknownFieldsEnabled bool
 }
 
 func NewHrefBuilder() *HrefBuilder {
@@ -76,6 +77,11 @@ func (b *HrefBuilder) IsIgnoreUnknownFieldsEnabled(isIgnoreUnknownFieldsEnabled 
 	return b
 }
 
+func (b *HrefBuilder) ReturnRecords(returnRecords bool) *HrefBuilder {
+	b.returnRecords = &returnRecords
+	return b
+}
+
 func (b *HrefBuilder) Build() string {
 	href := strings.Builder{}
 	if !strings.HasPrefix(b.apiPath, "api/") {
@@ -83,7 +89,11 @@ func (b *HrefBuilder) Build() string {
 	}
 	href.WriteString(b.apiPath)
 
-	href.WriteString("?return_records=true")
+	if b.returnRecords != nil {
+		href.WriteString("?return_records=" + strconv.FormatBool(*b.returnRecords))
+	} else {
+		href.WriteString("?return_records=true")
+	}
 
 	if len(b.hiddenFields) > 0 {
 		fieldsMap := make(map[string]bool)

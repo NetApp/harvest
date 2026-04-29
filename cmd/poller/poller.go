@@ -1531,6 +1531,7 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 	}
 
 	isKeyPerf := remote.IsKeyPerf()
+	hasRestPerf := remote.HasRESTPerf
 	replaced := c.Name
 
 	if strings.HasPrefix(replaced, "Zapi") {
@@ -1549,7 +1550,7 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 		}
 
 		replaced = strings.ReplaceAll(replaced, "Zapi", "Rest")
-		if isKeyPerf {
+		if isKeyPerf && !hasRestPerf {
 			replaced = strings.ReplaceAll(replaced, "RestPerf", "KeyPerf")
 		}
 		return conf.Collector{
@@ -1558,7 +1559,7 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 		}
 	}
 
-	if isKeyPerf {
+	if isKeyPerf && !hasRestPerf {
 		replaced := strings.ReplaceAll(c.Name, "RestPerf", "KeyPerf")
 		return conf.Collector{
 			Name:      replaced,
