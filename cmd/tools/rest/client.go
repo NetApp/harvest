@@ -388,6 +388,11 @@ func (c *Client) UpdateClusterInfo(retries int) error {
 			if errors.Is(err, errs.ErrPermissionDenied) {
 				return err
 			}
+			if errs.IsRestErr(err, errs.APINotFound) {
+				contentTables = nil
+			} else {
+				continue
+			}
 		}
 		apiTableResults := gjson.ParseBytes(contentTables)
 

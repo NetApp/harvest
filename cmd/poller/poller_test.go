@@ -92,7 +92,7 @@ func TestCollectorUpgrade(t *testing.T) {
 		remote        conf.Remote
 	}
 
-	ontap911 := conf.Remote{Version: "9.11.1", ZAPIsExist: true}
+	ontap911 := conf.Remote{Version: "9.11.1", ZAPIsExist: true, HasRESTPerf: true}
 	ontap917 := conf.Remote{Version: "9.17.1", ZAPIsExist: false}
 	asaR2 := conf.Remote{Version: "9.16.1", ZAPIsExist: false, IsDisaggregated: true, IsSanOptimized: true}
 	keyPerf := conf.Remote{Version: "9.17.1", ZAPIsExist: false, IsDisaggregated: true}

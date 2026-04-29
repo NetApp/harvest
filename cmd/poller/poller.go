@@ -1541,7 +1541,7 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 			case "Zapi":
 				return c
 			case "ZapiPerf":
-				if isKeyPerf || hasRestPerf {
+				if isKeyPerf {
 					replaced = "RestPerf"
 				} else {
 					return c
