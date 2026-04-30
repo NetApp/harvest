@@ -90,6 +90,9 @@ type shelfEnvironmentMetric struct {
 	fanSpeed              []float64
 	voltageSensor         map[string]shelfSensorReading
 	currentSensor         map[string]shelfSensorReading
+	psuPowerDrawn         float64
+	moduleType            string
+	moduleFirmwareVersion string
 }
 
 type shelfSensorReading struct {
@@ -675,6 +678,15 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 			if _, ok := shelfEnvironmentMetricMap[iKey]; !ok {
 				shelfEnvironmentMetricMap[iKey] = &shelfEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 			}
+			if o.Object == "shelf_module" {
+				sem := shelfEnvironmentMetricMap[iKey]
+				if mt := instance.GetLabel("module_type"); mt != "" && sem.moduleType == "" {
+					sem.moduleType = mt
+				}
+				if fw := instance.GetLabel("firmware_version"); fw != "" {
+					sem.moduleFirmwareVersion = power.MinFirmwareVersion(sem.moduleFirmwareVersion, fw)
+				}
+			}
 			for mkey, metric := range o.GetMetrics() {
 				switch o.Object {
 				case "shelf_temperature":
@@ -719,6 +731,12 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 								value: value,
 								rail:  power.ClassifyRailFromLabels(instance.GetLabel("location"), instance.GetLabel("sensor_id"), instance.GetLabel("id")),
 							}
+						}
+					}
+				case "shelf_psu":
+					if mkey == "psu-power-drawn" {
+						if value, ok := metric.GetValueFloat64(instance); ok {
+							shelfEnvironmentMetricMap[iKey].psuPowerDrawn += value
 						}
 					}
 				}
@@ -782,6 +800,19 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 						"input rail not detected; using output rail for shelf power",
 						slog.String("shelf", instance.GetLabel("shelf")),
 						slog.Int("output_pairs", outputPairs),
+						slog.Int("unknown_pairs", unknownPairs),
+					)
+				case v.psuPowerDrawn > 0:
+					sumPower = v.psuPowerDrawn
+					// https://mysupport.netapp.com/site/bugs-online/product/ONTAP/BURT/1372079
+					if power.NeedsPsuPowerDrawnCorrection(v.moduleType, v.moduleFirmwareVersion) {
+						sumPower = v.psuPowerDrawn / 8
+					}
+					d.SLogger.Debug(
+						"rail classification unavailable; using psu-power-drawn for shelf power",
+						slog.String("shelf", instance.GetLabel("shelf")),
+						slog.Float64("psu_power_drawn", v.psuPowerDrawn),
+						slog.Float64("shelf_power", sumPower),
 						slog.Int("unknown_pairs", unknownPairs),
 					)
 				default:
@@ -888,6 +919,9 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 					instance.SetLabel("shelf", shelfName)
 					instance.SetLabel("shelf_id", shelfID)
+					if attribute == "shelf-modules" {
+						instance.SetLabel("module_type", s.GetChildContentS("module-type"))
+					}
 
 					// Each child would have different possible values which is an ugly way to write all of them,
 					// so normal value would be mapped to 1 and rest all are mapped to 0.
