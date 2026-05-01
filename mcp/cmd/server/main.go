@@ -226,10 +226,26 @@ func resolveTSDBConfig(override mcptypes.TSDBOverride) auth.TSDBConfig {
 	return config
 }
 
-func addTool[T any](server *mcp.Server, name, description string, handler func(context.Context, *mcp.CallToolRequest, T) (*mcp.CallToolResult, any, error)) {
+var (
+	readOnlyLocalToolAnnotations = mcp.ToolAnnotations{
+		ReadOnlyHint:  true,
+		OpenWorldHint: new(false),
+	}
+	readOnlyRemoteToolAnnotations = mcp.ToolAnnotations{
+		ReadOnlyHint:  true,
+		OpenWorldHint: new(true),
+	}
+	destructiveMutationToolAnnotations = mcp.ToolAnnotations{
+		DestructiveHint: new(true),
+		OpenWorldHint:   new(false),
+	}
+)
+
+func addTool[T any](server *mcp.Server, name, description string, annotations mcp.ToolAnnotations, handler func(context.Context, *mcp.CallToolRequest, T) (*mcp.CallToolResult, any, error)) {
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        name,
 		Description: description,
+		Annotations: &annotations,
 	}, handler)
 }
 
@@ -898,16 +914,16 @@ func createMCPServer() *mcp.Server {
 
 	metricDescriptions = loader.LoadMetricDescriptions(getResourcePath("metadata"), logger)
 
-	addTool(server, "get_metric_description", descriptions.GetMetricDescriptionDesc, GetMetricDescription)
-	addTool(server, "search_metrics", descriptions.SearchMetricsDesc, SearchMetrics)
-	addTool(server, "metrics_query", descriptions.MetricsQueryDesc, MetricsQuery)
-	addTool(server, "metrics_range_query", descriptions.MetricsRangeQueryDesc, MetricsRangeQuery)
-	addTool(server, "list_metrics", descriptions.ListMetricsDesc, ListMetrics)
-	addTool(server, "get_active_alerts", descriptions.GetActiveAlertsDesc, GetActiveAlerts)
-	addTool(server, "infrastructure_health", descriptions.InfrastructureHealthDesc, InfrastructureHealth)
-	addTool(server, "list_label_values", descriptions.ListLabelValuesDesc, ListLabelValues)
-	addTool(server, "list_all_label_names", descriptions.ListAllLabelNamesDesc, ListAllLabelNames)
-	addTool(server, "get_response_format_template", descriptions.GetResponseFormatTemplateDesc, GetResponseFormatTemplate)
+	addTool(server, "get_metric_description", descriptions.GetMetricDescriptionDesc, readOnlyLocalToolAnnotations, GetMetricDescription)
+	addTool(server, "search_metrics", descriptions.SearchMetricsDesc, readOnlyLocalToolAnnotations, SearchMetrics)
+	addTool(server, "metrics_query", descriptions.MetricsQueryDesc, readOnlyRemoteToolAnnotations, MetricsQuery)
+	addTool(server, "metrics_range_query", descriptions.MetricsRangeQueryDesc, readOnlyRemoteToolAnnotations, MetricsRangeQuery)
+	addTool(server, "list_metrics", descriptions.ListMetricsDesc, readOnlyRemoteToolAnnotations, ListMetrics)
+	addTool(server, "get_active_alerts", descriptions.GetActiveAlertsDesc, readOnlyRemoteToolAnnotations, GetActiveAlerts)
+	addTool(server, "infrastructure_health", descriptions.InfrastructureHealthDesc, readOnlyRemoteToolAnnotations, InfrastructureHealth)
+	addTool(server, "list_label_values", descriptions.ListLabelValuesDesc, readOnlyRemoteToolAnnotations, ListLabelValues)
+	addTool(server, "list_all_label_names", descriptions.ListAllLabelNamesDesc, readOnlyRemoteToolAnnotations, ListAllLabelNames)
+	addTool(server, "get_response_format_template", descriptions.GetResponseFormatTemplateDesc, readOnlyLocalToolAnnotations, GetResponseFormatTemplate)
 
 	// Initialize rule manager
 	var err error
@@ -917,13 +933,13 @@ func createMCPServer() *mcp.Server {
 		logger.Info("rule management tools will be disabled - see environment configuration")
 	} else {
 		// Add rule management tools
-		addTool(server, "list_alert_rules", "List all Prometheus alert rules from alert_rules.yml and ems_alert_rules.yml files", ListAlertRules)
-		addTool(server, "create_alert_rule", "Create a new Prometheus alert rule in the appropriate file (alert_rules.yml or ems_alert_rules.yml)", CreateAlertRule)
-		addTool(server, "update_alert_rule", "Update an existing Prometheus alert rule", UpdateAlertRule)
-		addTool(server, "delete_alert_rule", "Delete a Prometheus alert rule", DeleteAlertRule)
-		addTool(server, "validate_alert_syntax", "Validate the syntax of a PromQL expression for an alert rule", ValidateAlertSyntax)
-		addTool(server, "reload_prometheus_rules", "Manually trigger a Prometheus configuration reload to apply rule changes", ReloadPrometheusRules)
-		addTool(server, "get_rules_config_help", "Get help and documentation for configuring the rules management system", GetRulesConfigHelp)
+		addTool(server, "list_alert_rules", "List all Prometheus alert rules from alert_rules.yml and ems_alert_rules.yml files", readOnlyLocalToolAnnotations, ListAlertRules)
+		addTool(server, "create_alert_rule", "Create a new Prometheus alert rule in the appropriate file (alert_rules.yml or ems_alert_rules.yml)", destructiveMutationToolAnnotations, CreateAlertRule)
+		addTool(server, "update_alert_rule", "Update an existing Prometheus alert rule", destructiveMutationToolAnnotations, UpdateAlertRule)
+		addTool(server, "delete_alert_rule", "Delete a Prometheus alert rule", destructiveMutationToolAnnotations, DeleteAlertRule)
+		addTool(server, "validate_alert_syntax", "Validate the syntax of a PromQL expression for an alert rule", readOnlyLocalToolAnnotations, ValidateAlertSyntax)
+		addTool(server, "reload_prometheus_rules", "Manually trigger a Prometheus configuration reload to apply rule changes", destructiveMutationToolAnnotations, ReloadPrometheusRules)
+		addTool(server, "get_rules_config_help", "Get help and documentation for configuring the rules management system", readOnlyLocalToolAnnotations, GetRulesConfigHelp)
 	}
 
 	promptDefinitions, err := loader.LoadPromptDefinitions(getResourcePath("prompts"), logger)
