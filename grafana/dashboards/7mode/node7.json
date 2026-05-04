@@ -549,7 +549,9 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "multi",
+          "hideZeros": false,
+          "sort": "desc"
         }
       },
       "pluginVersion": "8.1.8",
@@ -640,7 +642,9 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "multi",
+          "hideZeros": false,
+          "sort": "desc"
         }
       },
       "pluginVersion": "8.1.8",
@@ -731,7 +735,9 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "multi",
+          "hideZeros": false,
+          "sort": "desc"
         }
       },
       "pluginVersion": "8.1.8",
@@ -952,7 +958,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1057,7 +1065,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1157,7 +1167,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1267,7 +1279,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1376,7 +1390,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1469,7 +1485,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1615,7 +1633,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1726,7 +1746,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1816,7 +1838,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1906,7 +1930,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -1996,7 +2022,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -2223,7 +2251,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -2665,7 +2695,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "targets": [
@@ -2761,7 +2793,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "targets": [
@@ -2999,7 +3033,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -3091,7 +3127,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",

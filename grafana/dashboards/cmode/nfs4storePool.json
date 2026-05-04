@@ -189,8 +189,9 @@
               "placement": "bottom"
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
-              "sort": "none"
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.2",

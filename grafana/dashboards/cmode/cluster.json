@@ -1226,8 +1226,9 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "pluginVersion": "7.5.4",
@@ -1318,8 +1319,9 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "pluginVersion": "7.5.4",
@@ -1411,8 +1413,9 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "pluginVersion": "7.5.4",
@@ -2663,8 +2666,9 @@
               "placement": "bottom"
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
-              "sort": "none"
+              "sort": "desc"
             }
           },
           "targets": [
@@ -2750,8 +2754,9 @@
               "placement": "bottom"
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "multi",
-              "sort": "none"
+              "sort": "desc"
             }
           },
           "targets": [
@@ -2856,7 +2861,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "pluginVersion": "7.5.4",
@@ -2948,7 +2955,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "pluginVersion": "7.5.4",
@@ -3041,7 +3050,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "pluginVersion": "7.5.4",
@@ -3135,7 +3146,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "pluginVersion": "7.5.4",
@@ -3229,7 +3242,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "pluginVersion": "7.5.4",
@@ -3323,7 +3338,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "pluginVersion": "7.5.4",
@@ -3417,7 +3434,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "pluginVersion": "7.5.4",
@@ -3687,7 +3706,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -3771,7 +3792,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -3855,7 +3878,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -3939,7 +3964,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -4023,7 +4050,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -4107,7 +4136,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -4208,7 +4239,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -4294,7 +4327,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [
@@ -4383,7 +4418,9 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
             }
           },
           "targets": [

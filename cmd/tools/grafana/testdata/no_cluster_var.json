@@ -633,8 +633,9 @@
               "sortDesc": true
             },
             "tooltip": {
-              "mode": "single",
-              "sort": "none"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -729,8 +730,9 @@
               "sortDesc": true
             },
             "tooltip": {
-              "mode": "single",
-              "sort": "none"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
@@ -823,8 +825,9 @@
               "sortDesc": true
             },
             "tooltip": {
-              "mode": "single",
-              "sort": "none"
+              "mode": "multi",
+              "hideZeros": false,
+              "sort": "desc"
             }
           },
           "pluginVersion": "8.1.8",
