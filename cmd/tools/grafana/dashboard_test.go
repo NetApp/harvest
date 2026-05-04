@@ -2220,5 +2220,21 @@ func checkTimeSeriesDefaults(t *testing.T, path string, data []byte) {
 			})
 			return true
 		})
+
+		// Check that tooltips are enabled, mode is multi, values sort order is descending, and hideZeros is false
+		tooltip := value.Get("options.tooltip")
+		if !tooltip.Exists() {
+			t.Errorf(`dashboard=%s title="%s" options.tooltip does not exist, want it to be enabled with mode=all, values.sort=descending and hideZeros=false`, path, title)
+			return
+		}
+		if tooltip.Get("mode").ClonedString() != "multi" {
+			t.Errorf(`dashboard=%s title="%s" options.tooltip.mode got=[%s] want=multi`, path, title, tooltip.Get("mode").ClonedString())
+		}
+		if tooltip.Get("sort").ClonedString() != "desc" {
+			t.Errorf(`dashboard=%s title="%s" options.tooltip.sort got=[%s] want=desc`, path, title, tooltip.Get("sort").ClonedString())
+		}
+		if tooltip.Get("hideZeros").Bool() {
+			t.Errorf(`dashboard=%s title="%s" options.tooltip.hideZeros got=true want=false`, path, title)
+		}
 	})
 }
