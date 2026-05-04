@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/safefs"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -111,29 +113,24 @@ func compareMetrics(restMetrics, zapiMetrics []Result) ([]string, error) {
 }
 
 func checkDashboard(dir string, metricName string) string {
-	var existsInDashboard string
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	existsInDashboard := "No"
+	err := safefs.WalkDir(dir, func(root *os.Root, path string, d fs.DirEntry) error {
+		if d.IsDir() || filepath.Ext(path) != ".json" {
+			return nil
+		}
+		data, err := root.ReadFile(path)
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() {
-			data, err := os.ReadFile(path)
-			if err != nil {
-				return err
-			}
-			if strings.Contains(string(data), metricName) {
-				existsInDashboard = "Yes"
-				return filepath.SkipDir
-			}
+		if strings.Contains(string(data), metricName) {
+			existsInDashboard = "Yes"
+			return fs.SkipAll
 		}
 		return nil
 	})
-	if err != nil {
+	if err != nil && !errors.Is(err, fs.SkipAll) {
 		fmt.Println("Error walking the path:", err)
 		return "Error"
-	}
-	if existsInDashboard == "" {
-		existsInDashboard = "No"
 	}
 	return existsInDashboard
 }

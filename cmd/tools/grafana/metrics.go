@@ -3,9 +3,11 @@ package grafana
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools"
+	"github.com/netapp/harvest/v2/pkg/safefs"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/spf13/cobra"
+	"io/fs"
 	"log"
 	"maps"
 	"os"
@@ -215,22 +217,35 @@ func DoTarget(pathPrefix string, rowTitle string, key gjson.Result, value gjson.
 
 func VisitDashboards(dirs []string, eachDash func(path string, data []byte)) {
 	for _, dir := range dirs {
-		err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
+		entryInfo, err := os.Stat(dir)
+		if err != nil {
+			log.Fatalf("failed to stat dashboards path=%s err=%v", dir, err)
+		}
+		if !entryInfo.IsDir() {
+			data, err := safefs.ReadFile(dir)
+			if err != nil {
+				log.Fatalf("failed to read dashboard path=%s err=%v", dir, err)
+			}
+			eachDash(filepath.Clean(dir), data)
+			continue
+		}
+
+		err = safefs.WalkDir(dir, func(root *os.Root, path string, d fs.DirEntry) error {
 			if strings.Contains(path, "influxdb") {
 				return nil
 			}
-			if err != nil {
-				log.Fatal("failed to read directory:", err)
+			if d.IsDir() {
+				return nil
 			}
 			ext := filepath.Ext(path)
 			if ext != ".json" {
 				return nil
 			}
-			data, err := os.ReadFile(path)
+			data, err := root.ReadFile(path)
 			if err != nil {
 				log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
 			}
-			eachDash(path, data)
+			eachDash(filepath.Join(dir, path), data)
 			return nil
 		})
 		if err != nil {

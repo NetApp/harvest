@@ -685,8 +685,8 @@ func importFiles(dir string, folder *Folder) {
 		}
 		// The label is inserted in the list of variables first
 		// Iterate backwards so the labels keep the same order as cmdline
-		for i := len(opts.labels) - 1; i >= 0; i-- {
-			data = addLabel(data, opts.labels[i], cases.Title(language.Und).String(opts.labels[i]), labelMap)
+		for _, label := range slices.Backward(opts.labels) {
+			data = addLabel(data, label, cases.Title(language.Und).String(label), labelMap)
 		}
 
 		if opts.showDatasource {

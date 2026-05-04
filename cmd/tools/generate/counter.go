@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
+	"github.com/netapp/harvest/v2/pkg/safefs"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -106,15 +108,15 @@ func writeMetadataFile(path string, metadata map[string]string) error {
 
 func visitDashboard(dirs []string, metricsPanelMap map[string]tools.PanelData, eachDash func(data []byte, metricsPanelMap map[string]tools.PanelData)) {
 	for _, dir := range dirs {
-		err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
-			if err != nil {
-				log.Fatal("failed to read directory:", err)
+		err := safefs.WalkDir(dir, func(root *os.Root, path string, d fs.DirEntry) error {
+			if d.IsDir() {
+				return nil
 			}
 			ext := filepath.Ext(path)
 			if ext != ".json" {
 				return nil
 			}
-			data, err := os.ReadFile(path)
+			data, err := root.ReadFile(path)
 			if err != nil {
 				log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
 			}

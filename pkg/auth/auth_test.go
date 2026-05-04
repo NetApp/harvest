@@ -163,7 +163,7 @@ Pollers:
 			pollerName: "test",
 			want: PollerAuth{
 				Username:            "username",
-				Password:            "addr=a.b.c user=username",
+				Password:            "script-data-username-a.b.c",
 				IsCert:              false,
 				HasCredentialScript: true,
 			},
@@ -182,7 +182,7 @@ Pollers:
 		{
 			name:           "credentials_script with default username",
 			pollerName:     "test",
-			want:           PollerAuth{Username: "me", Password: "addr=a.b.c user=me", HasCredentialScript: true},
+			want:           PollerAuth{Username: "me", Password: "script-data-me-a.b.c", HasCredentialScript: true},
 			defaultDefined: true,
 			yaml: `
 Defaults:
@@ -197,7 +197,7 @@ Pollers:
 		{
 			name:       "no default",
 			pollerName: "test",
-			want:       PollerAuth{Username: "username", Password: "addr=a.b.c user=username", HasCredentialScript: true},
+			want:       PollerAuth{Username: "username", Password: "script-data-username-a.b.c", HasCredentialScript: true},
 			yaml: `
 Pollers:
   test:
@@ -247,7 +247,8 @@ Pollers:
 		{
 			name:       "poller and default credentials_script",
 			pollerName: "test",
-			want:       PollerAuth{Username: "bat", Password: "addr=a.b.c user=bat", HasCredentialScript: true},
+			// #nosec G101
+			want: PollerAuth{Username: "bat", Password: "script-data-bat-a.b.c", HasCredentialScript: true},
 			yaml: `
 Defaults:
   use_insecure_tls: true
@@ -264,9 +265,10 @@ Pollers:
 		},
 
 		{
-			name:         "poller schedule",
-			pollerName:   "test",
-			want:         PollerAuth{Username: "flo", Password: "addr=a.b.c user=flo", HasCredentialScript: true},
+			name:       "poller schedule",
+			pollerName: "test",
+			// #nosec G101
+			want:         PollerAuth{Username: "flo", Password: "script-data-flo-a.b.c", HasCredentialScript: true},
 			wantSchedule: "15m",
 			yaml: `
 Defaults:
@@ -286,9 +288,10 @@ Pollers:
 		},
 
 		{
-			name:         "defaults schedule",
-			pollerName:   "test",
-			want:         PollerAuth{Username: "flo", Password: "addr=a.b.c user=flo", HasCredentialScript: true},
+			name:       "defaults schedule",
+			pollerName: "test",
+			// #nosec G101
+			want:         PollerAuth{Username: "flo", Password: "script-data-flo-a.b.c", HasCredentialScript: true},
 			wantSchedule: "42m",
 			yaml: `
 Defaults:

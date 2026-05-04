@@ -406,8 +406,8 @@ func TestUnitsAndExprMatch(t *testing.T) {
 						}
 					}
 				}
-				failText.WriteString(fmt.Sprintf("unit=%s %s path=%s title=%q\n",
-					unit, row.dashboard, row.path, row.title))
+				_, _ = fmt.Fprintf(&failText, "unit=%s %s path=%s title=%q\n",
+					unit, row.dashboard, row.path, row.title)
 			}
 		}
 		if failText.Len() > 0 {
