@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/safefs"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
@@ -150,7 +151,7 @@ func doDoctor(aPath string) string {
 			continue
 		}
 		for _, childPath := range matches {
-			childContents, err := os.ReadFile(childPath)
+			childContents, err := safefs.ReadFile(childPath)
 			if err != nil {
 				fmt.Printf("error reading child file. err=%+v\n", err)
 				continue

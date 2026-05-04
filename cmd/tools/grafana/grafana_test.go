@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 	"testing"
 
@@ -629,8 +630,8 @@ func TestAddLabel(t *testing.T) {
 			opts.customAllValue = tt.customAllValue
 
 			data := []byte(wrappedInDef)
-			for i := len(tt.labels) - 1; i >= 0; i-- {
-				data = addLabel(data, tt.labels[i], cases.Title(language.Und).String(tt.labels[i]), labelMap)
+			for _, label := range slices.Backward(tt.labels) {
+				data = addLabel(data, label, cases.Title(language.Und).String(label), labelMap)
 			}
 
 			formattedGot, err := formatJSON(data)

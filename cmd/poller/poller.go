@@ -1296,7 +1296,7 @@ func (p *Poller) loadMetadata() {
 		"hostname", p.options.Hostname,
 	}
 
-	for i := 0; i < len(globalKVs); i += 2 {
+	for i := 0; i+1 < len(globalKVs); i += 2 {
 		p.metadataTarget.SetGlobalLabel(globalKVs[i], globalKVs[i+1])
 		p.status.SetGlobalLabel(globalKVs[i], globalKVs[i+1])
 	}

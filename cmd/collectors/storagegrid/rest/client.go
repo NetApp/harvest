@@ -383,6 +383,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 			Username: pollerAuth.Username,
 			Password: pollerAuth.Password,
 		}
+		// #nosec G117 -- StorageGRID requires credentials in the JSON request body.
 		postBody, err := json.Marshal(authB)
 		if err != nil {
 			return err

@@ -13,6 +13,7 @@ import (
 	"github.com/goccy/go-yaml/token"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/requests"
+	"github.com/netapp/harvest/v2/pkg/safefs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/mergo"
 	"log"
@@ -350,8 +351,7 @@ func GetLastPromPort(pollerName string, validatePortInUse bool) (int, error) {
 
 	exporters := poller.Exporters
 exporter:
-	for i := len(exporters) - 1; i >= 0; i-- {
-		e := exporters[i]
+	for _, e := range slices.Backward(exporters) {
 		exporter := Config.Exporters[e]
 		if exporter.Type == "Prometheus" {
 			isPrometheusExporterConfigured = true
@@ -545,7 +545,7 @@ Tools:
 	}
 
 	marshal := []byte(astFile.Docs[0].Body.String())
-	return os.WriteFile(fp, marshal, 0o0600)
+	return safefs.WriteFile(fp, marshal, 0o0600)
 }
 
 type TLS struct {

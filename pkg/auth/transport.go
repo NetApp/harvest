@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/safefs"
 	"io"
 	"io/fs"
 	"log/slog"
@@ -62,8 +63,7 @@ func recording(poller *conf.Poller, transport *http.Transport) http.RoundTripper
 		}
 
 		requestName, responseName := buildName(b)
-		name := filepath.Join(basePath, requestName)
-		if err := os.WriteFile(name, b, 0600); err != nil {
+		if err := safefs.WriteFile(filepath.Join(basePath, requestName), b, 0600); err != nil {
 			return nil, err
 		}
 		if response, err = transport.RoundTrip(req); err != nil {
@@ -71,10 +71,11 @@ func recording(poller *conf.Poller, transport *http.Transport) http.RoundTripper
 		}
 		b, err = httputil.DumpResponse(response, true)
 		if err != nil {
+			_ = response.Body.Close()
 			return nil, err
 		}
-		name = filepath.Join(basePath, responseName)
-		if err := os.WriteFile(name, b, 0600); err != nil {
+		if err := safefs.WriteFile(filepath.Join(basePath, responseName), b, 0600); err != nil {
+			_ = response.Body.Close()
 			return nil, err
 		}
 		return response, nil

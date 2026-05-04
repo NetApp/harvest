@@ -4,7 +4,7 @@
 .PHONY: help deps clean build test fmt lint package asup dev fetch-asup ci
 
 SHELL := /bin/bash
-GOLANGCI_LINT_VERSION := v2.9.0
+GOLANGCI_LINT_VERSION := v2.12.1
 GOVULNCHECK_VERSION := latest
 HARVEST_ENV := .harvest.env
 
