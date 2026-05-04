@@ -181,7 +181,7 @@ func (p *Process) NiceWithContext(ctx context.Context) (int32, error) {
 	return nice, nil
 }
 
-func (p *Process) IOniceWithContext(_ context.Context) (int32, error) {
+func (*Process) IOniceWithContext(_ context.Context) (int32, error) {
 	return 0, common.ErrNotImplementedError
 }
 
@@ -297,7 +297,7 @@ func (p *Process) TimesWithContext(ctx context.Context) (*cpu.TimesStat, error) 
 	return cpuTimes, nil
 }
 
-func (p *Process) CPUAffinityWithContext(_ context.Context) ([]int32, error) {
+func (*Process) CPUAffinityWithContext(_ context.Context) ([]int32, error) {
 	return nil, common.ErrNotImplementedError
 }
 
@@ -333,7 +333,7 @@ func (p *Process) ChildrenWithContext(ctx context.Context) ([]*Process, error) {
 	ret := make([]*Process, 0, len(statFiles))
 	for _, statFile := range statFiles {
 		statContents, err := os.ReadFile(statFile)
-		if err != nil {
+		if err != nil || len(statContents) == 0 {
 			continue
 		}
 		fields := splitProcStat(statContents)
@@ -412,8 +412,7 @@ func (p *Process) MemoryMapsWithContext(ctx context.Context, grouped bool) (*[]M
 			if len(field) < 2 {
 				continue
 			}
-			v := strings.Trim(field[1], "kB") // remove last "kB"
-			v = strings.TrimSpace(v)
+			v := strings.TrimSpace(strings.TrimSuffix(field[1], " kB"))
 			t, err := strconv.ParseUint(v, 10, 64)
 			if err != nil {
 				return m, err
@@ -919,49 +918,49 @@ func (p *Process) fillFromStatusWithContext(ctx context.Context) error {
 			}
 			p.numCtxSwitches.Involuntary = v
 		case "VmRSS":
-			value := strings.Trim(value, " kB") // remove last "kB"
+			value = strings.TrimSpace(strings.TrimSuffix(value, " kB"))
 			v, err := strconv.ParseUint(value, 10, 64)
 			if err != nil {
 				return err
 			}
 			p.memInfo.RSS = v * 1024
 		case "VmSize":
-			value := strings.Trim(value, " kB") // remove last "kB"
+			value = strings.TrimSpace(strings.TrimSuffix(value, " kB"))
 			v, err := strconv.ParseUint(value, 10, 64)
 			if err != nil {
 				return err
 			}
 			p.memInfo.VMS = v * 1024
 		case "VmSwap":
-			value := strings.Trim(value, " kB") // remove last "kB"
+			value = strings.TrimSpace(strings.TrimSuffix(value, " kB"))
 			v, err := strconv.ParseUint(value, 10, 64)
 			if err != nil {
 				return err
 			}
 			p.memInfo.Swap = v * 1024
 		case "VmHWM":
-			value := strings.Trim(value, " kB") // remove last "kB"
+			value = strings.TrimSpace(strings.TrimSuffix(value, " kB"))
 			v, err := strconv.ParseUint(value, 10, 64)
 			if err != nil {
 				return err
 			}
 			p.memInfo.HWM = v * 1024
 		case "VmData":
-			value := strings.Trim(value, " kB") // remove last "kB"
+			value = strings.TrimSpace(strings.TrimSuffix(value, " kB"))
 			v, err := strconv.ParseUint(value, 10, 64)
 			if err != nil {
 				return err
 			}
 			p.memInfo.Data = v * 1024
 		case "VmStk":
-			value := strings.Trim(value, " kB") // remove last "kB"
+			value = strings.TrimSpace(strings.TrimSuffix(value, " kB"))
 			v, err := strconv.ParseUint(value, 10, 64)
 			if err != nil {
 				return err
 			}
 			p.memInfo.Stack = v * 1024
 		case "VmLck":
-			value := strings.Trim(value, " kB") // remove last "kB"
+			value = strings.TrimSpace(strings.TrimSuffix(value, " kB"))
 			v, err := strconv.ParseUint(value, 10, 64)
 			if err != nil {
 				return err
@@ -1033,6 +1032,9 @@ func (p *Process) fillFromTIDStatWithContext(ctx context.Context, tid int32) (ui
 	}
 
 	contents, err := os.ReadFile(statPath)
+	if err == nil && len(contents) == 0 {
+		err = fmt.Errorf("process %d: stat file is empty, process may have terminated", pid)
+	}
 	if err != nil {
 		return 0, 0, nil, 0, 0, 0, nil, err
 	}
