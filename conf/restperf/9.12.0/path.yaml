@@ -2,8 +2,6 @@ name:                     Path
 query:                    api/cluster/counter/tables/path
 object:                   path
 
-instance_key:             uuid
-
 counters:
   - ^^id
   - ^node.name             => node
