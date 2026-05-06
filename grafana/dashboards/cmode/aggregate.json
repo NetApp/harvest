@@ -3132,6 +3132,114 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Percent of space used.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": 0
+              },
+              {
+                "color": "red"
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 72
+      },
+      "id": 835,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "100\n    *\n      sum by (aggr, cluster, datacenter, node) (\n        aggr_space_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      )\n  /\n    sum by (aggr, cluster, datacenter, node) (\n      aggr_space_total{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      (\n            100\n          *\n            sum by (aggr, cluster, datacenter, node) (\n              aggr_space_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n            )\n        /\n          sum by (aggr, cluster, datacenter, node) (\n            aggr_space_total{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n          )\n      )[3h:]\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{node}} - {{aggr}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Aggregates by Space Used %",
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
