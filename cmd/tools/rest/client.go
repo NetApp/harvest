@@ -383,20 +383,18 @@ func (c *Client) UpdateClusterInfo(retries int) error {
 			APIPath("api/cluster/counter/tables").
 			ReturnRecords(false).
 			Build()
+		// Check if the cluster supports REST performance counters.
+		// Permission denied means the endpoint exists but the user lacks access - cluster still has REST perf.
+		// Any other error (e.g. endpoint not supported) means no REST perf.
 		contentTables, err = c.GetRest(apiTables)
+		var hasRESTPerf bool
 		if err != nil {
-			if errors.Is(err, errs.ErrPermissionDenied) {
-				return err
-			}
-			if errs.IsRestErr(err, errs.APINotFound) {
-				contentTables = nil
-			} else {
-				continue
-			}
+			hasRESTPerf = errors.Is(err, errs.ErrPermissionDenied)
+		} else {
+			hasRESTPerf = gjson.ParseBytes(contentTables).Get("num_records").Exists()
 		}
-		apiTableResults := gjson.ParseBytes(contentTables)
 
-		c.remote = conf.NewRemote(apiClusterResults, apiTableResults)
+		c.remote = conf.NewRemote(apiClusterResults, hasRESTPerf)
 
 		return nil
 	}
