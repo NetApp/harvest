@@ -536,7 +536,9 @@ func validateImport() {
 func initImportVars() {
 	m := make(map[string]*Folder)
 
-	// default behaviour
+	// default behavior
+	opts.dir = strings.TrimSuffix(opts.dir, "/")
+
 	switch {
 	case opts.dir == "grafana/dashboards" && opts.serverfolder.name == "":
 		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-main-cDOT"}
