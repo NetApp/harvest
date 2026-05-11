@@ -7,6 +7,8 @@
 
 ## :star: New Features
 
+- :medal_sports: E-Series support in Harvest is now GA.
+
 - :medal_sports: **Four new dashboards:**
   - ONTAP: License — Shows ONTAP license status and capacity usage
   - ONTAP: Time Till Full — Shows projected time till full for aggregates, volumes, and clusters. Supported only with VictoriaMetrics.
