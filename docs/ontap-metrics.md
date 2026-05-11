@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Apr-21
+Creation Date : 2026-May-11
 ONTAP Version: 9.16.1
 ```
 
@@ -1482,6 +1482,7 @@ The `aggr_space_total` metric is visualized in the following Grafana dashboards:
 | ONTAP: Aggregate | Highlights | stat | [Space Used %](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=26) |
 | ONTAP: Aggregate | Highlights | table | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by Total Space](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=13) |
+| ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by Space Used %](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=835) |
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources Aggregates by Capacity Used %](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=243) |
 | ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources Aggregates by Capacity Used %](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=267) |
 | ONTAP: Cluster | Highlights | stat | [Total Space](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=277) |
@@ -1516,6 +1517,7 @@ The `aggr_space_used` metric is visualized in the following Grafana dashboards:
 | ONTAP: Aggregate | Highlights | stat | [Used and Reserved Space](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=811) |
 | ONTAP: Aggregate | Highlights | stat | [Space Used %](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=26) |
 | ONTAP: Aggregate | Highlights | table | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
+| ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by Space Used %](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=835) |
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources Aggregates by Capacity Used %](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=243) |
 | ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources Aggregates by Capacity Used %](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=267) |
 | ONTAP: Cluster | Highlights | stat | [Used and Reserved Space](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=279) |
@@ -15376,7 +15378,7 @@ The average read throughput in kilobytes per second read from the indicated targ
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `read_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `read_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `read_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 The `path_read_data` metric is visualized in the following Grafana dashboards:
@@ -15395,7 +15397,7 @@ The number of I/O read operations sent from the initiator port to the indicated 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `read_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `read_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `read_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 The `path_read_iops` metric is visualized in the following Grafana dashboards:
@@ -15414,7 +15416,7 @@ The average latency in microseconds of I/O read operations sent from this contro
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_iops | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_iops | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_iops | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 The `path_read_latency` metric is visualized in the following Grafana dashboards:
@@ -15433,7 +15435,7 @@ The average throughput in kilobytes per second read and written from/to the indi
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `total_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `total_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `total_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 
@@ -15444,7 +15446,7 @@ The number of total read/write I/O operations sent from the initiator port to th
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `total_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `total_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `total_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 
@@ -15455,7 +15457,7 @@ The average write throughput in kilobytes per second written to the indicated ta
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `write_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `write_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `write_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 The `path_write_data` metric is visualized in the following Grafana dashboards:
@@ -15474,7 +15476,7 @@ The number of I/O write operations sent from the initiator port to the indicated
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `write_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `write_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `write_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 The `path_write_iops` metric is visualized in the following Grafana dashboards:
@@ -15493,7 +15495,7 @@ The average latency in microseconds of I/O write operations sent from this contr
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| RestPerf | `api/cluster/counter/tables/path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/restperf/9.12.0/path.yaml |
+| RestPerf | `api/cluster/counter/tables/path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/restperf/9.15.0/path.yaml |
 | ZapiPerf | `perf-object-get-instances path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 The `path_write_latency` metric is visualized in the following Grafana dashboards:
