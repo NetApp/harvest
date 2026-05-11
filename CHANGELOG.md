@@ -9,7 +9,7 @@
 
 - :medal_sports: **Four new dashboards:**
   - ONTAP: License — Shows ONTAP license status and capacity usage
-  - ONTAP: Time Till Full — Shows projected time until aggregates, volumes, and clusters reach capacity based on growth trends. Supported only with VictoriaMetrics.
+  - ONTAP: Time Till Full — Shows projected time till full for aggregates, volumes, and clusters. Supported only with VictoriaMetrics.
   - E-Series: Drive Dashboard
   - E-Series: SSD Cache Dashboard (requires Santricity 12.00 or later)
 
@@ -44,7 +44,7 @@ After upgrading, don't forget to re-import your dashboards to get all the new en
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
 @BrendonA667, @Klocke208, @dhirajmalkari, @ebarron, @erikgruetter, @hrishi-ntap, @mamoep, @otecmichal, @ranganetapp, @rmilkowski, @roybatty2019, @ryanjrady
 
-:seedling: This release includes 24 features, 23 bug fixes, 8 documentation, 2 testing, 5 refactoring, 16 miscellaneous, and 12 ci pull requests.
+:seedling: This release includes 25 features, 24 bug fixes, 9 documentation, 2 testing, 5 refactoring, 16 miscellaneous, and 14 ci pull requests.
 
 <details>
 
@@ -75,6 +75,7 @@ After upgrading, don't forget to re-import your dashboards to get all the new en
 - Handled Restperf Path 9.15 Template ([#4253](https://github.com/NetApp/harvest/pull/4253))
 - Add Tool Annotations To Harvest Mcp Tools ([#4256](https://github.com/NetApp/harvest/pull/4256))
 - Harvest Should Include A Top Aggregates By Space Used % Panel ([#4265](https://github.com/NetApp/harvest/pull/4265))
+- Add .* In Workload Var ([#4270](https://github.com/NetApp/harvest/pull/4270))
 
 ### :bug: Bug Fixes
 - Handle Dify Ai Schema Issue ([#4152](https://github.com/NetApp/harvest/pull/4152))
@@ -100,6 +101,7 @@ After upgrading, don't forget to re-import your dashboards to get all the new en
 - Move Ssd Cache To 12.00 ([#4239](https://github.com/NetApp/harvest/pull/4239))
 - Update Svm State From Online To Running ([#4241](https://github.com/NetApp/harvest/pull/4241))
 - Shelf Reports Double Power ([#4254](https://github.com/NetApp/harvest/pull/4254))
+- Grafana Customize Should Trim Directory Path ([#4273](https://github.com/NetApp/harvest/pull/4273))
 
 ### :closed_book: Documentation
 - Add E-Series To Docs ([#4155](https://github.com/NetApp/harvest/pull/4155))
@@ -110,6 +112,7 @@ After upgrading, don't forget to re-import your dashboards to get all the new en
 - Metadata Dashboard Should Mention Collectors Panel For Details O… ([#4215](https://github.com/NetApp/harvest/pull/4215))
 - Update Power Dashboard Link ([#4221](https://github.com/NetApp/harvest/pull/4221))
 - Update Gcnv Doc ([#4238](https://github.com/NetApp/harvest/pull/4238))
+- Update Metric Doc ([#4276](https://github.com/NetApp/harvest/pull/4276))
 
 ### :wrench: Testing
 - Ignore Vm Queries In Ci ([#4168](https://github.com/NetApp/harvest/pull/4168))
@@ -153,6 +156,8 @@ After upgrading, don't forget to re-import your dashboards to get all the new en
 - Fix Ems Test Error ([#4236](https://github.com/NetApp/harvest/pull/4236))
 - Neil-Mahajana Has Signed Ccla ([#4262](https://github.com/NetApp/harvest/pull/4262))
 - Bump Go (#4266) ([#4267](https://github.com/NetApp/harvest/pull/4267))
+- Bump Modelcontextprotocol/Go-Sdk ([#4268](https://github.com/NetApp/harvest/pull/4268))
+- Fix Build ([#4277](https://github.com/NetApp/harvest/pull/4277))
 
 </details>
 ---
