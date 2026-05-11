@@ -3,9 +3,168 @@
 
 ## 26.05.0 / 2026-05-11 Release
 
+:pushpin: Highlights of this major release include:
+
+## :star: New Features
+
+- :medal_sports: E-Series support in Harvest is now GA.
+
+- :medal_sports: **Four new dashboards:**
+  - ONTAP: License — Shows ONTAP license status and capacity usage
+  - ONTAP: Time Till Full — Shows projected time till full for aggregates, volumes, and clusters. Supported only with VictoriaMetrics.
+  - E-Series: Drive Dashboard
+  - E-Series: SSD Cache Dashboard (requires Santricity 12.00 or later)
+
+- :medal_sports: Harvest now supports Google Cloud NetApp Volumes (GCNV) in ONTAP mode
+
+- :medal_sports: Harvest adds support for Cisco 5000 series switches
+
+- :gem: **Dashboard enhancements** — several existing dashboards include new panels:
+  - **ONTAP:Volume**: new Top Users panel showing top consumers by throughput and IOPS
+  - **ONTAP:Aggregate**: Top Aggregates by Space Used % panel
+  - **Cisco:Switch**: Ethernet output discarded packets panel
+  - **E-Series:Hardware**: Host connection details
+  - **E-Series:Volume**: Other IOPS and Queue Depth panels
+
+- **MCP enhancements:**
+  - Harvest MCP returns detailed error reasons when a tool call fails
+  - Harvest MCP tools include tool annotations
+
+- Harvest now monitors SnapMirror fabric link status
+- New EMS event `callhome.data.outage.detected` added to default EMS configuration
+- Shelf power metrics no longer double-count redundant power supply readings
+
 ## Announcements
 
-:bulb: **IMPORTANT** Harvest is only tested with [supported versions of Grafana](https://endoflife.date/grafana). Harvest release 26.05.0 supports Grafana versions 11.6+. After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+:bulb: **IMPORTANT** Harvest is only tested with [supported versions of Grafana](https://endoflife.date/grafana). Harvest release 26.05.0 supports Grafana versions 11.6+.
+After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+## Known Issues
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
+@BrendonA667, @Klocke208, @dhirajmalkari, @ebarron, @erikgruetter, @hrishi-ntap, @mamoep, @otecmichal, @ranganetapp, @rmilkowski, @roybatty2019, @ryanjrady
+
+:seedling: This release includes 25 features, 24 bug fixes, 9 documentation, 2 testing, 5 refactoring, 16 miscellaneous, and 14 ci pull requests.
+
+<details>
+
+<summary>Expand for full list of pull requests</summary>
+
+### :rocket: Features
+- Collect Cisco Ethernet Output Discarded Packets ([#4150](https://github.com/NetApp/harvest/pull/4150))
+- Add Top Users To Volume Dashboard ([#4154](https://github.com/NetApp/harvest/pull/4154))
+- Enhancement In N/W Dashboard And Switch Dashboard ([#4161](https://github.com/NetApp/harvest/pull/4161))
+- Add Time Till Full Dashboard ([#4166](https://github.com/NetApp/harvest/pull/4166))
+- License Dashboard ([#4170](https://github.com/NetApp/harvest/pull/4170))
+- Harvest Should Monitor Fabric Link Status ([#4175](https://github.com/NetApp/harvest/pull/4175))
+- License Dashboard ([#4176](https://github.com/NetApp/harvest/pull/4176))
+- Grafana Dashboards Should Use Natural Ascending Sort Order For … ([#4185](https://github.com/NetApp/harvest/pull/4185))
+- Add Support For Cisco 5K Switches ([#4191](https://github.com/NetApp/harvest/pull/4191))
+- Add Port Ip And Host Connection Details ([#4196](https://github.com/NetApp/harvest/pull/4196))
+- Cisco Dashboard Should Use 3M Interval To Better Align With Pol… ([#4202](https://github.com/NetApp/harvest/pull/4202))
+- Return Error Reason In Mcp ([#4216](https://github.com/NetApp/harvest/pull/4216))
+- Add Callhome.data.outage.detected To Ems Config ([#4223](https://github.com/NetApp/harvest/pull/4223))
+- Eseries Ssd-Cache ([#4224](https://github.com/NetApp/harvest/pull/4224))
+- Add Queuedepth For Volume Eseries ([#4227](https://github.com/NetApp/harvest/pull/4227))
+- Gcnv Ontap Mode Support ([#4235](https://github.com/NetApp/harvest/pull/4235))
+- Harvest Should Include A Cmperf Collector ([#4240](https://github.com/NetApp/harvest/pull/4240))
+- Harvest Should Parse Cm Protobuf Files ([#4244](https://github.com/NetApp/harvest/pull/4244))
+- Eseries Drive Dashboard ([#4245](https://github.com/NetApp/harvest/pull/4245))
+- Harvest Should Parse Labels In Cm Pb Files ([#4246](https://github.com/NetApp/harvest/pull/4246))
+- Do Not Auto-Upgrade Keyperf To Restperf If Restperf Exists ([#4252](https://github.com/NetApp/harvest/pull/4252))
+- Handled Restperf Path 9.15 Template ([#4253](https://github.com/NetApp/harvest/pull/4253))
+- Add Tool Annotations To Harvest Mcp Tools ([#4256](https://github.com/NetApp/harvest/pull/4256))
+- Harvest Should Include A Top Aggregates By Space Used % Panel ([#4265](https://github.com/NetApp/harvest/pull/4265))
+- Add .* In Workload Var ([#4270](https://github.com/NetApp/harvest/pull/4270))
+
+### :bug: Bug Fixes
+- Handle Dify Ai Schema Issue ([#4152](https://github.com/NetApp/harvest/pull/4152))
+- Remove Rate From Promql For Ontap Dashboards. ([#4153](https://github.com/NetApp/harvest/pull/4153))
+- Remove Extra Call From Svm Template ([#4165](https://github.com/NetApp/harvest/pull/4165))
+- Influxdb Exporter Should Handle Conflicting Metrics ([#4172](https://github.com/NetApp/harvest/pull/4172))
+- Rest Client Timeout Is Not Set As Per Template ([#4173](https://github.com/NetApp/harvest/pull/4173))
+- License Key Handling ([#4178](https://github.com/NetApp/harvest/pull/4178))
+- Security Zapi Uuid Should Be Child Element ([#4180](https://github.com/NetApp/harvest/pull/4180))
+- Snapmirror S3 Relationships Should Only Export The Source Side ([#4181](https://github.com/NetApp/harvest/pull/4181))
+- Handled State Field For Ls Type Snapmirror ([#4182](https://github.com/NetApp/harvest/pull/4182))
+- `Bin/Grafana Import --Prefix` Should Handle All Metrics With Spa… ([#4188](https://github.com/NetApp/harvest/pull/4188))
+- `Bin/Grafana Import --Prefix` Should Handle Computed Metrics ([#4189](https://github.com/NetApp/harvest/pull/4189))
+- Simplify Lun Rest Template ([#4194](https://github.com/NetApp/harvest/pull/4194))
+- Format Cisco Promql ([#4195](https://github.com/NetApp/harvest/pull/4195))
+- Update Asar2 Capacity Schedule To 3M ([#4198](https://github.com/NetApp/harvest/pull/4198))
+- Limit Token To Dedicated Env ([#4200](https://github.com/NetApp/harvest/pull/4200))
+- Cache Adminvserverserial For Certificate Plugin ([#4203](https://github.com/NetApp/harvest/pull/4203))
+- Cisco Collector Should Ignore Zero Counters ([#4205](https://github.com/NetApp/harvest/pull/4205))
+- Harvest Mcp Should Create Valid Alert_rules.yml ([#4208](https://github.com/NetApp/harvest/pull/4208))
+- Ignore Cohesity Named Volumes ([#4209](https://github.com/NetApp/harvest/pull/4209))
+- Add Missing Tags For License Dashboard ([#4232](https://github.com/NetApp/harvest/pull/4232))
+- Move Ssd Cache To 12.00 ([#4239](https://github.com/NetApp/harvest/pull/4239))
+- Update Svm State From Online To Running ([#4241](https://github.com/NetApp/harvest/pull/4241))
+- Shelf Reports Double Power ([#4254](https://github.com/NetApp/harvest/pull/4254))
+- Grafana Customize Should Trim Directory Path ([#4273](https://github.com/NetApp/harvest/pull/4273))
+
+### :closed_book: Documentation
+- Add E-Series To Docs ([#4155](https://github.com/NetApp/harvest/pull/4155))
+- Modify Mcp Prompt To Include Eseries ([#4156](https://github.com/NetApp/harvest/pull/4156))
+- Add Label Copy Doc ([#4158](https://github.com/NetApp/harvest/pull/4158))
+- Describe How To Use Certificate Authentication For The Statperf … ([#4164](https://github.com/NetApp/harvest/pull/4164))
+- Update Quickstart Service Versions ([#4214](https://github.com/NetApp/harvest/pull/4214))
+- Metadata Dashboard Should Mention Collectors Panel For Details O… ([#4215](https://github.com/NetApp/harvest/pull/4215))
+- Update Power Dashboard Link ([#4221](https://github.com/NetApp/harvest/pull/4221))
+- Update Gcnv Doc ([#4238](https://github.com/NetApp/harvest/pull/4238))
+- Update Metric Doc ([#4276](https://github.com/NetApp/harvest/pull/4276))
+
+### :wrench: Testing
+- Ignore Vm Queries In Ci ([#4168](https://github.com/NetApp/harvest/pull/4168))
+- Ensure Tooltips Are Enabled In Dashboards ([#4261](https://github.com/NetApp/harvest/pull/4261))
+
+### Refactoring
+- Move Codebase To Go 1.26 ([#4149](https://github.com/NetApp/harvest/pull/4149))
+- Suppress Metrocluster Check Error Msg When Ontap Mcc Is Run… ([#4201](https://github.com/NetApp/harvest/pull/4201))
+- Log Zero Values In Cisco Collector ([#4204](https://github.com/NetApp/harvest/pull/4204))
+- Harvest Dashboards Should Use Consistent Line Width And Sho… ([#4231](https://github.com/NetApp/harvest/pull/4231))
+- Lint Issues ([#4259](https://github.com/NetApp/harvest/pull/4259))
+
+### Miscellaneous
+- Merge Release/26.02.0 To Main ([#4129](https://github.com/NetApp/harvest/pull/4129))
+- Update All Dependencies ([#4136](https://github.com/NetApp/harvest/pull/4136))
+- Merge Release/26.02.0 To Main ([#4144](https://github.com/NetApp/harvest/pull/4144))
+- Pin Golangci To Workaround Bug ([#4145](https://github.com/NetApp/harvest/pull/4145))
+- Mcp Lint ([#4146](https://github.com/NetApp/harvest/pull/4146))
+- Update All Dependencies ([#4160](https://github.com/NetApp/harvest/pull/4160))
+- Update All Dependencies ([#4169](https://github.com/NetApp/harvest/pull/4169))
+- Update All Dependencies ([#4179](https://github.com/NetApp/harvest/pull/4179))
+- Update All Dependencies ([#4192](https://github.com/NetApp/harvest/pull/4192))
+- Update All Dependencies ([#4212](https://github.com/NetApp/harvest/pull/4212))
+- Bump Go ([#4226](https://github.com/NetApp/harvest/pull/4226))
+- Update All Dependencies ([#4228](https://github.com/NetApp/harvest/pull/4228))
+- Update All Dependencies ([#4243](https://github.com/NetApp/harvest/pull/4243))
+- Update All Dependencies ([#4249](https://github.com/NetApp/harvest/pull/4249))
+- Update Step-Security/Harden-Runner Action To V2.19.0 ([#4257](https://github.com/NetApp/harvest/pull/4257))
+- Track Upstream Gopsutil Changes ([#4260](https://github.com/NetApp/harvest/pull/4260))
+
+### :hammer: CI
+- Create Grafana Api Tokens For Grafana 12.X ([#4186](https://github.com/NetApp/harvest/pull/4186))
+- Better Error Logging ([#4190](https://github.com/NetApp/harvest/pull/4190))
+- Ioaiaaii Has Signed The Ccla ([#4193](https://github.com/NetApp/harvest/pull/4193))
+- Add Docker Cleanup Steps In Post Call ([#4210](https://github.com/NetApp/harvest/pull/4210))
+- Remove Scan From Ci ([#4211](https://github.com/NetApp/harvest/pull/4211))
+- Renovate Should Wait A Week Before Suggesting A Dependency Update ([#4213](https://github.com/NetApp/harvest/pull/4213))
+- Apply Stepsecurity Github Actions ([#4218](https://github.com/NetApp/harvest/pull/4218))
+- Add Stepsecurity Bot To Clabot ([#4219](https://github.com/NetApp/harvest/pull/4219))
+- Alexkiousis Has Signed The Ccla ([#4225](https://github.com/NetApp/harvest/pull/4225))
+- Fix Ems Test Error ([#4236](https://github.com/NetApp/harvest/pull/4236))
+- Neil-Mahajana Has Signed Ccla ([#4262](https://github.com/NetApp/harvest/pull/4262))
+- Bump Go (#4266) ([#4267](https://github.com/NetApp/harvest/pull/4267))
+- Bump Modelcontextprotocol/Go-Sdk ([#4268](https://github.com/NetApp/harvest/pull/4268))
+- Fix Build ([#4277](https://github.com/NetApp/harvest/pull/4277))
+
+</details>
+---
+
+
 
 ## 26.02.0 / 2026-02-11 Release
 :pushpin: Highlights of this major release include:

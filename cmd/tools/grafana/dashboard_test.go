@@ -740,6 +740,7 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 		"Aggregate":   true,
 		"FlexGroup":   true,
 		"Constituent": true,
+		"Workload":    true,
 	}
 	exceptionForAllValues := map[string]bool{
 		"cmode/security.json": true,
