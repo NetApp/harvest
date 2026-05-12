@@ -86,7 +86,7 @@ func TestMessages(t *testing.T) {
 	assert.Equal(t, len(obs[0].Schema.CounterSchema), 2)
 	assert.Equal(t, obs[0].Schema.CounterSchema[0].Name, "counter-1")
 	assert.Equal(t, obs[0].Schema.CounterSchema[0].Index, uint32(1))
-	assert.Equal(t, obs[0].Schema.CounterSchema[0].Type, uint8(3))
+	assert.Equal(t, obs[0].Schema.CounterSchema[0].Type, CookString)
 	assert.Equal(t, obs[0].Schema.CounterSchema[0].DimX, uint32(0))
 	assert.Equal(t, obs[0].Schema.CounterSchema[0].DimY, uint32(0))
 	assert.Equal(t, len(obs[0].Schema.CounterSchema[0].LabelsX), 0)
@@ -113,7 +113,11 @@ func TestMessages(t *testing.T) {
 	assert.Equal(t, listString, []string{"abc", "def", "ghi"})
 	assert.Equal(t, mustList32(t, obs[1].Data.Instances[0].Counters[4]), []uint32{100, 200, 300})
 
-	assert.Equal(t, obs[1].Schema.CounterSchema[2].LabelsX, []string{"opcode 1", "opcode 2"})
+	assert.Equal(t, obs[1].Schema.CounterSchema[0].LabelsX, []string{"opcode 1", "opcode 2"})
+	assert.Equal(t, obs[1].Schema.CounterSchema[1].Name, "ops")
+	assert.Equal(t, obs[1].Schema.CounterSchema[2].Name, "latency")
+	assert.Equal(t, obs[1].Schema.CounterSchema[2].BaseIndex, 1)
+	assert.Equal(t, obs[1].Schema.CounterSchema[2].Type, CookAverage)
 }
 
 func TestCounterTypeAccessors(t *testing.T) {

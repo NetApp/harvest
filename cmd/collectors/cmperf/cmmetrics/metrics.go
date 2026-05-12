@@ -28,13 +28,14 @@ type ObjectSchema struct {
 }
 
 type CounterSchema struct {
-	Name    string
-	Index   uint32
-	Type    uint8
-	DimX    uint32
-	DimY    uint32
-	LabelsX []string
-	LabelsY []string
+	Name      string
+	Index     uint32
+	BaseIndex uint32
+	Type      CounterTypeEnum
+	DimX      uint32
+	DimY      uint32
+	LabelsX   []string
+	LabelsY   []string
 }
 
 type ObjectData struct {
@@ -47,6 +48,17 @@ type ObjectInstance struct {
 	UUID     string
 	Counters []CounterType
 }
+
+type CounterTypeEnum uint8
+
+const (
+	CookRaw = iota
+	CookRate
+	CookDelta
+	CookAverage
+	CookPercent
+	CookString
+)
 
 type CounterKind uint8
 
@@ -344,7 +356,7 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 			if val > math.MaxUint8 {
 				return counterSchema, fmt.Errorf("counter schema type %d exceeds uint8", val)
 			}
-			counterSchema.Type = uint8(val)
+			counterSchema.Type = CounterTypeEnum(val)
 		case 4:
 			val, ok := fc.Uint32()
 			if !ok {
@@ -369,6 +381,12 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 				return counterSchema, errors.New("failed to read counter schema counter_y_labels")
 			}
 			counterSchema.LabelsY = append(counterSchema.LabelsY, val)
+		case 9:
+			val, ok := fc.Uint32()
+			if !ok {
+				return counterSchema, errors.New("failed to read counter schema base_counter_index")
+			}
+			counterSchema.BaseIndex = val
 		}
 	}
 
