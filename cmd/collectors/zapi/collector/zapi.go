@@ -419,8 +419,8 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(numInstances))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx)
-	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls)
+	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx.Load())
+	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls.Load())
 
 	z.AddCollectCount(count)
 

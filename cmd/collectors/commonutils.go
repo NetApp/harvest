@@ -83,7 +83,7 @@ func InvokeRestCallWithTestFile(client *rest.Client, href string, testFilePath s
 }
 
 func InvokeRestCall(client *rest.Client, href string) ([]gjson.Result, error) {
-	result, err := rest.FetchAll(client, href)
+	result, err := rest.FetchAll(client, nil, href)
 	if err != nil {
 		return []gjson.Result{}, fmt.Errorf("failed to fetchAll href=%s, hrefLength=%d err=%w", TruncateURL(href), len(href), err)
 	}
@@ -120,7 +120,7 @@ func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *slog.Logger
 		ReturnTimeout(returnTimeOut).
 		Build()
 
-	if records, err = rest.FetchSome(client, href, 1, DefaultBatchSize); err != nil {
+	if records, err = rest.FetchSome(client, nil, href, 1, DefaultBatchSize); err != nil {
 		return clusterTime, err
 	}
 	if len(records) == 0 {

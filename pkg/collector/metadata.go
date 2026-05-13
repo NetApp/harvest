@@ -1,13 +1,15 @@
 package collector
 
+import "sync/atomic"
+
 type Metadata struct {
-	BytesRx         uint64
-	NumCalls        uint64
-	PluginInstances uint64
+	BytesRx         atomic.Uint64
+	NumCalls        atomic.Uint64
+	PluginInstances atomic.Uint64
 }
 
 func (m *Metadata) Reset() {
-	m.BytesRx = 0
-	m.NumCalls = 0
-	m.PluginInstances = 0
+	m.BytesRx.Store(0)
+	m.NumCalls.Store(0)
+	m.PluginInstances.Store(0)
 }

@@ -1817,7 +1817,7 @@ func (p *Poller) sendHarvestVersion() error {
 	fields := []string{osName, sha1Hostname, version.VERSION, strconv.FormatUint(rssMB, 10)}
 
 	href := `api/cluster?ignore_unknown_fields=true&fields=harvestTag,` + strings.Join(fields, ",")
-	_, err = connection.GetPlainRest(href, false)
+	_, err = connection.GetPlainRest(nil, href, false)
 	if err != nil {
 		return err
 	}

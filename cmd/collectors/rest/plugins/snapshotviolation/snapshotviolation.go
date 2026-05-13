@@ -42,7 +42,7 @@ func (s *SnapshotViolation) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := s.client.Init(5, remote); err != nil {
+	if _, err := s.client.Init(5, remote); err != nil {
 		return err
 	}
 	s.data, err = snapshotviolation.InitMatrix(s.Parent)
@@ -54,15 +54,15 @@ func (s *SnapshotViolation) Init(remote conf.Remote) error {
 }
 
 func (s *SnapshotViolation) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
-	s.client.Metadata.Reset()
+	s.RequestMetadata.Reset()
 
 	if s.schedule >= s.PluginInvocationRate {
 		s.schedule = 0
 		s.populateSnapshotViolation(dataMap)
 	}
 	s.schedule++
-	s.client.Metadata.PluginInstances = uint64(len(s.data.GetInstances()))
-	return []*matrix.Matrix{s.data}, s.client.Metadata, nil
+	s.RequestMetadata.PluginInstances.Store(uint64(len(s.data.GetInstances())))
+	return []*matrix.Matrix{s.data}, &s.RequestMetadata, nil
 }
 
 func (s *SnapshotViolation) populateSnapshotViolation(dataMap map[string]*matrix.Matrix) {
@@ -159,7 +159,7 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 		return nil
 	}
 
-	err := rest.FetchAllStream(s.client, href, processBatch)
+	err := rest.FetchAllStream(s.client, &s.RequestMetadata, href, processBatch)
 	if err != nil {
 		s.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return filteredSnapshotStats

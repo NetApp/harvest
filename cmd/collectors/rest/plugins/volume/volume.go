@@ -83,7 +83,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := v.client.Init(5, remote); err != nil {
+	if v.Remote, err = v.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -114,7 +114,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	// Read template to decide inclusion of flexgroup constituents
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
-	v.isArwSupportedVersion, err = version.AtLeast(v.client.Remote().Version, ARWSupportedVersion)
+	v.isArwSupportedVersion, err = version.AtLeast(v.Remote.Version, ARWSupportedVersion)
 	if err != nil {
 		return fmt.Errorf("unable to get version %w", err)
 	}
@@ -123,7 +123,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
-	v.client.Metadata.Reset()
+	v.RequestMetadata.Reset()
 
 	if v.currentVal >= v.PluginInvocationRate {
 		v.currentVal = 0
@@ -158,7 +158,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	v.handleTags(data.GetGlobalLabels())
 
 	v.currentVal++
-	return []*matrix.Matrix{v.arw, v.tags, flexgroupFootPrintMatrix}, v.client.Metadata, nil
+	return []*matrix.Matrix{v.arw, v.tags, flexgroupFootPrintMatrix}, &v.RequestMetadata, nil
 }
 
 func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]volumeInfo) {

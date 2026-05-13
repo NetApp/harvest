@@ -47,7 +47,7 @@ func (s *SecurityAccount) Init(remote conf.Remote) error {
 		return fmt.Errorf("failed to connect err=%w", err)
 	}
 
-	if err := s.client.Init(5, remote); err != nil {
+	if _, err := s.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -69,7 +69,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	s.client.Metadata.Reset()
+	s.RequestMetadata.Reset()
 	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
 		return nil, nil, err
 	}
@@ -118,5 +118,5 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		}
 	}
 
-	return []*matrix.Matrix{data}, s.client.Metadata, nil
+	return []*matrix.Matrix{data}, &s.RequestMetadata, nil
 }

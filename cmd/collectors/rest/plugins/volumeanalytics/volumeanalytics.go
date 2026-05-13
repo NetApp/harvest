@@ -69,7 +69,7 @@ func (v *VolumeAnalytics) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := v.client.Init(5, remote); err != nil {
+	if v.Remote, err = v.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -98,9 +98,9 @@ func (v *VolumeAnalytics) initMatrix() error {
 
 func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
-	v.client.Metadata.Reset()
+	v.RequestMetadata.Reset()
 
-	clusterVersion := v.client.Remote().Version
+	clusterVersion := v.Remote.Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		v.SLogger.Error("Failed to parse version",
@@ -280,7 +280,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	for _, value := range v.data {
 		result = append(result, value)
 	}
-	return result, v.client.Metadata, nil
+	return result, &v.RequestMetadata, nil
 }
 
 func (v *VolumeAnalytics) getLabelBucket(label string) string {
@@ -313,7 +313,7 @@ func (v *VolumeAnalytics) getAnalyticsData(instanceID string) ([]gjson.Result, g
 		Filter([]string{"order_by=analytics.bytes_used+desc", "type=directory"}).
 		MaxRecords(maxDirCollectCount).
 		Build()
-	if result, analytics, err = rest.FetchAnalytics(v.client, href); err != nil {
+	if result, analytics, err = rest.FetchAnalytics(v.client, &v.RequestMetadata, href); err != nil {
 		return nil, gjson.Result{}, err
 	}
 	return result, analytics, nil

@@ -82,9 +82,9 @@ func (v *Version) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 
 	v.parseVersionAndBanner(output, versionMat)
 
-	v.client.Metadata.NumCalls = 1
-	v.client.Metadata.BytesRx = uint64(len(output.Raw))
-	v.client.Metadata.PluginInstances = uint64(len(versionMat.GetInstances()))
+	v.client.Metadata.NumCalls.Store(1)
+	v.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
+	v.client.Metadata.PluginInstances.Store(uint64(len(versionMat.GetInstances())))
 
 	return []*matrix.Matrix{versionMat}, v.client.Metadata, nil
 }

@@ -182,7 +182,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				if objInstance, err = matrices[i].NewInstance(objKey); err != nil {
 					return nil, nil, err
 				}
-				metadata.PluginInstances++
+				metadata.PluginInstances.Add(1)
 				switch {
 				case rule.allLabels:
 					objInstance.SetLabels(instance.GetLabels())

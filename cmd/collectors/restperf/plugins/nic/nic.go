@@ -94,7 +94,7 @@ func (n *Nic) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := n.client.Init(5, remote); err != nil {
+	if _, err := n.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -109,7 +109,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	portDataMap := make(map[string]collectors.PortData)
 	data := dataMap[n.Object]
 
-	n.client.Metadata.Reset()
+	n.RequestMetadata.Reset()
 
 	// Purge and reset data
 	n.data.PurgeInstances()
@@ -231,7 +231,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		return nil, nil, err
 	}
 
-	return []*matrix.Matrix{n.data}, n.client.Metadata, nil
+	return []*matrix.Matrix{n.data}, &n.RequestMetadata, nil
 }
 
 func (n *Nic) getIfgroupInfo() map[string]string {

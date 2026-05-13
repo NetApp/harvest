@@ -190,7 +190,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 					if objInstance, err = matrices[matrixKey].NewInstance(objKey); err != nil {
 						return nil, nil, err
 					}
-					metadata.PluginInstances++
+					metadata.PluginInstances.Add(1)
 				}
 
 				if value, ok = metric.GetValueFloat64(instance); !ok {

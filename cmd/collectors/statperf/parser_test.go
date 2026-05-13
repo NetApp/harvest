@@ -244,9 +244,7 @@ func TestParseData(t *testing.T) {
 			assert.Nil(t, err)
 
 			s := &StatPerf{
-				Rest: &rest2.Rest{
-					AbstractCollector: &collector.AbstractCollector{},
-				},
+				Rest: &rest2.Rest{AbstractCollector: &collector.AbstractCollector{}},
 			}
 			s.Logger = slog.Default()
 			if tc.name == "array" {
@@ -463,9 +461,7 @@ Scope: sa-tme-flexpod-a800-rdma-02
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			s := &StatPerf{
-				Rest: &rest2.Rest{
-					AbstractCollector: &collector.AbstractCollector{},
-				},
+				Rest: &rest2.Rest{AbstractCollector: &collector.AbstractCollector{}},
 			}
 			s.Logger = slog.Default()
 			s.perfProp = &perfProp{
@@ -522,9 +518,7 @@ Scope: cluster-01
 3 entries were displayed.`
 
 	s := &StatPerf{
-		Rest: &rest2.Rest{
-			AbstractCollector: &collector.AbstractCollector{},
-		},
+		Rest: &rest2.Rest{AbstractCollector: &collector.AbstractCollector{}},
 	}
 	s.Logger = slog.Default()
 	s.perfProp = &perfProp{
@@ -561,9 +555,7 @@ Scope: cluster-01
 2 entries were displayed.`
 
 	s := &StatPerf{
-		Rest: &rest2.Rest{
-			AbstractCollector: &collector.AbstractCollector{},
-		},
+		Rest: &rest2.Rest{AbstractCollector: &collector.AbstractCollector{}},
 	}
 	s.Logger = slog.Default()
 	s.perfProp = &perfProp{

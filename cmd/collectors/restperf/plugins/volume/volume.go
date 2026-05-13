@@ -45,7 +45,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 
 	if v.Options.IsTest {
-		v.client = &rest.Client{Metadata: &collector.Metadata{}}
+		v.client = &rest.Client{}
 		return nil
 	}
 
@@ -55,7 +55,8 @@ func (v *Volume) Init(remote conf.Remote) error {
 		return err
 	}
 
-	return v.client.Init(5, remote)
+	_, err = v.client.Init(5, remote)
+	return err
 }
 
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
@@ -89,7 +90,7 @@ func (v *Volume) fetchVolumes() (map[string]string, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	records, err := rest.FetchAll(v.client, href)
+	records, err := rest.FetchAll(v.client, &v.RequestMetadata, href)
 	if err != nil {
 		return nil, err
 	}

@@ -532,8 +532,8 @@ func (c *Client) invoke(withTimers bool, headers ...map[string]string) (*node.No
 		parseT = time.Since(start)
 	}
 
-	c.Metadata.BytesRx += uint64(len(body))
-	c.Metadata.NumCalls++
+	c.Metadata.BytesRx.Add(uint64(len(body)))
+	c.Metadata.NumCalls.Add(1)
 
 	// check if the request was successful
 	if result = root.GetChildS("results"); result == nil {

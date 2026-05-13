@@ -95,12 +95,12 @@ func newRest(object string, path string, confPath string) *Rest {
 	opts.HomePath = "testdata"
 	opts.IsTest = true
 	ac := collector.New("Rest", object, opts, collectors.Params(object, path), nil, conf.Remote{})
-	r := Rest{}
+	r := &Rest{AbstractCollector: ac}
 	err = r.Init(ac)
 	if err != nil {
 		panic(err)
 	}
-	return &r
+	return r
 }
 
 func TestIsValidFormat(t *testing.T) {

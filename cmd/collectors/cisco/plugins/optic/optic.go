@@ -82,9 +82,9 @@ func (o *Optic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 
 	o.parseOptic(output, opticMat)
 
-	o.client.Metadata.NumCalls = 1
-	o.client.Metadata.BytesRx = uint64(len(output.Raw))
-	o.client.Metadata.PluginInstances = uint64(len(opticMat.GetInstances()))
+	o.client.Metadata.NumCalls.Store(1)
+	o.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
+	o.client.Metadata.PluginInstances.Store(uint64(len(opticMat.GetInstances())))
 
 	return []*matrix.Matrix{opticMat}, o.client.Metadata, nil
 }

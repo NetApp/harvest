@@ -285,8 +285,8 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseTime.Microseconds())
 	_ = e.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = e.Metadata.LazySetValueUint64("instances", "data", uint64(len(mat.GetInstances())))
-	_ = e.Metadata.LazySetValueUint64("bytesRx", "data", e.Client.Metadata.BytesRx)
-	_ = e.Metadata.LazySetValueUint64("numCalls", "data", e.Client.Metadata.NumCalls)
+	_ = e.Metadata.LazySetValueUint64("bytesRx", "data", e.Client.Metadata.BytesRx.Load())
+	_ = e.Metadata.LazySetValueUint64("numCalls", "data", e.Client.Metadata.NumCalls.Load())
 	e.AddCollectCount(count)
 
 	return e.Matrix, nil

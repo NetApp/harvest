@@ -82,7 +82,8 @@ func (m *Mav) Init(remote conf.Remote) error {
 	if m.timeFilter < minValue {
 		m.timeFilter = minValue
 	}
-	return m.client.Init(5, remote)
+	_, err = m.client.Init(5, remote)
+	return err
 }
 
 func newExportOptions(fields ...string) *node.Node {
@@ -127,7 +128,7 @@ func (m *Mav) initMatrix() {
 
 func (m *Mav) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[m.Object]
-	m.client.Metadata.Reset()
+	m.RequestMetadata.Reset()
 	// Purge and reset data
 	m.mavData.PurgeInstances()
 	m.mavData.Reset()
@@ -139,9 +140,9 @@ func (m *Mav) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 
 	err := m.collectMAVRequests()
 	if err != nil {
-		return nil, m.client.Metadata, err
+		return nil, &m.RequestMetadata, err
 	}
-	return []*matrix.Matrix{m.mavData, m.mavDataExtendedMatrix}, m.client.Metadata, nil
+	return []*matrix.Matrix{m.mavData, m.mavDataExtendedMatrix}, &m.RequestMetadata, nil
 }
 
 func (m *Mav) collectMAVRequests() error {

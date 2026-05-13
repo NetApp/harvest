@@ -269,7 +269,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 	matricesArray = append(matricesArray, changeMat)
 
 	metadata := &collector.Metadata{}
-	metadata.PluginInstances = uint64(len(changeMat.GetInstances()))
+	metadata.PluginInstances.Store(uint64(len(changeMat.GetInstances())))
 
 	c.copyPreviousData(data)
 	if len(changeMat.GetInstances()) > 0 {

@@ -133,7 +133,7 @@ func (d *Disk) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := d.client.Init(5, remote); err != nil {
+	if _, err := d.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -236,7 +236,7 @@ func (d *Disk) initMetrics(attribute, objectName string, obj *node.Node) error {
 func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	data := dataMap[d.Object]
-	d.client.Metadata.Reset()
+	d.RequestMetadata.Reset()
 
 	// Set all global labels from rest.go if already not exist
 	for a := range d.instanceLabels {
@@ -256,7 +256,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	records, err := rest.FetchAll(d.client, href)
+	records, err := rest.FetchAll(d.client, &d.RequestMetadata, href)
 	if err != nil {
 		d.SLogger.Error("Failed to fetch shelfData", slogx.Err(err), slog.String("href", href))
 		return nil, nil, err
@@ -424,7 +424,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		return output, nil, err
 	}
 
-	return output, d.client.Metadata, nil
+	return output, &d.RequestMetadata, nil
 }
 
 func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) ([]*matrix.Matrix, error) {
@@ -578,7 +578,7 @@ func (d *Disk) getDisks() error {
 		Fields([]string{"name", "uid", "shelf.uid", "type", "aggregates"}).
 		Build()
 
-	records, err := rest.FetchAll(d.client, href)
+	records, err := rest.FetchAll(d.client, &d.RequestMetadata, href)
 	if err != nil {
 		d.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err
@@ -637,7 +637,7 @@ func (d *Disk) getAggregates() error {
 		Fields([]string{"aggregate", "composite", "node", "uses_shared_disks", "storage_type"}).
 		Build()
 
-	records, err := rest.FetchAll(d.client, href)
+	records, err := rest.FetchAll(d.client, &d.RequestMetadata, href)
 	if err != nil {
 		d.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err

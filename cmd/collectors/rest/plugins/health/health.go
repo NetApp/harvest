@@ -87,7 +87,8 @@ func (h *Health) Init(remote conf.Remote) error {
 		return err
 	}
 
-	return h.client.Init(5, remote)
+	h.Remote, err = h.client.Init(5, remote)
+	return err
 }
 
 func (h *Health) InitAllMatrix() error {
@@ -124,8 +125,8 @@ func (h *Health) initMatrix(name string, prefix string, inputMat map[string]*mat
 
 func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[h.Object]
-	h.client.Metadata.Reset()
-	clusterVersion := h.client.Remote().Version
+	h.RequestMetadata.Reset()
+	clusterVersion := h.Remote.Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		h.SLogger.Error(
@@ -215,10 +216,10 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	)
 
 	//nolint:gosec
-	h.client.Metadata.PluginInstances = uint64(diskAlertCount + shelfAlertCount + supportAlertCount + nodeAlertCount + HAAlertCount + networkEthernetPortAlertCount + networkFcpPortAlertCount +
-		networkInterfaceAlertCount + volumeRansomwareAlertCount + volumeMoveAlertCount + licenseAlertCount + emsAlertCount + resolutionInstancesCount)
+	h.RequestMetadata.PluginInstances.Store(uint64(diskAlertCount + shelfAlertCount + supportAlertCount + nodeAlertCount + HAAlertCount + networkEthernetPortAlertCount + networkFcpPortAlertCount +
+		networkInterfaceAlertCount + volumeRansomwareAlertCount + volumeMoveAlertCount + licenseAlertCount + emsAlertCount + resolutionInstancesCount))
 
-	return result, h.client.Metadata, nil
+	return result, &h.RequestMetadata, nil
 }
 
 func (h *Health) collectLicenseAlerts() int {
@@ -262,7 +263,7 @@ func (h *Health) collectVolumeMoveAlerts() int {
 		instance *matrix.Instance
 	)
 	// The volume move command is not available for these systems.
-	if h.client.Remote().IsAFX() || h.client.Remote().IsASAr2() {
+	if h.Remote.IsAFX() || h.Remote.IsASAr2() {
 		return 0
 	}
 	volumeMoveAlertCount := 0
@@ -302,7 +303,7 @@ func (h *Health) collectVolumeRansomwareAlerts() int {
 		instance *matrix.Instance
 	)
 	volumeRansomwareAlertCount := 0
-	clusterVersion := h.client.Remote().Version
+	clusterVersion := h.Remote.Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		h.SLogger.Error("Failed to parse version", slogx.Err(err), slog.String("version", clusterVersion))
@@ -497,7 +498,7 @@ func (h *Health) collectHAAlerts() int {
 	)
 	HAAlertCount := 0
 	possible := "possible"
-	if h.client.Remote().IsAFX() {
+	if h.Remote.IsAFX() {
 		possible = "takeover_of_possible"
 	}
 	records, err := h.getHADown(possible)
@@ -763,7 +764,7 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 func (h *Health) getHADown(possible string) ([]gjson.Result, error) {
 	fields := []string{possible, "partner_name,state_description,partner_state"}
 	// mode field is not available in AFX. We reply on partner mapping for HA Alerts
-	if !h.client.Remote().IsAFX() {
+	if !h.Remote.IsAFX() {
 		fields = append(fields, "mode")
 	}
 	query := "api/private/cli/storage/failover"

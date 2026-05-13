@@ -47,6 +47,7 @@ func TestCounters(t *testing.T) {
 	var (
 		poller *conf.Poller
 		client *rest2.Client
+		remote conf.Remote
 		err    error
 	)
 
@@ -63,10 +64,10 @@ func TestCounters(t *testing.T) {
 	client, err = rest2.New(poller, timeout, auth.NewCredentials(poller, slog.Default()))
 	assert.Nil(t, err)
 
-	err = client.Init(5, conf.Remote{})
+	remote, err = client.Init(5, conf.Remote{})
 	assert.Nil(t, err)
 
-	restCounters := processRestCounters(client)
+	restCounters := processRestCounters(client, remote)
 	err = invokeRestCall(client, restCounters)
 	assert.Nil(t, err)
 }
@@ -97,7 +98,7 @@ func validateRolePermissions() {
 		os.Exit(1)
 	}
 
-	if err = adminClient.Init(5, conf.Remote{}); err != nil {
+	if _, err = adminClient.Init(5, conf.Remote{}); err != nil {
 		slog.Error("admin client init failed", slogx.Err(err), slog.String("poller", pollerName))
 		os.Exit(1)
 	}
@@ -160,12 +161,12 @@ func shouldSkipEndpoint(api string, skipEndpoints []string) bool {
 	return false
 }
 
-func processRestCounters(client *rest2.Client) map[string][]counterData {
-	restPerfCounters := visitRestTemplates("../../conf/restperf", client, func(path string, currentVersion string, _ *rest2.Client) map[string][]counterData {
+func processRestCounters(client *rest2.Client, remote conf.Remote) map[string][]counterData {
+	restPerfCounters := visitRestTemplates("../../conf/restperf", remote.Version, client, func(path string, currentVersion string, _ *rest2.Client) map[string][]counterData {
 		return processRestConfigCounters(path, currentVersion, "perf")
 	})
 
-	restCounters := visitRestTemplates("../../conf/rest", client, func(path string, currentVersion string, _ *rest2.Client) map[string][]counterData {
+	restCounters := visitRestTemplates("../../conf/rest", remote.Version, client, func(path string, currentVersion string, _ *rest2.Client) map[string][]counterData {
 		return processRestConfigCounters(path, currentVersion, "rest")
 	})
 
@@ -173,7 +174,7 @@ func processRestCounters(client *rest2.Client) map[string][]counterData {
 	return restCounters
 }
 
-func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path string, currentVersion string, client *rest2.Client) map[string][]counterData) map[string][]counterData {
+func visitRestTemplates(dir string, currentVersion string, client *rest2.Client, eachTemp func(path string, currentVersion string, client *rest2.Client) map[string][]counterData) map[string][]counterData {
 	result := make(map[string][]counterData)
 	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
@@ -195,7 +196,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 			return nil
 		}
 
-		r := eachTemp(path, client.Remote().Version, client)
+		r := eachTemp(path, currentVersion, client)
 		maps.Copy(result, r)
 		return nil
 	})

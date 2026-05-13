@@ -46,6 +46,7 @@ const DefaultPollInterval = 3 * time.Minute
 type Plugin interface {
 	GetName() string
 	Init(conf.Remote) error
+	SetRemote(conf.Remote)
 	Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error)
 }
 
@@ -102,9 +103,11 @@ type ModuleInfo struct {
 
 // AbstractPlugin implements methods of the Plugin interface, except Run()
 type AbstractPlugin struct {
-	Parent               string           // name of the collector that owns this plugin
-	Name                 string           // name of the plugin
-	Object               string           // object of the collector, describes what that collector is collecting
+	Parent               string // name of the collector that owns this plugin
+	Name                 string // name of the plugin
+	Object               string // object of the collector, describes what that collector is collecting
+	Remote               conf.Remote
+	RequestMetadata      collector.Metadata
 	SLogger              *slog.Logger     // logger used for logging
 	Options              *options.Options // poller options
 	Params               *node.Node       // plugin parameters
@@ -128,6 +131,13 @@ func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object 
 // GetName returns the name of the plugin
 func (p *AbstractPlugin) GetName() string {
 	return p.Name
+}
+
+// SetRemote updates the cached Remote for this plugin. The collector calls this
+// before each plugin Run so plugins observe ONTAP version/feature changes after
+// in-place cluster upgrades.
+func (p *AbstractPlugin) SetRemote(r conf.Remote) {
+	p.Remote = r
 }
 
 // IsStatPerfCollector returns true if the parent collector is StatPerf

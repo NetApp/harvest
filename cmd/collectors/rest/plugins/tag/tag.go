@@ -51,7 +51,8 @@ func (t *Tag) Init(remote conf.Remote) error {
 			}
 		}
 	}
-	return t.client.Init(5, remote)
+	t.Remote, err = t.client.Init(5, remote)
+	return err
 }
 
 func (t *Tag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
@@ -61,7 +62,7 @@ func (t *Tag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		return nil, nil, nil
 	}
 
-	clusterVersion := t.client.Remote().Version
+	clusterVersion := t.Remote.Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		t.SLogger.Error("Failed to parse version", slogx.Err(err), slog.String("version", clusterVersion))

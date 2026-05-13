@@ -65,7 +65,7 @@ func (s *SnapshotViolation) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 	}
 	s.schedule++
 
-	s.client.Metadata.PluginInstances = uint64(len(s.data.GetInstances()))
+	s.client.Metadata.PluginInstances.Store(uint64(len(s.data.GetInstances())))
 	return []*matrix.Matrix{s.data}, s.client.Metadata, nil
 }
 

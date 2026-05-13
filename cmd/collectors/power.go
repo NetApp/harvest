@@ -27,7 +27,7 @@ const (
 // CollectChassisFRU is here because both ZAPI and REST sensor.go plugin call it to collect
 // `system chassis fru show`.
 // Chassis FRU information is only available via private CLI
-func collectChassisFRU(client *rest.Client, logger *slog.Logger) (map[string]int, error) {
+func collectChassisFRU(client *rest.Client, clusterName string, logger *slog.Logger) (map[string]int, error) {
 	fields := []string{"fru-name", "type", "status", "connected-nodes", "num-nodes"}
 	query := "api/private/cli/system/chassis/fru"
 	filter := []string{"type=psu"}
@@ -38,7 +38,7 @@ func collectChassisFRU(client *rest.Client, logger *slog.Logger) (map[string]int
 		MaxRecords(DefaultBatchSize).
 		Build()
 
-	result, err := rest.FetchAll(client, href)
+	result, err := rest.FetchAll(client, nil, href)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data href=%s err=%w", href, err)
 	}
@@ -51,7 +51,7 @@ func collectChassisFRU(client *rest.Client, logger *slog.Logger) (map[string]int
 		if !cn.Exists() {
 			logger.Warn(
 				"fru has no connected nodes",
-				slog.String("cluster", client.Remote().Name),
+				slog.String("cluster", clusterName),
 				slog.String("fru", r.Get("fru_name").ClonedString()),
 			)
 			continue
@@ -384,6 +384,7 @@ func (s *Sensor) Init(remote conf.Remote) error {
 	if err := s.InitAbc(); err != nil {
 		return err
 	}
+	s.Remote = remote
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
@@ -393,7 +394,7 @@ func (s *Sensor) Init(remote conf.Remote) error {
 
 	s.hasREST = true
 
-	if err := s.client.Init(5, remote); err != nil {
+	if _, err := s.client.Init(5, remote); err != nil {
 		if re, ok := errors.AsType[*errs.RestError](err); ok && re.StatusCode == http.StatusNotFound {
 			s.SLogger.Warn("Cluster does not support REST. Power plugin disabled")
 			s.hasREST = false
@@ -425,13 +426,13 @@ func (s *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	// Purge and reset data
 	s.data.PurgeInstances()
 	s.data.Reset()
-	s.client.Metadata.Reset()
+	s.RequestMetadata.Reset()
 
 	// Set all global labels if they don't already exist
 	s.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	// Collect chassis fru show, so we can determine if a controller's PSUs are shared or not
-	nodeToNumNode, err := collectChassisFRU(s.client, s.SLogger)
+	nodeToNumNode, err := collectChassisFRU(s.client, s.Remote.Name, s.SLogger)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -445,5 +446,5 @@ func (s *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	}
 	metrics := calculateEnvironmentMetrics(data, s.SLogger, valueKey, s.data, nodeToNumNode)
 
-	return metrics, s.client.Metadata, nil
+	return metrics, &s.RequestMetadata, nil
 }

@@ -77,9 +77,9 @@ func (c *CDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 
 	c.parseCDP(output, cdpMat)
 
-	c.client.Metadata.NumCalls = 1
-	c.client.Metadata.BytesRx = uint64(len(output.Raw))
-	c.client.Metadata.PluginInstances = uint64(len(cdpMat.GetInstances()))
+	c.client.Metadata.NumCalls.Store(1)
+	c.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
+	c.client.Metadata.PluginInstances.Store(uint64(len(cdpMat.GetInstances())))
 
 	return []*matrix.Matrix{cdpMat}, c.client.Metadata, nil
 }

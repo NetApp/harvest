@@ -220,7 +220,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 		}
 	}
 
-	q.client.Metadata.PluginInstances = uint64(quotaIndex) //nolint:gosec
+	q.client.Metadata.PluginInstances.Store(uint64(quotaIndex))
 
 	q.SLogger.Info(
 		"Collected",
