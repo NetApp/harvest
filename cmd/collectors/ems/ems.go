@@ -548,12 +548,14 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 				)
 			}
 		} else {
+			existingEms := false
 			if _, ok := m[msgName]; !ok {
 				// create matrix if not exists for the ems event
 				mx = matrix.New(msgName, e.Prop.Object, msgName)
 				mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
 				m[msgName] = mx
 			} else {
+				existingEms = true
 				mx = m[msgName]
 			}
 
@@ -671,6 +673,9 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 			if !isMatch {
 				mx.RemoveInstance(instanceKey)
+				if !existingEms {
+					delete(m, msgName)
+				}
 				continue
 			}
 			count += instanceLabelCount
