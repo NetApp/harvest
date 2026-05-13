@@ -70,3 +70,60 @@ func TestClientGetPlainRestConcurrent(t *testing.T) {
 		t.Fatalf("NumCalls = %d, want %d", metadata.NumCalls.Load(), workers*iterations)
 	}
 }
+
+func TestClientPostRestAuthRetryReplaysBody(t *testing.T) {
+	credentials := auth.NewCredentials(&conf.Poller{
+		Name:     "test",
+		Addr:     "cluster.example",
+		Username: "user",
+		CredentialsScript: conf.CredentialsScript{
+			Path: "../../../pkg/auth/testdata/get_credentials_yaml",
+		},
+	}, slog.Default())
+
+	expectedBody := `{"hello":"world"}`
+	var bodies []string
+	var attempts int
+
+	client := &Client{
+		client: &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+			payload, err := io.ReadAll(r.Body)
+			if err != nil {
+				return nil, err
+			}
+			bodies = append(bodies, string(payload))
+			attempts++
+
+			statusCode := http.StatusOK
+			responseBody := `{"records":[]}`
+			if attempts == 1 {
+				statusCode = http.StatusUnauthorized
+				responseBody = `{"error":{"message":"unauthorized"}}`
+			}
+
+			return &http.Response{
+				StatusCode: statusCode,
+				Body:       io.NopCloser(strings.NewReader(responseBody)),
+				Header:     make(http.Header),
+			}, nil
+		})},
+		Logger:  slog.Default(),
+		baseURL: "https://cluster.example/",
+		auth:    credentials,
+	}
+
+	_, err := client.PostRest(nil, "api/cluster", []byte(expectedBody))
+	if err != nil {
+		t.Fatalf("PostRest() error = %v", err)
+	}
+
+	if len(bodies) != 2 {
+		t.Fatalf("got %d request bodies, want 2", len(bodies))
+	}
+	if bodies[0] != expectedBody {
+		t.Fatalf("first request body = %q, want %q", bodies[0], expectedBody)
+	}
+	if bodies[1] != expectedBody {
+		t.Fatalf("retried request body = %q, want %q", bodies[1], expectedBody)
+	}
+}

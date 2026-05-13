@@ -158,13 +158,7 @@ func (c *Client) GetPlainRest(metadata *collector.Metadata, request string, enco
 		req.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 	}
 
-	buffer := bytes.NewBuffer(nil)
-	req.GetBody = func() (io.ReadCloser, error) {
-		r := bytes.NewReader(buffer.Bytes())
-		return io.NopCloser(r), nil
-	}
-
-	result, err := c.invokeWithAuthRetry(req, buffer)
+	result, err := c.invokeWithAuthRetry(req)
 	recordRequestMetadata(metadata, result)
 
 	result = c.unwrapGCNVBody(result)
@@ -199,8 +193,7 @@ func (c *Client) PostRest(metadata *collector.Metadata, endpoint string, body []
 	u := c.baseURL + endpoint
 
 	var err error
-	buffer := bytes.NewBuffer(body)
-	req, err := requests.New("POST", u, bytes.NewBuffer(body))
+	req, err := requests.New("POST", u, bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
@@ -225,18 +218,13 @@ func (c *Client) PostRest(metadata *collector.Metadata, endpoint string, body []
 		req.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 	}
 
-	req.GetBody = func() (io.ReadCloser, error) {
-		r := bytes.NewReader(buffer.Bytes())
-		return io.NopCloser(r), nil
-	}
-
-	result, err := c.invokeWithAuthRetry(req, buffer)
+	result, err := c.invokeWithAuthRetry(req)
 	recordRequestMetadata(metadata, result)
 
 	return result, err
 }
 
-func (c *Client) invokeWithAuthRetry(req *http.Request, buffer *bytes.Buffer) ([]byte, error) {
+func (c *Client) invokeWithAuthRetry(req *http.Request) ([]byte, error) {
 	var (
 		body []byte
 		err  error
@@ -248,10 +236,6 @@ func (c *Client) invokeWithAuthRetry(req *http.Request, buffer *bytes.Buffer) ([
 			innerBody []byte
 			innerErr  error
 		)
-
-		if buffer != nil {
-			defer buffer.Reset()
-		}
 		restReq := req.URL.String()
 		api := requests.GetURLWithoutHost(req)
 
@@ -348,9 +332,21 @@ func (c *Client) invokeWithAuthRetry(req *http.Request, buffer *bytes.Buffer) ([
 					if pollerAuth2.AuthToken != "" {
 						req.Header.Set("Authorization", "Bearer "+pollerAuth2.AuthToken)
 						c.Logger.Debug("Using authToken from credential script")
+						if req.GetBody != nil {
+							req.Body, err2 = req.GetBody()
+							if err2 != nil {
+								return nil, err2
+							}
+						}
 						return doInvoke()
 					}
 					req.SetBasicAuth(pollerAuth2.Username, pollerAuth2.Password)
+					if req.GetBody != nil {
+						req.Body, err2 = req.GetBody()
+						if err2 != nil {
+							return nil, err2
+						}
+					}
 					return doInvoke()
 				}
 			}
