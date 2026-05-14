@@ -45,7 +45,7 @@ func (c *Certificate) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := c.client.Init(5, remote); err != nil {
+	if _, err := c.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -62,7 +62,7 @@ func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		unixTime         time.Time
 	)
 	data := dataMap[c.Object]
-	c.client.Metadata.Reset()
+	c.RequestMetadata.Reset()
 
 	if c.currentVal >= c.PluginInvocationRate {
 		c.currentVal = 0
@@ -99,7 +99,7 @@ func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	}
 
 	c.currentVal++
-	return nil, c.client.Metadata, nil
+	return nil, &c.RequestMetadata, nil
 }
 
 func (c *Certificate) refreshAdminSerial() {

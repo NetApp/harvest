@@ -283,9 +283,9 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	}
 
 	apiT := time.Now()
-	r.Client.Metadata.Reset()
+	r.RequestMetadata.Reset()
 
-	records, err = rest.FetchAll(r.Client, href)
+	records, err = rest.FetchAll(r.Client, &r.RequestMetadata, href)
 	if err != nil {
 		return r.handleError(err, href)
 	}
@@ -417,8 +417,8 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	_ = r.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "counter", uint64(len(r.perfProp.counterInfo)))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "counter", r.Client.Metadata.BytesRx)
-	_ = r.Metadata.LazySetValueUint64("numCalls", "counter", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "counter", r.RequestMetadata.BytesRx.Load())
+	_ = r.Metadata.LazySetValueUint64("numCalls", "counter", r.RequestMetadata.NumCalls.Load())
 
 	return nil, nil
 }
@@ -716,7 +716,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	startTime = time.Now()
-	r.Client.Metadata.Reset()
+	r.RequestMetadata.Reset()
 
 	isWorkloadObj := isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)
 	prevMat = r.Matrix[r.Object]
@@ -843,7 +843,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			return nil
 		}
 
-		err = rest.FetchRestPerfDataStream(r.Client, href, processBatch, headers)
+		err = rest.FetchRestPerfDataStream(r.Client, &r.RequestMetadata, href, processBatch, headers)
 		apiD += time.Since(startTime)
 
 		if err != nil {
@@ -882,8 +882,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
-	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.RequestMetadata.BytesRx.Load())
+	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.RequestMetadata.NumCalls.Load())
 	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 	r.AddCollectCount(metricCount)
 
@@ -1457,7 +1457,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
 
-	records, err = rest.FetchAll(r.Client, href)
+	records, err = rest.FetchAll(r.Client, nil, href)
 	if err != nil {
 		r.Logger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err
@@ -1606,8 +1606,8 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	apiT := time.Now()
-	r.Client.Metadata.Reset()
-	records, err = rest.FetchAll(r.Client, href, headers)
+	r.RequestMetadata.Reset()
+	records, err = rest.FetchAll(r.Client, &r.RequestMetadata, href, headers)
 	if err != nil {
 		return r.handleError(err, href)
 	}
@@ -1711,8 +1711,8 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 	_ = r.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
 	_ = r.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "instance", r.Client.Metadata.BytesRx)
-	_ = r.Metadata.LazySetValueUint64("numCalls", "instance", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "instance", r.RequestMetadata.BytesRx.Load())
+	_ = r.Metadata.LazySetValueUint64("numCalls", "instance", r.RequestMetadata.NumCalls.Load())
 
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")

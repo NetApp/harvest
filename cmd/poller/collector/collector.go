@@ -490,6 +490,7 @@ func (c *AbstractCollector) Start(
 
 					for _, v := range c.Plugins {
 						for _, plg := range v {
+							plg.SetRemote(c.Remote)
 							pluginData, pluginMetadata, err := plg.Run(data)
 							if err != nil {
 								c.Logger.Error("", slogx.Err(err), slog.String("plugin", plg.GetName()))
@@ -499,9 +500,9 @@ func (c *AbstractCollector) Start(
 								results = append(results, pluginData...)
 							}
 							if pluginMetadata != nil {
-								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx)
-								_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls)
-								_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances)
+								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx.Load())
+								_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls.Load())
+								_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances.Load())
 							}
 						}
 					}

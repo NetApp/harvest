@@ -85,11 +85,12 @@ func checkRest(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 		return conf.Remote{}, err
 	}
 
-	if err := client.Init(1, conf.Remote{}); err != nil {
+	remote, err := client.Init(1, conf.Remote{})
+	if err != nil {
 		return conf.Remote{}, err
 	}
 
-	return client.Remote(), nil
+	return remote, nil
 }
 
 func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
@@ -156,7 +157,8 @@ func checkCiscoRest(pollerName string, cred *auth.Credentials) (conf.Remote, err
 		return conf.Remote{}, err
 	}
 
-	if err := client.Init(1, conf.Remote{}); err != nil {
+	err = client.Init(1, conf.Remote{})
+	if err != nil {
 		return conf.Remote{}, err
 	}
 
@@ -181,7 +183,8 @@ func checkStorageGrid(pollerName string, cred *auth.Credentials) (conf.Remote, e
 		return conf.Remote{}, err
 	}
 
-	if err := client.Init(1, conf.Remote{}); err != nil {
+	err = client.Init(1, conf.Remote{})
+	if err != nil {
 		return conf.Remote{}, err
 	}
 
@@ -206,7 +209,8 @@ func checkEseries(pollerName string, cred *auth.Credentials) (conf.Remote, error
 		return conf.Remote{}, err
 	}
 
-	if err := client.Init(1, conf.Remote{}); err != nil {
+	err = client.Init(1, conf.Remote{})
+	if err != nil {
 		return conf.Remote{}, err
 	}
 

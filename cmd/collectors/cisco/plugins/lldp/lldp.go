@@ -80,9 +80,9 @@ func (l *LLDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 
 	l.parseLLDP(output, lldpMat)
 
-	l.client.Metadata.NumCalls = 1
-	l.client.Metadata.BytesRx = uint64(len(output.Raw))
-	l.client.Metadata.PluginInstances = uint64(len(lldpMat.GetInstances()))
+	l.client.Metadata.NumCalls.Store(1)
+	l.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
+	l.client.Metadata.PluginInstances.Store(uint64(len(lldpMat.GetInstances())))
 
 	return []*matrix.Matrix{lldpMat}, l.client.Metadata, nil
 }

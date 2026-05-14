@@ -104,9 +104,9 @@ func (i *Interface) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 
 	i.parseInterface(output, interfaceMat)
 
-	i.client.Metadata.NumCalls = 1
-	i.client.Metadata.BytesRx = uint64(len(output.Raw))
-	i.client.Metadata.PluginInstances = uint64(len(interfaceMat.GetInstances()))
+	i.client.Metadata.NumCalls.Store(1)
+	i.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
+	i.client.Metadata.PluginInstances.Store(uint64(len(interfaceMat.GetInstances())))
 
 	return []*matrix.Matrix{interfaceMat}, i.client.Metadata, nil
 }

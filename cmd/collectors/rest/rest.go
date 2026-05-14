@@ -3,6 +3,14 @@ package rest
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+	"os"
+	"regexp"
+	"slices"
+	"sort"
+	"strings"
+	"time"
+
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/auditlog"
@@ -51,13 +59,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"log/slog"
-	"os"
-	"regexp"
-	"slices"
-	"sort"
-	"strings"
-	"time"
 )
 
 // Regular expression to match dot notation or single word without dot
@@ -69,6 +70,7 @@ var validPropRegex = regexp.MustCompile(`^([a-zA-Z_]\w*\.)*[a-zA-Z_]\w*$`)
 type Rest struct {
 	*collector.AbstractCollector
 	Client                       *rest.Client
+	RequestMetadata              collector2.Metadata
 	Prop                         *prop
 	Endpoints                    []*EndPoint
 	isIgnoreUnknownFieldsEnabled bool
@@ -216,9 +218,11 @@ func (r *Rest) InitClient() error {
 		return nil
 	}
 
-	if err := r.Client.Init(5, r.Remote); err != nil {
+	remote, err := r.Client.Init(5, r.Remote)
+	if err != nil {
 		return err
 	}
+	r.Remote = remote
 
 	return nil
 }
@@ -257,7 +261,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if a.Options.IsTest {
-		return &rest.Client{Metadata: &collector2.Metadata{}}, nil
+		return &rest.Client{}, nil
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
 		r.Logger.Error("error creating new client", slogx.Err(err), slog.String("poller", opt.Poller))
@@ -322,10 +326,11 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	startTime := time.Now()
 	// Update the cluster info to track if ONTAP version is updated
-	err := r.Client.UpdateClusterInfo(5)
+	remote, err := r.Client.UpdateClusterInfo(5)
 	if err != nil {
 		return nil, err
 	}
+	r.Remote = remote
 	apiD := time.Since(startTime)
 
 	startTime = time.Now()
@@ -374,7 +379,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		metricCount  uint64
 	)
 	r.Matrix[r.Object].Reset()
-	r.Client.Metadata.Reset()
+	r.RequestMetadata.Reset()
 
 	// Track old instances before processing batches
 	oldInstances := set.New()
@@ -397,7 +402,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	r.Logger.Debug("Fetching data", slog.String("href", r.Prop.Href))
 	startTime := time.Now()
-	if err := rest.FetchAllStream(r.Client, r.Prop.Href, processBatch); err != nil {
+	if err := rest.FetchAllStream(r.Client, &r.RequestMetadata, r.Prop.Href, processBatch); err != nil {
 		_, err2 := r.handleError(err)
 		return nil, err2
 	}
@@ -424,8 +429,8 @@ func (r *Rest) postPollData(apiD time.Duration, parseD time.Duration, metricCoun
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(numRecords))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
-	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.RequestMetadata.BytesRx.Load())
+	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.RequestMetadata.NumCalls.Load())
 
 	r.AddCollectCount(metricCount)
 }
@@ -739,7 +744,7 @@ func (r *Rest) GetRestData(href string, headers ...map[string]string) ([]gjson.R
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	result, err := rest.FetchAll(r.Client, href, headers...)
+	result, err := rest.FetchAll(r.Client, &r.RequestMetadata, href, headers...)
 	if err != nil {
 		return r.handleError(err)
 	}

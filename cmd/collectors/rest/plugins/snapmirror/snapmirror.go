@@ -55,7 +55,7 @@ func (m *SnapMirror) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := m.client.Init(5, remote); err != nil {
+	if _, err := m.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -92,7 +92,7 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	data := dataMap[m.Object]
 	m.data.PurgeInstances()
 	m.data.Reset()
-	m.client.Metadata.Reset()
+	m.RequestMetadata.Reset()
 
 	// Set all global labels from Rest.go if already not exist
 	m.data.SetGlobalLabels(data.GetGlobalLabels())
@@ -115,7 +115,7 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	m.currentVal++
 
 	m.checkFabricLinkStatus(data)
-	return []*matrix.Matrix{m.data}, m.client.Metadata, nil
+	return []*matrix.Matrix{m.data}, &m.RequestMetadata, nil
 }
 
 func (m *SnapMirror) getSVMPeerData(cluster string) error {
@@ -130,7 +130,7 @@ func (m *SnapMirror) getSVMPeerData(cluster string) error {
 		Filter([]string{"peer.cluster.name=!" + cluster}).
 		Build()
 
-	result, err := rest.FetchAll(m.client, href)
+	result, err := rest.FetchAll(m.client, &m.RequestMetadata, href)
 	if err != nil {
 		m.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err
@@ -161,7 +161,7 @@ func (m *SnapMirror) getClusterPeerData() error {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	result, err := rest.FetchAll(m.client, href)
+	result, err := rest.FetchAll(m.client, &m.RequestMetadata, href)
 	if err != nil {
 		m.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return err

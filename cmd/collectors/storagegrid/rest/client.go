@@ -271,8 +271,8 @@ func (c *Client) fetch() ([]byte, error) {
 	}
 	defer c.printRequestAndResponse(body)
 
-	c.Metadata.BytesRx += uint64(len(body))
-	c.Metadata.NumCalls++
+	c.Metadata.BytesRx.Add(uint64(len(body)))
+	c.Metadata.NumCalls.Add(1)
 
 	return body, nil
 }

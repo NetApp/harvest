@@ -315,7 +315,7 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	)
 
 	startTime = time.Now()
-	kp.Client.Metadata.Reset()
+	kp.RequestMetadata.Reset()
 
 	href := kp.Prop.Href
 	kp.Logger.Debug("fetching href", slog.String("href", href))
@@ -365,7 +365,7 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil
 	}
 
-	if err := rest2.FetchAllStream(kp.Client, kp.Prop.Href, processBatch, headers); err != nil {
+	if err := rest2.FetchAllStream(kp.Client, &kp.RequestMetadata, kp.Prop.Href, processBatch, headers); err != nil {
 		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 	apiD += time.Since(startTime)
@@ -388,8 +388,8 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = kp.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = kp.Metadata.LazySetValueUint64("metrics", "data", metricCount)
 	_ = kp.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = kp.Metadata.LazySetValueUint64("bytesRx", "data", kp.Client.Metadata.BytesRx)
-	_ = kp.Metadata.LazySetValueUint64("numCalls", "data", kp.Client.Metadata.NumCalls)
+	_ = kp.Metadata.LazySetValueUint64("bytesRx", "data", kp.RequestMetadata.BytesRx.Load())
+	_ = kp.Metadata.LazySetValueUint64("numCalls", "data", kp.RequestMetadata.NumCalls.Load())
 	_ = kp.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 
 	kp.AddCollectCount(metricCount)

@@ -41,7 +41,7 @@ func (f *FlexCache) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := f.client.Init(5, remote); err != nil {
+	if _, err := f.client.Init(5, remote); err != nil {
 		return err
 	}
 	return nil
@@ -49,7 +49,7 @@ func (f *FlexCache) Init(remote conf.Remote) error {
 
 func (f *FlexCache) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[f.Object]
-	f.client.Metadata.Reset()
+	f.RequestMetadata.Reset()
 
 	flexCache, err := f.getFlexCaches()
 	if err != nil {
@@ -67,7 +67,7 @@ func (f *FlexCache) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 			instance.SetExportable(false)
 		}
 	}
-	return nil, f.client.Metadata, nil
+	return nil, &f.RequestMetadata, nil
 }
 
 func (f *FlexCache) getFlexCaches() (*set.Set, error) {

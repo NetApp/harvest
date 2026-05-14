@@ -33,7 +33,8 @@ func (v *VolumeTag) Init(remote conf.Remote) error {
 		return err
 	}
 
-	return v.client.Init(5, remote)
+	_, err = v.client.Init(5, remote)
+	return err
 }
 
 func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
@@ -43,7 +44,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 	)
 
 	data := dataMap[v.Object]
-	v.client.Metadata.Reset()
+	v.RequestMetadata.Reset()
 
 	query := "api/storage/volumes"
 
@@ -53,7 +54,7 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		Fields([]string{"comment"}).
 		Build()
 
-	records, err := rest.FetchAll(v.client, href)
+	records, err := rest.FetchAll(v.client, &v.RequestMetadata, href)
 	if err != nil {
 		v.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return nil, nil, err
@@ -85,5 +86,5 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		}
 	}
 
-	return nil, v.client.Metadata, nil
+	return nil, &v.RequestMetadata, nil
 }

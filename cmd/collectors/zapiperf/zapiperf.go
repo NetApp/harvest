@@ -777,8 +777,8 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
 	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
 	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instanceKeys)))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx)
-	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls)
+	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx.Load())
+	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls.Load())
 	_ = z.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 
 	z.AddCollectCount(count)
@@ -1377,8 +1377,8 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
 	_ = z.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
 	_ = z.Metadata.LazySetValueUint64("metrics", "counter", uint64(numMetrics))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "counter", z.Client.Metadata.BytesRx)
-	_ = z.Metadata.LazySetValueUint64("numCalls", "counter", z.Client.Metadata.NumCalls)
+	_ = z.Metadata.LazySetValueUint64("bytesRx", "counter", z.Client.Metadata.BytesRx.Load())
+	_ = z.Metadata.LazySetValueUint64("numCalls", "counter", z.Client.Metadata.NumCalls.Load())
 
 	if numMetrics == 0 {
 		return nil, errs.New(errs.ErrNoMetric, "")
@@ -1765,8 +1765,8 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	_ = z.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
 	_ = z.Metadata.LazySetValueInt64("parse_time", "instance", parseD.Microseconds())
 	_ = z.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "instance", z.Client.Metadata.BytesRx)
-	_ = z.Metadata.LazySetValueUint64("numCalls", "instance", z.Client.Metadata.NumCalls)
+	_ = z.Metadata.LazySetValueUint64("bytesRx", "instance", z.Client.Metadata.BytesRx.Load())
+	_ = z.Metadata.LazySetValueUint64("numCalls", "instance", z.Client.Metadata.NumCalls.Load())
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "")
 	}

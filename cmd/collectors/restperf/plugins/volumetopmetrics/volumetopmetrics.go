@@ -147,7 +147,7 @@ func (t *TopMetrics) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := t.client.Init(5, remote); err != nil {
+	if _, err := t.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -190,7 +190,7 @@ func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	}
 
 	data := dataMap[t.Object]
-	t.client.Metadata.Reset()
+	t.RequestMetadata.Reset()
 	err := t.InitAllMatrix()
 	if err != nil {
 		return nil, nil, err
@@ -202,29 +202,29 @@ func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 	metricsData, err := t.processTopMetrics(data)
 	if err != nil {
-		return nil, t.client.Metadata, err
+		return nil, &t.RequestMetadata, err
 	}
 
 	if metricsData == nil {
-		return nil, t.client.Metadata, nil
+		return nil, &t.RequestMetadata, nil
 	}
 
 	if t.clientMetricsEnabled {
 		err = t.processTopClients(metricsData)
 		if err != nil {
-			return nil, t.client.Metadata, err
+			return nil, &t.RequestMetadata, err
 		}
 	}
 	if t.fileMetricsEnabled {
 		err = t.processTopFiles(metricsData)
 		if err != nil {
-			return nil, t.client.Metadata, err
+			return nil, &t.RequestMetadata, err
 		}
 	}
 	if t.userMetricsEnabled {
 		err = t.processTopUsers(metricsData)
 		if err != nil {
-			return nil, t.client.Metadata, err
+			return nil, &t.RequestMetadata, err
 		}
 	}
 
@@ -240,8 +240,8 @@ func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		pluginInstances += uint64(len(value.GetInstances()))
 	}
 
-	t.client.Metadata.PluginInstances = pluginInstances
-	return result, t.client.Metadata, err
+	t.RequestMetadata.PluginInstances.Store(pluginInstances)
+	return result, &t.RequestMetadata, err
 }
 
 func (t *TopMetrics) getCachedVolumesWithActivityTracking() (*set.Set, error) {

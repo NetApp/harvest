@@ -244,8 +244,8 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 		}
 
 		// Track metadata
-		c.Metadata.NumCalls++
-		c.Metadata.BytesRx += uint64(len(innerBody))
+		c.Metadata.NumCalls.Add(1)
+		c.Metadata.BytesRx.Add(uint64(len(innerBody)))
 
 		if res.StatusCode == http.StatusUnauthorized {
 			c.Logger.Warn(

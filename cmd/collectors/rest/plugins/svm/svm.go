@@ -62,7 +62,7 @@ func (s *SVM) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := s.client.Init(5, remote); err != nil {
+	if _, err := s.client.Init(5, remote); err != nil {
 		return err
 	}
 	s.nsswitchInfo = make(map[string]Nsswitch)
@@ -80,7 +80,7 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	)
 
 	data := dataMap[s.Object]
-	s.client.Metadata.Reset()
+	s.RequestMetadata.Reset()
 
 	// update nsswitch info
 	if s.nsswitchInfo, err = s.GetNSSwitchInfo(data); err != nil {
@@ -129,7 +129,7 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 
 	s.updateSVM(data)
 
-	return nil, s.client.Metadata, nil
+	return nil, &s.RequestMetadata, nil
 }
 
 func (s *SVM) updateSVM(data *matrix.Matrix) {

@@ -74,7 +74,8 @@ func (a *AuditLog) Init(remote conf.Remote) error {
 	a.lastFilterTimes = make(map[string]int64)
 	a.InitVolumeCache()
 
-	return a.client.Init(5, remote)
+	_, err = a.client.Init(5, remote)
+	return err
 }
 
 func (a *AuditLog) InitVolumeCache() {
@@ -99,7 +100,7 @@ func (a *AuditLog) initMatrix() error {
 }
 
 func (a *AuditLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
-	a.client.Metadata.Reset()
+	a.RequestMetadata.Reset()
 
 	if a.schedule >= a.PluginInvocationRate {
 		a.schedule = 0
@@ -142,7 +143,7 @@ func (a *AuditLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 		a.lastFilterTimes["volume"] = clusterTime.Unix()
 	}
 
-	return []*matrix.Matrix{a.data}, a.client.Metadata, nil
+	return []*matrix.Matrix{a.data}, &a.RequestMetadata, nil
 }
 
 func (a *AuditLog) HasVolumeConfig() bool {
@@ -207,7 +208,7 @@ func (a *AuditLog) populateVolumeCache() error {
 		Fields([]string{"svm.name", "uuid", "name"}).
 		Build()
 
-	records, err := rest.FetchAll(a.client, href)
+	records, err := rest.FetchAll(a.client, &a.RequestMetadata, href)
 	if err != nil {
 		return err
 	}

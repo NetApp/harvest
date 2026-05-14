@@ -128,7 +128,7 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 	}
 
 	// Init is called to get the cluster version
-	err = client.Init(1, conf.Remote{})
+	remote, err := client.Init(1, conf.Remote{})
 	if err != nil {
 		if re, ok := errors.AsType[*errs.RestError](err); ok {
 			return nil, fmt.Errorf("poller=%s statusCode=%d", poller.Name, re.StatusCode)
@@ -160,7 +160,7 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 
 	href := hrefBuilder.Build()
 
-	err = FetchForCli(client, href, &records, args.DownloadAll, &curls)
+	err = FetchForCli(client, nil, href, &records, args.DownloadAll, &curls)
 	if err != nil {
 		return nil, fmt.Errorf("poller=%s %w", poller.Name, err)
 	}
@@ -171,8 +171,8 @@ func fetchData(poller *conf.Poller, timeout time.Duration) (*Results, error) {
 		Poller:         poller.Name,
 		Addr:           poller.Addr,
 		API:            args.API,
-		Version:        client.remote.Version,
-		ClusterName:    client.remote.Name,
+		Version:        remote.Version,
+		ClusterName:    remote.Name,
 		Records:        records,
 		NumRecords:     len(records),
 		PollDurationMs: time.Since(now).Milliseconds(),
@@ -299,14 +299,15 @@ func GetPollerAndAddr(pName string) (*conf.Poller, string, error) {
 	return poller, poller.Addr, nil
 }
 
-// FetchForCli used for CLI only
-func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, curls *[]string) error {
+// FetchForCli used for CLI only.
+// If metadata is non-nil, BytesRx and NumCalls are incremented.
+func FetchForCli(client *Client, metadata *collector.Metadata, href string, records *[]any, downloadAll bool, curls *[]string) error {
 
 	var prevLink string
 	nextLink := href
 
 	for {
-		getRest, err := client.GetRest(nextLink)
+		getRest, err := client.GetRest(metadata, nextLink)
 		if err != nil {
 			return fmt.Errorf("error making request %w", err)
 		}
@@ -369,14 +370,15 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, 
 
 // FetchAll collects all records.
 // If you want to limit the number of records returned, use FetchSome.
-func FetchAll(client *Client, href string, headers ...map[string]string) ([]gjson.Result, error) {
+// If metadata is non-nil, BytesRx and NumCalls are incremented.
+func FetchAll(client *Client, metadata *collector.Metadata, href string, headers ...map[string]string) ([]gjson.Result, error) {
 	var (
 		records []gjson.Result
 		result  []gjson.Result
 		err     error
 	)
 
-	err = fetchAll(client, href, &records, headers...)
+	err = fetchAll(client, metadata, href, &records, headers...)
 	if err != nil {
 		return nil, err
 	}
@@ -386,7 +388,7 @@ func FetchAll(client *Client, href string, headers ...map[string]string) ([]gjso
 	return result, nil
 }
 
-func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, error) {
+func FetchAnalytics(client *Client, metadata *collector.Metadata, href string) ([]gjson.Result, gjson.Result, error) {
 	var (
 		records   []gjson.Result
 		analytics = &gjson.Result{}
@@ -409,7 +411,7 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 		}
 		downloadAll = maxRecords == 0
 	}
-	err = fetchAnalytics(client, href, &records, analytics, downloadAll, int64(maxRecords))
+	err = fetchAnalytics(client, metadata, href, &records, analytics, downloadAll, int64(maxRecords))
 	if err != nil {
 		return nil, gjson.Result{}, err
 	}
@@ -424,12 +426,12 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 	return result, *analytics, nil
 }
 
-func FetchRestPerfDataStream(client *Client, href string, processBatch func([]PerfRecord) error, headers ...map[string]string) error {
+func FetchRestPerfDataStream(client *Client, metadata *collector.Metadata, href string, processBatch func([]PerfRecord) error, headers ...map[string]string) error {
 	var prevLink string
 	nextLink := href
 	recordsFound := false
 	for {
-		response, err := client.GetRest(nextLink, headers...)
+		response, err := client.GetRest(metadata, nextLink, headers...)
 		if err != nil {
 			return fmt.Errorf("error making request %w", err)
 		}
@@ -463,8 +465,8 @@ func FetchRestPerfDataStream(client *Client, href string, processBatch func([]Pe
 	return nil
 }
 
-func FetchPost(client *Client, endpoint string, body []byte, headers ...map[string]string) ([]gjson.Result, error) {
-	response, err := client.PostRest(endpoint, body, headers...)
+func FetchPost(client *Client, metadata *collector.Metadata, endpoint string, body []byte, headers ...map[string]string) ([]gjson.Result, error) {
+	response, err := client.PostRest(metadata, endpoint, body, headers...)
 	if err != nil {
 		return nil, fmt.Errorf("error in POST request: %w", err)
 	}
@@ -482,14 +484,14 @@ func FetchPost(client *Client, endpoint string, body []byte, headers ...map[stri
 	return results, nil
 }
 
-func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result, int64) error, headers ...map[string]string) error {
+func FetchAllStream(client *Client, metadata *collector.Metadata, href string, processBatch func([]gjson.Result, int64) error, headers ...map[string]string) error {
 	var prevLink string
 	nextLink := href
 	recordsFound := false
 
 	for {
 		var records []gjson.Result
-		response, err := client.GetRest(nextLink, headers...)
+		response, err := client.GetRest(metadata, nextLink, headers...)
 		if err != nil {
 			return fmt.Errorf("error making request %w", err)
 		}
@@ -540,13 +542,13 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 	return nil
 }
 
-func fetchAll(client *Client, href string, records *[]gjson.Result, headers ...map[string]string) error {
+func fetchAll(client *Client, metadata *collector.Metadata, href string, records *[]gjson.Result, headers ...map[string]string) error {
 
 	var prevLink string
 	nextLink := href
 
 	for {
-		response, err := client.GetRest(nextLink, headers...)
+		response, err := client.GetRest(metadata, nextLink, headers...)
 		if err != nil {
 			return fmt.Errorf("error making request %w", err)
 		}
@@ -587,7 +589,7 @@ func fetchAll(client *Client, href string, records *[]gjson.Result, headers ...m
 // FetchSome collects at most recordsWanted records, following pagination links as needed.
 // Use batchSize to limit the number of records returned in a single response.
 // If recordsWanted is -1, all records are collected.
-func FetchSome(client *Client, href string, recordsWanted int, batchSize string) ([]gjson.Result, error) {
+func FetchSome(client *Client, metadata *collector.Metadata, href string, recordsWanted int, batchSize string) ([]gjson.Result, error) {
 	var (
 		records []gjson.Result
 		result  []gjson.Result
@@ -607,11 +609,10 @@ func FetchSome(client *Client, href string, recordsWanted int, batchSize string)
 	}
 	q := u.Query()
 	q.Set("max_records", strconv.Itoa(batch))
-	encoded := q.Encode()
-	u.RawQuery = encoded
+	u.RawQuery = q.Encode()
 	href = u.String()
 
-	err = fetchLimit(client, href, &records, recordsWanted)
+	err = fetchLimit(client, metadata, href, &records, recordsWanted)
 	if err != nil {
 		return nil, err
 	}
@@ -621,13 +622,12 @@ func FetchSome(client *Client, href string, recordsWanted int, batchSize string)
 	return result, nil
 }
 
-func fetchLimit(client *Client, href string, records *[]gjson.Result, recordsWanted int) error {
-
+func fetchLimit(client *Client, metadata *collector.Metadata, href string, records *[]gjson.Result, recordsWanted int) error {
 	var prevLink string
 	nextLink := href
 
 	for {
-		getRest, err := client.GetRest(nextLink)
+		getRest, err := client.GetRest(metadata, nextLink)
 		if err != nil {
 			return fmt.Errorf("error making request %w", err)
 		}
@@ -641,7 +641,6 @@ func fetchLimit(client *Client, href string, records *[]gjson.Result, recordsWan
 			// extract returned records since paginated records need to be merged into a single lists
 			if numRecords.Int() > 0 {
 				*records = append(*records, data)
-
 				if recordsWanted != -1 {
 					recordsWanted -= int(numRecords.Int())
 					if recordsWanted <= 0 {
@@ -652,7 +651,6 @@ func fetchLimit(client *Client, href string, records *[]gjson.Result, recordsWan
 
 			prevLink = nextLink
 			nextLink = next.ClonedString()
-
 			if nextLink == "" || nextLink == prevLink {
 				// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
 				break
@@ -673,13 +671,13 @@ func fetchLimit(client *Client, href string, records *[]gjson.Result, recordsWan
 	return nil
 }
 
-func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analytics *gjson.Result, downloadAll bool, maxRecords int64) error {
+func fetchAnalytics(client *Client, metadata *collector.Metadata, href string, records *[]gjson.Result, analytics *gjson.Result, downloadAll bool, maxRecords int64) error {
 
 	var prevLink string
 	nextLink := href
 
 	for {
-		getRest, err := client.GetRest(nextLink)
+		getRest, err := client.GetRest(metadata, nextLink)
 		if err != nil {
 			return fmt.Errorf("error making request %w", err)
 		}

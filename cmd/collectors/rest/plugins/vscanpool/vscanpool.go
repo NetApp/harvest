@@ -66,7 +66,7 @@ func (v *VscanPool) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := v.client.Init(5, remote); err != nil {
+	if _, err := v.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -75,7 +75,7 @@ func (v *VscanPool) Init(remote conf.Remote) error {
 
 func (v *VscanPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
-	v.client.Metadata.Reset()
+	v.RequestMetadata.Reset()
 	v.vscanServer.Reset()
 
 	// Purge and reset data
@@ -94,7 +94,7 @@ func (v *VscanPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		v.updateVscanLabels(svmPoolMap, vserverServerStateMap)
 	}
 
-	return []*matrix.Matrix{v.vscanServer}, v.client.Metadata, nil
+	return []*matrix.Matrix{v.vscanServer}, &v.RequestMetadata, nil
 }
 
 func (v *VscanPool) updateVscanLabels(svmPoolMap map[string][]string, vserverServerStateMap map[string]map[string]string) {

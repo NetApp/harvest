@@ -33,12 +33,13 @@ func (f *FCVI) Init(remote conf.Remote) error {
 		return err
 	}
 
-	return f.client.Init(5, remote)
+	_, err = f.client.Init(5, remote)
+	return err
 }
 
 func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[f.Object]
-	f.client.Metadata.Reset()
+	f.RequestMetadata.Reset()
 
 	query := "api/private/cli/metrocluster/interconnect/adapter"
 	fields := []string{"node", "adapter", "port_name"}
@@ -47,7 +48,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		Fields(fields).
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
-	records, err := rest.FetchAll(f.client, href)
+	records, err := rest.FetchAll(f.client, &f.RequestMetadata, href)
 	if err != nil {
 		f.SLogger.Error("Failed to fetch data", slogx.Err(err), slog.String("href", href))
 		return nil, nil, err
@@ -79,5 +80,5 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		}
 	}
 
-	return nil, f.client.Metadata, nil
+	return nil, &f.RequestMetadata, nil
 }

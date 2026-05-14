@@ -91,9 +91,9 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	e.parseEnvironment(envOutput, envMat)
 	e.parseFanDetails(fanDetailsOutput, envMat)
 
-	e.client.Metadata.NumCalls = 1
-	e.client.Metadata.BytesRx = uint64(len(output.Raw))
-	e.client.Metadata.PluginInstances = uint64(len(envMat.GetInstances()))
+	e.client.Metadata.NumCalls.Store(1)
+	e.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
+	e.client.Metadata.PluginInstances.Store(uint64(len(envMat.GetInstances())))
 
 	return []*matrix.Matrix{envMat}, e.client.Metadata, nil
 }

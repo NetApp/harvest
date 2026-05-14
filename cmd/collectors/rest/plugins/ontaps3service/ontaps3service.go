@@ -49,7 +49,7 @@ func (o *OntapS3Service) Init(remote conf.Remote) error {
 		return err
 	}
 
-	if err := o.client.Init(5, remote); err != nil {
+	if _, err := o.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -68,7 +68,7 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	// reset svmToS3serverMap map
 	svmToURLMap = make(map[string][]string)
 	data := dataMap[o.Object]
-	o.client.Metadata.Reset()
+	o.RequestMetadata.Reset()
 
 	fields := []string{"svm.name", "name", "is_http_enabled", "is_https_enabled", "secure_port", "port"}
 	href := rest.NewHrefBuilder().
@@ -127,5 +127,5 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		ontapS3.SetLabel("url", strings.Join(urlValue, ","))
 	}
 
-	return nil, o.client.Metadata, nil
+	return nil, &o.RequestMetadata, nil
 }

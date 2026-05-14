@@ -251,7 +251,7 @@ func (r *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	startTime = time.Now()
-	r.Client.Metadata.Reset()
+	r.RequestMetadata.Reset()
 	prevMat = r.Matrix[r.Object]
 
 	// clone matrix without numeric data
@@ -264,8 +264,8 @@ func (r *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
-	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.RequestMetadata.BytesRx.Load())
+	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.RequestMetadata.NumCalls.Load())
 	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 	r.AddCollectCount(metricCount)
 

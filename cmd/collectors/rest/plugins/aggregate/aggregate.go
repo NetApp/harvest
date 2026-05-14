@@ -49,7 +49,7 @@ func (a *Aggregate) Init(remote conf.Remote) error {
 	}
 	a.client = client
 
-	if err := a.client.Init(5, remote); err != nil {
+	if _, err := a.client.Init(5, remote); err != nil {
 		return fmt.Errorf("failed to initialize REST client: %w", err)
 	}
 
@@ -84,7 +84,7 @@ func (a *Aggregate) initMatrix(name string, data *matrix.Matrix) (*matrix.Matrix
 
 func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[a.Object]
-	a.client.Metadata.Reset()
+	a.RequestMetadata.Reset()
 
 	aggrSpaceMat, err := a.initMatrix(aggrObjectStoreMatrix, data)
 	if err != nil {
@@ -96,7 +96,7 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 
 	a.collectObjectStoreData(aggrSpaceMat, data)
 
-	return []*matrix.Matrix{aggrSpaceMat}, a.client.Metadata, nil
+	return []*matrix.Matrix{aggrSpaceMat}, &a.RequestMetadata, nil
 }
 
 func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {

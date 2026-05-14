@@ -346,7 +346,8 @@ func BuildMetrics(dir, configPath, pollerName string, opts *Options, metricsPane
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
-	if err = restClient.Init(2, conf.Remote{}); err != nil {
+	remote, err := restClient.Init(2, conf.Remote{})
+	if err != nil {
 		fmt.Printf("error init rest client %+v\n", err)
 		os.Exit(1)
 	}
@@ -401,7 +402,7 @@ func BuildMetrics(dir, configPath, pollerName string, opts *Options, metricsPane
 		}
 	}
 
-	return counters, restClient.Remote()
+	return counters, remote
 }
 
 func GenerateCounters(dir string, counters map[string]Counter, collectorName string, metricsPanelMap map[string]PanelData) map[string]Counter {
@@ -1264,7 +1265,7 @@ func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap m
 		href := rest.NewHrefBuilder().
 			APIPath(model.Query).
 			Build()
-		records, err = rest.FetchAll(client, href)
+		records, err = rest.FetchAll(client, nil, href)
 		if err != nil {
 			fmt.Printf("error while invoking api %+v\n", err)
 			return nil
@@ -1449,7 +1450,7 @@ func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap m
 			fmt.Printf("error while build clicommand %+v\n", err)
 			return nil
 		}
-		records, err = rest.FetchPost(client, "api/private/cli", cliCommand)
+		records, err = rest.FetchPost(client, nil, "api/private/cli", cliCommand)
 		if err != nil {
 			fmt.Printf("error while invoking api %+v\n", err)
 			return nil
