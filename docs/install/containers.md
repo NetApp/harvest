@@ -278,6 +278,7 @@ Make sure you don't skip this step. It is essential as it updates local copies o
 Building a custom Harvest Docker image is only necessary if you require a tailored solution. If your intention is to run Harvest using Docker without any customizations, please refer to the [Overview](#docker-compose) section above.
 
 ```sh
-source .harvest.env
-docker build -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} -t harvest:latest . --no-cache
+make docker TAG=harvest:latest
 ```
+
+Replace `harvest:latest` with any image tag you want (e.g. `myorg/harvest:25.05.0`).

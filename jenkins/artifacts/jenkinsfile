@@ -115,6 +115,19 @@ pipeline {
             }
         }
 
+        stage('Setup Multi-Arch Builder') {
+            steps {
+                sh '''
+                docker buildx create --name multiarch-builder --driver docker-container --use \
+                    || docker buildx use multiarch-builder
+                docker buildx inspect --bootstrap
+                '''
+                script {
+                    currentStage = 'Setup Multi-Arch Builder'
+                }
+            }
+        }
+
         stage('Build Harvest RPM/DEB') {
             steps {
                sh '''
@@ -152,42 +165,42 @@ pipeline {
             }
         }
 
-        stage('Build Autosupport Binary') {
-           steps {
-               sh '''
-               #cd $harvestPath
-               rm -rf ./autosupport/asup
-               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-               docker run --rm -v "$PWD":/$harvestPath -w /$harvestPath golang:${GO_VERSION} sh -c "export PATH=$PATH:/usr/local/go/bin && make asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN"
-               cp ./autosupport/asup $targetLocation/asup_linux_amd64
+        stage('docker-ci') {
+            steps {
+                sh '''
+                export PATH=$PATH:/usr/local/go/bin
+                make docker-ci VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$GIT_TOKEN
                 '''
                 script {
-                    currentStage = 'Build Autosupport Binary'
+                    currentStage = 'docker-ci'
                 }
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GIT_TOKEN')]) {
-                    script {
-                        // Write the GIT_TOKEN to a temporary file
-                        def gitTokenFile = "${env.WORKSPACE}/git_token"
-                        currentStage = 'Build Docker Images'
-                        writeFile file: gitTokenFile, text: env.GIT_TOKEN
-
-                        withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
-                            sh '''
-                            targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
-                            docker login
-                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
-                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GODEBUG=fips140=on -t ${imageName}:latest-fips -t ${imageName}:$VERSION-$RELEASE-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:$VERSION-$RELEASE-fips . --no-cache
-                            docker save -o ${targetLocation}/docker_harvest.tar ${ghcrImage}:latest
-                            docker save -o ${targetLocation}/docker_harvest_fips.tar ${ghcrImage}:latest-fips
-                            '''
-                        }
-                    }
+                script {
+                    currentStage = 'Build Docker Images'
                 }
+                sh '''
+                targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+
+                # Non-FIPS — amd64 (built locally for tests)
+                docker build -f container/onePollerPerContainer/Dockerfile \
+                    --build-arg TARGETARCH=amd64 \
+                    -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE \
+                    -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE .
+                docker save -o ${targetLocation}/docker_harvest.tar ${ghcrImage}:latest
+
+                # FIPS — amd64 (built locally for tests)
+                docker build -f container/onePollerPerContainer/Dockerfile \
+                    --build-arg TARGETARCH=amd64 --build-arg GODEBUG=fips140=on \
+                    -t ${imageName}:latest-fips -t ${imageName}:$VERSION-$RELEASE-fips \
+                    -t ${ghcrImage}:latest-fips -t ${ghcrImage}:$VERSION-$RELEASE-fips .
+                docker save -o ${targetLocation}/docker_harvest_fips.tar ${ghcrImage}:latest-fips
+
+                ls -lh ${targetLocation}/docker_harvest*.tar
+                '''
             }
         }
 
@@ -257,34 +270,44 @@ pipeline {
                 }
             }
             steps {
-                withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
-                    sh '''
-                    docker login
-                    docker push ${imageName}:$VERSION-$RELEASE-fips
-                    docker push ${imageName}:$VERSION-$RELEASE
-                    '''
-                    script {
-                        currentStage = 'Docker Image Publish'
-                        if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
-                            sh '''
-                            docker push ${imageName}:latest-fips
-                            docker push ${imageName}:latest
-                            '''
-                        }
-                    }
-                }
-                sh '''
-                echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
-                docker push ${ghcrImage}:$VERSION-$RELEASE-fips
-                docker push ${ghcrImage}:$VERSION-$RELEASE
-                '''
                 script {
                     currentStage = 'Docker Image Publish'
-                    if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
-                        sh '''
-                        docker push ${ghcrImage}:latest-fips
-                        docker push ${ghcrImage}:latest
-                        '''
+                }
+                withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+                    sh '''
+                    echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
+
+                    # Non-FIPS: single command → manifest list with amd64 + arm64
+                    docker buildx build --provenance=false --builder multiarch-builder \
+                        -f container/onePollerPerContainer/Dockerfile \
+                        --platform linux/amd64,linux/arm64 \
+                        -t ${imageName}:$VERSION-$RELEASE -t ${ghcrImage}:$VERSION-$RELEASE --push .
+
+                    # FIPS: single command → manifest list with amd64 + arm64
+                    docker buildx build --provenance=false --builder multiarch-builder \
+                        -f container/onePollerPerContainer/Dockerfile \
+                        --platform linux/amd64,linux/arm64 --build-arg GODEBUG=fips140=on \
+                        -t ${imageName}:$VERSION-$RELEASE-fips -t ${ghcrImage}:$VERSION-$RELEASE-fips --push .
+
+                    echo "--- Verify manifests ---"
+                    docker buildx imagetools inspect ${ghcrImage}:$VERSION-$RELEASE
+                    docker buildx imagetools inspect ${ghcrImage}:$VERSION-$RELEASE-fips
+                    '''
+                    script {
+                        if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
+                            sh '''
+                            docker buildx build --provenance=false --builder multiarch-builder \
+                                -f container/onePollerPerContainer/Dockerfile \
+                                --platform linux/amd64,linux/arm64 \
+                                -t ${imageName}:latest -t ${ghcrImage}:latest --push .
+                            docker buildx build --provenance=false --builder multiarch-builder \
+                                -f container/onePollerPerContainer/Dockerfile \
+                                --platform linux/amd64,linux/arm64 --build-arg GODEBUG=fips140=on \
+                                -t ${imageName}:latest-fips -t ${ghcrImage}:latest-fips --push .
+                            docker buildx imagetools inspect ${ghcrImage}:latest
+                            docker buildx imagetools inspect ${ghcrImage}:latest-fips
+                            '''
+                        }
                     }
                 }
             }
@@ -340,16 +363,6 @@ pipeline {
                             git push https://$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
                         fi
                         /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
-                        # Reuse already built Docker images and tag them with 'nightly'
-                        docker tag ${ghcrImage}:latest ${ghcrImage}:nightly
-                        docker tag ${imageName}:latest ${imageName}:nightly
-                        docker tag ${ghcrImage}:latest-fips ${ghcrImage}:nightly-fips
-                        docker tag ${imageName}:latest-fips ${imageName}:nightly-fips
-                        docker tag ${ghcrMcpImage}:latest ${ghcrMcpImage}:nightly
-                        echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
-                        docker push ${ghcrImage}:nightly-fips
-                        docker push ${ghcrImage}:nightly
-                        docker push ${ghcrMcpImage}:nightly
                         # Add a dummy user/email for mike deploy to work
                         git config user.name harvest
                         git config user.email harvest
@@ -358,9 +371,21 @@ pipeline {
                         '''
                         withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
                             sh '''
-                            docker login
-                            docker push ${imageName}:nightly-fips
-                            docker push ${imageName}:nightly
+                            echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
+
+                            # Non-FIPS nightly: single command → manifest list with amd64 + arm64
+                            docker buildx build --provenance=false --builder multiarch-builder \
+                                -f container/onePollerPerContainer/Dockerfile \
+                                --platform linux/amd64,linux/arm64 \
+                                -t ${imageName}:nightly -t ${ghcrImage}:nightly --push .
+
+                            # FIPS nightly: single command → manifest list with amd64 + arm64
+                            docker buildx build --provenance=false --builder multiarch-builder \
+                                -f container/onePollerPerContainer/Dockerfile \
+                                --platform linux/amd64,linux/arm64 --build-arg GODEBUG=fips140=on \
+                                -t ${imageName}:nightly-fips -t ${ghcrImage}:nightly-fips --push .
+
+                            docker push ${ghcrMcpImage}:nightly
                             '''
                         }
                     }

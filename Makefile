@@ -134,6 +134,49 @@ asup:
 	@mkdir -p ${CURRENT_DIR}/autosupport
 	@cp ${ASUP_TMP}/harvest-asup/bin/asup ${CURRENT_DIR}/autosupport
 
+###############################################################################
+# docker-ci: cross-compile binaries for amd64 + arm64 and stage them into
+# docker-build/ so the Dockerfile can COPY them without building inside Docker.
+#
+# Usage:
+#   make docker-ci                          # harvest only (no asup)
+#   make docker-ci GIT_TOKEN=<token>        # harvest + asup
+#   make docker-ci GIT_TOKEN=<token> ASUP_MAKE_TARGET=production
+###############################################################################
+docker-ci: ## Cross-compile harvest+asup for amd64+arm64 and stage into docker-build/
+	@echo "--- Staging docker-build/ directories ---"
+	@rm -rf docker-build
+	@mkdir -p docker-build/bin.amd64 docker-build/bin.arm64 \
+	          docker-build/autosupport.amd64 docker-build/autosupport.arm64
+	@for arch in amd64 arm64; do \
+		echo "--- Cross-compiling harvest for $$arch ---"; \
+		$(MAKE) harvest GOARCH=$$arch GOOS=linux VERSION=$(VERSION) RELEASE=$(RELEASE) || exit 1; \
+		cp bin/harvest bin/poller bin/grafana docker-build/bin.$$arch/; \
+	done
+	@if [ -n "$(GIT_TOKEN)" ]; then \
+		for arch in amd64 arm64; do \
+			echo "--- Cross-compiling asup for $$arch ---"; \
+			$(MAKE) asup GOARCH=$$arch GOOS=linux GIT_TOKEN=$(GIT_TOKEN) VERSION=$(VERSION) RELEASE=$(RELEASE) ASUP_MAKE_TARGET=$(ASUP_MAKE_TARGET) || exit 1; \
+			cp autosupport/asup docker-build/autosupport.$$arch/asup; \
+		done; \
+	else \
+		echo "--- GIT_TOKEN not set, skipping asup build ---"; \
+	fi
+	@echo "--- docker-build/ ready ---"
+	@for arch in amd64 arm64; do \
+		echo "$$arch: $$(file docker-build/bin.$$arch/poller)"; \
+	done
+
+NATIVE_ARCH := $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+
+docker: ## Build and load Docker image for native arch. Usage: make docker TAG=harvest:latest
+	@[ -n "$(TAG)" ] || (echo "ERROR: TAG is required. Usage: make docker TAG=harvest:latest"; exit 1)
+	$(MAKE) docker-ci
+	docker build -f container/onePollerPerContainer/Dockerfile \
+	    --build-arg TARGETARCH=$(NATIVE_ARCH) \
+	    -t $(TAG) .
+	@echo "Built: $(TAG)"
+
 dev: build lint govulncheck
 	@echo "Deleting AutoSupport binary"
 	@rm -rf autosupport/asup

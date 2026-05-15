@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+# Docker staging directory created by `make docker-ci`
+docker-build/
+
 # Test binary, built with `go test -c`
 *.test
 *.tmp

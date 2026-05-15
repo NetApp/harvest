@@ -32,11 +32,11 @@ After Rancher Desktop installs, start it `Cmd + Space` type: Rancher and wait fo
 
 You only need to [create a new image](containers.md#building-harvest-docker-image) if you've made changes to Harvest. If you just want to use the latest version of Harvest, skip this step.
 
-These are the same steps outline on [Building Harvest Docker Image](containers.md#building-harvest-docker-image) except we replace `docker build` with `nerdctl` like so:
+These are the same steps outlined on [Building Harvest Docker Image](containers.md#building-harvest-docker-image). Build the image and then import it into nerdctl:
 
 ```sh
-source .harvest.env
-nerdctl build -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} -t harvest:latest . --no-cache 
+make docker TAG=harvest:latest
+docker save harvest:latest | nerdctl load
 ```
 
 ## Generate a Harvest compose file
