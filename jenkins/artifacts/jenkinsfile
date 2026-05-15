@@ -50,17 +50,6 @@ pipeline {
             }
         }
 
-        stage('Setup Multi-Arch Builder') {
-            steps {
-                sh '''
-                docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-                docker buildx create --name multiarch-builder --driver docker-container --use \
-                    || docker buildx use multiarch-builder
-                docker buildx inspect --bootstrap
-                '''
-            }
-        }
-
         stage("Initialization") {
             steps {
                 buildName "${BUILD_NUMBER}_$BRANCH"
@@ -76,6 +65,17 @@ pipeline {
                 script {
                     currentStage = 'clean system'
                 }
+            }
+        }
+
+        stage('Setup Multi-Arch Builder') {
+            steps {
+                sh '''
+                docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+                docker buildx create --name multiarch-builder --driver docker-container --use \
+                    || docker buildx use multiarch-builder
+                docker buildx inspect --bootstrap
+                '''
             }
         }
 
