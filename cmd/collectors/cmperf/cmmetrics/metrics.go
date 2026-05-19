@@ -88,10 +88,10 @@ const (
 )
 
 type MetricsFileRecord struct {
-	version *MetricsFileVersion
-	schema  *ObjectSchema
-	batch   *ObjectCollection
-	summary *CollectionStatus
+	Version *MetricsFileVersion
+	Schema  *ObjectSchema
+	Batch   *ObjectCollection
+	Summary *CollectionStatus
 }
 
 type CollectionStatus struct {
@@ -103,8 +103,8 @@ type MetricsFileVersion struct {
 }
 
 type StatusCode struct {
-	code  StatusCodeEnum
-	nodes []string
+	Code  StatusCodeEnum
+	Nodes []string
 }
 
 type CounterType struct {
@@ -296,7 +296,7 @@ func handleMetricsFileRecord(data []byte) (*MetricsFileRecord, error) {
 			if err != nil {
 				return nil, err
 			}
-			record.version = &fileVersion
+			record.Version = &fileVersion
 		case 2:
 			data, ok := fc.MessageData()
 			if !ok {
@@ -306,7 +306,7 @@ func handleMetricsFileRecord(data []byte) (*MetricsFileRecord, error) {
 			if err != nil {
 				return nil, err
 			}
-			record.schema = &schema
+			record.Schema = &schema
 		case 3:
 			data, ok := fc.MessageData()
 			if !ok {
@@ -316,7 +316,7 @@ func handleMetricsFileRecord(data []byte) (*MetricsFileRecord, error) {
 			if err != nil {
 				return nil, err
 			}
-			record.batch = objectCollection
+			record.Batch = objectCollection
 		case 4:
 			data, ok := fc.MessageData()
 			if !ok {
@@ -326,7 +326,7 @@ func handleMetricsFileRecord(data []byte) (*MetricsFileRecord, error) {
 			if err != nil {
 				return nil, err
 			}
-			record.summary = &collectionStatus
+			record.Summary = &collectionStatus
 		}
 	}
 	return &record, nil
@@ -342,7 +342,7 @@ func handleCollectionStatus(data []byte) (CollectionStatus, error) {
 		var err error
 		data, err = fc.NextField(data)
 		if err != nil {
-			return collectionStatus, errors.New("failed to read CollectionStatus data")
+			return collectionStatus, fmt.Errorf("failed to read CollectionStatus data for field %d: %w", fc.FieldNum, err)
 		}
 		if fc.FieldNum == 1 {
 			value, ok := fc.MessageData()
@@ -378,15 +378,15 @@ func handleStatusCode(value []byte) (StatusCode, error) {
 				return statusCode, errors.New("failed to read statusCode code value")
 			}
 			if value > math.MaxUint8 {
-				return statusCode, fmt.Errorf("status code exceeds uint8 %d ", value)
+				return statusCode, fmt.Errorf("status code exceeds uint8 %d", value)
 			}
-			statusCode.code = StatusCodeEnum(value)
+			statusCode.Code = StatusCodeEnum(value)
 		case 2:
 			val, ok := fc.String()
 			if !ok {
 				return statusCode, errors.New("failed to read statusCode nodes value")
 			}
-			statusCode.nodes = append(statusCode.nodes, val)
+			statusCode.Nodes = append(statusCode.Nodes, val)
 		}
 	}
 
@@ -403,7 +403,7 @@ func handleMetricsFileVersion(data []byte) (MetricsFileVersion, error) {
 		var err error
 		data, err = fc.NextField(data)
 		if err != nil {
-			return fileVersion, errors.New("failed to read metricsFileVersion data")
+			return fileVersion, fmt.Errorf("failed to read metricsFileVersion data: %w", err)
 		}
 		if fc.FieldNum == 1 {
 			key, ok := fc.Uint32()

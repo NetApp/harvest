@@ -90,15 +90,15 @@ func TestMessages(t *testing.T) {
 
 	version := obs[0]
 	schema := obs[1]
-	rec1 := obs[2].batch
-	rec2 := obs[3].batch
+	rec1 := obs[2].Batch
+	rec2 := obs[3].Batch
 	summary := obs[4]
 
-	assert.Equal(t, version.version.FormatVersion, 1)
-	assert.Equal(t, schema.schema.Name, "workload_queue_dblade")
-	assert.Equal(t, schema.schema.CounterSchema[0].Name, "instance_name")
-	assert.Equal(t, schema.schema.CounterSchema[15].Name, "cache_miss_rate")
-	assert.Equal(t, schema.schema.CounterSchema[15].BaseIndex, 16)
+	assert.Equal(t, version.Version.FormatVersion, 1)
+	assert.Equal(t, schema.Schema.Name, "workload_queue_dblade")
+	assert.Equal(t, schema.Schema.CounterSchema[0].Name, "instance_name")
+	assert.Equal(t, schema.Schema.CounterSchema[15].Name, "cache_miss_rate")
+	assert.Equal(t, schema.Schema.CounterSchema[15].BaseIndex, 16)
 
 	assert.Equal(t, rec1.Timestamp, 1779210300000)
 	assert.Equal(t, rec2.Timestamp, 1779210300000)
@@ -110,7 +110,7 @@ func TestMessages(t *testing.T) {
 	assert.Equal(t, mustUint64Value(t, rec1.Data.Instances[0].Counters[13]), 5957)
 	assert.Equal(t, mustList64(t, rec1.Data.Instances[0].Counters[4]), []uint64{9190949671, 0, 0, 0})
 
-	assert.Equal(t, len(summary.summary.Statuses), 2)
+	assert.Equal(t, len(summary.Summary.Statuses), 2)
 }
 
 func TestCounterTypeAccessors(t *testing.T) {
