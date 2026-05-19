@@ -1,6 +1,7 @@
 # GO_VERSION should be overridden by the build script via --build-arg GO_VERSION=$value
 ARG GO_VERSION
-FROM golang:${GO_VERSION} AS builder
+ARG BUILDPLATFORM
+FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS builder
 
 SHELL ["/bin/bash", "-c"]
 
@@ -9,6 +10,7 @@ ARG BUILD_DIR=/opt/home
 ARG VERSION=2.0
 ARG RELEASE=nightly
 ARG ASUP_MAKE_TARGET=build
+ARG TARGETARCH
 
 # Set the Current Working Directory inside the container
 WORKDIR $BUILD_DIR
@@ -19,9 +21,9 @@ COPY . .
 
 RUN --mount=type=secret,id=git_token \
     if [[ -n "$ASUP_MAKE_TARGET" && -f "/run/secrets/git_token" ]]; then \
-    make build asup VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$(cat /run/secrets/git_token); \
+    make build asup GOARCH=${TARGETARCH} VERSION=$VERSION RELEASE=$RELEASE ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET GIT_TOKEN=$(cat /run/secrets/git_token); \
     else \
-    make build VERSION=$VERSION RELEASE=$RELEASE BIN_PLATFORM=linux; \
+    make build GOARCH=${TARGETARCH} VERSION=$VERSION RELEASE=$RELEASE BIN_PLATFORM=linux; \
     fi
 
 RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml.example \
