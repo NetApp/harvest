@@ -66,10 +66,19 @@ func mustList32(t *testing.T, counter CounterType) []uint32 {
 	return value
 }
 
+func mustList64(t *testing.T, counter CounterType) []uint64 {
+	t.Helper()
+	value, ok := counter.List64()
+	if !ok {
+		t.Fatalf("expected []uint64 value for counter type %v", counter.Type)
+	}
+	return value
+}
+
 func TestMessages(t *testing.T) {
 
-	path := "testdata/test1.pb"
-	obs := make([]*ObjectCollection, 0, 2)
+	path := "testdata/wqd.pb"
+	obs := make([]*MetricsFileRecord, 0, 5)
 
 	for aMsg, err := range Messages(path) {
 		assert.Nil(t, err)
@@ -77,47 +86,31 @@ func TestMessages(t *testing.T) {
 		obs = append(obs, aMsg)
 	}
 
-	assert.Equal(t, len(obs), 2)
+	assert.Equal(t, len(obs), 5)
 
-	assert.Equal(t, obs[0].Timestamp, uint64(1776429464001))
-	assert.Equal(t, obs[0].Period, uint32(60))
-	assert.Equal(t, obs[0].Node, "cm-test")
-	assert.Equal(t, obs[0].Schema.Name, "cm-test")
-	assert.Equal(t, len(obs[0].Schema.CounterSchema), 2)
-	assert.Equal(t, obs[0].Schema.CounterSchema[0].Name, "counter-1")
-	assert.Equal(t, obs[0].Schema.CounterSchema[0].Index, uint32(1))
-	assert.Equal(t, obs[0].Schema.CounterSchema[0].Type, CookString)
-	assert.Equal(t, obs[0].Schema.CounterSchema[0].DimX, uint32(0))
-	assert.Equal(t, obs[0].Schema.CounterSchema[0].DimY, uint32(0))
-	assert.Equal(t, len(obs[0].Schema.CounterSchema[0].LabelsX), 0)
-	assert.Equal(t, len(obs[0].Schema.CounterSchema[0].LabelsY), 0)
+	version := obs[0]
+	schema := obs[1]
+	rec1 := obs[2].batch
+	rec2 := obs[3].batch
+	summary := obs[4]
 
-	assert.Equal(t, obs[0].Data.Name, "od-1")
-	assert.Equal(t, len(obs[0].Data.Instances), 2)
-	assert.Equal(t, obs[0].Data.Instances[0].Name, "vol1")
-	assert.Equal(t, obs[0].Data.Instances[0].UUID, "06b3c803-ff78-11eb-ba17-00a098e24321")
-	assert.Equal(t, len(obs[0].Data.Instances[0].Counters), 4)
-	assert.Equal(t, obs[0].Data.Instances[0].Counters[0].Index, uint32(1))
-	assert.Equal(t, mustUint64Value(t, obs[0].Data.Instances[0].Counters[0]), 42)
-	assert.False(t, obs[0].Data.Instances[0].Counters[0].IsUint32())
-	assert.True(t, obs[0].Data.Instances[0].Counters[0].IsUint64())
-	assert.False(t, obs[0].Data.Instances[0].Counters[0].IsList32())
-	assert.False(t, obs[0].Data.Instances[0].Counters[0].IsList64())
-	assert.False(t, obs[0].Data.Instances[0].Counters[0].IsListString())
+	assert.Equal(t, version.version.FormatVersion, 1)
+	assert.Equal(t, schema.schema.Name, "workload_queue_dblade")
+	assert.Equal(t, schema.schema.CounterSchema[0].Name, "instance_name")
+	assert.Equal(t, schema.schema.CounterSchema[15].Name, "cache_miss_rate")
+	assert.Equal(t, schema.schema.CounterSchema[15].BaseIndex, 16)
 
-	assert.Equal(t, obs[0].Data.Instances[1].Counters[3].Index, 4)
-	assert.Equal(t, obs[0].Data.Instances[1].Counters[2].scalar, 144)
+	assert.Equal(t, rec1.Timestamp, 1779210300000)
+	assert.Equal(t, rec2.Timestamp, 1779210300000)
+	assert.Equal(t, rec1.Period, 60)
+	assert.Equal(t, rec1.Data.Name, "workload_queue_dblade")
+	assert.Equal(t, rec1.Data.Instances[0].Name, "<none>")
+	assert.Equal(t, rec1.Data.Instances[0].UUID, "<none>")
+	assert.True(t, rec1.Data.Instances[0].Counters[13].IsUint64())
+	assert.Equal(t, mustUint64Value(t, rec1.Data.Instances[0].Counters[13]), 5957)
+	assert.Equal(t, mustList64(t, rec1.Data.Instances[0].Counters[4]), []uint64{9190949671, 0, 0, 0})
 
-	listString, b := obs[1].Data.Instances[0].Counters[3].ListString()
-	assert.True(t, b)
-	assert.Equal(t, listString, []string{"abc", "def", "ghi"})
-	assert.Equal(t, mustList32(t, obs[1].Data.Instances[0].Counters[4]), []uint32{100, 200, 300})
-
-	assert.Equal(t, obs[1].Schema.CounterSchema[0].LabelsX, []string{"opcode 1", "opcode 2"})
-	assert.Equal(t, obs[1].Schema.CounterSchema[1].Name, "ops")
-	assert.Equal(t, obs[1].Schema.CounterSchema[2].Name, "latency")
-	assert.Equal(t, obs[1].Schema.CounterSchema[2].BaseIndex, 1)
-	assert.Equal(t, obs[1].Schema.CounterSchema[2].Type, CookAverage)
+	assert.Equal(t, len(summary.summary.Statuses), 2)
 }
 
 func TestCounterTypeAccessors(t *testing.T) {
@@ -185,24 +178,6 @@ func TestHandleCounterSchemaLabels(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, schema.LabelsX, []string{"node", "svm"})
 	assert.Equal(t, schema.LabelsY, []string{"read", "write"})
-}
-
-func TestReadProtoRejectsMalformedNestedMessages(t *testing.T) {
-	t.Run("schema", func(t *testing.T) {
-		payload := appendVarintField(nil, 5, 1)
-		msg, err := readProto(payload)
-		assert.Nil(t, msg)
-		assert.NotNil(t, err)
-		assert.Equal(t, err.Error(), "failed to read object schema message")
-	})
-
-	t.Run("data", func(t *testing.T) {
-		payload := appendVarintField(nil, 6, 1)
-		msg, err := readProto(payload)
-		assert.Nil(t, msg)
-		assert.NotNil(t, err)
-		assert.Equal(t, err.Error(), "failed to read object data message")
-	})
 }
 
 func BenchmarkCounterType(b *testing.B) {

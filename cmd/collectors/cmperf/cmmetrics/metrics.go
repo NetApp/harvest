@@ -72,6 +72,41 @@ const (
 	CounterKindListString
 )
 
+type StatusCodeEnum uint8
+
+const (
+	CompleteCollection     = 0
+	PartialCollection      = 1
+	SecondaryMetricsFile   = 2
+	MemoryError            = 3
+	InternalError          = 4
+	ChildTimeoutError      = 5
+	NetworkError           = 6
+	MetaMismatchError      = 7
+	CollectionTimeoutError = 8
+	NoAdditionalStatus     = 9
+)
+
+type MetricsFileRecord struct {
+	version *MetricsFileVersion
+	schema  *ObjectSchema
+	batch   *ObjectCollection
+	summary *CollectionStatus
+}
+
+type CollectionStatus struct {
+	Statuses []StatusCode
+}
+
+type MetricsFileVersion struct {
+	FormatVersion uint32
+}
+
+type StatusCode struct {
+	code  StatusCodeEnum
+	nodes []string
+}
+
 type CounterType struct {
 	Index  uint32
 	Type   CounterKind
@@ -189,8 +224,8 @@ func (c *CounterType) ListString() ([]string, bool) {
 	return value, ok
 }
 
-func Messages(path string) iter.Seq2[*ObjectCollection, error] {
-	return func(yield func(*ObjectCollection, error) bool) {
+func Messages(path string) iter.Seq2[*MetricsFileRecord, error] {
+	return func(yield func(*MetricsFileRecord, error) bool) {
 		f, err := os.Open(path)
 
 		if err != nil {
@@ -234,7 +269,155 @@ func Messages(path string) iter.Seq2[*ObjectCollection, error] {
 	}
 }
 
-func readProto(src []byte) (*ObjectCollection, error) {
+func readProto(data []byte) (*MetricsFileRecord, error) {
+	return handleMetricsFileRecord(data)
+}
+
+func handleMetricsFileRecord(data []byte) (*MetricsFileRecord, error) {
+	var (
+		fc  easyproto.FieldContext
+		err error
+	)
+
+	record := MetricsFileRecord{}
+
+	for len(data) > 0 {
+		data, err = fc.NextField(data)
+		if err != nil {
+			return nil, err
+		}
+		switch fc.FieldNum {
+		case 1:
+			data, ok := fc.MessageData()
+			if !ok {
+				return nil, errors.New("failed to read MetricsFileVersion data")
+			}
+			fileVersion, err := handleMetricsFileVersion(data)
+			if err != nil {
+				return nil, err
+			}
+			record.version = &fileVersion
+		case 2:
+			data, ok := fc.MessageData()
+			if !ok {
+				return nil, errors.New("failed to read ObjectSchema data")
+			}
+			schema, err := handleObjectSchema(data)
+			if err != nil {
+				return nil, err
+			}
+			record.schema = &schema
+		case 3:
+			data, ok := fc.MessageData()
+			if !ok {
+				return nil, errors.New("failed to read ObjectCollection data")
+			}
+			objectCollection, err := handleObjectCollection(data)
+			if err != nil {
+				return nil, err
+			}
+			record.batch = objectCollection
+		case 4:
+			data, ok := fc.MessageData()
+			if !ok {
+				return nil, errors.New("failed to read CollectionStatus data")
+			}
+			collectionStatus, err := handleCollectionStatus(data)
+			if err != nil {
+				return nil, err
+			}
+			record.summary = &collectionStatus
+		}
+	}
+	return &record, nil
+}
+
+func handleCollectionStatus(data []byte) (CollectionStatus, error) {
+	var (
+		fc               easyproto.FieldContext
+		collectionStatus CollectionStatus
+	)
+
+	for len(data) > 0 {
+		var err error
+		data, err = fc.NextField(data)
+		if err != nil {
+			return collectionStatus, errors.New("failed to read CollectionStatus data")
+		}
+		if fc.FieldNum == 1 {
+			value, ok := fc.MessageData()
+			if !ok {
+				return collectionStatus, errors.New("failed to read collection status code")
+			}
+			code, err := handleStatusCode(value)
+			if err != nil {
+				return CollectionStatus{}, err
+			}
+			collectionStatus.Statuses = append(collectionStatus.Statuses, code)
+		}
+	}
+
+	return collectionStatus, nil
+}
+
+func handleStatusCode(value []byte) (StatusCode, error) {
+	var (
+		fc         easyproto.FieldContext
+		statusCode StatusCode
+	)
+	for len(value) > 0 {
+		var err error
+		value, err = fc.NextField(value)
+		if err != nil {
+			return statusCode, errors.New("failed to read statusCode data")
+		}
+		switch fc.FieldNum {
+		case 1:
+			value, ok := fc.Uint64()
+			if !ok {
+				return statusCode, errors.New("failed to read statusCode code value")
+			}
+			if value > math.MaxUint8 {
+				return statusCode, fmt.Errorf("status code exceeds uint8 %d ", value)
+			}
+			statusCode.code = StatusCodeEnum(value)
+		case 2:
+			val, ok := fc.String()
+			if !ok {
+				return statusCode, errors.New("failed to read statusCode nodes value")
+			}
+			statusCode.nodes = append(statusCode.nodes, val)
+		}
+	}
+
+	return statusCode, nil
+}
+
+func handleMetricsFileVersion(data []byte) (MetricsFileVersion, error) {
+	var (
+		fc          easyproto.FieldContext
+		fileVersion MetricsFileVersion
+	)
+
+	for len(data) > 0 {
+		var err error
+		data, err = fc.NextField(data)
+		if err != nil {
+			return fileVersion, errors.New("failed to read metricsFileVersion data")
+		}
+		if fc.FieldNum == 1 {
+			key, ok := fc.Uint32()
+			if !ok {
+				return fileVersion, errors.New("failed to read format_version value")
+			}
+			fileVersion.FormatVersion = key
+		}
+	}
+
+	return fileVersion, nil
+}
+
+func handleObjectCollection(data []byte) (*ObjectCollection, error) {
 	var (
 		fc  easyproto.FieldContext
 		err error
@@ -242,8 +425,8 @@ func readProto(src []byte) (*ObjectCollection, error) {
 
 	cm := ObjectCollection{}
 
-	for len(src) > 0 {
-		src, err = fc.NextField(src)
+	for len(data) > 0 {
+		data, err = fc.NextField(data)
 		if err != nil {
 			return nil, err
 		}
@@ -381,7 +564,7 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 				return counterSchema, errors.New("failed to read counter schema counter_y_labels")
 			}
 			counterSchema.LabelsY = append(counterSchema.LabelsY, val)
-		case 9:
+		case 8:
 			val, ok := fc.Uint32()
 			if !ok {
 				return counterSchema, errors.New("failed to read counter schema base_counter_index")
