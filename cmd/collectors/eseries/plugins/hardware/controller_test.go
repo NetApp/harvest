@@ -1,6 +1,171 @@
 package hardware
 
-import "testing"
+import (
+	"log/slog"
+	"testing"
+
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+)
+
+// newTestHardware returns a Hardware ready to test processHostInterfacesFromAPI.
+func newTestHardware() *Hardware {
+	h := &Hardware{
+		AbstractPlugin: &plugin.AbstractPlugin{
+			SLogger: slog.Default(),
+			Parent:  "test",
+		},
+		data: make(map[string]*matrix.Matrix),
+	}
+	h.initHostInterfaceMatrix()
+	return h
+}
+
+func parseResults(jsonStr string) []gjson.Result {
+	return gjson.Parse(jsonStr).Array()
+}
+
+func TestProcessHostInterfacesFromAPI(t *testing.T) {
+	tests := []struct {
+		name       string
+		json       string
+		ctrlMap    map[string]string
+		portMap    map[string]string
+		wantCount  int
+		wantKey    string
+		wantLabels map[string]string
+	}{
+		{
+			name:      "FC: key mapped to fibre, linkStatus and currentInterfaceSpeed used",
+			wantCount: 1,
+			wantKey:   "ctrl1_ref1",
+			ctrlMap:   map[string]string{"ctrl1": "A"},
+			portMap:   map[string]string{},
+			wantLabels: map[string]string{
+				"interface_type": "fc",
+				"link_state":     "up",
+				"speed":          "16000",
+				"controller":     "A",
+			},
+			json: `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"fc","fibre":{"channel":"1","linkStatus":"up","currentInterfaceSpeed":"speed16gig","physicalLocation":{"label":"0a"}}}}]`,
+		},
+		{
+			name:       "nvmeCouplingDriver: key mapped to couplingDriverNvme",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{},
+			wantLabels: map[string]string{"interface_type": "nvmeCouplingDriver"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"nvmeCouplingDriver","couplingDriverNvme":{"channel":"1","physicalLocation":{"label":""}}}}]`,
+		},
+		{
+			name:      "iSCSI: linkState and currentSpeed used, ip_address from ipv4Data",
+			wantCount: 1,
+			wantKey:   "ctrl1_ref1",
+			ctrlMap:   map[string]string{},
+			portMap:   map[string]string{},
+			wantLabels: map[string]string{
+				"interface_type": "iscsi",
+				"link_state":     "up",
+				"speed":          "10000",
+				"ip_address":     "192.168.1.1",
+			},
+			json: `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"iscsi","iscsi":{"channel":"1","linkState":"up","currentSpeed":"speed10gig","ipv4Data":{"ipv4AddressData":{"ipv4Address":"192.168.1.1"}},"physicalLocation":{"label":""}}},"commandProtocolPropertiesList":{"commandProtocolProperties":[]}}]`,
+		},
+		{
+			name:       "IB: same key name, instance created",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{},
+			wantLabels: map[string]string{"interface_type": "ib"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"ib","ib":{"channel":"1","physicalLocation":{"label":""}}}}]`,
+		},
+		{
+			name:       "ethernet: same key name, instance created",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{},
+			wantLabels: map[string]string{"interface_type": "ethernet"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"ethernet","ethernet":{"channel":"1","physicalLocation":{"label":""}}}}]`,
+		},
+
+		// --- Label correctness ---
+		{
+			name:       "portLabelMap takes priority over physicalLocation.label",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{"1": "0a"},
+			wantLabels: map[string]string{"port": "0a"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"fc","fibre":{"channel":"1","physicalLocation":{"label":"wronglabel"}}}}]`,
+		},
+		{
+			name:       "portLabelMap miss falls back to physicalLocation.label",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{},
+			wantLabels: map[string]string{"port": "0b"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"fc","fibre":{"channel":"2","physicalLocation":{"label":"0b"}}}}]`,
+		},
+		{
+			name:       "linkState fallback: empty linkState uses linkStatus",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{},
+			wantLabels: map[string]string{"link_state": "up"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"fc","fibre":{"channel":"1","linkStatus":"up","physicalLocation":{"label":""}}}}]`,
+		},
+		{
+			name:       "speed fallback: empty currentSpeed uses currentInterfaceSpeed",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{},
+			wantLabels: map[string]string{"speed": "16000"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"fc","fibre":{"channel":"1","currentInterfaceSpeed":"speed16gig","physicalLocation":{"label":""}}}}]`,
+		},
+		{
+			name:       "physical_port_state: linkUp cleaned to Up",
+			wantCount:  1,
+			wantKey:    "ctrl1_ref1",
+			ctrlMap:    map[string]string{},
+			portMap:    map[string]string{},
+			wantLabels: map[string]string{"physical_port_state": "Up"},
+			json:       `[{"interfaceRef":"ref1","controllerRef":"ctrl1","ioInterfaceTypeData":{"interfaceType":"fc","fibre":{"channel":"1","physPortState":"linkUp","physicalLocation":{"label":""}}}}]`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHardware()
+			h.processHostInterfacesFromAPI(parseResults(tt.json), tt.ctrlMap, tt.portMap)
+
+			instances := h.data[hostInterfaceMatrix].GetInstances()
+			if len(instances) != tt.wantCount {
+				t.Fatalf("instance count = %d, want %d", len(instances), tt.wantCount)
+			}
+
+			if tt.wantKey == "" || len(tt.wantLabels) == 0 {
+				return
+			}
+
+			inst := instances[tt.wantKey]
+			if inst == nil {
+				t.Fatalf("instance %q not found", tt.wantKey)
+			}
+			for label, want := range tt.wantLabels {
+				if got := inst.GetLabel(label); got != want {
+					t.Errorf("label %q = %q, want %q", label, got, want)
+				}
+			}
+		})
+	}
+}
 
 func TestSpeedToMB(t *testing.T) {
 	tests := []struct {
