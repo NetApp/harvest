@@ -66,6 +66,24 @@ func cleanLinkState(state string) string {
 	return strings.TrimPrefix(state, "link")
 }
 
+// interfaceTypeToDataKey maps the interfaceType field value to the actual JSON data key
+// in ioInterfaceTypeData. The eSeries swagger IOInterfaceTypeData definition shows two
+// cases where the interfaceType enum value does not match the JSON property key:
+//   - "fc"                 → "fibre"               (FibreInterface)
+//   - "nvmeCouplingDriver" → "couplingDriverNvme"   (CouplingDriverNVMeInterface)
+//
+// All other types (ib, iscsi, sas, sata, scsi, ethernet, pcie) use identical names.
+func interfaceTypeToDataKey(interfaceType string) string {
+	switch interfaceType {
+	case "fc":
+		return "fibre"
+	case "nvmeCouplingDriver":
+		return "couplingDriverNvme"
+	default:
+		return interfaceType
+	}
+}
+
 func cleanConfigType(configType string) string {
 	switch strings.ToLower(configType) {
 	case "stat":
@@ -376,7 +394,8 @@ func (h *Hardware) processHostInterfacesFromAPI(results []gjson.Result, controll
 		controllerName := controllerLabelMap[controllerRef]
 
 		interfaceType := iface.Get("ioInterfaceTypeData.interfaceType").ClonedString()
-		interfaceData := iface.Get("ioInterfaceTypeData." + interfaceType)
+		dataKey := interfaceTypeToDataKey(interfaceType)
+		interfaceData := iface.Get("ioInterfaceTypeData." + dataKey)
 
 		if !interfaceData.Exists() || interfaceData.Type == gjson.Null {
 			continue
@@ -402,8 +421,18 @@ func (h *Hardware) processHostInterfacesFromAPI(results []gjson.Result, controll
 		}
 		inst.SetLabelTrimmed("port", portLabel)
 
-		inst.SetLabelTrimmed("link_state", interfaceData.Get("linkState").ClonedString())
-		inst.SetLabelTrimmed("speed", speedToMB(interfaceData.Get("currentSpeed").ClonedString()))
+		// FC interfaces use "linkStatus" and "currentInterfaceSpeed"; iSCSI/ethernet use "linkState" and "currentSpeed"
+		linkState := interfaceData.Get("linkState").ClonedString()
+		if linkState == "" {
+			linkState = interfaceData.Get("linkStatus").ClonedString()
+		}
+		inst.SetLabelTrimmed("link_state", linkState)
+
+		speedVal := interfaceData.Get("currentSpeed").ClonedString()
+		if speedVal == "" {
+			speedVal = interfaceData.Get("currentInterfaceSpeed").ClonedString()
+		}
+		inst.SetLabelTrimmed("speed", speedToMB(speedVal))
 		inst.SetLabelTrimmed("physical_port_state", cleanLinkState(interfaceData.Get("physPortState").ClonedString()))
 		inst.SetLabelTrimmed("nvme_supported", interfaceData.Get("isNVMeSupported").ClonedString())
 		inst.SetLabelTrimmed("max_transmission_unit", interfaceData.Get("maximumTransmissionUnit").ClonedString())

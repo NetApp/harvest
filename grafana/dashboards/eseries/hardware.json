@@ -1665,7 +1665,6 @@
               "options": {
                 "excludeByName": {
                   "global_identifier": true,
-                  "interface_type": true,
                   "nvme_supported": true
                 },
                 "indexByName": {
