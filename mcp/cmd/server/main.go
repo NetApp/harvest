@@ -19,6 +19,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -543,8 +544,38 @@ func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.
 }
 
 func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.GetActiveAlertsRequest) (*mcp.CallToolResult, any, error) {
+	args.Cluster = strings.TrimSpace(args.Cluster)
+	args.ClusterMatch = strings.TrimSpace(args.ClusterMatch)
+	for _, v := range []string{args.Cluster, args.ClusterMatch} {
+		if strings.ContainsAny(v, `"\`) {
+			return nil, nil, fmt.Errorf("invalid cluster filter value %q: must not contain '\"' or '\\'", v)
+		}
+	}
+	var clusterRe *regexp.Regexp
+	if args.ClusterMatch != "" {
+		var err error
+		clusterRe, err = regexp.Compile(args.ClusterMatch)
+		if err != nil {
+			return nil, nil, fmt.Errorf("invalid cluster_match regex %q: %w", args.ClusterMatch, err)
+		}
+	}
+
 	config := resolveTSDBConfig(args.TSDBOverride)
+
+	if notFound, err := checkClusterExists(config, args.Cluster, args.ClusterMatch); err != nil {
+		return nil, nil, err
+	} else if notFound != nil {
+		return notFound, nil, nil
+	}
+
 	queryURL := config.URL + "/api/v1/alerts"
+
+	var filterAnnotation string
+	if args.Cluster != "" {
+		filterAnnotation = fmt.Sprintf("_Filtered by cluster: %q_\n\n", args.Cluster)
+	} else if args.ClusterMatch != "" {
+		filterAnnotation = fmt.Sprintf("_Filtered by cluster: %q_\n\n", args.ClusterMatch)
+	}
 
 	resp, err := auth.MakeRequest(config, queryURL)
 	if err != nil {
@@ -580,9 +611,11 @@ func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.Ge
 		}, nil, nil
 	}
 
-	alertReport := "## Prometheus Active Alerts\n\n"
+	alertReport := "## Prometheus Active Alerts\n\n" + filterAnnotation
 
-	alerts := promResp.Data.Alerts
+	alerts := filterAlertsByCluster(promResp.Data.Alerts, args.Cluster, clusterRe)
+	promResp.Data.Alerts = alerts
+
 	if len(alerts) == 0 {
 		alertReport += "✅ **No active alerts found**\n\n"
 	} else {
@@ -641,10 +674,148 @@ func countAlertsBySeverity(alerts []any) (int, int, int) {
 	return critical, warning, info
 }
 
+// filterAlertsByCluster returns only the alerts whose "cluster" label matches
+func filterAlertsByCluster(alerts []any, cluster string, re *regexp.Regexp) []any {
+	if cluster == "" && re == nil {
+		return alerts
+	}
+	filtered := make([]any, 0, len(alerts))
+	for _, alert := range alerts {
+		alertMap, ok := alert.(map[string]any)
+		if !ok {
+			continue
+		}
+		labels, _ := alertMap["labels"].(map[string]any)
+		name, _ := labels["cluster"].(string)
+		if clusterMatches(name, cluster, re) {
+			filtered = append(filtered, alert)
+		}
+	}
+	return filtered
+}
+
+// clusterMatches returns true when the given cluster label value satisfies the
+func clusterMatches(name, cluster string, re *regexp.Regexp) bool {
+	switch {
+	case cluster != "":
+		return name == cluster
+	case re != nil:
+		loc := re.FindStringIndex(name)
+		return len(loc) == 2 && loc[0] == 0 && loc[1] == len(name)
+	default:
+		return true
+	}
+}
+
+// checkClusterExists verifies that at least one time series exists for the given cluster
+func checkClusterExists(config auth.TSDBConfig, cluster, clusterMatch string) (*mcp.CallToolResult, error) {
+	if cluster == "" && clusterMatch == "" {
+		return nil, nil
+	}
+
+	existQuery := applyClusterFilter("cluster_new_status", cluster, clusterMatch)
+	existValues := url.Values{}
+	existValues.Set("query", existQuery)
+	existResp, err := executeTSDBQuery(config, config.URL+"/api/v1/query", existValues)
+	if err != nil {
+		return nil, fmt.Errorf("cluster existence check failed: %w", err)
+	}
+	resultSlice, _ := existResp.Data.Result.([]any)
+
+	if len(resultSlice) > 0 {
+		return nil, nil
+	}
+
+	var clusterList string
+	activeValues := url.Values{}
+	activeValues.Set("query", "cluster_new_status")
+	if activeResp, activeErr := executeTSDBQuery(config, config.URL+"/api/v1/query", activeValues); activeErr == nil {
+		names := extractClusterNames(activeResp.Data.Result)
+		if len(names) > 0 {
+			sb := strings.Builder{}
+			for _, c := range names {
+				sb.WriteString("\n- ")
+				sb.WriteString(c)
+			}
+			clusterList = fmt.Sprintf("\n\n**Active clusters (%d):**%s", len(names), sb.String()) //nolint:gosec
+		}
+	}
+
+	var msg string
+	if cluster != "" {
+		msg = fmt.Sprintf("❌ **Cluster %q not found** in the connected TSDB.\n\nNo metrics with `cluster=%q` exist. Check the cluster name — it may differ from the poller name.%s", cluster, cluster, clusterList) //nolint:gosec
+	} else {
+		msg = fmt.Sprintf("❌ **No clusters matched pattern `%s`** in the connected TSDB.\n\nNo metrics with `cluster=~%q` exist.%s", clusterMatch, clusterMatch, clusterList) //nolint:gosec
+	}
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{&mcp.TextContent{Text: msg}},
+	}, nil
+}
+
+// applyClusterFilter injects a cluster label matcher into a bare PromQL query expression.
+//
+// Two query shapes are handled:
+//
+//  1. Queries that already open with a label selector:
+//     {__name__=~"health_.*"}  →  {__name__=~"health_.*", cluster="X"}
+//
+//  2. Queries whose first token is a metric name:
+//     volume_size_used_percent > 95  →  volume_size_used_percent{cluster="X"} > 95
+//
+// When neither cluster nor clusterMatch is set the query is returned unchanged.
+func applyClusterFilter(query, cluster, clusterMatch string) string {
+	var labelFilter string
+	switch {
+	case cluster != "":
+		labelFilter = `cluster="` + cluster + `"`
+	case clusterMatch != "":
+		labelFilter = `cluster=~"` + clusterMatch + `"`
+	default:
+		return query
+	}
+
+	if strings.HasPrefix(query, "{") {
+		idx := strings.Index(query, "}")
+		if idx == -1 {
+			return query
+		}
+		return query[:idx] + ", " + labelFilter + query[idx:]
+	}
+
+	idx := strings.Index(query, " ")
+	if idx == -1 {
+		return query + "{" + labelFilter + "}"
+	}
+	return query[:idx] + "{" + labelFilter + "}" + query[idx:]
+}
+
 func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.InfrastructureHealthRequest) (*mcp.CallToolResult, any, error) {
+	args.Cluster = strings.TrimSpace(args.Cluster)
+	args.ClusterMatch = strings.TrimSpace(args.ClusterMatch)
+
+	for _, v := range []string{args.Cluster, args.ClusterMatch} {
+		if strings.ContainsAny(v, `"\`) {
+			return nil, nil, fmt.Errorf("invalid cluster filter value %q: must not contain '\"' or '\\'", v)
+		}
+	}
+
+	if args.ClusterMatch != "" {
+		if _, err := regexp.Compile(args.ClusterMatch); err != nil {
+			return nil, nil, fmt.Errorf("invalid cluster_match regex %q: %w", args.ClusterMatch, err)
+		}
+	}
+
 	healthReport := strings.Builder{}
 	var report string
-	healthReport.WriteString("## ONTAP Infrastructure Health Report\n\n")
+
+	header := "## ONTAP Infrastructure Health Report"
+	switch {
+	case args.Cluster != "":
+		header += " (cluster: " + args.Cluster + ")"
+	case args.ClusterMatch != "":
+		header += " (cluster_match: " + args.ClusterMatch + ")"
+	}
+	healthReport.WriteString(header + "\n\n")
 	issuesFound := false
 
 	// Health checks to perform
@@ -666,15 +837,22 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 
 	config := resolveTSDBConfig(args.TSDBOverride)
 
+	if notFound, err := checkClusterExists(config, args.Cluster, args.ClusterMatch); err != nil {
+		return nil, nil, err
+	} else if notFound != nil {
+		return notFound, nil, nil
+	}
+
 	for _, check := range healthChecks {
 		queryURL := config.URL + "/api/v1/query"
 		urlValues := url.Values{}
-		urlValues.Set("query", check.query)
+		filteredQuery := applyClusterFilter(check.query, args.Cluster, args.ClusterMatch)
+		urlValues.Set("query", filteredQuery)
 
 		// Debug logging for infrastructure health check query
 		logger.Debug("Executing infrastructure health check",
 			slog.String("check_name", check.name),
-			slog.String("query", check.query),
+			slog.String("query", filteredQuery),
 			slog.String("url", queryURL))
 
 		promResp, err := executeTSDBQuery(config, queryURL, urlValues)
@@ -733,6 +911,36 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 			&mcp.TextContent{Text: report},
 		},
 	}, nil, nil
+}
+
+// extractClusterNames returns sorted, deduplicated cluster label values from
+func extractClusterNames(result any) []string {
+	resultSlice, ok := result.([]any)
+	if !ok {
+		return nil
+	}
+	seen := make(map[string]struct{}, len(resultSlice))
+	var names []string
+	for _, r := range resultSlice {
+		rm, ok := r.(map[string]any)
+		if !ok {
+			continue
+		}
+		metric, ok := rm["metric"].(map[string]any)
+		if !ok {
+			continue
+		}
+		c, ok := metric["cluster"].(string)
+		if !ok || c == "" {
+			continue
+		}
+		if _, dup := seen[c]; !dup {
+			seen[c] = struct{}{}
+			names = append(names, c)
+		}
+	}
+	sort.Strings(names)
+	return names
 }
 
 func extractIdentifiers(metric map[string]any) string {

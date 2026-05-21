@@ -55,6 +55,8 @@ type ListMetricsRequest struct {
 
 type InfrastructureHealthRequest struct {
 	IncludeDetails bool         `json:"includeDetails,omitempty" jsonschema:"Include detailed metrics in the response"`
+	Cluster        string       `json:"cluster,omitempty" jsonschema:"Optional exact cluster name to scope the health check (e.g. prod-east-1). Adds {cluster=\"X\"} to every PromQL query. Takes precedence over cluster_match when both are provided."`
+	ClusterMatch   string       `json:"cluster_match,omitempty" jsonschema:"Optional regex pattern matched against the cluster label. Adds {cluster=~\"pattern\"} to every PromQL query. Ignored when cluster is also provided. IMPORTANT: PromQL regex is fully anchored — for substring matching wrap with .* on both sides (e.g. '.*asa.*' matches rtp-sa-asa01, not just 'asa')."`
 	TSDBOverride   TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
@@ -75,6 +77,8 @@ type SearchMetricsRequest struct {
 }
 
 type GetActiveAlertsRequest struct {
+	Cluster      string       `json:"cluster,omitempty" jsonschema:"Optional exact cluster name to filter alerts (e.g. prod-east-1). Only alerts with labels.cluster matching this value are returned. Takes precedence over cluster_match when both are provided."`
+	ClusterMatch string       `json:"cluster_match,omitempty" jsonschema:"Optional regex pattern matched against the cluster label of each alert. Only alerts whose labels.cluster matches are returned. Ignored when cluster is also provided. IMPORTANT: PromQL regex is fully anchored — for substring matching wrap with .* on both sides (e.g. '.*asa.*' matches rtp-sa-asa01, not just 'asa')."`
 	TSDBOverride TSDBOverride `json:"tsdb_override,omitzero" jsonschema:"Optional override for TSDB connection"`
 }
 
