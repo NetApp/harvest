@@ -77,6 +77,7 @@ var exceptionList = []string{
 	"Top $TopResources Time Till Full by Aggregate",
 	"Throughput",
 	"Total Power Consumed",
+	"WAFL Write Cleaning (% of CP Time)",
 }
 
 var legendName = regexp.MustCompile(`{{.*?}}`)
