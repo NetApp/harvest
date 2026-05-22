@@ -9,6 +9,15 @@ Workflow: Excellent starting point for infrastructure analysis and assessment.
 REACH FOR THIS WHEN:
 - General health questions, 'any problems?', starting any troubleshooting
 
+OPTIONAL CLUSTER FILTERING:
+- cluster: Exact cluster name to scope all health checks (e.g. 'prod-east-1'). Adds {cluster="X"} to every PromQL query.
+- cluster_match: Regex pattern matched against the cluster label. Adds {cluster=~"pattern"} to every query.
+  IMPORTANT: PromQL regex is fully anchored — 'asa' only matches the literal string "asa", not clusters that contain "asa".
+  For substring matching always wrap with .* on both sides: 'asa' → '.*asa.*', 'prod' → '.*prod.*'.
+  Examples: '.*asa.*' matches rtp-sa-asa01, rtp-sa-asa02. 'prod-.*' matches prod-east-1, prod-west-2 (prefix match).
+- When both are provided, 'cluster' takes precedence.
+- When neither is provided, all clusters are evaluated (global view — default behavior).
+
 ANALYSIS APPROACH:
 1. Start here for overall infrastructure status
 2. If issues found → use get_active_alerts for detailed alert information
@@ -125,6 +134,14 @@ USE THIS TOOL WHEN:
 - User asks 'what alerts are firing?' or 'any active problems?'
 - Need to prioritize which issues to address first (by severity)
 - Starting incident investigation or troubleshooting session
+
+OPTIONAL CLUSTER FILTERING:
+- cluster: Exact cluster name — only alerts with labels.cluster matching this value are returned.
+- cluster_match: Regex pattern matched against each alert's labels.cluster.
+  IMPORTANT: PromQL regex is fully anchored — 'asa' only matches the literal string "asa".
+  For substring matching always wrap with .* on both sides: '.*asa.*'.
+- When both are provided, 'cluster' takes precedence.
+- When neither is provided, all alerts are returned (default).
 
 OUTPUT FORMAT:
 - Summary by severity: Critical, Warning, Info
