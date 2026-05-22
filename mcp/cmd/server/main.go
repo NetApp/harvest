@@ -546,17 +546,21 @@ func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.
 func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.GetActiveAlertsRequest) (*mcp.CallToolResult, any, error) {
 	args.Cluster = strings.TrimSpace(args.Cluster)
 	args.ClusterMatch = strings.TrimSpace(args.ClusterMatch)
-	for _, v := range []string{args.Cluster, args.ClusterMatch} {
-		if strings.ContainsAny(v, `"\`) {
-			return nil, nil, fmt.Errorf("invalid cluster filter value %q: must not contain '\"' or '\\'", v)
-		}
+	if strings.ContainsAny(args.Cluster, `"\`) {
+		msg := fmt.Sprintf("invalid cluster filter value %q: must not contain '\"' or '\\'", args.Cluster)
+		return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
+	}
+	if strings.Contains(args.ClusterMatch, `"`) {
+		msg := fmt.Sprintf("invalid cluster_match filter value %q: must not contain '\"'", args.ClusterMatch)
+		return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
 	}
 	var clusterRe *regexp.Regexp
 	if args.ClusterMatch != "" {
 		var err error
 		clusterRe, err = regexp.Compile(args.ClusterMatch)
 		if err != nil {
-			return nil, nil, fmt.Errorf("invalid cluster_match regex %q: %w", args.ClusterMatch, err)
+			msg := fmt.Sprintf("invalid cluster_match regex %q: %v", args.ClusterMatch, err)
+			return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
 		}
 	}
 
@@ -694,7 +698,6 @@ func filterAlertsByCluster(alerts []any, cluster string, re *regexp.Regexp) []an
 	return filtered
 }
 
-// clusterMatches returns true when the given cluster label value satisfies the
 func clusterMatches(name, cluster string, re *regexp.Regexp) bool {
 	switch {
 	case cluster != "":
@@ -792,16 +795,19 @@ func applyClusterFilter(query, cluster, clusterMatch string) string {
 func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.InfrastructureHealthRequest) (*mcp.CallToolResult, any, error) {
 	args.Cluster = strings.TrimSpace(args.Cluster)
 	args.ClusterMatch = strings.TrimSpace(args.ClusterMatch)
-
-	for _, v := range []string{args.Cluster, args.ClusterMatch} {
-		if strings.ContainsAny(v, `"\`) {
-			return nil, nil, fmt.Errorf("invalid cluster filter value %q: must not contain '\"' or '\\'", v)
-		}
+	if strings.ContainsAny(args.Cluster, `"\`) {
+		msg := fmt.Sprintf("invalid cluster filter value %q: must not contain '\"' or '\\'", args.Cluster)
+		return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
+	}
+	if strings.Contains(args.ClusterMatch, `"`) {
+		msg := fmt.Sprintf("invalid cluster_match filter value %q: must not contain '\"'", args.ClusterMatch)
+		return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
 	}
 
 	if args.ClusterMatch != "" {
 		if _, err := regexp.Compile(args.ClusterMatch); err != nil {
-			return nil, nil, fmt.Errorf("invalid cluster_match regex %q: %w", args.ClusterMatch, err)
+			msg := fmt.Sprintf("invalid cluster_match regex %q: %v", args.ClusterMatch, err)
+			return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
 		}
 	}
 
@@ -913,7 +919,6 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 	}, nil, nil
 }
 
-// extractClusterNames returns sorted, deduplicated cluster label values from
 func extractClusterNames(result any) []string {
 	resultSlice, ok := result.([]any)
 	if !ok {
