@@ -2905,7 +2905,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg(\n  clamp_max(\n    abs(\n      wafl_cp_phase_times{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=~\"P2_FLUSH|cp_p2_flush\",node=~\"$Node\"}\n      - 100\n    )\n    * ignoring(metric) wafl_total_cp_util / 100,\n    100\n  )\n)",
+              "expr": "avg(\n  clamp_max(\n    abs(\n      wafl_cp_phase_times{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=~\"P2_FLUSH|cp_p2_flush\",node=~\"$Node\"}\n      - 100\n    )\n    * ignoring(metric) wafl_total_cp_util{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"} / 100,\n    100\n  )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "WAFL Write Cleaning (% of Total Time)",
