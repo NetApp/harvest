@@ -1,8 +1,9 @@
 {
+  "__elements": {},
   "__inputs": [
     {
       "description": "",
-      "label": "Prometheus",
+      "label": "prometheus",
       "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
       "pluginName": "Prometheus",
@@ -14,7 +15,7 @@
       "id": "grafana",
       "name": "Grafana",
       "type": "grafana",
-      "version": "8.1.8"
+      "version": "12.3.2"
     },
     {
       "id": "prometheus",
@@ -51,7 +52,9 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -66,12 +69,10 @@
       }
     ]
   },
-  "description": "",
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1749475358867,
   "links": [
     {
       "asDropdown": true,
@@ -91,7 +92,6 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,10 @@
       "type": "row"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
@@ -115,7 +118,7 @@
             "steps": [
               {
                 "color": "blue",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -135,6 +138,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -142,12 +146,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "12.3.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "sum(\n  nic_tx_bytes + nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
           "interval": "",
@@ -155,13 +165,14 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Ethernet Throughput",
       "type": "stat"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "This panel displays detail of total number of FC-NVMe/FCP operations and amount of FC-NVMe/FCP traffic to and from the storage system.",
       "fieldConfig": {
         "defaults": {
@@ -172,7 +183,7 @@
             "steps": [
               {
                 "color": "blue",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -220,6 +231,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "vertical",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -227,12 +239,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "12.3.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "sum(\n    fcp_total_data\n  +\n    fcp_nvmf_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "interval": "",
@@ -240,6 +258,10 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "sum(\n    fcp_total_ops\n  +\n    fcp_nvmf_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "hide": false,
@@ -248,13 +270,14 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "FC Throughput",
       "type": "stat"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "Bytes received.",
       "fieldConfig": {
         "defaults": {
@@ -265,7 +288,7 @@
             "steps": [
               {
                 "color": "blue",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -285,6 +308,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -292,25 +316,32 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "12.3.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "sum(nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Ethernet Receive",
       "type": "stat"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
@@ -321,7 +352,7 @@
             "steps": [
               {
                 "color": "blue",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -341,6 +372,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -348,25 +380,32 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "12.3.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "sum(nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Ethernet Send",
       "type": "stat"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "This panel displays detail of number of FC-NVMe/FC read operations and amount of data read from the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
@@ -377,7 +416,7 @@
             "steps": [
               {
                 "color": "blue",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -425,6 +464,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "vertical",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -432,12 +472,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "12.3.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "sum(\n    fcp_read_data\n  +\n    fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "interval": "",
@@ -445,6 +491,10 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "sum(\n    fcp_read_ops\n  +\n    fcp_nvmf_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "hide": false,
@@ -453,13 +503,14 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "FC Read Throughput",
       "type": "stat"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "This panel displays detail of Number of FC-NVMe/FC write operations and amount of data written to the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
@@ -470,7 +521,7 @@
             "steps": [
               {
                 "color": "blue",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -518,6 +569,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "vertical",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -525,12 +577,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "12.3.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "sum(\n    fcp_write_data\n  +\n    fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "interval": "",
@@ -538,6 +596,10 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "sum(\n    fcp_write_ops\n  +\n    fcp_nvmf_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "hide": false,
@@ -546,14 +608,11 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "FC Write Throughput",
       "type": "stat"
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -563,7 +622,10 @@
       "id": 32,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays a collection of ports (physical, VLAN and LAG) for an entire cluster.",
           "fieldConfig": {
             "defaults": {
@@ -573,6 +635,9 @@
                   "type": "auto"
                 },
                 "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
                 "inspect": false
               },
               "decimals": 2,
@@ -582,7 +647,7 @@
                 "steps": [
                   {
                     "color": "rgb(80, 220, 20)",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "light-yellow",
@@ -598,8 +663,7 @@
                   }
                 ]
               },
-              "unit": "Bps",
-              "unitScale": true
+              "unit": "Bps"
             },
             "overrides": [
               {
@@ -774,6 +838,50 @@
                     "value": "string"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Health Status"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "degraded": {
+                            "color": "red",
+                            "index": 1,
+                            "text": "degraded"
+                          },
+                          "healthy": {
+                            "color": "green",
+                            "index": 0,
+                            "text": "healthy"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "empty",
+                          "result": {
+                            "color": "transparent",
+                            "index": 2
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -781,32 +889,26 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 2
+            "y": 12
           },
           "id": 59,
-          "interval": "",
           "options": {
             "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
             "showHeader": true,
             "sortBy": [
               {
                 "desc": false,
-                "displayName": "Status"
+                "displayName": "Health Status"
               }
             ]
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "net_port_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
               "format": "table",
@@ -817,7 +919,10 @@
               "refId": "A"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "exemplar": false,
               "expr": "net_port_mtu{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
@@ -836,7 +941,6 @@
               "options": {
                 "include": {
                   "names": [
-                    "admin_speed",
                     "cluster",
                     "datacenter",
                     "ipspace",
@@ -846,7 +950,9 @@
                     "port_type",
                     "role",
                     "status",
-                    "Value #B"
+                    "admin_speed",
+                    "Value #B",
+                    "health_status"
                   ]
                 }
               }
@@ -872,15 +978,16 @@
                 "includeByName": {},
                 "indexByName": {
                   "Value #B": 4,
-                  "admin_speed": 7,
+                  "admin_speed": 8,
                   "cluster": 1,
                   "datacenter": 0,
-                  "ipspace": 8,
+                  "health_status": 7,
+                  "ipspace": 9,
                   "node": 2,
                   "op_speed": 5,
                   "port": 3,
-                  "port_type": 9,
-                  "role": 10,
+                  "port_type": 10,
+                  "role": 11,
                   "status": 6
                 },
                 "renameByName": {
@@ -890,6 +997,7 @@
                   "admin_up": "",
                   "cluster": "",
                   "datacenter": "",
+                  "health_status": "Health Status",
                   "ipspace": "IPspace",
                   "node": "",
                   "op_speed": "Link Speed",
@@ -904,7 +1012,10 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "This table tracks hardware network traffic performance and errors for all supported network interface cards (NIC), such as Intel Niantic, Qlogic, and CNA.",
           "fieldConfig": {
             "defaults": {
@@ -914,6 +1025,9 @@
                   "type": "auto"
                 },
                 "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
                 "inspect": false
               },
               "decimals": 2,
@@ -923,12 +1037,11 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
-              "unit": "Bps",
-              "unitScale": true
+              "unit": "Bps"
             },
             "overrides": [
               {
@@ -983,7 +1096,7 @@
                       "steps": [
                         {
                           "color": "rgb(80, 220, 20)",
-                          "value": null
+                          "value": 0
                         },
                         {
                           "color": "light-yellow",
@@ -1042,7 +1155,7 @@
                       "steps": [
                         {
                           "color": "rgb(80, 220, 20)",
-                          "value": null
+                          "value": 0
                         },
                         {
                           "color": "light-yellow",
@@ -1101,7 +1214,7 @@
                       "steps": [
                         {
                           "color": "rgb(80, 220, 20)",
-                          "value": null
+                          "value": 0
                         },
                         {
                           "color": "light-yellow",
@@ -1168,7 +1281,7 @@
                       "steps": [
                         {
                           "color": "rgb(199, 48, 66)",
-                          "value": null
+                          "value": 0
                         },
                         {
                           "color": "rgb(74, 163, 52)",
@@ -1310,20 +1423,11 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 23
           },
           "id": 58,
-          "interval": "",
           "options": {
             "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
             "showHeader": true,
             "sortBy": [
               {
@@ -1332,10 +1436,13 @@
               }
             ]
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "nic_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
@@ -1345,7 +1452,10 @@
               "refId": "A"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1355,7 +1465,10 @@
               "refId": "B"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1365,7 +1478,10 @@
               "refId": "C"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1375,7 +1491,10 @@
               "refId": "D"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1385,7 +1504,10 @@
               "refId": "E"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "nic_tx_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1395,7 +1517,10 @@
               "refId": "F"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "nic_rx_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1473,7 +1598,10 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
@@ -1481,9 +1609,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1492,6 +1624,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1499,6 +1632,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1516,7 +1650,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1532,7 +1666,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 34
           },
           "id": 12,
           "options": {
@@ -1543,7 +1677,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1551,9 +1686,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "instant": false,
@@ -1562,13 +1701,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources NICs by Send Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Bytes received.",
           "fieldConfig": {
             "defaults": {
@@ -1576,9 +1716,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1587,6 +1731,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1594,6 +1739,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1611,7 +1757,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1627,7 +1773,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 34
           },
           "id": 28,
           "options": {
@@ -1638,7 +1784,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1646,9 +1793,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -1656,13 +1807,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources NICs by Receive Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Percentage of bytes transferred.",
           "fieldConfig": {
             "defaults": {
@@ -1670,9 +1822,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1681,6 +1837,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1688,6 +1845,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1707,7 +1865,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1723,7 +1881,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 34
+            "y": 44
           },
           "id": 61,
           "options": {
@@ -1734,7 +1892,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1742,9 +1901,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -1752,13 +1915,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources NICs by Port Utilization %",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
           "fieldConfig": {
             "defaults": {
@@ -1766,9 +1930,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1777,6 +1945,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1784,6 +1953,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1801,7 +1971,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1817,7 +1987,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 34
+            "y": 44
           },
           "id": 29,
           "options": {
@@ -1828,7 +1998,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1836,9 +2007,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
@@ -1846,6 +2021,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
@@ -1853,6 +2032,10 @@
               "refId": "D"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(nic_tx_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
@@ -1860,13 +2043,14 @@
               "refId": "B"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "NICs Send Errors by Cluster",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
           "fieldConfig": {
             "defaults": {
@@ -1874,9 +2058,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1885,6 +2073,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1892,6 +2081,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1909,7 +2099,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -1925,7 +2115,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 34
+            "y": 44
           },
           "id": 30,
           "options": {
@@ -1936,7 +2126,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1944,9 +2135,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
@@ -1954,6 +2149,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(\n  nic_rx_alignment_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
@@ -1961,6 +2160,10 @@
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
@@ -1968,6 +2171,10 @@
               "refId": "C"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(nic_rx_length_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
@@ -1975,6 +2182,10 @@
               "refId": "D"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(nic_rx_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
@@ -1982,13 +2193,14 @@
               "refId": "E"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "NICs Receive Errors by Cluster",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Ethernet port errors.",
           "fieldConfig": {
             "defaults": {
@@ -1997,7 +2209,9 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
                 "filterable": true
               },
               "mappings": [],
@@ -2006,8 +2220,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2052,8 +2265,10 @@
                     "value": 126
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
                   }
                 ]
               },
@@ -2068,8 +2283,10 @@
                     "value": 126
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
                   }
                 ]
               },
@@ -2084,8 +2301,10 @@
                     "value": 126
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
                   }
                 ]
               },
@@ -2100,8 +2319,10 @@
                     "value": 126
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
                   }
                 ]
               },
@@ -2116,8 +2337,10 @@
                     "value": 126
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
                   }
                 ]
               },
@@ -2194,8 +2417,10 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
                   }
                 ]
               },
@@ -2206,8 +2431,10 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
                   }
                 ]
               }
@@ -2217,7 +2444,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 52
           },
           "id": 119,
           "options": {
@@ -2232,6 +2459,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "nic_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
@@ -2241,6 +2472,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum_over_time(\n  nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
@@ -2251,6 +2486,10 @@
               "refId": "rx_crc_errors"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum_over_time(\n  nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
@@ -2261,6 +2500,10 @@
               "refId": "tx_hw_errors"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum_over_time(\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
@@ -2271,6 +2514,10 @@
               "refId": "tx_total_errors"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum_over_time(\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
@@ -2281,6 +2528,10 @@
               "refId": "rx_total_errors"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum_over_time(\n  nic_link_up_to_downs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
@@ -2291,6 +2542,10 @@
               "refId": "link_up_to_downs"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum_over_time(\n  nic_rx_alignment_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
@@ -2301,6 +2556,10 @@
               "refId": "rx_alignment_errors"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum_over_time(\n  nic_rx_length_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
@@ -2386,7 +2645,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2396,7 +2654,10 @@
       "id": 33,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Detail of interface group, also known as a Link Aggregation Group (LAG), created by combining two or more physical ports on the same node into a single logical port.",
           "fieldConfig": {
             "defaults": {
@@ -2414,8 +2675,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -2548,8 +2808,7 @@
                       "mode": "percentage",
                       "steps": [
                         {
-                          "color": "rgb(80, 220, 20)",
-                          "value": null
+                          "color": "rgb(80, 220, 20)"
                         },
                         {
                           "color": "light-yellow",
@@ -2607,8 +2866,7 @@
                       "mode": "percentage",
                       "steps": [
                         {
-                          "color": "rgb(80, 220, 20)",
-                          "value": null
+                          "color": "rgb(80, 220, 20)"
                         },
                         {
                           "color": "light-yellow",
@@ -2644,7 +2902,6 @@
             "y": 3
           },
           "id": 122,
-          "interval": "",
           "options": {
             "cellHeight": "sm",
             "footer": {
@@ -2666,6 +2923,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "nic_ifgrp_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
               "format": "table",
@@ -2676,6 +2937,10 @@
               "refId": "D"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "nic_ifgrp_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
               "format": "table",
@@ -2686,6 +2951,10 @@
               "refId": "E"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "nic_ifgrp_tx_perc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
               "format": "table",
@@ -2696,6 +2965,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "expr": "nic_ifgrp_rx_perc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
               "format": "table",
@@ -2764,7 +3037,10 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
@@ -2810,8 +3086,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2828,7 +3103,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 12
+            "y": 61
           },
           "id": 123,
           "options": {
@@ -2851,6 +3126,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "exemplar": false,
               "expr": "nic_ifgrp_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_ifgrp_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
@@ -2864,7 +3143,10 @@
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Bytes received.",
           "fieldConfig": {
             "defaults": {
@@ -2910,8 +3192,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2928,7 +3209,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 12
+            "y": 61
           },
           "id": 124,
           "options": {
@@ -2951,6 +3232,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "editorMode": "code",
               "exemplar": false,
               "expr": "nic_ifgrp_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_ifgrp_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
@@ -2964,18 +3249,11 @@
           "type": "timeseries"
         }
       ],
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "refId": "A"
-        }
-      ],
       "title": "Link Aggregation Group (LAG)",
       "type": "row"
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2985,13 +3263,18 @@
       "id": 80,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "FC port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
                 "filterable": true
               },
               "decimals": 2,
@@ -3000,8 +3283,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(80, 220, 20)",
-                    "value": null
+                    "color": "rgb(80, 220, 20)"
                   },
                   {
                     "color": "light-yellow",
@@ -3047,8 +3329,11 @@
                     "value": "percentunit"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   },
                   {
                     "id": "displayName",
@@ -3064,8 +3349,7 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "rgb(80, 220, 20)",
-                          "value": null
+                          "color": "rgb(80, 220, 20)"
                         },
                         {
                           "color": "light-yellow",
@@ -3103,8 +3387,11 @@
                     "value": "send"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -3119,8 +3406,11 @@
                     "value": "receive"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -3215,7 +3505,6 @@
             "y": 3
           },
           "id": 71,
-          "interval": "",
           "options": {
             "showHeader": true,
             "sortBy": [
@@ -3228,6 +3517,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
@@ -3238,6 +3531,10 @@
               "refId": "C"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
@@ -3248,6 +3545,10 @@
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
@@ -3258,8 +3559,6 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "FC ports",
           "transformations": [
             {
@@ -3302,12 +3601,19 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 14
+            "y": 63
           },
           "id": 117,
           "options": {
@@ -3315,16 +3621,22 @@
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
+          "title": "",
           "type": "text"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "FC ports with fabric details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
                 "filterable": true
               },
               "mappings": [],
@@ -3332,8 +3644,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3492,16 +3803,19 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 16
+            "y": 65
           },
           "id": 115,
-          "interval": "",
           "options": {
             "showHeader": true
           },
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
@@ -3512,6 +3826,10 @@
               "refId": "C"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_max_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
@@ -3522,6 +3840,10 @@
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_fabric_connected_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
@@ -3532,8 +3854,6 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "FC ports with Fabric detail",
           "transformations": [
             {
@@ -3604,7 +3924,10 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -3646,8 +3969,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3663,7 +3985,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 76
           },
           "id": 67,
           "options": {
@@ -3674,7 +3996,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -3685,6 +4008,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
@@ -3693,13 +4020,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCPs by Send Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -3741,8 +4069,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3758,7 +4085,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 76
           },
           "id": 69,
           "options": {
@@ -3769,7 +4096,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -3780,6 +4108,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -3787,13 +4119,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCPs by Receive Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Average latency for read operations.",
           "fieldConfig": {
             "defaults": {
@@ -3835,8 +4168,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3852,7 +4184,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 37
+            "y": 86
           },
           "id": 77,
           "options": {
@@ -3863,7 +4195,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -3874,6 +4207,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
@@ -3882,13 +4219,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCPs by Send Latency",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Average latency for write operations.",
           "fieldConfig": {
             "defaults": {
@@ -3930,8 +4268,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3947,7 +4284,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 37
+            "y": 86
           },
           "id": 78,
           "options": {
@@ -3958,7 +4295,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -3969,6 +4307,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
@@ -3977,13 +4319,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCPs by Receive Latency",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
           "fieldConfig": {
             "defaults": {
@@ -4025,8 +4368,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4042,7 +4384,7 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 47
+            "y": 96
           },
           "id": 75,
           "options": {
@@ -4053,7 +4395,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -4064,6 +4407,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4071,6 +4418,10 @@
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(\n  fcp_invalid_transmission_word{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
@@ -4078,6 +4429,10 @@
               "refId": "C"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_isr_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4085,6 +4440,10 @@
               "refId": "D"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(\n  fcp_spurious_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
@@ -4092,6 +4451,10 @@
               "refId": "I"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_invalid_crc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4099,13 +4462,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "FCPs Transmission interrupts",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
           "fieldConfig": {
             "defaults": {
@@ -4147,8 +4511,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4164,7 +4527,7 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 47
+            "y": 96
           },
           "id": 76,
           "options": {
@@ -4175,7 +4538,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -4186,12 +4550,20 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(\n  fcp_discarded_frames_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "interval": "",
               "legendFormat": "discarded frames",
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_loss_of_signal{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4199,6 +4571,10 @@
               "refId": "E"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_loss_of_sync{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4206,6 +4582,10 @@
               "refId": "F"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_prim_seq_err{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4213,6 +4593,10 @@
               "refId": "G"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_queue_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4220,6 +4604,10 @@
               "refId": "H"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(fcp_threshold_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
@@ -4227,13 +4615,14 @@
               "refId": "J"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "FCPs Transmission errors",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Number of times the Fibre Channel link was lost.",
           "fieldConfig": {
             "defaults": {
@@ -4275,8 +4664,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4292,7 +4680,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 47
+            "y": 96
           },
           "id": 73,
           "options": {
@@ -4303,7 +4691,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -4314,6 +4703,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_link_down{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_link_down{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -4321,13 +4714,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCPs by Link Down",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Number of link failures.",
           "fieldConfig": {
             "defaults": {
@@ -4369,8 +4763,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4386,7 +4779,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 47
+            "y": 96
           },
           "id": 74,
           "options": {
@@ -4397,7 +4790,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -4408,6 +4802,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_link_failure{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_link_failure{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -4415,8 +4813,6 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCPs by Link Failure",
           "type": "timeseries"
         }
@@ -4426,7 +4822,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4436,13 +4831,18 @@
       "id": 96,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "NVMe/FC port details.",
           "fieldConfig": {
             "defaults": {
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
                 "filterable": true
               },
               "decimals": 2,
@@ -4451,8 +4851,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(80, 220, 20)",
-                    "value": null
+                    "color": "rgb(80, 220, 20)"
                   },
                   {
                     "color": "light-yellow",
@@ -4498,8 +4897,11 @@
                     "value": "send"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -4514,8 +4916,11 @@
                     "value": "receive"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -4607,10 +5012,9 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 107
           },
           "id": 98,
-          "interval": "",
           "options": {
             "showHeader": true,
             "sortBy": [
@@ -4623,6 +5027,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "format": "table",
@@ -4633,6 +5041,10 @@
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "format": "table",
@@ -4643,8 +5055,6 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "NVMe/FC ports",
           "transformations": [
             {
@@ -4687,7 +5097,10 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Amount of data read from the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4729,8 +5142,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4746,7 +5158,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 69
+            "y": 118
           },
           "id": 100,
           "options": {
@@ -4757,7 +5169,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -4768,6 +5181,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
@@ -4776,13 +5193,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCP_NVMFs by Send Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Amount of data written to the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4824,8 +5242,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4841,7 +5258,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 69
+            "y": 118
           },
           "id": 102,
           "options": {
@@ -4852,7 +5269,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -4863,6 +5281,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -4870,13 +5292,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCP_NVMFs by Receive Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Average latency for read operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4918,8 +5341,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4935,7 +5357,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 79
+            "y": 128
           },
           "id": 104,
           "options": {
@@ -4946,7 +5368,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -4957,6 +5380,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_nvmf_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
@@ -4965,13 +5392,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCP_NVMFs by Send Latency",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Average latency for write operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -5013,8 +5441,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -5030,7 +5457,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 79
+            "y": 128
           },
           "id": 106,
           "options": {
@@ -5041,7 +5468,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -5052,6 +5480,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "fcp_nvmf_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
@@ -5060,8 +5492,6 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources FCP_NVMFs by Receive Latency",
           "type": "timeseries"
         }
@@ -5071,7 +5501,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -5081,13 +5510,20 @@
       "id": 110,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 90
+            "y": 139
           },
           "id": 114,
           "options": {
@@ -5095,10 +5531,14 @@
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
+          "title": "",
           "type": "text"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Detail of network routes.",
           "fieldConfig": {
             "defaults": {
@@ -5107,7 +5547,9 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
                 "filterable": true
               },
               "mappings": [],
@@ -5115,8 +5557,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -5198,7 +5639,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 92
+            "y": 141
           },
           "id": 112,
           "options": {
@@ -5207,6 +5648,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "net_route_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
@@ -5266,9 +5711,9 @@
       "type": "row"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 30,
-  "style": "dark",
+  "schemaVersion": 42,
   "tags": [
     "harvest",
     "ontap",
@@ -5277,35 +5722,26 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "Prometheus",
-          "value": "Prometheus"
-        },
-        "description": null,
-        "error": null,
+        "current": {},
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
-        "multi": false,
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 2,
+        "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Datacenter",
         "options": [],
@@ -5315,23 +5751,18 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Cluster",
         "options": [],
@@ -5341,23 +5772,18 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(node_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Node",
         "options": [],
@@ -5367,23 +5793,18 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Eth",
         "options": [],
@@ -5393,23 +5814,18 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "FCP",
         "options": [],
@@ -5419,26 +5835,15 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
-        "allValue": null,
         "current": {
-          "selected": true,
           "text": "5",
           "value": "5"
         },
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": false,
-        "label": null,
-        "multi": false,
         "name": "TopResources",
         "options": [
           {
@@ -5518,8 +5923,6 @@
           }
         ],
         "query": "1,2,3,4,5,6,8,10,15,20,50,100,250,500,1000",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -5544,5 +5947,6 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "cdot-network",
-  "version": 14
+  "version": 14,
+  "weekStart": ""
 }

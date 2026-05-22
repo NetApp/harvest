@@ -27,6 +27,7 @@ endpoints:
       - ^duplex_admin                        => admin_duplex
       - ^duplex_oper                         => op_duplex
       - ^flowcontrol_admin                   => admin_flowcontrol
+      - ^health_status                       => health_status
       - ^role                                => role
       - ^speed_admin                         => admin_speed
 # This is ifgrp(lag) type of ports, subset of above port api. It would only append below labels when key matches.
