@@ -1146,7 +1146,7 @@ func createMCPServer() *mcp.Server {
 		logger.Info("rule management tools will be disabled - see environment configuration")
 	} else {
 		// Add rule management tools
-		addTool(server, "list_alert_rules", "List all Prometheus alert rules from alert_rules.yml and ems_alert_rules.yml files", readOnlyLocalToolAnnotations, ListAlertRules)
+		addTool(server, "list_alert_rules", descriptions.ListAlertRulesDesc, readOnlyLocalToolAnnotations, ListAlertRules)
 		addTool(server, "create_alert_rule", "Create a new Prometheus alert rule in the appropriate file (alert_rules.yml or ems_alert_rules.yml)", destructiveMutationToolAnnotations, CreateAlertRule)
 		addTool(server, "update_alert_rule", "Update an existing Prometheus alert rule", destructiveMutationToolAnnotations, UpdateAlertRule)
 		addTool(server, "delete_alert_rule", "Delete a Prometheus alert rule", destructiveMutationToolAnnotations, DeleteAlertRule)
@@ -1358,15 +1358,35 @@ func GetResponseFormatTemplate(_ context.Context, _ *mcp.CallToolRequest, _ stru
 	}, nil, nil
 }
 
-// Rule management handlers
-
-func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListAlertRulesRequest) (*mcp.CallToolResult, any, error) {
 	if ruleManager == nil {
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				&mcp.TextContent{Text: "Rule management is not available. Please configure HARVEST_RULES_PATH environment variable."},
 			},
 		}, nil, nil
+	}
+
+	args.Cluster = strings.TrimSpace(args.Cluster)
+	args.ClusterMatch = strings.TrimSpace(args.ClusterMatch)
+
+	if strings.ContainsAny(args.Cluster, `"\`) {
+		msg := fmt.Sprintf("invalid cluster filter value %q: must not contain '\"' or '\\'", args.Cluster)
+		return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
+	}
+	if strings.Contains(args.ClusterMatch, `"`) {
+		msg := fmt.Sprintf("invalid cluster_match filter value %q: must not contain '\"'", args.ClusterMatch)
+		return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
+	}
+
+	var clusterRe *regexp.Regexp
+	if args.ClusterMatch != "" {
+		var err error
+		clusterRe, err = regexp.Compile(args.ClusterMatch)
+		if err != nil {
+			msg := fmt.Sprintf("invalid cluster_match regex %q: %v", args.ClusterMatch, err)
+			return handleValidationError(msg), nil, fmt.Errorf("%s", msg)
+		}
 	}
 
 	response, err := ruleManager.ListRules()
@@ -1378,14 +1398,25 @@ func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp
 		}, nil, nil
 	}
 
+	filteredAlertRules := filterRulesByCluster(response.AlertRules, args.Cluster, clusterRe)
+	filteredEMSRules := filterRulesByCluster(response.EMSRules, args.Cluster, clusterRe)
+	filteredTotal := len(filteredAlertRules) + len(filteredEMSRules)
+
 	var builder strings.Builder
 	builder.WriteString("**Alert Rules Summary**\n")
-	fmt.Fprintf(&builder, "Total Rules: %d\n", response.TotalRules)
+
+	if args.Cluster != "" {
+		fmt.Fprintf(&builder, "_Filtered by cluster: %q_\n", args.Cluster)
+	} else if args.ClusterMatch != "" {
+		fmt.Fprintf(&builder, "_Filtered by cluster_match: %q_\n", args.ClusterMatch)
+	}
+
+	fmt.Fprintf(&builder, "Total Rules: %d\n", filteredTotal)
 	fmt.Fprintf(&builder, "Last Modified: %s\n\n", response.LastModified)
 
-	if len(response.AlertRules) > 0 {
+	if len(filteredAlertRules) > 0 {
 		builder.WriteString("**Standard Alert Rules (alert_rules.yml):**\n")
-		for _, rule := range response.AlertRules {
+		for _, rule := range filteredAlertRules {
 			fmt.Fprintf(&builder, "- **%s**\n", rule.Alert)
 			fmt.Fprintf(&builder, "  Expression: `%s`\n", rule.Expr)
 			if rule.For != "" {
@@ -1401,9 +1432,9 @@ func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp
 		}
 	}
 
-	if len(response.EMSRules) > 0 {
+	if len(filteredEMSRules) > 0 {
 		builder.WriteString("**EMS Alert Rules (ems_alert_rules.yml):**\n")
-		for _, rule := range response.EMSRules {
+		for _, rule := range filteredEMSRules {
 			fmt.Fprintf(&builder, "- **%s**\n", rule.Alert)
 			fmt.Fprintf(&builder, "  Expression: `%s`\n", rule.Expr)
 			if rule.For != "" {
@@ -1419,8 +1450,12 @@ func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp
 		}
 	}
 
-	if response.TotalRules == 0 {
-		builder.WriteString("No alert rules found.")
+	if filteredTotal == 0 {
+		if args.Cluster != "" || args.ClusterMatch != "" {
+			builder.WriteString("No alert rules found matching the cluster filter.")
+		} else {
+			builder.WriteString("No alert rules found.")
+		}
 	}
 
 	return &mcp.CallToolResult{
@@ -1428,6 +1463,39 @@ func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp
 			&mcp.TextContent{Text: builder.String()},
 		},
 	}, response, nil
+}
+
+// filterRulesByCluster returns only rules whose Expr contains the cluster name.
+// as a substring, or whose labels["cluster"] matches.
+// If both cluster and clusterRe are empty/nil, all rules are returned unchanged.
+func filterRulesByCluster(ruleList []rules.RuleInfo, cluster string, re *regexp.Regexp) []rules.RuleInfo {
+	if cluster == "" && re == nil {
+		return ruleList
+	}
+	filtered := make([]rules.RuleInfo, 0, len(ruleList))
+	for _, rule := range ruleList {
+		if ruleMatchesCluster(rule, cluster, re) {
+			filtered = append(filtered, rule)
+		}
+	}
+	return filtered
+}
+
+// ruleMatchesCluster checks if a rule references the given cluster in its expr
+// (substring match) or in its labels["cluster"] field.
+func ruleMatchesCluster(rule rules.RuleInfo, cluster string, re *regexp.Regexp) bool {
+	// candidates to check: the expr string and labels["cluster"]
+	exprValue := rule.Expr
+	labelValue := rule.Labels["cluster"]
+
+	switch {
+	case cluster != "":
+		return strings.Contains(exprValue, cluster) || labelValue == cluster
+	case re != nil:
+		return re.MatchString(exprValue) || re.MatchString(labelValue)
+	default:
+		return true
+	}
 }
 
 func CreateAlertRule(_ context.Context, _ *mcp.CallToolRequest, params rules.CreateRuleRequest) (*mcp.CallToolResult, any, error) {

@@ -19,6 +19,13 @@ type AlertsResponse struct {
 	ErrorType string `json:"errorType,omitempty"`
 }
 
+// Add this after GetActiveAlertsRequest struct
+
+type ListAlertRulesRequest struct {
+	Cluster      string `json:"cluster,omitempty" jsonschema:"Optional exact cluster name to filter alert rules (e.g. prod-east-1). Only rules whose expr references cluster=\"X\" are returned. Takes precedence over cluster_match when both are provided."`
+	ClusterMatch string `json:"cluster_match,omitempty" jsonschema:"Optional regex pattern matched against the cluster label in rule expressions. Only rules whose expr references cluster=~\"pattern\" are returned. Ignored when cluster is also provided. IMPORTANT: PromQL regex is fully anchored — for substring matching wrap with .* on both sides (e.g. '.*asa.*')."`
+}
+
 type LabelsResponse struct {
 	Status    string   `json:"status"`
 	Data      []string `json:"data"`

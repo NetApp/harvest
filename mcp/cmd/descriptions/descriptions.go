@@ -52,6 +52,18 @@ COMMON QUERY PATTERNS:
 - Cluster-wide summary: sum by (cluster) (volume_size_total)
 - Filter by label: volume_ops_total{cluster="prod",node="node1"}`
 
+
+const ListAlertRulesDesc = `List all Prometheus alert rules from alert_rules.yml and ems_alert_rules.yml files.
+
+OPTIONAL CLUSTER FILTERING:
+- cluster: Exact cluster name — only rules whose PromQL expression references cluster="X" are returned.
+- cluster_match: Regex pattern matched against the cluster label value in each rule's expression.
+  IMPORTANT: PromQL regex is fully anchored — 'asa' only matches the literal string "asa".
+  For substring matching always wrap with .* on both sides: '.*asa.*'.
+- When both are provided, 'cluster' takes precedence.
+- When neither is provided, all rules are returned (default).`
+
+
 const MetricsRangeQueryDesc = `Use for trend analysis, growth patterns, historical baselines, and identifying when problems started.
 
 USE THIS TOOL FOR:
