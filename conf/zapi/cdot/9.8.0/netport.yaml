@@ -7,6 +7,7 @@ counters:
     - ^^node                                   => node
     - ^^port                                   => port
     - ^broadcast-domain                        => broadcast
+    - ^health-status                           => health_status
     - ^ifgrp-distribution-function             => lag_distribution_policy
     - ^ifgrp-mode                              => lag_mode
     - ^ifgrp-port                              => lag_port
