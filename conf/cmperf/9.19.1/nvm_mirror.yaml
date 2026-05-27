@@ -3,12 +3,10 @@ name:                     NvmMirror
 query:                    nvm_mirror
 object:                   nvm_mirror
 
-instance_key:             uuid
-
 counters:
-  - instance_name           => name
-  - instance_uuid
-  - node_name               => node
+  - ^^instance_uuid
+  - ^instance_name           => name
+  - ^node_name               => node
   - write_throughput
 
 export_options:

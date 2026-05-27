@@ -3,13 +3,10 @@ name:                     WAFLSizer
 query:                    wafl_hya_sizer
 object:                   flashpool
 
-instance_key:             uuid
-
 counters:
+  - ^^instance_name           => aggr
+  - ^^node_name               => node
   - cache_stats
-  - instance_name          => aggr
-  - node_name              => node
-
 export_options:
   instance_keys:
     - aggr

@@ -7,6 +7,8 @@ global_labels:
   - nfsv: v4.2
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name            => node
   - access_avg_latency
   - access_total
   - backchannel_ctl_avg_latency
@@ -43,7 +45,6 @@ counters:
   - getdevicelist_total
   - getfh_avg_latency
   - getfh_total
-  - instance_name            => node
   - latency
   - layoutcommit_avg_latency
   - layoutcommit_total
@@ -63,9 +64,9 @@ counters:
   - lookup_total
   - lookupp_avg_latency
   - lookupp_total
-  - nfs42_read_throughput    => read_throughput
-  - nfs42_throughput         => throughput
-  - nfs42_write_throughput   => write_throughput
+  - nfs42_read_throughput     => read_throughput
+  - nfs42_throughput          => throughput
+  - nfs42_write_throughput    => write_throughput
   - null_avg_latency
   - null_total
   - nverify_avg_latency
@@ -117,7 +118,6 @@ counters:
   - want_delegation_total
   - write_avg_latency
   - write_total
-
 override:
   - access_total: rate
   - backchannel_ctl_total: rate

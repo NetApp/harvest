@@ -3,6 +3,9 @@ query:                    resource_headroom_cpu
 object:                   headroom_cpu
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name           => cpu
+  - ^node_name               => node
   - current_latency
   - current_ops
   - current_utilization
@@ -10,8 +13,6 @@ counters:
   - ewma_hourly
   - ewma_monthly
   - ewma_weekly
-  - instance_name
-  - node_name              => node
   - optimal_point_confidence_factor
   - optimal_point_latency
   - optimal_point_ops

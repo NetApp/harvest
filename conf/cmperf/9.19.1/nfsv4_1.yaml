@@ -7,6 +7,8 @@ global_labels:
   - nfsv: v4.1
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name            => svm
   - access_avg_latency
   - access_total
   - backchannel_ctl_avg_latency
@@ -43,7 +45,6 @@ counters:
   - getdevicelist_total
   - getfh_avg_latency
   - getfh_total
-  - instance_name            => svm
   - latency
   - layoutcommit_avg_latency
   - layoutcommit_total
@@ -63,10 +64,10 @@ counters:
   - lookup_total
   - lookupp_avg_latency
   - lookupp_total
-  - nfs41_latency_hist       => latency_hist
-  - nfs41_read_throughput    => read_throughput
-  - nfs41_throughput         => throughput
-  - nfs41_write_throughput   => write_throughput
+  - nfs41_latency_hist        => latency_hist
+  - nfs41_read_throughput     => read_throughput
+  - nfs41_throughput          => throughput
+  - nfs41_write_throughput    => write_throughput
   - null_avg_latency
   - null_total
   - nverify_avg_latency
@@ -112,7 +113,7 @@ counters:
   - setattr_total
   - test_stateid_avg_latency
   - test_stateid_total
-  - total_ops                => ops
+  - total_ops                 => ops
   - verify_avg_latency
   - verify_total
   - want_delegation_avg_latency
@@ -120,7 +121,6 @@ counters:
   - write_avg_latency
   - write_latency_hist
   - write_total
-
 export_options:
   instance_keys:
     - svm

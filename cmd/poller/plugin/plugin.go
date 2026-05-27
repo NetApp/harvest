@@ -145,6 +145,11 @@ func (p *AbstractPlugin) IsStatPerfCollector() bool {
 	return p.Parent == "StatPerf"
 }
 
+// IsCmPerfCollector returns true if the parent collector is CmPerf
+func (p *AbstractPlugin) IsCmPerfCollector() bool {
+	return p.Parent == "CmPerf"
+}
+
 // Init initializes the plugin by calling InitAbc
 func (p *AbstractPlugin) Init(conf.Remote) error {
 	return p.InitAbc()

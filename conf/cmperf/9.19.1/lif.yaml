@@ -4,20 +4,18 @@ query:                    lif
 object:                   lif
 
 counters:
-  - current_port             => port
-  - instance_name
-  - instance_uuid
-  - node_name                => node
+  - ^^instance_uuid
+  - ^current_port             => port
+  - ^instance_name            => lif
+  - ^node_name                => node
+  - ^up_time                  => uptime
+  - ^vserver_name             => svm
   - recv_data
   - recv_errors
   - recv_packet
   - sent_data
   - sent_errors
   - sent_packet
-  - up_time                  => uptime
-  - vserver_name             => svm
-
-
 export_options:
   instance_keys:
     - lif

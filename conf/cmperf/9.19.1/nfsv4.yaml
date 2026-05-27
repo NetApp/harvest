@@ -7,6 +7,8 @@ global_labels:
   - nfsv: v4
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name            => svm
   - access_avg_latency
   - access_total
   - close_avg_latency
@@ -23,7 +25,6 @@ counters:
   - getattr_total
   - getfh_avg_latency
   - getfh_total
-  - instance_name            => svm
   - latency
   - link_avg_latency
   - link_total
@@ -37,10 +38,10 @@ counters:
   - lookup_total
   - lookupp_avg_latency
   - lookupp_total
-  - nfs4_latency_hist        => latency_hist
-  - nfs4_read_throughput     => read_throughput
-  - nfs4_throughput          => throughput
-  - nfs4_write_throughput    => write_throughput
+  - nfs4_latency_hist         => latency_hist
+  - nfs4_read_throughput      => read_throughput
+  - nfs4_throughput           => throughput
+  - nfs4_write_throughput     => write_throughput
   - null_avg_latency
   - null_total
   - nverify_avg_latency
@@ -86,13 +87,12 @@ counters:
   - setclientid_confirm_avg_latency
   - setclientid_confirm_total
   - setclientid_total
-  - total_ops                => ops
+  - total_ops                 => ops
   - verify_avg_latency
   - verify_total
   - write_avg_latency
   - write_latency_hist
   - write_total
-
 override:
   - access_total: rate
   - close_total: rate
@@ -137,4 +137,3 @@ override:
 export_options:
   instance_keys:
     - svm
-

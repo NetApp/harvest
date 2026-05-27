@@ -2,19 +2,16 @@ name:                     FlexCache
 query:                    flexcache_per_volume
 object:                   flexcache
 
-instance_key:
-  - uuid
-  - name
-
 counters:
+  - ^^instance_uuid
+  - ^instance_name                                     => volume
+  - ^vserver_name                                      => svm
   - blocks_requested_from_client
   - blocks_retrieved_from_origin
   - evict_rw_cache_skipped_reason_disconnected
   - evict_skipped_reason_config_noent
   - evict_skipped_reason_disconnected
   - evict_skipped_reason_offline
-  - instance_name                                     => volume
-  - instance_uuid                                     => svm
   - invalidate_skipped_reason_config_noent
   - invalidate_skipped_reason_disconnected
   - invalidate_skipped_reason_offline
@@ -25,7 +22,6 @@ counters:
   - nix_skipped_reason_offline
   - reconciled_data_entries
   - reconciled_lock_entries
-
 plugins:
   - FlexCache
   - MetricAgent:

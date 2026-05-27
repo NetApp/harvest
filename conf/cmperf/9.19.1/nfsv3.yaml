@@ -7,6 +7,8 @@ global_labels:
   - nfsv: v3
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name            => svm
   - access_avg_latency
   - access_total
   - commit_avg_latency
@@ -19,7 +21,6 @@ counters:
   - fsstat_total
   - getattr_avg_latency
   - getattr_total
-  - instance_name            => svm
   - latency
   - link_avg_latency
   - link_total
@@ -29,13 +30,13 @@ counters:
   - mkdir_total
   - mknod_avg_latency
   - mknod_total
-  - nfsv3_latency_hist       => latency_hist
-  - nfsv3_ops                => ops
-  - nfsv3_read_ops           => read_ops
-  - nfsv3_read_throughput    => read_throughput
-  - nfsv3_throughput         => throughput
-  - nfsv3_write_ops          => write_ops
-  - nfsv3_write_throughput   => write_throughput
+  - nfsv3_latency_hist        => latency_hist
+  - nfsv3_ops                 => ops
+  - nfsv3_read_ops            => read_ops
+  - nfsv3_read_throughput     => read_throughput
+  - nfsv3_throughput          => throughput
+  - nfsv3_write_ops           => write_ops
+  - nfsv3_write_throughput    => write_throughput
   - null_avg_latency
   - null_total
   - pathconf_avg_latency
@@ -62,7 +63,6 @@ counters:
   - write_avg_latency
   - write_latency_hist
   - write_total
-
 override:
   - access_total: rate
   - commit_total: rate
