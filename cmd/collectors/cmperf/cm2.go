@@ -129,7 +129,7 @@ type cm2FileRecord struct {
 }
 
 func (c *CmPerf) pollONTAPFilesEndpoint(query string) ([]cm2FileRecord, error) {
-	path := "api/cluster/counter-cache/files?fields=path,checksum_path,node,timestamp,object&object=" + url.QueryEscape(query) + "&order_by=timestamp+desc"
+	path := "api/cluster/counter-cache/files?fields=path,checksum_path,node,timestamp,object&object=" + url.QueryEscape(query) + "&order_by=timestamp+desc&max_records=1"
 	if !c.lastTimestamp.IsZero() {
 		path += "&timestamp=>" + url.QueryEscape(c.lastTimestamp.UTC().Format(time.RFC3339))
 	}
@@ -189,14 +189,14 @@ func (c *CmPerf) parseCM2FilesResponse(body io.Reader) ([]cm2FileRecord, error) 
 	return records, nil
 }
 
-func (c *CmPerf) downloadCM2Files(dir string) (bool, error) {
+func (c *CmPerf) downloadCM2Files(dir string) (string, time.Time, error) {
 	records, err := c.pollONTAPFilesEndpoint(c.Prop.Query)
 	if err != nil {
-		return false, fmt.Errorf("downloadCM2Files: poll: %w", err)
+		return "", time.Time{}, fmt.Errorf("downloadCM2Files: poll: %w", err)
 	}
 	if len(records) == 0 {
 		c.Logger.Warn("no CM2 files available", slog.String("query", c.Prop.Query))
-		return false, nil
+		return "", time.Time{}, nil
 	}
 
 	rec := records[0]
@@ -205,7 +205,7 @@ func (c *CmPerf) downloadCM2Files(dir string) (bool, error) {
 			slog.String("path", rec.SpiURL),
 			slog.Time("fileTS", rec.Timestamp),
 			slog.Time("lastTS", c.lastTimestamp))
-		return false, nil
+		return "", time.Time{}, nil
 	}
 
 	c.Logger.Debug("downloading CM2 file",
@@ -213,16 +213,17 @@ func (c *CmPerf) downloadCM2Files(dir string) (bool, error) {
 		slog.Time("fileTS", rec.Timestamp),
 		slog.Time("prevTS", c.lastTimestamp))
 
-	if err := c.downloadSPIFile(rec, dir); err != nil {
-		c.Logger.Warn("downloadSPIFile failed", slog.String("url", rec.SpiURL), slogx.Err(err))
-		return false, err
+	path, dlErr := c.downloadSPIFile(rec, dir)
+	if dlErr != nil {
+		c.Logger.Warn("downloadSPIFile failed", slog.String("url", rec.SpiURL), slogx.Err(dlErr))
+		return "", time.Time{}, dlErr
 	}
 
-	c.lastTimestamp = rec.Timestamp
-	return true, nil
+	// lastTimestamp is advanced by the caller only after the file is successfully parsed.
+	return path, rec.Timestamp, nil
 }
 
-func (c *CmPerf) downloadSPIFile(rec cm2FileRecord, dir string) error {
+func (c *CmPerf) downloadSPIFile(rec cm2FileRecord, dir string) (string, error) {
 	entries, rdErr := os.ReadDir(dir)
 	if rdErr != nil {
 		c.Logger.Debug("could not read CM2 temp dir for cleanup", slog.String("dir", dir), slogx.Err(rdErr))
@@ -235,7 +236,7 @@ func (c *CmPerf) downloadSPIFile(rec cm2FileRecord, dir string) error {
 	}
 	fname := fmt.Sprintf("%d_%s.pb", time.Now().UnixMilli(), c.Prop.Query)
 	path := filepath.Join(dir, fname)
-	return c.downloadSPIFileONTAP(rec.SpiURL, path)
+	return path, c.downloadSPIFileONTAP(rec.SpiURL, path)
 }
 
 func (c *CmPerf) downloadSPIFileONTAP(spiRelPath, destPath string) error {
@@ -257,26 +258,7 @@ func (c *CmPerf) downloadSPIFileONTAP(spiRelPath, destPath string) error {
 	return nil
 }
 
-func (c *CmPerf) pollCM2Files(dir string, curMat *matrix.Matrix) (uint64, uint64, error) {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	var newest os.DirEntry
-	for _, entry := range entries {
-		if !entry.IsDir() {
-			newest = entry
-			break
-		}
-	}
-
-	if newest == nil {
-		return 0, 0, fmt.Errorf("CM2 pb file missing from temp dir %s", dir)
-	}
-
-	path := filepath.Join(dir, newest.Name())
-
+func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint64, error) {
 	var (
 		fileSchema   *cmmetrics.ObjectSchema
 		fileSummary  *cmmetrics.CollectionStatus
@@ -288,7 +270,7 @@ func (c *CmPerf) pollCM2Files(dir string, curMat *matrix.Matrix) (uint64, uint64
 	for rec, msgErr := range cmmetrics.Messages(path) {
 		if msgErr != nil {
 			c.Logger.Warn("error reading CM2 pb file",
-				slog.String("file", newest.Name()), slogx.Err(msgErr))
+				slog.String("file", filepath.Base(path)), slogx.Err(msgErr))
 			readErr = msgErr
 			break
 		}
@@ -315,7 +297,7 @@ func (c *CmPerf) pollCM2Files(dir string, curMat *matrix.Matrix) (uint64, uint64
 
 	if fileSummary == nil {
 		c.Logger.Warn("no collection status summary in CM2 file — treating as incomplete",
-			slog.String("file", newest.Name()))
+			slog.String("file", filepath.Base(path)))
 	}
 	isComplete := false
 	if fileSummary != nil {
@@ -327,7 +309,7 @@ func (c *CmPerf) pollCM2Files(dir string, curMat *matrix.Matrix) (uint64, uint64
 				// ONTAP always appends this alongside other codes
 			default:
 				c.Logger.Warn("non-complete collection status",
-					slog.String("file", newest.Name()),
+					slog.String("file", filepath.Base(path)),
 					slog.Uint64("status", uint64(sc.Code)),
 					slog.Any("nodes", sc.Nodes))
 			}
@@ -336,27 +318,27 @@ func (c *CmPerf) pollCM2Files(dir string, curMat *matrix.Matrix) (uint64, uint64
 	if !isComplete {
 		if c.AllowPartialAggregation {
 			c.Logger.Debug("incomplete collection allowed by template",
-				slog.String("file", newest.Name()))
+				slog.String("file", filepath.Base(path)))
 		} else {
 			c.Logger.Debug("incomplete collection — instances will be skipped",
-				slog.String("file", newest.Name()))
+				slog.String("file", filepath.Base(path)))
 			for _, inst := range curMat.GetInstances() {
 				inst.SetPartial(true)
 				inst.SetExportable(false)
 			}
-			numPartials += metricCount
+			numPartials += uint64(len(curMat.GetInstances()))
 			metricCount = 0
 		}
 	}
 
 	if !schemaLoaded && readErr == nil {
 		c.Logger.Warn("no schema loaded from CM2 pb file — file may be empty or corrupt",
-			slog.String("file", newest.Name()))
+			slog.String("file", filepath.Base(path)))
 	}
 
 	if removeErr := os.Remove(filepath.Clean(path)); removeErr != nil {
 		c.Logger.Warn("failed to remove CM2 pb file",
-			slog.String("file", newest.Name()), slogx.Err(removeErr))
+			slog.String("file", filepath.Base(path)), slogx.Err(removeErr))
 	}
 
 	return metricCount, numPartials, readErr
@@ -461,17 +443,23 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 func (c *CmPerf) buildInstanceKey(inst cmmetrics.ObjectInstance, stringVals map[string]string) string {
 	if len(c.Prop.InstanceKeys) > 0 {
 		var b strings.Builder
+		var anyNonEmpty bool
 		for i, k := range c.Prop.InstanceKeys {
 			v := stringVals[k]
 			if v == "" {
 				c.Logger.Debug("instance key counter has no value",
 					slog.String("counter", k),
 					slog.String("uuid", inst.UUID))
+			} else {
+				anyNonEmpty = true
 			}
 			if i > 0 {
 				b.WriteByte(':')
 			}
 			b.WriteString(v)
+		}
+		if !anyNonEmpty {
+			return ""
 		}
 		return b.String()
 	}
@@ -537,7 +525,7 @@ func (c *CmPerf) populateArrayCounter(
 	// 1D path: LabelsX only.
 	labels := cs.LabelsX
 	// TODO check if this is correct way to identify histograms
-	isHisto := len(labels) > 0 && strings.Contains(strings.ToLower(cs.Name), "hist")
+	isHisto := len(labels) > 0 && strings.Contains(strings.ToLower(cs.Name), "_hist")
 
 	if isHisto {
 		bucketKey := cs.Name + ".bucket"

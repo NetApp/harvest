@@ -162,7 +162,6 @@ func (c *CmPerf) InitMatrix() error {
 
 	_, _ = c.Metadata.NewMetricUint64("skips")
 	_, _ = c.Metadata.NewMetricUint64("numPartials")
-	_, _ = c.Metadata.NewMetricUint64("downloadFailures")
 	return nil
 }
 
@@ -255,16 +254,13 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	startTime = time.Now()
-	filesDownloaded, dlErr := c.downloadCM2Files(tmpDir)
+	filePath, fileTS, dlErr := c.downloadCM2Files(tmpDir)
 	apiD += time.Since(startTime)
 	if dlErr != nil {
-		_ = c.Metadata.LazySetValueUint64("downloadFailures", "data", 1)
 		return nil, dlErr
 	}
-	_ = c.Metadata.LazySetValueUint64("downloadFailures", "data", 0)
-
-	// TODO: We keep publishing older data from the Prometheus cache until it expires.What is no cm2 files are available for very long time?
-	if !filesDownloaded {
+	// TODO: We keep publishing older data from the Prometheus cache until it expires.What if no cm2 files are available for very long time?
+	if filePath == "" {
 		// No new file this poll — leave r.Matrix[r.Object] (prevMat) intact so
 		// the next poll with fresh data can diff correctly against it.
 		return nil, nil
@@ -273,11 +269,14 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 	var pollErr error
 	var pollPartials uint64
-	metricCount, pollPartials, pollErr = c.pollCM2Files(tmpDir, curMat)
+	metricCount, pollPartials, pollErr = c.pollCM2Files(filePath, curMat)
 	numPartials += pollPartials
 	if pollErr != nil {
 		return nil, pollErr
 	}
+	// Advance lastTimestamp only after the file has been successfully parsed,
+	// so a parse failure does not permanently skip the file.
+	c.lastTimestamp = fileTS
 	if len(curMat.GetInstances()) == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+c.Prop.Object+" instances on cluster")
 	}
