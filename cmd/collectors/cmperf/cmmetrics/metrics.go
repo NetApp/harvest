@@ -18,7 +18,6 @@ type ObjectCollection struct {
 	Timestamp uint64
 	Period    uint32
 	Node      string
-	Schema    ObjectSchema
 	Data      ObjectData
 }
 
@@ -449,16 +448,6 @@ func handleObjectCollection(data []byte) (*ObjectCollection, error) {
 				return nil, errors.New("failed to read node name")
 			}
 			cm.Node = nodeName
-		case 5:
-			data, ok := fc.MessageData()
-			if !ok {
-				return nil, errors.New("failed to read object schema message")
-			}
-			schema, err := handleObjectSchema(data)
-			if err != nil {
-				return nil, err
-			}
-			cm.Schema = schema
 		case 6:
 			data, ok := fc.MessageData()
 			if !ok {
