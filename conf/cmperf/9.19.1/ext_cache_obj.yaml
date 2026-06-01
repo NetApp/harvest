@@ -4,9 +4,10 @@ name:                     ExtCacheObj
 query:                    ext_cache_obj
 object:                   flashcache
 
-instance_key:             uuid
-
 counters:
+  - ^^instance_uuid
+  - ^instance_name
+  - ^node_name              => node
   - accesses
   - disk_reads_replaced
   - evicts
@@ -17,17 +18,13 @@ counters:
   - hit_normal_lev0
   - hit_percent
   - inserts
-  - instance_name
-  - instance_uuid
   - invalidates
   - miss
   - miss_directory
   - miss_indirect
   - miss_metadata_file
   - miss_normal_lev0
-  - node_name              => node
   - usage
-
 export_options:
   instance_keys:
     - node

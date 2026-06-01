@@ -2,13 +2,13 @@ name:                     Namespace
 query:                    namespace
 object:                   namespace
 
-instance_key:             name
-
 counters:
+  - ^^instance_uuid
+  - ^instance_name         => path
+  - ^vserver_name          => svm
   - avg_other_latency
   - avg_read_latency
   - avg_write_latency
-  - instance_name         => path
   - other_ops
   - read_data
   - read_ops
@@ -17,10 +17,8 @@ counters:
   - remote_read_ops
   - remote_write_data
   - remote_write_ops
-  - vserver_name          => svm
   - write_data
   - write_ops
-
 plugins:
   LabelAgent:
     split:
@@ -32,5 +30,3 @@ export_options:
     - path
     - svm
     - volume
-
-

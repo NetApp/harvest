@@ -1,6 +1,8 @@
 package cmperf
 
 import (
+	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/plugins/fabricpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/plugins/fcp"
@@ -17,6 +19,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -28,29 +32,12 @@ const (
 	timestampMetricName = "timestamp"
 )
 
-var (
-	qosQuery              = "api/cluster/counter/tables/qos"
-	qosVolumeQuery        = "api/cluster/counter/tables/qos_volume"
-	qosDetailQuery        = "api/cluster/counter/tables/qos_detail"
-	qosDetailVolumeQuery  = "api/cluster/counter/tables/qos_detail_volume"
-	workloadDetailMetrics = []string{"resource_latency"}
-)
-
-var qosQueries = map[string]string{
-	qosQuery:       qosQuery,
-	qosVolumeQuery: qosVolumeQuery,
-}
-var qosDetailQueries = map[string]string{
-	qosDetailQuery:       qosDetailQuery,
-	qosDetailVolumeQuery: qosDetailVolumeQuery,
-}
-
 type CmPerf struct {
-	*rest2.Rest         // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	perfProp            *perfProp
-	archivedMetrics     map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
-	hasInstanceSchedule bool
-	recordsToSave       int // Number of records to save when using the recorder
+	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	perfProp        *perfProp
+	archivedMetrics map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
+	recordsToSave   int                      // Number of records to save when using the recorder
+	lastTimestamp   time.Time                // tracks last downloaded file timestamp (aggregated: 1 file per object)
 }
 
 type counter struct {
@@ -61,6 +48,7 @@ type counter struct {
 type perfProp struct {
 	isCacheEmpty        bool
 	counterInfo         map[string]*counter
+	schemaMap           map[uint32]cmmetrics.CounterSchema
 	latencyIoReqd       int
 	qosLabels           map[string]string
 	disableConstituents bool
@@ -70,72 +58,70 @@ func init() {
 	plugin.RegisterModule(&CmPerf{})
 }
 
-func (r *CmPerf) HarvestModule() plugin.ModuleInfo {
+func (c *CmPerf) HarvestModule() plugin.ModuleInfo {
 	return plugin.ModuleInfo{
 		ID:  "harvest.collector.cmperf",
 		New: func() plugin.Module { return new(CmPerf) },
 	}
 }
 
-func (r *CmPerf) Init(a *collector.AbstractCollector) error {
+func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 
 	var err error
 
-	r.Rest = &rest2.Rest{AbstractCollector: a}
+	c.Rest = &rest2.Rest{AbstractCollector: a}
 
-	r.perfProp = &perfProp{}
+	c.perfProp = &perfProp{}
 
-	r.InitProp()
+	c.InitProp()
 
-	r.perfProp.counterInfo = make(map[string]*counter)
-	r.archivedMetrics = make(map[string]*rest2.Metric)
+	c.perfProp.counterInfo = make(map[string]*counter)
+	c.archivedMetrics = make(map[string]*rest2.Metric)
 
-	if err := r.InitClient(); err != nil {
+	if err := c.InitClient(); err != nil {
 		return err
 	}
 
-	if r.Prop.TemplatePath, err = r.LoadTemplate(); err != nil {
+	if c.Prop.TemplatePath, err = c.LoadTemplate(); err != nil {
 		return err
 	}
 
-	r.InitVars(a.Params)
+	c.InitVars(a.Params)
 
-	if err := collector.Init(r); err != nil {
+	if err := collector.Init(c); err != nil {
 		return err
 	}
 
-	if err := r.InitCache(); err != nil {
+	if err := c.InitCache(); err != nil {
 		return err
 	}
 
-	if err := r.InitMatrix(); err != nil {
+	if err := c.InitMatrix(); err != nil {
 		return err
 	}
 
-	if err := r.InitQOS(); err != nil {
+	if err := c.InitQOS(); err != nil {
 		return err
 	}
 
-	r.InitSchedule()
+	c.recordsToSave = collector.RecordKeepLast(c.Params, c.Logger)
 
-	r.recordsToSave = collector.RecordKeepLast(r.Params, r.Logger)
-
-	r.Logger.Debug(
+	c.Logger.Debug(
 		"initialized cache",
-		slog.Int("numMetrics", len(r.Prop.Metrics)),
-		slog.String("timeout", r.Client.GetTimeout().String()),
+		slog.Int("numMetrics", len(c.Prop.Metrics)),
+		slog.String("timeout", c.Client.GetTimeout().String()),
 	)
 
 	return nil
 }
 
-func (r *CmPerf) InitQOS() error {
-	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-		qosLabels := r.Params.GetChildS("qos_labels")
+func (c *CmPerf) InitQOS() error {
+	if isWorkloadObject(c.Prop.Query) {
+		qosLabels := c.Params.GetChildS("qos_labels")
 		if qosLabels == nil {
 			return errs.New(errs.ErrMissingParam, "qos_labels")
 		}
-		r.perfProp.qosLabels = make(map[string]string)
+		c.perfProp.qosLabels = make(map[string]string)
 		for _, label := range qosLabels.GetAllChildContentS() {
 
 			display := strings.ReplaceAll(label, "-", "_")
@@ -144,48 +130,43 @@ func (r *CmPerf) InitQOS() error {
 				label = strings.TrimSpace(before)
 				display = strings.TrimSpace(after)
 			}
-			r.perfProp.qosLabels[label] = display
+			c.perfProp.qosLabels[label] = display
 		}
 	}
-	if counters := r.Params.GetChildS("counters"); counters != nil {
+	if counters := c.Params.GetChildS("counters"); counters != nil {
 		refine := counters.GetChildS("refine")
 		if refine != nil {
 			withConstituents := refine.GetChildContentS("with_constituents")
 			if withConstituents == "false" {
-				r.perfProp.disableConstituents = true
-			}
-			withServiceLatency := refine.GetChildContentS("with_service_latency")
-			if withServiceLatency != "false" {
-				workloadDetailMetrics = append(workloadDetailMetrics, "service_time_latency")
+				c.perfProp.disableConstituents = true
 			}
 		}
 	}
 	return nil
 }
 
-func (r *CmPerf) InitMatrix() error {
-	mat := r.Matrix[r.Object]
+func (c *CmPerf) InitMatrix() error {
+	mat := c.Matrix[c.Object]
 	// init perf properties
-	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
-	r.perfProp.isCacheEmpty = true
+	c.perfProp.latencyIoReqd = c.loadParamInt("latency_io_reqd", latencyIoReqd)
+	c.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
-	mat.Object = r.Prop.Object
+	mat.Object = c.Prop.Object
 	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", r.Remote.Name)
-	if r.Params.HasChildS("labels") {
-		for _, l := range r.Params.GetChildS("labels").GetChildren() {
+	mat.SetGlobalLabel("cluster", c.Remote.Name)
+	if c.Params.HasChildS("labels") {
+		for _, l := range c.Params.GetChildS("labels").GetChildren() {
 			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
 		}
 	}
 
-	// Add metadata metric for skips/numPartials
-	_, _ = r.Metadata.NewMetricUint64("skips")
-	_, _ = r.Metadata.NewMetricUint64("numPartials")
+	_, _ = c.Metadata.NewMetricUint64("skips")
+	_, _ = c.Metadata.NewMetricUint64("numPartials")
 	return nil
 }
 
 // load an int parameter or use defaultValue
-func (r *CmPerf) loadParamInt(name string, defaultValue int) int {
+func (c *CmPerf) loadParamInt(name string, defaultValue int) int {
 
 	var (
 		x string
@@ -193,24 +174,24 @@ func (r *CmPerf) loadParamInt(name string, defaultValue int) int {
 		e error
 	)
 
-	if x = r.Params.GetChildContentS(name); x != "" {
+	if x = c.Params.GetChildContentS(name); x != "" {
 		if n, e = strconv.Atoi(x); e == nil {
-			r.Logger.Debug("using",
+			c.Logger.Debug("using",
 				slog.String("name", name),
 				slog.Int("value", n),
 			)
 			return n
 		}
-		r.Logger.Warn("invalid parameter (expected integer)", slog.String("name", name), slog.String("value", x))
+		c.Logger.Warn("invalid parameter (expected integer)", slog.String("name", name), slog.String("value", x))
 	}
 
-	r.Logger.Debug("using", slog.String("name", name), slog.Int("defaultValue", defaultValue))
+	c.Logger.Debug("using", slog.String("name", name), slog.Int("defaultValue", defaultValue))
 	return defaultValue
 }
 
-func (r *CmPerf) PollCounter() (map[string]*matrix.Matrix, error) {
+func (c *CmPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
-	mat := r.Matrix[r.Object]
+	mat := c.Matrix[c.Object]
 
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
@@ -218,24 +199,27 @@ func (r *CmPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	if mat.GetMetric(timestampMetricName) == nil {
 		m, err := mat.NewMetricFloat64(timestampMetricName)
 		if err != nil {
-			r.Logger.Error("add timestamp metric", slogx.Err(err))
+			c.Logger.Error("add timestamp metric", slogx.Err(err))
+		} else {
+			m.SetProperty("raw")
+			m.SetExportable(false)
 		}
-		m.SetProperty("raw")
-		m.SetExportable(false)
 	}
+
+	c.buildCounters()
 
 	return nil, nil
 }
 
 // GetOverride override counter property
-func (r *CmPerf) GetOverride(counter string) string {
-	if o := r.Params.GetChildS("override"); o != nil {
+func (c *CmPerf) GetOverride(counter string) string {
+	if o := c.Params.GetChildS("override"); o != nil {
 		return o.GetChildContentS(counter)
 	}
 	return ""
 }
 
-func (r *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
+func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var (
 		apiD, parseD time.Duration
 		metricCount  uint64
@@ -245,44 +229,82 @@ func (r *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 		curMat       *matrix.Matrix
 	)
 
-	timestamp := r.Matrix[r.Object].GetMetric(timestampMetricName)
+	timestamp := c.Matrix[c.Object].GetMetric(timestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
 
 	startTime = time.Now()
-	r.RequestMetadata.Reset()
-	prevMat = r.Matrix[r.Object]
+	c.RequestMetadata.Reset()
+	prevMat = c.Matrix[c.Object]
 
 	// clone matrix without numeric data
-	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
 	curMat.Reset()
 
 	apiD += time.Since(startTime)
 
-	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.RequestMetadata.BytesRx.Load())
-	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.RequestMetadata.NumCalls.Load())
-	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
-	r.AddCollectCount(metricCount)
+	baseDir := os.TempDir()
+	if envDir := os.Getenv("HARVEST_CMPERF_TMPDIR"); envDir != "" {
+		baseDir = envDir
+	}
+	tmpDir := filepath.Clean(filepath.Join(baseDir, c.Options.Poller+"-cmperf", "harvest-cmperf-"+c.Prop.Object))
+	if mkErr := os.MkdirAll(tmpDir, 0750); mkErr != nil {
+		return nil, fmt.Errorf("create CM2 temp dir %s: %w", tmpDir, mkErr)
+	}
 
-	return r.cookCounters(curMat, prevMat)
+	startTime = time.Now()
+	filePath, fileTS, dlErr := c.downloadCM2Files(tmpDir)
+	apiD += time.Since(startTime)
+	if dlErr != nil {
+		return nil, dlErr
+	}
+	// TODO: We keep publishing older data from the Prometheus cache until it expires.What if no cm2 files are available for very long time?
+	if filePath == "" {
+		// No new file this poll — leave r.Matrix[r.Object] (prevMat) intact so
+		// the next poll with fresh data can diff correctly against it.
+		return nil, nil
+	}
+
+	startTime = time.Now()
+	var pollErr error
+	var pollPartials uint64
+	metricCount, pollPartials, pollErr = c.pollCM2Files(filePath, curMat)
+	numPartials += pollPartials
+	if pollErr != nil {
+		return nil, pollErr
+	}
+	// Advance lastTimestamp only after the file has been successfully parsed,
+	// so a parse failure does not permanently skip the file.
+	c.lastTimestamp = fileTS
+	if len(curMat.GetInstances()) == 0 {
+		return nil, errs.New(errs.ErrNoInstance, "no "+c.Prop.Object+" instances on cluster")
+	}
+	parseD += time.Since(startTime)
+
+	_ = c.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
+	_ = c.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
+	_ = c.Metadata.LazySetValueUint64("metrics", "data", metricCount)
+	_ = c.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
+	_ = c.Metadata.LazySetValueUint64("bytesRx", "data", c.RequestMetadata.BytesRx.Load())
+	_ = c.Metadata.LazySetValueUint64("numCalls", "data", c.RequestMetadata.NumCalls.Load())
+	_ = c.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
+	c.AddCollectCount(metricCount)
+
+	return c.cookCounters(curMat, prevMat)
 }
 
-func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {
+func (c *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {
 	var (
 		err   error
 		skips int
 	)
 
 	// skip calculating from delta if no data from previous poll
-	if r.perfProp.isCacheEmpty {
-		r.Logger.Debug("skip postprocessing until next poll (previous cache empty)")
-		r.Matrix[r.Object] = curMat
-		r.perfProp.isCacheEmpty = false
+	if c.perfProp.isCacheEmpty {
+		c.Logger.Debug("skip postprocessing until next poll (previous cache empty)")
+		c.Matrix[c.Object] = curMat
+		c.perfProp.isCacheEmpty = false
 		return nil, nil
 	}
 
@@ -299,7 +321,7 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 
 	for key, metric := range curMat.GetMetrics() {
 		if metric.GetName() != timestampMetricName && metric.Buckets() == nil {
-			counter := r.counterLookup(metric, key)
+			counter := c.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
 					// does not require base counter
@@ -311,7 +333,7 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 					orderedDenominatorKeys = append(orderedDenominatorKeys, key)
 				}
 			} else {
-				r.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
+				c.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
 			}
 		}
 	}
@@ -324,8 +346,8 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 
 	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta("timestamp", prevMat, cachedData, r.AllowPartialAggregation, r.Logger); err != nil {
-		r.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
+	if _, err = curMat.Delta("timestamp", prevMat, cachedData, c.AllowPartialAggregation, c.Logger); err != nil {
+		c.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 	}
 
 	var base *matrix.Metric
@@ -333,11 +355,10 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
-		counter := r.counterLookup(metric, key)
+		counter := c.counterLookup(metric, key)
 		if counter == nil {
-			r.Logger.Error(
+			c.Logger.Error(
 				"Missing counter:",
-				slogx.Err(err),
 				slog.String("counter", metric.GetName()),
 			)
 			continue
@@ -354,8 +375,8 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = curMat.Delta(key, prevMat, cachedData, r.AllowPartialAggregation, r.Logger); err != nil {
-			r.Logger.Error("Calculate delta:", slogx.Err(err), slog.String("key", key))
+		if skips, err = curMat.Delta(key, prevMat, cachedData, c.AllowPartialAggregation, c.Logger); err != nil {
+			c.Logger.Error("Calculate delta:", slogx.Err(err), slog.String("key", key))
 			continue
 		}
 		totalSkips += skips
@@ -377,14 +398,7 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 		// For the next two properties we need base counters
 		// We assume that delta of base counters is already calculated
 		if base = curMat.GetMetric(counter.denominator); base == nil {
-			if isWorkloadDetailObject(r.Prop.Query) {
-				// The workload detail generates metrics at the resource level. The 'service_time' and 'wait_time' metrics are used as raw values for these resource-level metrics. Their denominator, 'visits', is not collected; therefore, a check is added here to prevent warnings.
-				// There is no need to cook these metrics further.
-				if key == "service_time" || key == "wait_time" {
-					continue
-				}
-			}
-			r.Logger.Warn(
+			c.Logger.Warn(
 				"Base counter missing",
 				slog.String("key", key),
 				slog.String("property", property),
@@ -402,13 +416,13 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, cachedData, prevMat, timestampMetricName, r.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, c.perfProp.latencyIoReqd, cachedData, prevMat, timestampMetricName, c.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator)
 			}
 
 			if err != nil {
-				r.Logger.Error("Division by base", slogx.Err(err), slog.String("key", key))
+				c.Logger.Error("Division by base", slogx.Err(err), slog.String("key", key))
 				continue
 			}
 			totalSkips += skips
@@ -420,14 +434,14 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 
 		if property == "percent" {
 			if skips, err = curMat.MultiplyByScalar(key, 100); err != nil {
-				r.Logger.Error("Multiply by scalar", slogx.Err(err), slog.String("key", key))
+				c.Logger.Error("Multiply by scalar", slogx.Err(err), slog.String("key", key))
 			} else {
 				totalSkips += skips
 			}
 			continue
 		}
 		// If we reach here, then one of the earlier clauses should have executed `continue` statement
-		r.Logger.Error(
+		c.Logger.Error(
 			"Unknown property",
 			slog.String("key", key),
 			slog.String("property", property),
@@ -437,12 +451,12 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
-		counter := r.counterLookup(metric, key)
+		counter := c.counterLookup(metric, key)
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
 				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
-					r.Logger.Error(
+					c.Logger.Error(
 						"Calculate rate",
 						slogx.Err(err),
 						slog.Int("i", i),
@@ -454,37 +468,37 @@ func (r *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 				totalSkips += skips
 			}
 		} else {
-			r.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
+			c.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metric.GetName()))
 			continue
 		}
 	}
 
 	calcD := time.Since(calcStart)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
+	_ = c.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
+	_ = c.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
+	_ = c.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
-	r.Matrix[r.Object] = cachedData
+	c.Matrix[c.Object] = cachedData
 
 	newDataMap := make(map[string]*matrix.Matrix)
-	newDataMap[r.Object] = curMat
+	newDataMap[c.Object] = curMat
 	return newDataMap, nil
 }
 
-func (r *CmPerf) counterLookup(metric *matrix.Metric, metricKey string) *counter {
-	var c *counter
+func (c *CmPerf) counterLookup(metric *matrix.Metric, metricKey string) *counter {
+	var co *counter
 
 	if metric.IsArray() {
 		name, _, _ := strings.Cut(metricKey, arrayKeyToken)
-		c = r.perfProp.counterInfo[name]
+		co = c.perfProp.counterInfo[name]
 	} else {
-		c = r.perfProp.counterInfo[metricKey]
+		co = c.perfProp.counterInfo[metricKey]
 	}
-	return c
+	return co
 }
 
-func (r *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
+func (c *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
 	case "Vscan":
 		return vscan.New(abc)
@@ -506,32 +520,13 @@ func (r *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plug
 		return volume.New(abc)
 
 	default:
-		r.Logger.Info("no CmPerf plugin found", slog.String("kind", kind))
+		c.Logger.Info("no CmPerf plugin found", slog.String("kind", kind))
 	}
 	return nil
 }
 
-func (r *CmPerf) InitSchedule() {
-	if r.Schedule == nil {
-		return
-	}
-	tasks := r.Schedule.GetTasks()
-	for _, task := range tasks {
-		if task.Name == "instance" {
-			r.hasInstanceSchedule = true
-			return
-		}
-	}
-}
-
 func isWorkloadObject(query string) bool {
-	_, ok := qosQueries[query]
-	return ok
-}
-
-func isWorkloadDetailObject(query string) bool {
-	_, ok := qosDetailQueries[query]
-	return ok
+	return query == "workload" || query == "workload_volume"
 }
 
 // Interface guards

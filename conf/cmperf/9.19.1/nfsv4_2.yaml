@@ -9,6 +9,8 @@ global_labels:
 allow_partial_aggregation: true
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name            => svm
   - access_avg_latency
   - access_total
   - backchannel_ctl_avg_latency
@@ -45,7 +47,6 @@ counters:
   - getdevicelist_total
   - getfh_avg_latency
   - getfh_total
-  - instance_name            => svm
   - latency
   - layoutcommit_avg_latency
   - layoutcommit_total
@@ -65,9 +66,9 @@ counters:
   - lookup_total
   - lookupp_avg_latency
   - lookupp_total
-  - nfs42_read_throughput    => read_throughput
-  - nfs42_throughput         => throughput
-  - nfs42_write_throughput   => write_throughput
+  - nfs42_read_throughput     => read_throughput
+  - nfs42_throughput          => throughput
+  - nfs42_write_throughput    => write_throughput
   - null_avg_latency
   - null_total
   - nverify_avg_latency
@@ -112,14 +113,13 @@ counters:
   - setattr_total
   - test_stateid_avg_latency
   - test_stateid_total
-  - total_ops                => ops
+  - total_ops                 => ops
   - verify_avg_latency
   - verify_total
   - want_delegation_avg_latency
   - want_delegation_total
   - write_avg_latency
   - write_total
-
 export_options:
   instance_keys:
     - svm

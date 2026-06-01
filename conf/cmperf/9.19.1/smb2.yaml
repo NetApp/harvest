@@ -1,18 +1,18 @@
-name:                     SMB2
-query:                    smb2
-object:                   smb2
+name: SMB2
+query: smb2
+object: smb2
 
 counters:
   - close_latency
   - close_ops
   - create_latency
   - create_ops
-  - instance_uuid
+  - ^^instance_uuid
   - lock_latency
   - lock_ops
   - negotiate_latency
   - negotiate_ops
-  - node_name          => node
+  - ^node_name          => node
   - oplock_break_latency
   - oplock_break_ops
   - query_directory_latency
@@ -27,7 +27,7 @@ counters:
   - set_info_ops
   - tree_connect_latency
   - tree_connect_ops
-  - vserver_name       => svm
+  - ^vserver_name       => svm
   - write_latency
   - write_ops
 # Histograms are disabled by default since they are expensive to export.
@@ -39,7 +39,6 @@ counters:
 #  - query_info_latency_histogram
 #  - session_setup_latency_histogram
 #  - set_info_latency_histogram
-
 
 plugins:
   LabelAgent:

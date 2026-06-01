@@ -66,8 +66,8 @@ func (n *Nic) Init(remote conf.Remote) error {
 	instanceKeys.NewChildS("", "ports")
 	n.data.SetExportOptions(exportOptions)
 
-	// StatPerf uses "rx_bytes" and "tx_bytes" while RestPerf uses "receive_bytes" and "transmit_bytes"
-	if n.IsStatPerfCollector() {
+	// StatPerf and CmPerf use "rx_bytes" and "tx_bytes" while RestPerf uses "receive_bytes" and "transmit_bytes"
+	if n.IsStatPerfCollector() || n.IsCmPerfCollector() {
 		n.receiveBytesName = "rx_bytes"
 		n.transmitBytesName = "tx_bytes"
 	} else {
@@ -158,7 +158,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		s = instance.GetLabel("speed")
 		nodeName = instance.GetLabel("node")
 
-		if n.IsStatPerfCollector() {
+		if n.IsStatPerfCollector() || n.IsCmPerfCollector() {
 			port = instance.GetLabel("nic")
 		} else {
 			// example name = cluster_name:e0a

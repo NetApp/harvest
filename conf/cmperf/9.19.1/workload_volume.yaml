@@ -1,4 +1,3 @@
-
 # object provides counters per volume for workloads tracked via "autovol"
 # (i.e. not in a policy group)
 
@@ -7,16 +6,14 @@ query:                    workload_volume
 object:                   qos
 
 # recommended to use large interval, since workload objects are expensive
-client_timeout:           1m30s
+client_timeout: 1m30s
 schedule:
-  - data:      3m
-
-instance_key:             name
+  - data: 3m
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name      => workload
   - concurrency
-  - instance_name
-  - instance_uuid
   - latency
   - ops
   - other_ops
@@ -30,8 +27,6 @@ counters:
   - write_data
   - write_latency
   - write_ops
-
-
 override:
   - read_io_type_base: delta
 

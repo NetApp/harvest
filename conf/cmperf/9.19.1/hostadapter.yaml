@@ -3,14 +3,12 @@ name:                     HostAdapter
 query:                    hostadapter
 object:                   hostadapter
 
-instance_key:             uuid
-
 counters:
+  - ^^instance_uuid
+  - ^instance_name          => hostadapter
+  - ^node_name              => node
   - bytes_read
   - bytes_written
-  - instance_name
-  - node_name             => node
-
 export_options:
   instance_keys:
     - hostadapter
