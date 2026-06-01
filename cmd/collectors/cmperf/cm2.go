@@ -2,6 +2,8 @@ package cmperf
 
 import (
 	"bytes"
+	"crypto/md5" //nolint:gosec
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
@@ -236,7 +238,14 @@ func (c *CmPerf) downloadSPIFile(rec cm2FileRecord, dir string) (string, error) 
 	}
 	fname := fmt.Sprintf("%d_%s.pb", time.Now().UnixMilli(), c.Prop.Query)
 	path := filepath.Join(dir, fname)
-	return path, c.downloadSPIFileONTAP(rec.SpiURL, path)
+	if err := c.downloadSPIFileONTAP(rec.SpiURL, path); err != nil {
+		return "", err
+	}
+	if err := c.verifyChecksum(path, rec.ChecksumURL); err != nil {
+		_ = os.Remove(filepath.Clean(path))
+		return "", err
+	}
+	return path, nil
 }
 
 func (c *CmPerf) downloadSPIFileONTAP(spiRelPath, destPath string) error {
@@ -254,7 +263,41 @@ func (c *CmPerf) downloadSPIFileONTAP(spiRelPath, destPath string) error {
 		return fmt.Errorf("downloadSPIFileONTAP write %s: %w", destPath, err)
 	}
 
-	// TODO validate checksum? checksum URL doesn't seem to be working.
+	return nil
+}
+
+func (c *CmPerf) verifyChecksum(filePath, checksumURL string) error {
+	if checksumURL == "" {
+		return nil
+	}
+
+	restPath := "spi" + checksumURL
+	data, err := c.Client.GetPlainRest(&c.RequestMetadata, restPath, false, map[string]string{
+		"Accept": "text/plain",
+	})
+	if err != nil {
+		return fmt.Errorf("verifyChecksum fetch %s: %w", restPath, err)
+	}
+
+	line := strings.TrimSpace(string(data))
+	hexStr := strings.SplitN(line, " ", 2)[0]
+	if len(hexStr) != 32 {
+		return fmt.Errorf("verifyChecksum: unexpected format %q", line)
+	}
+
+	pb, err := os.ReadFile(filepath.Clean(filePath))
+	if err != nil {
+		return fmt.Errorf("verifyChecksum: read file: %w", err)
+	}
+
+	// #nosec G401 -- MD5 used for data integrity verification, not cryptography
+	actual := md5.Sum(pb)
+	actualHex := hex.EncodeToString(actual[:])
+	if actualHex != hexStr {
+		return fmt.Errorf("verifyChecksum: mismatch for %s: expected %s, got %s",
+			filepath.Base(filePath), hexStr, actualHex)
+	}
+
 	return nil
 }
 
@@ -269,7 +312,7 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint6
 	)
 	for rec, msgErr := range cmmetrics.Messages(path) {
 		if msgErr != nil {
-			c.Logger.Warn("error reading CM2 pb file",
+			c.Logger.Error("error reading CM2 pb file",
 				slog.String("file", filepath.Base(path)), slogx.Err(msgErr))
 			readErr = msgErr
 			break
@@ -278,17 +321,11 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint6
 			fileSchema = rec.Schema
 		}
 		if rec.Batch != nil {
-			batch := rec.Batch
-			schema := batch.Schema
-			if len(schema.CounterSchema) == 0 && fileSchema != nil {
-				schema = *fileSchema
-				batch.Schema = schema
-			}
-			if !schemaLoaded && len(schema.CounterSchema) > 0 {
-				c.buildCountersFromSchema(schema, curMat)
+			if !schemaLoaded && fileSchema != nil && len(fileSchema.CounterSchema) > 0 {
+				c.buildCountersFromSchema(*fileSchema, curMat)
 				schemaLoaded = true
 			}
-			metricCount += c.populateMatrix(batch, curMat)
+			metricCount += c.populateMatrix(rec.Batch, curMat)
 		}
 		if rec.Summary != nil {
 			fileSummary = rec.Summary
@@ -352,7 +389,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 	var metricCount uint64
 
 	for _, inst := range oc.Data.Instances {
-		stringVals := make(map[string]string, 8)
+		stringVals := make(map[string]string)
 
 		if inst.Name != "" {
 			stringVals["instance_name"] = inst.Name
