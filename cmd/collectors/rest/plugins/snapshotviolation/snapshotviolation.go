@@ -121,13 +121,22 @@ func (s *SnapshotViolation) populateSnapshotViolation(dataMap map[string]*matrix
 			metric.SetValueInt64(instance, stats.TotalSize)
 		}
 
+		if stats.OldestCreateTime > 0 {
+			if metric := s.data.GetMetric(snapshotviolation.OldestCreateTime); metric != nil {
+				metric.SetValueFloat64(instance, float64(stats.OldestCreateTime))
+			}
+			if metric := s.data.GetMetric(snapshotviolation.NewestCreateTime); metric != nil {
+				metric.SetValueFloat64(instance, float64(stats.NewestCreateTime))
+			}
+		}
+
 	}
 }
 
 func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]*set.Set) map[string]snapshotviolation.Stats {
 	filteredSnapshotStats := make(map[string]snapshotviolation.Stats)
 
-	fields := []string{"vserver", "volume", "snapshot", "size"}
+	fields := []string{"vserver", "volume", "snapshot", "size", "create_time"}
 	query := "api/private/cli/volume/snapshot"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
@@ -143,8 +152,15 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 			snapshot := sData.Get("snapshot").ClonedString()
 			sizeStr := sData.Get("size").ClonedString()
 
+			var createTime int64
+			if createTimeStr := sData.Get("create_time").ClonedString(); createTimeStr != "" {
+				if t, err := time.Parse(time.RFC3339, createTimeStr); err == nil {
+					createTime = t.Unix()
+				}
+			}
+
 			if size, err := strconv.ParseInt(sizeStr, 10, 64); err == nil {
-				snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, size, prefixMap, filteredSnapshotStats)
+				snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, size, createTime, prefixMap, filteredSnapshotStats)
 			} else {
 				// If conversion fails, log warning and use original value
 				s.SLogger.Warn("Failed to convert snapshot size",

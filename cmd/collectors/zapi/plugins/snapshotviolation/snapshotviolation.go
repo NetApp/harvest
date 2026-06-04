@@ -125,6 +125,15 @@ func (s *SnapshotViolation) populateSnapshotViolation(dataMap map[string]*matrix
 			metric.SetValueInt64(instance, stats.TotalSize)
 		}
 
+		if stats.OldestCreateTime > 0 {
+			if metric := s.data.GetMetric(snapshotviolation.OldestCreateTime); metric != nil {
+				metric.SetValueFloat64(instance, float64(stats.OldestCreateTime))
+			}
+			if metric := s.data.GetMetric(snapshotviolation.NewestCreateTime); metric != nil {
+				metric.SetValueFloat64(instance, float64(stats.NewestCreateTime))
+			}
+		}
+
 	}
 }
 
@@ -139,6 +148,7 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 	snapshotInfo.NewChildS("vserver", "")
 	snapshotInfo.NewChildS("volume", "")
 	snapshotInfo.NewChildS("total", "")
+	snapshotInfo.NewChildS("access-time", "")
 	desired.AddChild(snapshotInfo)
 	request.AddChild(desired)
 	query := request.NewChildS("query", "")
@@ -152,11 +162,19 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 			volume := sData.GetChildContentS("volume")
 			snapshot := sData.GetChildContentS("name")
 			sizeKBStr := sData.GetChildContentS("total")
+			accessTimeStr := sData.GetChildContentS("access-time")
+
+			var createTime int64
+			if accessTimeStr != "" {
+				if epoch, err := strconv.ParseInt(accessTimeStr, 10, 64); err == nil && epoch > 0 {
+					createTime = epoch
+				}
+			}
 
 			// Convert size from KB to bytes (multiply by 1024)
 			if sizeKB, err := strconv.ParseInt(sizeKBStr, 10, 64); err == nil {
 				sizeBytes := sizeKB * 1024
-				snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, sizeBytes, prefixMap, filteredSnapshotStats)
+				snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, sizeBytes, createTime, prefixMap, filteredSnapshotStats)
 			} else {
 				// If conversion fails, log warning and use original value
 				s.SLogger.Warn("Failed to convert snapshot size from KB to bytes",

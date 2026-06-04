@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-May-11
+Creation Date : 2026-Jun-04
 ONTAP Version: 9.16.1
 ```
 
@@ -18782,6 +18782,28 @@ The `snapshot_restore_size` metric is visualized in the following Grafana dashbo
 
 
 
+### snapshot_volume_newest_create_time
+
+Unix epoch timestamp of the newest snapshot for this volume, across all snapshots regardless of snapshot policy.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/snapshotpolicy.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
+
+
+
+### snapshot_volume_oldest_create_time
+
+Unix epoch timestamp of the oldest snapshot for this volume, across all snapshots regardless of snapshot policy.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/snapshotpolicy.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
+
+
+
 ### snapshot_volume_violation_count
 
 This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.
@@ -24521,6 +24543,7 @@ The `wafl_cp_phase_times` metric is visualized in the following Grafana dashboar
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Node | Backend | timeseries | [System Utilization](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=41) |
+| ONTAP: Node | Backend | timeseries | [WAFL Write Cleaning (% of CP Time)](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=139) |
 ///
 
 
@@ -24705,6 +24728,14 @@ Percentage of time spent in a Consistency Point (CP).
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/wafl` | `total_cp_util`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/restperf/9.12.0/wafl.yaml |
 | ZapiPerf | `perf-object-get-instances wafl` | `total_cp_util`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
+The `wafl_total_cp_util` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Node | Backend | timeseries | [System Utilization](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=41) |
+///
 
 
 

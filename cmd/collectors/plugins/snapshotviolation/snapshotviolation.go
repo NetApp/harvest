@@ -10,19 +10,25 @@ import (
 const (
 	ViolationCount     = "violation_count"
 	ViolationTotalSize = "violation_total_size"
+	OldestCreateTime   = "oldest_create_time"
+	NewestCreateTime   = "newest_create_time"
 	KeyToken           = ","
 )
 
 var Metrics = []string{
 	ViolationCount,
 	ViolationTotalSize,
+	OldestCreateTime,
+	NewestCreateTime,
 }
 
 type Stats struct {
-	Svm       string
-	Volume    string
-	Count     int
-	TotalSize int64
+	Svm              string
+	Volume           string
+	Count            int
+	TotalSize        int64
+	OldestCreateTime int64
+	NewestCreateTime int64
 }
 
 func InitMatrix(parent string) (*matrix.Matrix, error) {
@@ -42,8 +48,25 @@ func InitMatrix(parent string) (*matrix.Matrix, error) {
 	return mat, nil
 }
 
-func ProcessSnapshotData(svm, volume, snapshot string, size int64, prefixMap map[string]*set.Set, filteredSnapshotStats map[string]Stats) {
+func ProcessSnapshotData(svm, volume, snapshot string, size int64, createTime int64, prefixMap map[string]*set.Set, filteredSnapshotStats map[string]Stats) {
 	key := svm + KeyToken + volume
+
+	if createTime > 0 {
+		stats, exists := filteredSnapshotStats[key]
+		if !exists {
+			stats = Stats{
+				Svm:    svm,
+				Volume: volume,
+			}
+		}
+		if stats.OldestCreateTime == 0 || createTime < stats.OldestCreateTime {
+			stats.OldestCreateTime = createTime
+		}
+		if createTime > stats.NewestCreateTime {
+			stats.NewestCreateTime = createTime
+		}
+		filteredSnapshotStats[key] = stats
+	}
 
 	prefixes := prefixMap[svm]
 

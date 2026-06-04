@@ -195,6 +195,8 @@ var (
 		"snapshot_create_time",
 		"snapshot_labels",
 		"snapshot_restore_size",
+		"snapshot_volume_newest_create_time",
+		"snapshot_volume_oldest_create_time",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",
 		"storage_unit_",
@@ -217,6 +219,8 @@ var (
 		"netstat_",
 		"nvm_mirror_",
 		"quota_disk_used_pct_threshold",
+		"snapshot_volume_newest_create_time",
+		"snapshot_volume_oldest_create_time",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",
 	}

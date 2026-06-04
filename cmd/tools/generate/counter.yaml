@@ -1,5 +1,4 @@
 counters:
-
   - Name: aggr_object_store_logical_used
     Description: Logical space usage of aggregates in the attached object store.
     APIs:
@@ -41,21 +40,25 @@ counters:
     Description: Number of plexes in the aggregate
 
   - Name: aggr_snapshot_inode_used_percent
-    Description: The percentage of disk space currently in use based on user-visible
+    Description:
+      The percentage of disk space currently in use based on user-visible
       file (inode) count on the referenced file system.
 
   - Name: aggr_snapshot_maxfiles_possible
-    Description: The largest value to which the maxfiles-available parameter can be
+    Description:
+      The largest value to which the maxfiles-available parameter can be
       increased by reconfiguration, on the referenced file system.
 
   - Name: aggr_space_reserved
-    Description: The total disk space in bytes that is reserved on the referenced file
+    Description:
+      The total disk space in bytes that is reserved on the referenced file
       system. The reserved space is already counted in the used space, so this element
       can be used to see what portion of the used space represents space reserved for
       future use.
 
   - Name: aggr_space_used_percent
-    Description: The percentage of disk space currently in use on the referenced file
+    Description:
+      The percentage of disk space currently in use on the referenced file
       system
 
   - Name: aggr_total_physical_used
@@ -65,7 +68,8 @@ counters:
     Description: The aggregate's volume count, which includes both FlexVols and FlexGroup constituents.
 
   - Name: cluster_new_status
-    Description: It is an indicator of the overall health status of the cluster, with
+    Description:
+      It is an indicator of the overall health status of the cluster, with
       a value of 1 indicating a healthy status and a value of 0 indicating an unhealthy
       status.
     APIs:
@@ -430,7 +434,8 @@ counters:
         Unit: scalar
 
   - Name: metadata_component_status
-    Description: status of the collector - 0 means running, 1 means standby, 2 means
+    Description:
+      status of the collector - 0 means running, 1 means standby, 2 means
       failed
     APIs:
       - API: REST
@@ -501,7 +506,8 @@ counters:
         Unit: enum
 
   - Name: node_cpu_busytime
-    Description: The time (in hundredths of a second) that the CPU has been doing useful
+    Description:
+      The time (in hundredths of a second) that the CPU has been doing useful
       work since the last boot
     APIs:
       - API: REST
@@ -534,7 +540,8 @@ counters:
         Unit: b_per_sec
 
   - Name: quota_disk_limit
-    Description: Maximum amount of disk space, in kilobytes, allowed for the quota target
+    Description:
+      Maximum amount of disk space, in kilobytes, allowed for the quota target
       (hard disk space limit). The value is -1 if the limit is unlimited.
     APIs:
       - API: REST
@@ -591,7 +598,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_file_limit
-    Description: Maximum number of files allowed for the quota target (hard files limit).
+    Description:
+      Maximum number of files allowed for the quota target (hard files limit).
       The value is -1 if the limit is unlimited.
     APIs:
       - API: REST
@@ -616,7 +624,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_files_used_pct_file_limit
-    Description: Current number of files used expressed as a percentage of hard file
+    Description:
+      Current number of files used expressed as a percentage of hard file
       limit.
     APIs:
       - API: REST
@@ -629,7 +638,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_files_used_pct_soft_file_limit
-    Description: Current number of files used expressed as a percentage of soft file
+    Description:
+      Current number of files used expressed as a percentage of soft file
       limit.
     APIs:
       - API: REST
@@ -642,7 +652,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_soft_disk_limit
-    Description: soft disk space limit, in kilobytes, for the quota target. The value
+    Description:
+      soft disk space limit, in kilobytes, for the quota target. The value
       is -1 if the limit is unlimited.
     APIs:
       - API: REST
@@ -655,7 +666,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_soft_file_limit
-    Description: Soft file limit, in number of files, for the quota target. The value
+    Description:
+      Soft file limit, in number of files, for the quota target. The value
       is -1 if the limit is unlimited.
     APIs:
       - API: REST
@@ -668,7 +680,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
 
   - Name: quota_threshold
-    Description: Disk space threshold, in kilobytes, for the quota target. The value
+    Description:
+      Disk space threshold, in kilobytes, for the quota target. The value
       is -1 if the limit is unlimited.
     APIs:
       - API: ZAPI
@@ -867,7 +880,8 @@ counters:
         Unit: b_per_sec
 
   - Name: volume_inode_files_total
-    Description: Total user-visible file (inode) count, i.e., current maximum number
+    Description:
+      Total user-visible file (inode) count, i.e., current maximum number
       of user-visible files (inodes) that this volume can currently hold.
     APIs:
       - API: REST
@@ -876,7 +890,8 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_inode_files_used
-    Description: Number of user-visible files (inodes) used. This field is valid only
+    Description:
+      Number of user-visible files (inodes) used. This field is valid only
       when the volume is online.
     APIs:
       - API: REST
@@ -888,12 +903,14 @@ counters:
     Description: volume_inode_files_used / volume_inode_total
 
   - Name: volume_overwrite_reserve_available
-    Description: amount of storage space that is currently available for overwrites,
+    Description:
+      amount of storage space that is currently available for overwrites,
       calculated by subtracting the total amount of overwrite reserve space from the
       amount that has already been used.
 
   - Name: volume_sis_compress_saved
-    Description: The total disk space (in bytes) that is saved by compressing blocks
+    Description:
+      The total disk space (in bytes) that is saved by compressing blocks
       on the referenced file system.
     APIs:
       - API: REST
@@ -902,7 +919,8 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_sis_compress_saved_percent
-    Description: Percentage of the total disk space that is saved by compressing blocks
+    Description:
+      Percentage of the total disk space that is saved by compressing blocks
       on the referenced file system
     APIs:
       - API: REST
@@ -911,7 +929,8 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_sis_dedup_saved
-    Description: The total disk space (in bytes) that is saved by deduplication and
+    Description:
+      The total disk space (in bytes) that is saved by deduplication and
       file cloning.
     APIs:
       - API: REST
@@ -920,7 +939,8 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_sis_dedup_saved_percent
-    Description: Percentage of the total disk space that is saved by deduplication and
+    Description:
+      Percentage of the total disk space that is saved by deduplication and
       file cloning.
     APIs:
       - API: REST
@@ -929,7 +949,8 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_sis_total_saved
-    Description: Total space saved (in bytes) in the volume due to deduplication, compression,
+    Description:
+      Total space saved (in bytes) in the volume due to deduplication, compression,
       and file cloning.
     APIs:
       - API: REST
@@ -938,7 +959,8 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_sis_total_saved_percent
-    Description: Percentage of total disk space that is saved by compressing blocks,
+    Description:
+      Percentage of total disk space that is saved by compressing blocks,
       deduplication and file cloning.
     APIs:
       - API: REST
@@ -947,11 +969,13 @@ counters:
         Template: conf/rest/9.12.0/volume.yaml
 
   - Name: volume_size_used_percent
-    Description: percentage of utilized storage space in a volume relative to its total
+    Description:
+      percentage of utilized storage space in a volume relative to its total
       capacity
 
   - Name: volume_snapshot_reserve_used
-    Description: amount of storage space currently used by a volume's snapshot reserve,
+    Description:
+      amount of storage space currently used by a volume's snapshot reserve,
       which is calculated by subtracting the snapshot reserve available space from the
       snapshot reserve size.
 
@@ -1044,7 +1068,7 @@ counters:
     Description: The reserved size (in bytes) that is not available for new overwrites. The number includes both the reserved size which has actually been used for overwrites as well as the size which was never allocated in the first place. This field is valid only when the volume is online.
 
   - Name: volume_size_available
-    Description:  The size (in bytes) that is still available in the volume. This field is valid only when the volume is online.
+    Description: The size (in bytes) that is still available in the volume. This field is valid only when the volume is online.
 
   - Name: volume_size_total
     Description: Total usable size (in bytes) of the volume, not including WAFL reserve or volume snapshot reserve.  If the volume is restricted or offline, a value of 0 is returned.
@@ -1204,7 +1228,6 @@ counters:
         ONTAPCounter: analytics.file_count
         Template: conf/rest/9.12.0/volume_analytics.yaml
 
-
   - Name: volume_analytics_dir_subdir_count
     Description: Number of sub directories in a directory.
     APIs:
@@ -1220,7 +1243,6 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.by_accessed_time.bytes_used.values
         Template: conf/rest/9.12.0/volume_analytics.yaml
-
 
   - Name: volume_analytics_bytes_used_percent_by_accessed_time
     Description: Percent used on-disk, broken down by date of last access.
@@ -1335,7 +1357,8 @@ counters:
         Template: conf/rest/9.6.0/health.yaml
 
   - Name: health_ems_alerts
-    Description: The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error).
+    Description:
+      The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error).
       By default, it monitors alerts with emergency severity.
     APIs:
       - API: REST
@@ -1354,7 +1377,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml
-
 
   - Name: qos_policy_adaptive_expected_iops
     Description: Specifies the size to be used to calculate expected IOPS per TB.
@@ -1440,7 +1462,6 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
 
-
   - Name: qos_workload_max_throughput_mbps
     Description: Maximum throughput Mbps allowed for the workload.
     APIs:
@@ -1464,7 +1485,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
-
 
   - Name: qos_workload_min_throughput_mbps
     Description: Minimum throughput Mbps allowed for the workload.
@@ -1503,7 +1523,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: shelf_new_status
-    Description: This metric indicates a value of 1 if the shelf state is online or ok (indicating the shelf is operational)
+    Description:
+      This metric indicates a value of 1 if the shelf state is online or ok (indicating the shelf is operational)
       and a value of 0 for any other state (indicating the shelf is not operational).
     APIs:
       - API: REST
@@ -1576,7 +1597,7 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: shelf_temperature_reading
-    Description:  Temperature Reading.
+    Description: Temperature Reading.
     APIs:
       - API: RestPerf
         Endpoint: NA
@@ -1624,7 +1645,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: aggr_new_status
-    Description: This metric indicates a value of 1 if the aggregate state is online (indicating the aggregate is operational)
+    Description:
+      This metric indicates a value of 1 if the aggregate state is online (indicating the aggregate is operational)
       and a value of 0 for any other state.
     APIs:
       - API: REST
@@ -1637,7 +1659,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
 
   - Name: cluster_subsystem_new_status
-    Description: This metric indicates a value of 1 if the subsystem health is ok (indicating the subsystem is operational)
+    Description:
+      This metric indicates a value of 1 if the subsystem health is ok (indicating the subsystem is operational)
       and a value of 0 for any other health status.
     APIs:
       - API: REST
@@ -1662,7 +1685,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/disk.yaml
 
   - Name: environment_sensor_status
-    Description: This metric indicates a value of 1 if the sensor threshold state is normal (indicating the sensor is operating within normal parameters)
+    Description:
+      This metric indicates a value of 1 if the sensor threshold state is normal (indicating the sensor is operating within normal parameters)
       and a value of 0 for any other state.
     APIs:
       - API: REST
@@ -1675,7 +1699,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
 
   - Name: lun_new_status
-    Description: This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state.
+    Description:
+      This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state.
       and a value of 0 for any other state.
     APIs:
       - API: REST
@@ -1807,7 +1832,6 @@ counters:
         ONTAPCounter: throughput.write
         Template: conf/keyperf/9.15.0/volume.yaml
 
-
   - Name: volume_clone_split_estimate
     Description: Display an estimate of additional storage required in the underlying aggregate to perform a volume clone split operation.
     APIs:
@@ -1919,7 +1943,6 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/volume.yaml
 
-
   - Name: nic_ifgrp_rx_bytes
     Description: Link Aggregation Group (LAG) Bytes received.
     APIs:
@@ -2005,7 +2028,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
   - Name: cluster_peer_non_encrypted
-    Description: This metric indicates a value of 1 if the cluster peer encryption state is none (indicating the connection is not encrypted)
+    Description:
+      This metric indicates a value of 1 if the cluster peer encryption state is none (indicating the connection is not encrypted)
       and a value of 0 for any other state.
     APIs:
       - API: REST
@@ -2030,7 +2054,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
   - Name: svm_new_status
-    Description: This metric indicates a value of 1 if the SVM state is online (indicating the SVM is operational)
+    Description:
+      This metric indicates a value of 1 if the SVM state is online (indicating the SVM is operational)
       and a value of 0 for any other state.
     APIs:
       - API: REST
@@ -2139,7 +2164,6 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/volume.yaml
-
 
   - Name: cluster_software_update
     Description: Displays the software update phase with its status.
@@ -2306,6 +2330,30 @@ counters:
 
   - Name: snapshot_volume_violation_total_size
     Description: This metric captures the total size of all snapshots that were not created through an applied snapshot policy.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/snapshotpolicy.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapshotpolicy.yaml
+
+  - Name: snapshot_volume_oldest_create_time
+    Description: Unix epoch timestamp of the oldest snapshot for this volume, across all snapshots regardless of snapshot policy.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/snapshotpolicy.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapshotpolicy.yaml
+
+  - Name: snapshot_volume_newest_create_time
+    Description: Unix epoch timestamp of the newest snapshot for this volume, across all snapshots regardless of snapshot policy.
     APIs:
       - API: REST
         Endpoint: NA
@@ -2555,7 +2603,6 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/vscan.yaml
 
-
   # ASAr2 cluster metricsF
   - Name: cluster_space_available
     Description: Available space across the cluster.
@@ -2640,7 +2687,7 @@ counters:
     APIs:
       - API: KeyPerf
         Endpoint: api/storage/storage-units
-        ONTAPCounter:  statistics.throughput_raw.write
+        ONTAPCounter: statistics.throughput_raw.write
         Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
   - Name: storage_unit_write_latency
     Description: Performance metric for write I/O operations.
