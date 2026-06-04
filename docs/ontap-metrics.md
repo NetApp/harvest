@@ -6966,7 +6966,7 @@ The `lun_labels` metric is visualized in the following Grafana dashboards:
 
 ### lun_new_status
 
-This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state. and a value of 0 for any other state.
+This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

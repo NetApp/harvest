@@ -425,7 +425,7 @@
   "lun_caw_reqs": "Number of compare and write requests",
   "lun_enospc": "Number of operations receiving ENOSPC errors",
   "lun_labels": "This metric provides information about Lun",
-  "lun_new_status": "This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state. and a value of 0 for any other state.",
+  "lun_new_status": "This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state.",
   "lun_other_data": "Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on.",
   "lun_other_latency": "Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.",
   "lun_other_ops": "Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.",
