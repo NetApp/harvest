@@ -16,7 +16,6 @@ const (
 	adminUp          = "admin_up"
 	crcErrors        = "crc_errors"
 	errorStatus      = "error_status"
-	transmitDiscard  = "transmit_discards"
 	receiveBroadcast = "receive_broadcast"
 	receiveBytes     = "receive_bytes"
 	receiveErrors    = "receive_errors"
@@ -32,7 +31,6 @@ var metrics = []string{
 	adminUp,
 	crcErrors,
 	errorStatus,
-	transmitDiscard,
 	receiveBroadcast,
 	receiveBytes,
 	receiveErrors,
@@ -175,7 +173,6 @@ func (i *Interface) parseInterface(output gjson.Result, ifMat *matrix.Matrix) {
 		instance.SetLabel("description", desc)
 
 		ifMat.GetMetric(crcErrors).SetValueFloat64(instance, crc)
-		ifMat.GetMetric(transmitDiscard).SetValueFloat64(instance, outDiscards)
 		ifMat.GetMetric(receiveBytes).SetValueFloat64(instance, inBytes)
 		ifMat.GetMetric(receiveErrors).SetValueFloat64(instance, inErrors)
 		ifMat.GetMetric(transmitBytes).SetValueFloat64(instance, outBytes)

@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Jun-04
+Creation Date : 2026-Jun-05
 EOS Version: 4.18.5
 ```
 
@@ -58,7 +58,7 @@ Displays uptime duration of the Arista switch. <span class="key">Description of 
     }'
     ```
 
-    After invoking the above Curl command, You would get this response
+    After invoking the above curl command, you would get this response:
     ```
     {
         "jsonrpc": "2.0",
@@ -366,25 +366,6 @@ The `arista_interface_transmit_bytes` metric is visualized in the following Graf
 |--------|----------|--------|--------|
 | Arista: Switch | Traffic | table | [Traffic on Switch](/d/arista-switch/arista3a-switch?orgId=1&viewPanel=48) |
 | Arista: Switch | Traffic | timeseries | [Top $TopResources Interface Send Throughput](/d/arista-switch/arista3a-switch?orgId=1&viewPanel=28) |
-///
-
-
-
-### arista_interface_transmit_discards
-
-Displays the number of outbound discards on the interface.
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| eAPI | `show interfaces` | `interfaceCounters.outDiscards` | conf/aristarest/eos/4.18.5/interface.yaml |
-
-The `arista_interface_transmit_discards` metric is visualized in the following Grafana dashboards:
-
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| Arista: Switch | Traffic | timeseries | [Top $TopResources Ethernet Out Discards](/d/arista-switch/arista3a-switch?orgId=1&viewPanel=49) |
 ///
 
 

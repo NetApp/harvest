@@ -15,7 +15,6 @@
   "arista_interface_receive_errors": "Displays the number of inbound errors on the interface.",
   "arista_interface_receive_multicast": "Displays the number of inbound multicast packets received on the interface.",
   "arista_interface_transmit_bytes": "Displays the number of bytes transmitted on the interface.",
-  "arista_interface_transmit_discards": "Displays the number of outbound discards on the interface.",
   "arista_interface_transmit_drops": "Displays the number of outbound packets dropped on the interface.",
   "arista_interface_transmit_errors": "Displays the number of outbound errors on the interface.",
   "arista_interface_up": "Indicates whether the interface line protocol is up (1) or down (0).",
