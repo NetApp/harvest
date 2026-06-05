@@ -1676,7 +1676,6 @@ counters:
 
   - Name: lun_new_status
     Description: This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state.
-      and a value of 0 for any other state.
     APIs:
       - API: REST
         Endpoint: NA
@@ -2304,6 +2303,30 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/snapshotpolicy.yaml
 
+  - Name: snapshot_volume_oldest_create_time
+    Description: Unix epoch timestamp of the oldest snapshot for this volume, across all snapshots regardless of snapshot policy.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/snapshotpolicy.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapshotpolicy.yaml
+
+  - Name: snapshot_volume_newest_create_time
+    Description: Unix epoch timestamp of the newest snapshot for this volume, across all snapshots regardless of snapshot policy.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/snapshotpolicy.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapshotpolicy.yaml
+
   - Name: snapshot_volume_violation_total_size
     Description: This metric captures the total size of all snapshots that were not created through an applied snapshot policy.
     APIs:
@@ -2555,8 +2578,7 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/vscan.yaml
 
-
-  # ASAr2 cluster metricsF
+  # ASAr2 cluster metrics
   - Name: cluster_space_available
     Description: Available space across the cluster.
     APIs:
