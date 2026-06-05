@@ -1,0 +1,6 @@
+name:               Version
+query:              "show version ; show hostname"
+object:             arista_switch
+
+plugins:
+  - Version

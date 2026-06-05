@@ -17,6 +17,7 @@ import (
 const (
 	SgVersion      = "11.6.0"
 	CiscoVersion   = "9.3.12"
+	AristaVersion  = "4.18.5"
 	ESeriesVersion = "11.80.0"
 )
 
@@ -26,18 +27,20 @@ var opts = &tools.Options{
 	Image:    "harvest:latest",
 }
 
-func generateCounterTemplate(metricsPanelMap map[string]tools.PanelData) (map[string]tools.Counter, map[string]tools.Counter, map[string]tools.Counter) {
+func generateCounterTemplate(metricsPanelMap map[string]tools.PanelData) (map[string]tools.Counter, map[string]tools.Counter, map[string]tools.Counter, map[string]tools.Counter) {
 	sgCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "storagegrid", metricsPanelMap)
 	tools.GenerateStorageGridCounterTemplate(sgCounters, SgVersion)
 	ciscoCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "cisco", metricsPanelMap)
 	tools.GenerateCiscoSwitchCounterTemplate(ciscoCounters, CiscoVersion)
+	aristaCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "arista", metricsPanelMap)
+	tools.GenerateAristaSwitchCounterTemplate(aristaCounters, AristaVersion)
 	eseriesCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "eseries", metricsPanelMap)
 	tools.GenerateESeriesCounterTemplate(eseriesCounters, ESeriesVersion)
-	return sgCounters, ciscoCounters, eseriesCounters
+	return sgCounters, ciscoCounters, aristaCounters, eseriesCounters
 }
 
 // generateMetadataFiles generates JSON metadata files for MCP server consumption
-func generateMetadataFiles(ontapCounters, sgCounters, ciscoCounters, eseriesCounters map[string]tools.Counter) {
+func generateMetadataFiles(ontapCounters, sgCounters, ciscoCounters, aristaCounters, eseriesCounters map[string]tools.Counter) {
 	metadataDir := "mcp/metadata"
 	if err := os.MkdirAll(metadataDir, 0750); err != nil {
 		fmt.Printf("Error creating metadata directory: %v\n", err)
@@ -69,6 +72,15 @@ func generateMetadataFiles(ontapCounters, sgCounters, ciscoCounters, eseriesCoun
 		fmt.Printf("Error writing Cisco metadata: %v\n", err)
 	} else {
 		fmt.Printf("Cisco metadata file generated at %s with %d metrics\n", ciscoPath, len(ciscoMetadata))
+	}
+
+	// Generate Arista metadata
+	aristaMetadata := extractMetricDescriptions(aristaCounters)
+	aristaPath := filepath.Join(metadataDir, "arista_metrics.json")
+	if err := writeMetadataFile(aristaPath, aristaMetadata); err != nil {
+		fmt.Printf("Error writing Arista metadata: %v\n", err)
+	} else {
+		fmt.Printf("Arista metadata file generated at %s with %d metrics\n", aristaPath, len(aristaMetadata))
 	}
 
 	// Generate ESeries metadata

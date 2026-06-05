@@ -1,0 +1,8 @@
+name:               Interface
+query:              "show interfaces"
+object:             arista_interface
+
+client_timeout:     2m
+
+plugins:
+  - Interface

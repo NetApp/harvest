@@ -64,6 +64,7 @@ nav:
       - 'ONTAP Metrics': 'ontap-metrics.md'
       - 'StorageGrid Metrics': 'storagegrid-metrics.md'
       - 'Cisco Switch Metrics': 'cisco-switch-metrics.md'
+      - 'Arista Switch Metrics': 'arista-switch-metrics.md'
       - 'E-Series Metrics': 'eseries-metrics.md'
       - 'Power Algorithm': 'resources/power-algorithm.md'
       - 'Plugins': 'plugins.md'

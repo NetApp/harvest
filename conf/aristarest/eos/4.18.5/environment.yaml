@@ -1,0 +1,6 @@
+name:               Environment
+query:              "show environment temperature ; show environment power ; show environment cooling"
+object:             arista_environment
+
+plugins:
+  - Environment

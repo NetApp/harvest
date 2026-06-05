@@ -1,0 +1,279 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": [
+    {
+      "lldpNeighbors": {
+        "Ethernet8": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet9": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet2": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet3": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet1": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet6": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet7": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet4": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet5": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet22": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet50": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet51": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet52": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet38": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet39": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet18": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet19": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet32": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet15": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet16": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet31": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet10": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet11": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet34": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet35": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet37": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet14": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet33": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet30": {
+          "lldpNeighborInfo": []
+        },
+        "Management1": {
+          "lldpNeighborInfo": [
+            {
+              "systemCapabilities": {
+                "bridge": true
+              },
+              "lastChangeTime": 1764813866.0986342,
+              "neighborInterfaceInfo": {
+                "portAndProtocolVlanEnabled": {},
+                "interfaceId": "\"Eth103/1/41\"",
+                "unknownTlvs": [],
+                "interfaceIdType": "local",
+                "interfaceDescription": "Ethernet103/1/41",
+                "autoNegAdvertisedCapabilities": [],
+                "protocolIdentityInfo": [],
+                "portAndProtocolVlanSupported": {},
+                "vlanNames": {},
+                "portVlanId": 816,
+                "unknownOrgDefinedTlvs": [
+                  {
+                    "ouiStr": "00-01-42",
+                    "subType": 1,
+                    "tlvLines": [
+                      "01"
+                    ]
+                  },
+                  {
+                    "ouiStr": "00-1B-21",
+                    "subType": 1,
+                    "tlvLines": [
+                      "02 0a 00 00 00 00 00 01 00 00 00 00 0c 05 00 00",
+                      "80 01 80"
+                    ]
+                  }
+                ]
+              },
+              "neighborDiscoveryTime": 1764813866.0986342,
+              "lastContactTime": 1780584102.9415388,
+              "chassisId": "8480.2d33.eb8a",
+              "systemName": "sa-tme-flexpod-5596-kk-27-234168",
+              "systemDescription": "Cisco NX-OS(tm) n5000, Software (n5000-uk9), Version 7.3(8)N1(1), RELEASE SOFTWARE Copyright (c) 2002-2012, 2016-2017 by Cisco Systems, Inc. Compiled 7/26/2020 12:00:00",
+              "ttl": 120,
+              "managementAddresses": [
+                {
+                  "oidString": "",
+                  "interfaceNumType": "ifIndex",
+                  "interfaceNum": 83886080,
+                  "address": "10.192.89.254",
+                  "addressType": "ipv4"
+                }
+              ],
+              "chassisIdType": "macAddress"
+            }
+          ]
+        },
+        "Ethernet17": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet49": {
+          "lldpNeighborInfo": [
+            {
+              "systemCapabilities": {
+                "bridge": true
+              },
+              "lastChangeTime": 1773929773.695858,
+              "neighborInterfaceInfo": {
+                "portAndProtocolVlanEnabled": {},
+                "interfaceId": "\"Eth1/32\"",
+                "unknownTlvs": [],
+                "interfaceIdType": "local",
+                "interfaceDescription": "Ethernet1/32",
+                "autoNegAdvertisedCapabilities": [],
+                "protocolIdentityInfo": [],
+                "portAndProtocolVlanSupported": {},
+                "vlanNames": {},
+                "portVlanId": 816,
+                "unknownOrgDefinedTlvs": [
+                  {
+                    "ouiStr": "00-01-42",
+                    "subType": 1,
+                    "tlvLines": [
+                      "01"
+                    ]
+                  },
+                  {
+                    "ouiStr": "00-01-42",
+                    "subType": 2,
+                    "tlvLines": [
+                      "24 00 24 00 24 00 24 00 24 00 24 00 24 00 24 00"
+                    ]
+                  },
+                  {
+                    "ouiStr": "00-01-42",
+                    "subType": 6,
+                    "tlvLines": [
+                      "06 00 00 00"
+                    ]
+                  }
+                ]
+              },
+              "neighborDiscoveryTime": 1773929773.695858,
+              "lastContactTime": 1780584107.219108,
+              "chassisId": "8c60.4f32.f7a7",
+              "systemName": "sa-tme-flexpod-5596-kk20-e04963.sa-tme-flexpod.local",
+              "systemDescription": "Cisco NX-OS(tm) n5000, Software (n5000-uk9), Version 7.3(8)N1(1), RELEASE SOFTWARE Copyright (c) 2002-2012, 2016-2017 by Cisco Systems, Inc. Compiled 7/26/2020 12:00:00",
+              "ttl": 120,
+              "managementAddresses": [
+                {
+                  "oidString": "",
+                  "interfaceNumType": "ifIndex",
+                  "interfaceNum": 83886080,
+                  "address": "10.192.89.253",
+                  "addressType": "ipv4"
+                }
+              ],
+              "chassisIdType": "macAddress"
+            }
+          ]
+        },
+        "Ethernet48": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet47": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet36": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet45": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet44": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet43": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet42": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet41": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet40": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet29": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet28": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet12": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet46": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet21": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet20": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet23": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet13": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet25": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet24": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet27": {
+          "lldpNeighborInfo": []
+        },
+        "Ethernet26": {
+          "lldpNeighborInfo": []
+        }
+      }
+    }
+  ]
+}

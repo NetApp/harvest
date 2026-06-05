@@ -1,0 +1,6 @@
+name:               Optic
+query:              "show interfaces transceiver"
+object:             arista_optic
+
+plugins:
+  - Optic

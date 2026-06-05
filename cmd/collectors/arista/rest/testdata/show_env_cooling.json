@@ -1,0 +1,43 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": [
+    {
+      "overrideFanSpeed": 0,
+      "coolingMode": "automatic",
+      "powerSupplySlots": [],
+      "fanTraySlots": [
+        {
+          "status": "ok",
+          "fans": [
+            {
+              "status": "ok",
+              "configuredSpeed": 51,
+              "actualSpeed": 50,
+              "label": "1/1"
+            }
+          ],
+          "speed": 51,
+          "label": "1"
+        },
+        {
+          "status": "ok",
+          "fans": [
+            {
+              "status": "ok",
+              "configuredSpeed": 51,
+              "actualSpeed": 50,
+              "label": "2/1"
+            }
+          ],
+          "speed": 51,
+          "label": "2"
+        }
+      ],
+      "shutdownOnInsufficientFans": true,
+      "ambientTemperature": 30.375,
+      "systemStatus": "coolingOk",
+      "airflowDirection": "backToFrontAirflow"
+    }
+  ]
+}

@@ -1892,6 +1892,7 @@ func TestTags(t *testing.T) {
 
 func checkTags(t *testing.T, path string, data []byte) {
 	allowedTagsMap := map[string]bool{
+		"arista":          true,
 		"asar2":           true,
 		"cdot":            true,
 		"cisco":           true,
@@ -1921,7 +1922,7 @@ func checkTags(t *testing.T, path string, data []byte) {
 func TestIntervalIsSet(t *testing.T) {
 
 	VisitDashboards(
-		[]string{"../../../grafana/dashboards/cisco"},
+		[]string{"../../../grafana/dashboards/arista", "../../../grafana/dashboards/cisco"},
 		func(path string, data []byte) {
 			checkTestIntervalIsSet(t, path, data)
 		},

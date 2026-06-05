@@ -1,0 +1,6 @@
+name:               LLDP
+query:              "show lldp neighbors detail"
+object:             arista_lldp_neighbor
+
+plugins:
+  - LLDP

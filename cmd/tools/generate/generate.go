@@ -122,6 +122,7 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 			"grafana/dashboards/cmode",
 			"grafana/dashboards/cmode-details",
 			"grafana/dashboards/cisco",
+			"grafana/dashboards/arista",
 			"grafana/dashboards/storagegrid",
 			"grafana/dashboards/eseries",
 		}, metricsPanelMap,
@@ -130,8 +131,8 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 		})
 	counters, cluster := tools.BuildMetrics("", "", opts.Poller, opts, metricsPanelMap)
 	tools.GenerateOntapCounterTemplate(counters, cluster.Version)
-	sgCounters, ciscoCounters, eseriesCounters := generateCounterTemplate(metricsPanelMap)
-	generateMetadataFiles(counters, sgCounters, ciscoCounters, eseriesCounters)
+	sgCounters, ciscoCounters, aristaCounters, eseriesCounters := generateCounterTemplate(metricsPanelMap)
+	generateMetadataFiles(counters, sgCounters, ciscoCounters, aristaCounters, eseriesCounters)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {

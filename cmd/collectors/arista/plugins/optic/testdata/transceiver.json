@@ -1,0 +1,28 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": [
+    {
+      "interfaces": {
+        "Ethernet49": {
+          "txPower": -2.5,
+          "rxPower": -3.14,
+          "temperature": 35.2,
+          "voltage": 3.31,
+          "txBias": 6.5,
+          "updateTime": 1780584182.0
+        },
+        "Ethernet50": {
+          "txPower": -1.9,
+          "rxPower": -2.7,
+          "temperature": 34.8,
+          "voltage": 3.29,
+          "txBias": 6.4,
+          "updateTime": 1780584182.0
+        },
+        "Ethernet51": {},
+        "Ethernet52": {}
+      }
+    }
+  ]
+}

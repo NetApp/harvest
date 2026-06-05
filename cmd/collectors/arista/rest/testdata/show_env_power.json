@@ -1,0 +1,26 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": [
+    {
+      "powerSupplies": {
+        "1": {
+          "fans": {},
+          "modelName": "PWR-00194-01",
+          "capacity": 65.0,
+          "tempSensors": {},
+          "managed": false,
+          "state": "ok"
+        },
+        "2": {
+          "fans": {},
+          "modelName": "PWR-00194-01",
+          "capacity": 65.0,
+          "tempSensors": {},
+          "managed": false,
+          "state": "powerLoss"
+        }
+      }
+    }
+  ]
+}
