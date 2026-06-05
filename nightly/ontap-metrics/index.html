@@ -12480,6 +12480,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#snapshot_volume_newest_create_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_newest_create_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snapshot_volume_oldest_create_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_oldest_create_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#snapshot_volume_violation_count" class="md-nav__link">
     <span class="md-ellipsis">
       snapshot_volume_violation_count
@@ -26892,6 +26910,24 @@
   <a href="#snapshot_restore_size" class="md-nav__link">
     <span class="md-ellipsis">
       snapshot_restore_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snapshot_volume_newest_create_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_newest_create_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snapshot_volume_oldest_create_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_oldest_create_time
     </span>
   </a>
   
@@ -47721,7 +47757,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="lun_new_status">lun_new_status<a class="headerlink" href="#lun_new_status" title="Permanent link">&para;</a></h3>
-<p>This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state. and a value of 0 for any other state.</p>
+<p>This metric indicates a value of 1 if the LUN state is online (indicating the LUN is operational) and a value of 0 for any other state.</p>
 <table>
 <thead>
 <tr>
@@ -79173,6 +79209,58 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 </div>
+<h3 id="snapshot_volume_newest_create_time">snapshot_volume_newest_create_time<a class="headerlink" href="#snapshot_volume_newest_create_time" title="Permanent link">&para;</a></h3>
+<p>Unix epoch timestamp of the newest snapshot for this volume, across all snapshots regardless of snapshot policy.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/snapshotpolicy.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/snapshotpolicy.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="snapshot_volume_oldest_create_time">snapshot_volume_oldest_create_time<a class="headerlink" href="#snapshot_volume_oldest_create_time" title="Permanent link">&para;</a></h3>
+<p>Unix epoch timestamp of the oldest snapshot for this volume, across all snapshots regardless of snapshot policy.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/snapshotpolicy.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/snapshotpolicy.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="snapshot_volume_violation_count">snapshot_volume_violation_count<a class="headerlink" href="#snapshot_volume_violation_count" title="Permanent link">&para;</a></h3>
 <p>This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.</p>
 <table>
