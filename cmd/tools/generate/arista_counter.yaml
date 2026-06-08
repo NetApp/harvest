@@ -37,7 +37,7 @@ counters:
     APIs:
       - API: eAPI
         Endpoint: show interfaces
-        AristaCounter: interfaceCounters.inErrors
+        AristaCounter: interfaceCounters.inputErrorsDetail.fcsErrors
         Template: conf/aristarest/eos/4.18.5/interface.yaml
 
   - Name: arista_interface_receive_bytes

@@ -196,11 +196,13 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 func (e *Environment) parseCooling(output gjson.Result, envMat *matrix.Matrix) {
 	if ambient := output.Get("ambientTemperature"); ambient.Exists() {
 		instance, err := envMat.NewInstance("cooling_ambient")
-		if err == nil {
-			instance.SetLabel("sensor", "ambient")
-			instance.SetLabel("status", output.Get("systemStatus").ClonedString())
-			envMat.GetMetric(ambientTemp).SetValueFloat64(instance, ambient.Float())
+		if err != nil {
+			e.SLogger.Error("Failed to create ambient temperature instance", slog.String("key", "cooling_ambient"))
+			return
 		}
+		instance.SetLabel("sensor", "ambient")
+		instance.SetLabel("status", output.Get("systemStatus").ClonedString())
+		envMat.GetMetric(ambientTemp).SetValueFloat64(instance, ambient.Float())
 	}
 
 	output.Get("fanTraySlots").ForEach(func(_, tray gjson.Result) bool {
