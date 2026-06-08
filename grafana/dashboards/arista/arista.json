@@ -1740,20 +1740,20 @@
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_receive_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_receive_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
-              "legendFormat": "Transmit - {{switch}} - {{interface}}",
+              "legendFormat": "Receive - {{switch}} - {{interface}}",
               "refId": "A"
             },
             {
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_transmit_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_transmit_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
-              "legendFormat": "Receive - {{switch}} - {{interface}}",
+              "legendFormat": "Transmit - {{switch}} - {{interface}}",
               "refId": "B"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Interface Receive Drops",
+          "title": "Top $TopResources Interface Drops",
           "type": "timeseries"
         },
         {

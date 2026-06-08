@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Jun-05
+Creation Date : 2026-Jun-08
 EOS Version: 4.18.5
 ```
 
@@ -260,7 +260,7 @@ Displays the number of CRC errors received on the interface.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| eAPI | `show interfaces` | `interfaceCounters.inErrors` | conf/aristarest/eos/4.18.5/interface.yaml |
+| eAPI | `show interfaces` | `interfaceCounters.inputErrorsDetail.fcsErrors` | conf/aristarest/eos/4.18.5/interface.yaml |
 
 The `arista_interface_crc_errors` metric is visualized in the following Grafana dashboards:
 
@@ -316,7 +316,7 @@ The `arista_interface_receive_drops` metric is visualized in the following Grafa
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Arista: Switch | Traffic | timeseries | [Top $TopResources Interface Receive Drops](/d/arista-switch/arista3a-switch?orgId=1&viewPanel=31) |
+| Arista: Switch | Traffic | timeseries | [Top $TopResources Interface Drops](/d/arista-switch/arista3a-switch?orgId=1&viewPanel=31) |
 ///
 
 
@@ -328,7 +328,7 @@ Displays the number of inbound errors on the interface.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| eAPI | `show interfaces` | `interfaceCounters.inErrors` | conf/aristarest/eos/4.18.5/interface.yaml |
+| eAPI | `show interfaces` | `interfaceCounters.totalInErrors` | conf/aristarest/eos/4.18.5/interface.yaml |
 
 The `arista_interface_receive_errors` metric is visualized in the following Grafana dashboards:
 
@@ -384,7 +384,7 @@ The `arista_interface_transmit_drops` metric is visualized in the following Graf
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Arista: Switch | Traffic | timeseries | [Top $TopResources Interface Receive Drops](/d/arista-switch/arista3a-switch?orgId=1&viewPanel=31) |
+| Arista: Switch | Traffic | timeseries | [Top $TopResources Interface Drops](/d/arista-switch/arista3a-switch?orgId=1&viewPanel=31) |
 ///
 
 
@@ -396,7 +396,7 @@ Displays the number of outbound errors on the interface.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| eAPI | `show interfaces` | `interfaceCounters.outErrors` | conf/aristarest/eos/4.18.5/interface.yaml |
+| eAPI | `show interfaces` | `interfaceCounters.totalOutErrors` | conf/aristarest/eos/4.18.5/interface.yaml |
 
 The `arista_interface_transmit_errors` metric is visualized in the following Grafana dashboards:
 
