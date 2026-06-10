@@ -1,0 +1,209 @@
+counters:
+
+  - Name: arista_switch_labels
+    Description: Displays identifying configuration detail of the Arista switch.
+    APIs:
+      - API: eAPI
+        Endpoint: show version ; show hostname
+        AristaCounter: modelName, serialNumber, hostname, version, internalVersion, systemMacAddress, hardwareRevision, architecture
+        Template: conf/aristarest/eos/4.18.5/version.yaml
+
+  - Name: arista_switch_uptime
+    Description: Displays uptime duration of the Arista switch.
+    APIs:
+      - API: eAPI
+        Endpoint: show version
+        AristaCounter: bootupTimestamp
+        Template: conf/aristarest/eos/4.18.5/version.yaml
+
+  - Name: arista_interface_admin_up
+    Description: Indicates whether the interface is administratively enabled (1) or disabled (0).
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceStatus
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_up
+    Description: Indicates whether the interface line protocol is up (1) or down (0).
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: lineProtocolStatus
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_crc_errors
+    Description: Displays the number of CRC errors received on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.inputErrorsDetail.fcsErrors
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_receive_bytes
+    Description: Displays the number of bytes received on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.inOctets
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_receive_errors
+    Description: Displays the number of inbound errors on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.totalInErrors
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_receive_drops
+    Description: Displays the number of inbound packets dropped on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.inDiscards
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_receive_broadcast
+    Description: Displays the number of inbound broadcast packets received on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.inBroadcastPkts
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_receive_multicast
+    Description: Displays the number of inbound multicast packets received on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.inMulticastPkts
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_transmit_bytes
+    Description: Displays the number of bytes transmitted on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.outOctets
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_transmit_errors
+    Description: Displays the number of outbound errors on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.totalOutErrors
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_interface_transmit_drops
+    Description: Displays the number of outbound packets dropped on the interface.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces
+        AristaCounter: interfaceCounters.outDiscards
+        Template: conf/aristarest/eos/4.18.5/interface.yaml
+
+  - Name: arista_optic_rx
+    Description: Displays the receive optical power (dBm) of the transceiver.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces transceiver
+        AristaCounter: rxPower
+        Template: conf/aristarest/eos/4.18.5/optic.yaml
+
+  - Name: arista_optic_tx
+    Description: Displays the transmit optical power (dBm) of the transceiver.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces transceiver
+        AristaCounter: txPower
+        Template: conf/aristarest/eos/4.18.5/optic.yaml
+
+  - Name: arista_optic_temperature
+    Description: Displays the transceiver temperature in degrees Celsius.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces transceiver
+        AristaCounter: temperature
+        Template: conf/aristarest/eos/4.18.5/optic.yaml
+
+  - Name: arista_optic_voltage
+    Description: Displays the transceiver supply voltage.
+    APIs:
+      - API: eAPI
+        Endpoint: show interfaces transceiver
+        AristaCounter: voltage
+        Template: conf/aristarest/eos/4.18.5/optic.yaml
+
+  - Name: arista_lldp_neighbor_labels
+    Description: Displays link layer discovery protocol information about neighbors of the Arista switch.
+    APIs:
+      - API: eAPI
+        Endpoint: show lldp neighbors detail
+        AristaCounter: neighborDevice, neighborPort, systemName, systemDescription, chassisId, capabilities
+        Template: conf/aristarest/eos/4.18.5/lldp.yaml
+
+  - Name: arista_environment_sensor_temp
+    Description: Displays the current temperature reported by a switch temperature sensor.
+    APIs:
+      - API: eAPI
+        Endpoint: show environment temperature
+        AristaCounter: currentTemperature
+        Template: conf/aristarest/eos/4.18.5/environment.yaml
+
+  - Name: arista_environment_ambient_temp
+    Description: Displays the switch ambient (inlet) temperature.
+    APIs:
+      - API: eAPI
+        Endpoint: show environment cooling
+        AristaCounter: ambientTemperature
+        Template: conf/aristarest/eos/4.18.5/environment.yaml
+
+  - Name: arista_environment_fan_speed
+    Description: Displays the current fan speed.
+    APIs:
+      - API: eAPI
+        Endpoint: show environment cooling
+        AristaCounter: actualSpeed
+        Template: conf/aristarest/eos/4.18.5/environment.yaml
+
+  - Name: arista_environment_fan_up
+    Description: Indicates whether the fan is operating normally (1) or not (0).
+    APIs:
+      - API: eAPI
+        Endpoint: show environment cooling
+        AristaCounter: status
+        Template: conf/aristarest/eos/4.18.5/environment.yaml
+
+  - Name: arista_environment_power_capacity
+    Description: Displays the rated capacity of a power supply.
+    APIs:
+      - API: eAPI
+        Endpoint: show environment power
+        AristaCounter: capacity
+        Template: conf/aristarest/eos/4.18.5/environment.yaml
+
+  - Name: arista_environment_power_in
+    Description: Displays the input power of a power supply.
+    APIs:
+      - API: eAPI
+        Endpoint: show environment power
+        AristaCounter: inputPower
+        Template: conf/aristarest/eos/4.18.5/environment.yaml
+
+  - Name: arista_environment_power_out
+    Description: Displays the output power of a power supply.
+    APIs:
+      - API: eAPI
+        Endpoint: show environment power
+        AristaCounter: outputPower
+        Template: conf/aristarest/eos/4.18.5/environment.yaml
+
+  - Name: arista_environment_power_up
+    Description: Indicates whether the power supply is operating normally (1) or not (0).
+    APIs:
+      - API: eAPI
+        Endpoint: show environment power
+        AristaCounter: state
+        Template: conf/aristarest/eos/4.18.5/environment.yaml

@@ -1,0 +1,191 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": [
+    {
+      "cardSlots": [],
+      "powerSupplySlots": [],
+      "shutdownOnOverheat": true,
+      "tempSensors": [
+        {
+          "maxTemperature": 46.945779236123656,
+          "maxTemperatureLastChange": 1766142323.9066682,
+          "hwStatus": "ok",
+          "currentTemperature": 44.35553178995357,
+          "description": "Cpu temp sensor",
+          "overheatThreshold": 105.0,
+          "criticalThreshold": 115.0,
+          "inAlertState": false,
+          "relPos": "1",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor1"
+        },
+        {
+          "maxTemperature": 44.0,
+          "maxTemperatureLastChange": 1766145741.5320046,
+          "hwStatus": "ok",
+          "currentTemperature": 40.0,
+          "description": "Front internal sensor",
+          "overheatThreshold": 75.0,
+          "criticalThreshold": 85.0,
+          "inAlertState": false,
+          "relPos": "2",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor2"
+        },
+        {
+          "maxTemperature": 42.375,
+          "maxTemperatureLastChange": 1766143984.0759647,
+          "hwStatus": "ok",
+          "currentTemperature": 39.75,
+          "description": "Front external sensor",
+          "overheatThreshold": 60.0,
+          "criticalThreshold": 75.0,
+          "inAlertState": false,
+          "relPos": "3",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor3"
+        },
+        {
+          "maxTemperature": 38.0,
+          "maxTemperatureLastChange": 1766144004.1004822,
+          "hwStatus": "ok",
+          "currentTemperature": 34.0,
+          "description": "Rear internal sensor",
+          "overheatThreshold": 75.0,
+          "criticalThreshold": 85.0,
+          "inAlertState": false,
+          "relPos": "4",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor4"
+        },
+        {
+          "maxTemperature": 33.875,
+          "maxTemperatureLastChange": 1766144214.3935823,
+          "hwStatus": "ok",
+          "currentTemperature": 30.5,
+          "description": "Rear external sensor",
+          "overheatThreshold": 60.0,
+          "criticalThreshold": 75.0,
+          "inAlertState": false,
+          "relPos": "5",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor5"
+        },
+        {
+          "maxTemperature": 59.06720000000001,
+          "maxTemperatureLastChange": 1766144807.3367476,
+          "hwStatus": "ok",
+          "currentTemperature": 55.2704,
+          "description": "Switch ASIC Center",
+          "overheatThreshold": 100.0,
+          "criticalThreshold": 110.0,
+          "inAlertState": false,
+          "relPos": "6",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor6"
+        },
+        {
+          "maxTemperature": 59.60960000000001,
+          "maxTemperatureLastChange": 1766144425.9238017,
+          "hwStatus": "ok",
+          "currentTemperature": 55.8128,
+          "description": "Switch ASIC Lower Left Corner",
+          "overheatThreshold": 100.0,
+          "criticalThreshold": 110.0,
+          "inAlertState": false,
+          "relPos": "7",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor7"
+        },
+        {
+          "maxTemperature": 57.982400000000005,
+          "maxTemperatureLastChange": 1766144631.6438942,
+          "hwStatus": "ok",
+          "currentTemperature": 54.728,
+          "description": "Switch ASIC Upper Right Edge",
+          "overheatThreshold": 100.0,
+          "criticalThreshold": 110.0,
+          "inAlertState": false,
+          "relPos": "8",
+          "alertCount": 0,
+          "pidDriverCount": 0,
+          "isPidDriver": false,
+          "name": "TempSensor8"
+        }
+      ],
+      "systemStatus": "temperatureOk"
+    },
+    {
+      "powerSupplies": {
+        "1": {
+          "fans": {},
+          "modelName": "PWR-00194-01",
+          "capacity": 65.0,
+          "tempSensors": {},
+          "managed": false,
+          "state": "ok"
+        },
+        "2": {
+          "fans": {},
+          "modelName": "PWR-00194-01",
+          "capacity": 65.0,
+          "tempSensors": {},
+          "managed": false,
+          "state": "powerLoss"
+        }
+      }
+    },
+    {
+      "overrideFanSpeed": 0,
+      "coolingMode": "automatic",
+      "powerSupplySlots": [],
+      "fanTraySlots": [
+        {
+          "status": "ok",
+          "fans": [
+            {
+              "status": "ok",
+              "configuredSpeed": 51,
+              "actualSpeed": 50,
+              "label": "1/1"
+            }
+          ],
+          "speed": 51,
+          "label": "1"
+        },
+        {
+          "status": "ok",
+          "fans": [
+            {
+              "status": "ok",
+              "configuredSpeed": 51,
+              "actualSpeed": 50,
+              "label": "2/1"
+            }
+          ],
+          "speed": 51,
+          "label": "2"
+        }
+      ],
+      "shutdownOnInsufficientFans": true,
+      "ambientTemperature": 30.375,
+      "systemStatus": "coolingOk",
+      "airflowDirection": "backToFrontAirflow"
+    }
+  ]
+}

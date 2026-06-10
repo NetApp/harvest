@@ -65,6 +65,7 @@ type CounterMetaData struct {
 	OntapVersion   string
 	SGVersion      string
 	CiscoVersion   string
+	AristaVersion  string
 	ESeriesVersion string
 }
 
@@ -91,6 +92,7 @@ type MetricDef struct {
 	Endpoint       string `yaml:"Endpoint"`
 	ONTAPCounter   string `yaml:"ONTAPCounter"`
 	CiscoCounter   string `yaml:"CiscoCounter"`
+	AristaCounter  string `yaml:"AristaCounter"`
 	SGCounter      string `yaml:"SGCounter"`
 	ESeriesCounter string `yaml:"ESeriesCounter"`
 	Template       string `yaml:"Template"`
@@ -1950,6 +1952,8 @@ func (m MetricDef) TableRow() string {
 			m.API, m.Endpoint, m.ONTAPCounter, unit, m.Template)
 	case strings.Contains(m.Template, "ciscorest"):
 		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.CiscoCounter, m.Template)
+	case strings.Contains(m.Template, "aristarest"):
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.AristaCounter, m.Template)
 	case strings.Contains(m.Template, "storagegrid"):
 		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.SGCounter, m.Template)
 	default:
@@ -2313,6 +2317,66 @@ func appendRow(table *tw.Table, missing string, counter Counter, def MetricDef) 
 		table.Append([]string{missing, counter.Name, def.API, def.Endpoint, def.ONTAPCounter, def.Template})
 	} else {
 		table.Append([]string{missing, counter.Name})
+	}
+}
+
+func GenerateAristaSwitchCounterTemplate(counters map[string]Counter, version string) {
+	targetPath := "docs/arista-switch-metrics.md"
+	t, err := template.New("arista_counter.tmpl").ParseFiles("cmd/tools/generate/arista_counter.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	out, err := os.Create(targetPath)
+	if err != nil {
+		panic(err)
+	}
+
+	keys := make([]string, 0, len(counters))
+	for k := range counters {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	values := make([]Counter, 0, len(keys))
+
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "AristaCounter", "Template"})
+
+	for _, k := range keys {
+		if k == "" {
+			continue
+		}
+		counter := counters[k]
+		if !strings.HasPrefix(counter.Name, "arista_") {
+			continue
+		}
+
+		if counter.Description == "" {
+			appendRow(table, "Description", counter, MetricDef{API: ""})
+		}
+
+		values = append(values, counter)
+	}
+
+	table.Render()
+	c := CounterTemplate{
+		Counters: values,
+		CounterMetaData: CounterMetaData{
+			Date:          time.Now().Format("2006-Jan-02"),
+			AristaVersion: version,
+		},
+	}
+
+	err = t.Execute(out, c)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
+
+	if table.NumLines() > 0 {
+		log.Fatalf("Issues found: refer table above")
 	}
 }
 

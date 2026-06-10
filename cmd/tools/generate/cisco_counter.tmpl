@@ -58,7 +58,7 @@ Displays uptime duration of the Cisco switch. <span class="key">Description of t
     }'
     ```
 
-    After invoking the above Curl command, You would get this response
+    After invoking the above curl command, you would get this response:
     ```
     {
             "ins_api":      {

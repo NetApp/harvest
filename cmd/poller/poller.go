@@ -55,6 +55,7 @@ import (
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/arista"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/cisco"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/cmperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
@@ -1828,6 +1829,7 @@ func (p *Poller) sendHarvestVersion() error {
 func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 	ontapCols := p.filterONTAPCollectors(cols)
 	ciscoCols := p.filterCiscoCollectors(cols)
+	aristaCols := p.filterAristaCollectors(cols)
 	sgCols := p.filterStorageGridCollectors(cols)
 	eseriesCols := p.filterEseriesCollectors(cols)
 	otherCols := p.filterOtherCollectors(cols)
@@ -1858,6 +1860,14 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 			validCollectors = append(validCollectors, ciscoCols...)
 		} else {
 			logger.Warn("Cisco connection failed, skipping Cisco collectors")
+		}
+	}
+
+	if len(aristaCols) > 0 {
+		if p.negotiateConnection("Arista", aristaCols) {
+			validCollectors = append(validCollectors, aristaCols...)
+		} else {
+			logger.Warn("Arista connection failed, skipping Arista collectors")
 		}
 	}
 
@@ -1910,6 +1920,8 @@ func (p *Poller) negotiateConnection(connectionType string, cols []conf.Collecto
 		remote, err = collectors.GatherClusterInfo(opts.Poller, p.auth, cols)
 	case "Cisco":
 		remote, err = collectors.GatherCiscoSwitchInfo(opts.Poller, p.auth)
+	case "Arista":
+		remote, err = collectors.GatherAristaSwitchInfo(opts.Poller, p.auth)
 	case "StorageGrid":
 		remote, err = collectors.GatherStorageGridInfo(opts.Poller, p.auth)
 	case "Eseries":
@@ -1952,6 +1964,16 @@ func (p *Poller) filterCiscoCollectors(cols []conf.Collector) []conf.Collector {
 		}
 	}
 	return ciscoCollectors
+}
+
+func (p *Poller) filterAristaCollectors(cols []conf.Collector) []conf.Collector {
+	var aristaCollectors []conf.Collector
+	for _, c := range cols {
+		if c.Name == "AristaRest" {
+			aristaCollectors = append(aristaCollectors, c)
+		}
+	}
+	return aristaCollectors
 }
 
 func (p *Poller) filterStorageGridCollectors(cols []conf.Collector) []conf.Collector {

@@ -1,0 +1,109 @@
+This document describes which Arista switch metrics are collected and what those metrics are named in Harvest, including:
+
+- Details about which Harvest metrics each dashboard uses.
+These can be generated on demand by running `bin/harvest grafana metrics`. See
+[#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
+
+```
+Creation Date : {{ .CounterMetaData.Date }}
+EOS Version: {{ .CounterMetaData.AristaVersion }}
+```
+
+??? "Navigate to Grafana dashboards"
+
+    Add your Grafana instance to the following form and save it. When you click on dashboard links on this page, a link to your dashboard will be opened. NAbox hosts Grafana on a subdomain like so: https://localhost/grafana/
+
+    <div>
+        <label for="grafanaHost">Grafana Host</label>
+        <input type="text" id="grafanaHost" name="grafanaHost" placeholder="e.g. http://localhost:3000" style="width: 80%;margin-left:1em">
+        <button type="button" onclick="saveGrafanaHost()">Save</button>
+    </div>
+
+## Understanding the structure
+
+Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
+
+arista_switch_uptime <span class="key">Name of the metric exported by Harvest</span>
+
+Displays uptime duration of the Arista switch. <span class="key">Description of the Arista switch metric</span>
+
+* <span class="key">API</span> Harvest uses the Arista eAPI (JSON-RPC runCmds) to collect metrics
+* <span class="key">Endpoint</span> name of the CLI command used to collect this metric
+* <span class="key">Metric</span> name of the field in the eAPI response
+* <span class="key">Template</span> path of the template that collects the metric
+
+| API   | Endpoint | Metric | Template |
+|-------|----------|--------|----------|
+| eAPI | `show version` | bootupTimestamp | conf/aristarest/eos/4.18.5/version.yaml |
+
+
+??? "Example to invoke eAPI show commands via curl"
+
+    Arista EOS exposes a JSON-RPC endpoint at `/command-api`. The `runCmds` method accepts an
+    array of CLI commands and returns their structured output.
+    Replace USER, PASSWORD, and ARISTA_SWITCH_IP with your actual username, password, and the switch's IP address.
+
+    ```
+    curl -sk -u USER:PASSWORD 'https://ARISTA_SWITCH_IP/command-api' \
+      -H 'Content-Type: application/json' -d
+    '{
+      "jsonrpc": "2.0",
+      "method": "runCmds",
+      "params": {
+        "version": 1,
+        "format": "json",
+        "cmds": ["show version"]
+      },
+      "id": "1"
+    }'
+    ```
+
+    After invoking the above curl command, you would get this response:
+    ```
+    {
+        "jsonrpc": "2.0",
+        "id": "1",
+        "result": [
+            {
+                "modelName": "DCS-7010T-48-R",
+                "internalVersion": "4.18.5M",
+                "systemMacAddress": "00:1c:73:00:00:00",
+                "serialNumber": "JPE00000000",
+                "hardwareRevision": "00.00",
+                "architecture": "i386",
+                "version": "4.18.5M",
+                "bootupTimestamp": 1625520901.0,
+                "uptime": 123456.78,
+                "memTotal": 4017088,
+                "memFree": 1872308
+            }
+        ]
+    }
+    ```
+
+
+## Metrics
+
+{{range .Counters}}
+### {{ .Name }}
+
+{{ .Description }}
+
+{{.Header -}}
+{{range .APIs}}
+{{.TableRow -}}
+{{end}}
+
+{{- if .HasPanels}}
+
+The `{{ .Name }}` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+{{- .PanelHeader -}}
+{{range .Panels}}
+{{.DashboardTableRow -}}
+{{end}}
+///
+{{end}}
+
+{{end}}

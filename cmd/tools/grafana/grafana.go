@@ -39,6 +39,7 @@ const (
 )
 
 var Dashboards = []string{
+	"../../../grafana/dashboards/arista",
 	"../../../grafana/dashboards/cisco",
 	"../../../grafana/dashboards/cmode",
 	"../../../grafana/dashboards/cmode-details",
@@ -544,6 +545,7 @@ func initImportVars() {
 		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-main-cDOT"}
 		m[filepath.Join(opts.dir, "cmode-details")] = &Folder{name: "Harvest-main-cDOT Details"}
 		m[filepath.Join(opts.dir, "cisco")] = &Folder{name: "Harvest-main-Cisco"}
+		m[filepath.Join(opts.dir, "arista")] = &Folder{name: "Harvest-main-Arista"}
 		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-main-7mode"}
 		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-main-StorageGrid"}
 		m[filepath.Join(opts.dir, "asar2")] = &Folder{name: "Harvest-main-ASAr2"}

@@ -1,0 +1,15 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "error": {
+    "data": [
+      {
+        "errors": [
+          "Invalid input (privileged mode required)"
+        ]
+      }
+    ],
+    "message": "CLI command 1 of 1 'show banner motd' failed: invalid command",
+    "code": 1002
+  }
+}

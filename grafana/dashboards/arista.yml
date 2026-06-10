@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: 'Harvest Arista'
+    orgId: 1
+    folder: 'Harvest-main-Arista'
+    type: file
+    disableDeletion: false
+    editable: true
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/arista

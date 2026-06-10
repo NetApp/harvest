@@ -1,0 +1,12 @@
+collector:          AristaRest
+
+# Order here matters!
+schedule:
+  - data:      3m
+
+objects:
+  Environment:         environment.yaml
+  Interface:           interface.yaml
+  LLDP:                lldp.yaml
+  Optic:               optic.yaml
+  Version:             version.yaml

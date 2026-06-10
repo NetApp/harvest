@@ -1,0 +1,20 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": [
+    {
+      "modelName": "DCS-7010T-48-R",
+      "internalVersion": "4.18.5M-6710299.4185M",
+      "systemMacAddress": "28:99:3a:29:5d:f5",
+      "serialNumber": "JPE17011101",
+      "memTotal": 3894336,
+      "bootupTimestamp": 1764813516.82,
+      "memFree": 2013552,
+      "version": "4.18.5M",
+      "architecture": "i386",
+      "isIntlVersion": false,
+      "internalBuildId": "aa12f96e-1861-4027-a36c-70da03584aa2",
+      "hardwareRevision": "12.00"
+    }
+  ]
+}

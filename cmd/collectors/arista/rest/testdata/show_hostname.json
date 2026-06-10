@@ -1,0 +1,10 @@
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": [
+    {
+      "fqdn": "sa-tme-flexpod-kk19-7010T-1g",
+      "hostname": "sa-tme-flexpod-kk19-7010T-1g"
+    }
+  ]
+}

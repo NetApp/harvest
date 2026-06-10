@@ -5,6 +5,7 @@ import (
 	"slices"
 	"time"
 
+	aristarest "github.com/netapp/harvest/v2/cmd/collectors/arista/rest"
 	ciscorest "github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
 	eseriesrest "github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	sgrest "github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
@@ -37,6 +38,10 @@ func GatherClusterInfo(pollerName string, cred *auth.Credentials, cols []conf.Co
 
 func GatherCiscoSwitchInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 	return checkCiscoRest(pollerName, cred)
+}
+
+func GatherAristaSwitchInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+	return checkAristaRest(pollerName, cred)
 }
 
 func GatherStorageGridInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
@@ -133,6 +138,7 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 	}
 
 	remote := client.Remote()
+
 	remote.ZAPIsChecked = true
 	remote.ZAPIsExist = zapisExist
 
@@ -153,6 +159,32 @@ func checkCiscoRest(pollerName string, cred *auth.Credentials) (conf.Remote, err
 	}
 
 	client, err = ciscorest.New(poller, cred)
+	if err != nil {
+		return conf.Remote{}, err
+	}
+
+	err = client.Init(1, conf.Remote{})
+	if err != nil {
+		return conf.Remote{}, err
+	}
+
+	return client.Remote(), nil
+}
+
+func checkAristaRest(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+
+	var (
+		poller *conf.Poller
+		client *aristarest.Client
+		err    error
+	)
+
+	// connect to the switch
+	if poller, err = conf.PollerNamed(pollerName); err != nil {
+		return conf.Remote{}, err
+	}
+
+	client, err = aristarest.New(poller, cred)
 	if err != nil {
 		return conf.Remote{}, err
 	}
