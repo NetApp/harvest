@@ -206,6 +206,8 @@ var (
 		"svm_ontaps3_svm_",
 		"svm_vscan_",
 		"token_",
+		"volume_efficiency_labels",
+		"volume_efficiency_last_op_size",
 		"volume_top_clients",
 		"volume_top_files",
 		"volume_top_users",
