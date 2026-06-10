@@ -1,0 +1,38 @@
+name:                     VolumeEfficiency
+query:                    api/private/cli/volume/efficiency
+object:                   volume_efficiency
+
+counters:
+  - ^^volume
+  - ^^vserver                                     => svm
+  - ^compression
+  - ^cross_volume_background_dedupe
+  - ^cross_volume_inline_dedupe
+  - ^data_compaction
+  - ^inline_compression
+  - ^inline_dedupe
+  - ^last_op_state
+  - ^path                                         => volume_path
+  - ^policy
+  - ^state
+  - ^storage_efficiency_mode
+  - ^type
+  - last_op_size
+
+export_options:
+  instance_keys:
+    - svm
+    - volume
+  instance_labels:
+    - compression
+    - cross_volume_background_dedupe
+    - cross_volume_inline_dedupe
+    - data_compaction
+    - inline_compression
+    - inline_dedupe
+    - last_op_state
+    - policy
+    - state
+    - storage_efficiency_mode
+    - type
+    - volume_path

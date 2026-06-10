@@ -69,6 +69,7 @@ objects:
   SupportAutoUpdate:           support_auto_update.yaml
   SVM:                         svm.yaml
   Volume:                      volume.yaml
+#  VolumeEfficiency:            vol_efficiency.yaml
   VolumeAnalytics:             volume_analytics.yaml
   VolumeSnaplock:              volume_snaplock.yaml
   Vscan:                       vscan.yaml
