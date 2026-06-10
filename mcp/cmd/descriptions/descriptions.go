@@ -5,7 +5,7 @@ const InfrastructureHealthDesc = `ONTAP infrastructure health checkup. Start eve
 CHECKS PERFORMED:
 - Availability: cluster, node, aggregate, volume, SVM, cluster-subsystem (*_new_status != 1)
 - Hardware: disk, shelf, FRU (fans/PSUs), environmental sensors (temperature, voltage, fan)
-- Capacity: volumes at 100%/95%, aggregate space at 95%/85%, aggregate inodes >90%
+- Capacity: volumes > 95%, aggregate space > 85%, aggregate inodes >90%
 - Data protection: SnapMirror lag >24h (critical)
 - Network: LIF receive/send errors, ethernet switch port status
 - Licensing: high entitlement_risk, non-compliant licenses (license_labels), capacity >90% (license_capacity_used_percent)
