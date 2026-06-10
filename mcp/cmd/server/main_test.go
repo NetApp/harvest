@@ -34,6 +34,12 @@ func TestApplyClusterFilter(t *testing.T) {
 			want:    `volume_size_used_percent{svm="vs1", cluster="cluster1"} > 95`,
 		},
 		{
+			name:    "metric with labels and no trailing expression - appends inside braces",
+			query:   `license_labels{license="snapmirror"}`,
+			cluster: "cluster1",
+			want:    `license_labels{license="snapmirror", cluster="cluster1"}`,
+		},
+		{
 			name:    "selector-only query - appends inside braces",
 			query:   `{__name__=~"health_.*"}`,
 			cluster: "cluster1",
@@ -50,6 +56,12 @@ func TestApplyClusterFilter(t *testing.T) {
 			query:        `volume_size_used_percent{svm="vs1"} > 95`,
 			clusterMatch: "prod.*",
 			want:         `volume_size_used_percent{svm="vs1", cluster=~"prod.*"} > 95`,
+		},
+		{
+			name:         "clusterMatch with labels and no trailing expression - appends regex matcher inside braces",
+			query:        `license_labels{license="snapmirror"}`,
+			clusterMatch: "prod.*",
+			want:         `license_labels{license="snapmirror", cluster=~"prod.*"}`,
 		},
 		{
 			name:         "cluster takes precedence over clusterMatch",
