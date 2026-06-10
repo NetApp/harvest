@@ -2578,6 +2578,14 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/vscan.yaml
 
+  - Name: volume_efficiency_last_op_size
+    Description: Represent the data size of the last successfully completed deduplication, compression, or compaction operation executed on a storage volume
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/volume/efficiency
+        ONTAPCounter: last_op_size
+        Template: conf/rest/9.10.0/vol_efficiency.yaml
+
   # ASAr2 cluster metrics
   - Name: cluster_space_available
     Description: Available space across the cluster.

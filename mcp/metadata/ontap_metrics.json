@@ -1437,6 +1437,8 @@
   "volume_capacity_tier_footprint_percent": "This field represents the footprint of blocks written to the volume in bin 1 as a percentage of aggregate size.",
   "volume_clone_split_estimate": "Display an estimate of additional storage required in the underlying aggregate to perform a volume clone split operation.",
   "volume_delayed_free_footprint": "This field represents the delayed free blocks footprint in bytes. This system is used to improve delete performance by batching delete requests.",
+  "volume_efficiency_labels": "This metric provides information about VolumeEfficiency",
+  "volume_efficiency_last_op_size": "Represent the data size of the last successfully completed deduplication, compression, or compaction operation executed on a storage volume",
   "volume_filesystem_size": "Filesystem size (in bytes) of the volume.  This is the total usable size of the volume, not including WAFL reserve.  This value is the same as Size except for certain SnapMirror destination volumes.  It is possible for destination volumes to have a different filesystem-size because the filesystem-size is sent across from the source volume.  This field is valid only when the volume is online.",
   "volume_guarantee_footprint": "This field represents the volume guarantee footprint in bytes. Alternatively, it is the space reserved for future writes in the volume.",
   "volume_hot_data": "Hot data size that is physically used in the volume.",
