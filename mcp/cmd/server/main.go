@@ -785,7 +785,7 @@ func applyClusterFilter(query, cluster, clusterMatch string) string {
 		return query[:idx] + ", " + labelFilter + query[idx:]
 	}
 
-	// Shape 2: metric_name{existing_labels...} — add cluster inside the braces
+	// metric_name{existing_labels...} — add cluster inside the braces
 	if strings.Contains(query, "{") {
 		closeIdx := strings.Index(query, "}")
 		if closeIdx == -1 {
