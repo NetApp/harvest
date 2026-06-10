@@ -22563,19 +22563,19 @@ The `volume_delayed_free_footprint` metric is visualized in the following Grafan
 
 This metric provides information about VolumeEfficiency
 
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/private/cli/volume/efficiency` | `Harvest generated` | conf/rest/9.6.0/vol_efficiency.yaml |
+| API    | Endpoint | Metric | Template                             |
+|--------|----------|--------|--------------------------------------|
+| REST | `api/private/cli/volume/efficiency` | `Harvest generated` | conf/rest/9.10.0/volume_efficiency.yaml |
 
 
 
 ### volume_efficiency_last_op_size
 
-Represent the data size of the last successfully completed deduplication, compression, or compaction operation executed on a storage volume
+Represents the data size of the last successfully completed deduplication, compression, or compaction operation executed on a storage volume
 
 | API    | Endpoint | Metric | Template                             |
 |--------|----------|--------|--------------------------------------|
-| REST | `api/private/cli/volume/efficiency` | `last_op_size` | conf/rest/9.6.0/vol_efficiency.yaml  |
+| REST | `api/private/cli/volume/efficiency` | `last_op_size` | conf/rest/9.10.0/volume_efficiency.yaml |
 
 
 
