@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Jun-04
+Creation Date : 2026-Jun-10
 ONTAP Version: 9.16.1
 ```
 
@@ -22556,6 +22556,26 @@ The `volume_delayed_free_footprint` metric is visualized in the following Grafan
 | ONTAP: Volume | FabricPool | table | [Volumes Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=185) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Delayed Free Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=179) |
 ///
+
+
+
+### volume_efficiency_labels
+
+This metric provides information about VolumeEfficiency
+
+| API    | Endpoint | Metric | Template                             |
+|--------|----------|--------|--------------------------------------|
+| REST | `api/private/cli/volume/efficiency` | `Harvest generated` | conf/rest/9.10.0/volume_efficiency.yaml |
+
+
+
+### volume_efficiency_last_op_size
+
+Represents the data size of the last successfully completed deduplication, compression, or compaction operation executed on a storage volume
+
+| API    | Endpoint | Metric | Template                             |
+|--------|----------|--------|--------------------------------------|
+| REST | `api/private/cli/volume/efficiency` | `last_op_size` | conf/rest/9.10.0/volume_efficiency.yaml |
 
 
 
