@@ -14694,6 +14694,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#volume_efficiency_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_efficiency_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_efficiency_last_op_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_efficiency_last_op_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#volume_filesystem_size" class="md-nav__link">
     <span class="md-ellipsis">
       volume_filesystem_size
@@ -29145,6 +29163,24 @@
   <a href="#volume_delayed_free_footprint" class="md-nav__link">
     <span class="md-ellipsis">
       volume_delayed_free_footprint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_efficiency_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_efficiency_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_efficiency_last_op_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_efficiency_last_op_size
     </span>
   </a>
   
@@ -90267,6 +90303,46 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 </div>
+<h3 id="volume_efficiency_labels">volume_efficiency_labels<a class="headerlink" href="#volume_efficiency_labels" title="Permanent link">&para;</a></h3>
+<p>This metric provides information about VolumeEfficiency</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/private/cli/volume/efficiency</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.6.0/volume_efficiency.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_efficiency_last_op_size">volume_efficiency_last_op_size<a class="headerlink" href="#volume_efficiency_last_op_size" title="Permanent link">&para;</a></h3>
+<p>Represents the data size of the last successfully completed deduplication, compression, or compaction operation executed on a storage volume</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/private/cli/volume/efficiency</code></td>
+<td><code>last_op_size</code></td>
+<td>conf/rest/9.10.0/volume_efficiency.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="volume_filesystem_size">volume_filesystem_size<a class="headerlink" href="#volume_filesystem_size" title="Permanent link">&para;</a></h3>
 <p>Filesystem size (in bytes) of the volume.  This is the total usable size of the volume, not including WAFL reserve.  This value is the same as Size except for certain SnapMirror destination volumes.  It is possible for destination volumes to have a different filesystem-size because the filesystem-size is sent across from the source volume.  This field is valid only when the volume is online.</p>
 <table>
