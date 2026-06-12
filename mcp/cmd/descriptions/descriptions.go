@@ -1,35 +1,30 @@
 package descriptions
 
-const InfrastructureHealthDesc = `Think of this as your ONTAP system's health checkup - like taking vital signs before diagnosing what's wrong.
-Combines multiple health indicators into a unified operational status view.
-Coverage: system availability, capacity utilization, performance baselines, known failure patterns.
-Output: Current status with trending indicators for operational planning.
-Workflow: Excellent starting point for infrastructure analysis and assessment.
+const InfrastructureHealthDesc = `ONTAP infrastructure health checkup. Start every troubleshooting session here.
 
-REACH FOR THIS WHEN:
-- General health questions, 'any problems?', starting any troubleshooting
+CHECKS PERFORMED:
+- Availability: cluster, node, aggregate, volume, SVM, cluster-subsystem (*_new_status != 1)
+- Hardware: disk, shelf, FRU (fans/PSUs), environmental sensors (temperature, voltage, fan)
+- Capacity: volumes > 95%, aggregate space > 85%, aggregate inodes >90%
+- Data protection: SnapMirror lag >24h (critical)
+- Network: LIF receive/send errors, ethernet switch port status
+- Licensing: high entitlement_risk, non-compliant licenses (license_labels), capacity >90% (license_capacity_used_percent)
+- SAN: LUN status, active health alerts (health_*)
 
-OPTIONAL CLUSTER FILTERING:
-- cluster: Exact cluster name to scope all health checks (e.g. 'prod-east-1'). Adds {cluster="X"} to every PromQL query.
-- cluster_match: Regex pattern matched against the cluster label. Adds {cluster=~"pattern"} to every query.
-  IMPORTANT: PromQL regex is fully anchored — 'asa' only matches the literal string "asa", not clusters that contain "asa".
-  For substring matching always wrap with .* on both sides: 'asa' → '.*asa.*', 'prod' → '.*prod.*'.
-  Examples: '.*asa.*' matches rtp-sa-asa01, rtp-sa-asa02. 'prod-.*' matches prod-east-1, prod-west-2 (prefix match).
-- When both are provided, 'cluster' takes precedence.
-- When neither is provided, all clusters are evaluated (global view — default behavior).
+METRIC SEMANTICS:
+- *_new_status: 1=healthy, 0=unhealthy
+- fru_status / environment_sensor_status: 1=ok, 0=degraded
+- health_* ≥ 1 = active alert
 
-ANALYSIS APPROACH:
-1. Start here for overall infrastructure status
-2. If issues found → use get_active_alerts for detailed alert information
-3. For capacity problems → use metrics_query with topk() to identify top consumers
-4. For performance issues → use metrics_range_query to analyze trends over time
-5. Drill down to component level (FlexGroup → constituents, aggregates → volumes)
+CLUSTER FILTERING (optional):
+- cluster: exact name → {cluster="X"} on every query
+- cluster_match: regex → {cluster=~"pattern"}. Fully anchored — use '.*prod.*' not 'prod'.
+- Omit both to evaluate all clusters.
 
-KEY METRICS CHECKED:
-- Status (*_new_status): 0=offline, 1=online
-- Capacity: *_size_used_percent, *_space_used_percent
-- Health: health_* indicators, error counters
-- Thresholds: Volumes >95% can cause app failures, Aggregates >80% need planning attention`
+WORKFLOW:
+1. Issues found → use get_active_alerts for detail
+2. Capacity problems → metrics_query with topk()
+3. Trends → metrics_range_query`
 
 const MetricsQueryDesc = `
 Approach: Start with simple metric queries, then add label filters to narrow scope. Use aggregation functions (sum, avg, max) for infrastructure-wide views.
@@ -52,7 +47,6 @@ COMMON QUERY PATTERNS:
 - Cluster-wide summary: sum by (cluster) (volume_size_total)
 - Filter by label: volume_ops_total{cluster="prod",node="node1"}`
 
-
 const ListAlertRulesDesc = `List all Prometheus alert rules from alert_rules.yml and ems_alert_rules.yml files.
 
 OPTIONAL CLUSTER FILTERING:
@@ -62,7 +56,6 @@ OPTIONAL CLUSTER FILTERING:
   For substring matching always wrap with .* on both sides: '.*asa.*'.
 - When both are provided, 'cluster' takes precedence.
 - When neither is provided, all rules are returned (default).`
-
 
 const MetricsRangeQueryDesc = `Use for trend analysis, growth patterns, historical baselines, and identifying when problems started.
 

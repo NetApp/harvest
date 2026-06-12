@@ -785,6 +785,15 @@ func applyClusterFilter(query, cluster, clusterMatch string) string {
 		return query[:idx] + ", " + labelFilter + query[idx:]
 	}
 
+	// metric_name{existing_labels...} — add cluster inside the braces
+	if strings.Contains(query, "{") {
+		closeIdx := strings.Index(query, "}")
+		if closeIdx == -1 {
+			return query
+		}
+		return query[:closeIdx] + ", " + labelFilter + query[closeIdx:]
+	}
+
 	idx := strings.Index(query, " ")
 	if idx == -1 {
 		return query + "{" + labelFilter + "}"
@@ -837,8 +846,31 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 		{"Volume Status", "volume_new_status != 1", "Volumes not online", false},
 		{"Full Volumes", "volume_size_used_percent == 100", "Volumes at 100% capacity", true},
 		{"High Volume Usage", "volume_size_used_percent > 95", "Volumes over 95% capacity", false},
-		{"High Aggregate Usage", "aggr_inode_used_percent > 90", "Aggregates over 90% capacity", false},
+		{"High Aggregate Inode Usage", "aggr_inode_used_percent > 90", "Aggregates over 90% inode capacity", false},
 		{"Health Alerts", "{__name__=~\"health_.*\"}", "Active health alerts", true},
+		// Hardware & environmental
+		{"Disk Status", "disk_new_status != 1", "Disks not online or failed", true},
+		{"Shelf Status", "shelf_new_status != 1", "Disk shelves not online", true},
+		{"FRU Status", "fru_status != 1", "Field-replaceable units (fans, PSUs) in non-ok state", false},
+		{"Environmental Sensors", "environment_sensor_status != 1", "Environmental sensors (temperature, voltage, fan) out of normal range", false},
+		// Aggregate space capacity
+		{"Critical Aggregate Space", "aggr_space_physical_used_percent > 95", "Aggregates over 95% physical space used", true},
+		{"High Aggregate Space", "aggr_space_physical_used_percent > 85", "Aggregates over 85% physical space used", false},
+		// Data protection
+		{"SnapMirror Lag Critical", "snapmirror_lag_time > 86400", "SnapMirror relationships with lag > 24 hours (DR at risk)", true},
+		// Network
+		{"LIF Receive Errors", "lif_recv_errors > 0", "Logical interfaces with receive errors", false},
+		{"LIF Send Errors", "lif_sent_errors > 0", "Logical interfaces with send errors", false},
+		{"Switch Port Status", "ethernet_switch_port_new_status != 1", "Ethernet switch ports not online", true},
+		// Licensing
+		{"License Entitlement Risk", `license_labels{entitlement_risk="high"}`, "Licenses with high entitlement risk", true},
+		{"License Compliance", `license_labels{compliance_state!="compliant"}`, "Licenses not in compliant state", false},
+		{"License Capacity", "license_capacity_used_percent > 90", "Licenses over 90% capacity used", false},
+		// SAN
+		{"LUN Status", "lun_new_status != 1", "LUNs not online", true},
+		// Cluster subsystems & SVMs
+		{"Cluster Subsystem Status", "cluster_subsystem_new_status != 1", "Cluster subsystems not healthy", true},
+		{"SVM Status", "svm_new_status != 1", "SVMs not running", true},
 	}
 
 	config := resolveTSDBConfig(args.TSDBOverride)
@@ -903,10 +935,13 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 		report = "🚨 **HEALTH ISSUES DETECTED** 🚨\n\n" + healthReport.String() +
 			"\n**Recommendation**: Review and address the issues above, prioritizing critical (🚨) alerts.\n\n" +
 			"**Health Monitoring Context**: \n" +
-			"- Status metrics (cluster_new_status, node_new_status, aggr_new_status, volume_new_status): 1 = healthy/online, 0 = unhealthy/offline\n" +
-			"- State metrics (*_state): When querying state metrics, 0 = object is offline, 1 = object is online\n" +
+			"- Status metrics (*_new_status): 1 = healthy/online, 0 = unhealthy/offline. Covers cluster, node, aggr, volume, disk, shelf, lun, cluster subsystem, SVM, ethernet switch port\n" +
 			"- Health metrics (health_*): Any value ≥ 1 indicates an active alert or issue\n" +
-			"- Capacity metrics: Monitor volume_size_used_percent and aggr_inode_used_percent for space issues\n"
+			"- FRU/sensor metrics (fru_status, environment_sensor_status): 1 = ok/normal, 0 = degraded/abnormal\n" +
+			"- Capacity metrics: volume_size_used_percent (per-volume), aggr_inode_used_percent (inode exhaustion), aggr_space_physical_used_percent (aggregate space)\n" +
+			"- Data protection: snapmirror_lag_time in seconds (>86400 = >24h lag, DR risk)\n" +
+			"- Network: lif_recv_errors / lif_sent_errors (non-zero = active errors), ethernet_switch_port_new_status\n" +
+			"- Licensing: license_capacity_used_percent (>90% = approaching limit)\n"
 	} else {
 		report = "✅ **ALL SYSTEMS HEALTHY** ✅\n\n" + healthReport.String() +
 			"\n**Status**: Your ONTAP infrastructure appears to be operating normally.\n"
@@ -957,11 +992,41 @@ func extractIdentifiers(metric map[string]any) string {
 	if node, ok := metric["node"].(string); ok {
 		identifiers = append(identifiers, "node:"+node)
 	}
+	if svm, ok := metric["svm"].(string); ok {
+		identifiers = append(identifiers, "svm:"+svm)
+	}
 	if volume, ok := metric["volume"].(string); ok {
 		identifiers = append(identifiers, "volume:"+volume)
 	}
 	if aggr, ok := metric["aggr"].(string); ok {
 		identifiers = append(identifiers, "aggr:"+aggr)
+	}
+	if disk, ok := metric["disk"].(string); ok {
+		identifiers = append(identifiers, "disk:"+disk)
+	}
+	if shelf, ok := metric["shelf"].(string); ok {
+		identifiers = append(identifiers, "shelf:"+shelf)
+	}
+	if lif, ok := metric["lif"].(string); ok {
+		identifiers = append(identifiers, "lif:"+lif)
+	}
+	if lun, ok := metric["lun"].(string); ok {
+		identifiers = append(identifiers, "lun:"+lun)
+	}
+	if port, ok := metric["port"].(string); ok {
+		identifiers = append(identifiers, "port:"+port)
+	}
+	if srcVol, ok := metric["source_volume"].(string); ok {
+		identifiers = append(identifiers, "source_volume:"+srcVol)
+	}
+	if destVol, ok := metric["destination_volume"].(string); ok {
+		identifiers = append(identifiers, "destination_volume:"+destVol)
+	}
+	if subsystem, ok := metric["subsystem"].(string); ok {
+		identifiers = append(identifiers, "subsystem:"+subsystem)
+	}
+	if license, ok := metric["license"].(string); ok {
+		identifiers = append(identifiers, "license:"+license)
 	}
 	if severity, ok := metric["severity"].(string); ok {
 		identifiers = append(identifiers, "severity:"+severity)
