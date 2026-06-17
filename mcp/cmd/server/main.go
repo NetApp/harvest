@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/VictoriaMetrics/metricsql"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/spf13/cobra"
@@ -66,6 +67,7 @@ var logger = setupLogger()
 var metricDescriptions map[string]string
 var ruleManager *rules.RuleManager
 var tsdbConfig auth.TSDBConfig
+var parsedLabelFilter []metricsql.LabelFilter
 
 const (
 	AppName = "harvest-mcp"
@@ -94,6 +96,11 @@ Optional Environment Variables (TLS):
 
 Optional Environment Variables (Timeout):
   HARVEST_TSDB_TIMEOUT          Request timeout duration (e.g., '30s', '1m', '90s', default: 30s)
+
+Optional Environment Variables (Metric Scoping):
+  HARVEST_TSDB_LABEL_FILTER     PromQL label selector injected into every query to scope results
+                                (e.g., 'job="harvest"' or 'job=~"harvest|storagegrid"')
+                                Useful when TSDB contains metrics from multiple sources
 
 Optional Environment Variables (Logging):
   LOG_LEVEL                 Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
@@ -209,9 +216,10 @@ func resolveTSDBConfig(override mcptypes.TSDBOverride) auth.TSDBConfig {
 		slog.Bool("custom_auth", override.Username != ""))
 
 	config := auth.TSDBConfig{
-		URL:       override.URL,
-		Timeout:   tsdbConfig.Timeout,
-		RulesPath: tsdbConfig.RulesPath,
+		URL:         override.URL,
+		Timeout:     tsdbConfig.Timeout,
+		RulesPath:   tsdbConfig.RulesPath,
+		LabelFilter: tsdbConfig.LabelFilter,
 		Auth: auth.Config{
 			Type:            auth.None,
 			InsecureSkipTLS: tsdbConfig.Auth.InsecureSkipTLS,
@@ -297,12 +305,13 @@ func MetricsQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.Query
 
 	config := resolveTSDBConfig(args.TSDBOverride)
 
+	query := injectFilters(args.Query, parsedLabelFilter)
 	queryURL := config.URL + "/api/v1/query"
 	urlValues := url.Values{}
-	urlValues.Set("query", args.Query)
+	urlValues.Set("query", query)
 
 	logger.Debug("Executing Prometheus instant query",
-		slog.String("query", args.Query),
+		slog.String("query", query),
 		slog.String("url", queryURL))
 
 	promResp, err := executeTSDBQuery(config, queryURL, urlValues)
@@ -322,15 +331,16 @@ func MetricsRangeQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.
 
 	config := resolveTSDBConfig(args.TSDBOverride)
 
+	query := injectFilters(args.Query, parsedLabelFilter)
 	queryURL := config.URL + "/api/v1/query_range"
 	urlValues := url.Values{}
-	urlValues.Set("query", args.Query)
+	urlValues.Set("query", query)
 	urlValues.Set("start", args.Start)
 	urlValues.Set("end", args.End)
 	urlValues.Set("step", args.Step)
 
 	logger.Debug("Executing Prometheus range query",
-		slog.String("query", args.Query),
+		slog.String("query", query),
 		slog.String("start", args.Start),
 		slog.String("end", args.End),
 		slog.String("step", args.Step),
@@ -418,6 +428,17 @@ func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMe
 		}
 	}
 
+	// Inject label filter into match[] for server-side scoping
+	if len(parsedLabelFilter) > 0 {
+		if len(matchList) > 0 {
+			for i, m := range matchList {
+				matchList[i] = injectFilters(m, parsedLabelFilter)
+			}
+		} else {
+			matchList = append(matchList, injectFilters("{}", parsedLabelFilter))
+		}
+	}
+
 	if len(matchList) > 0 {
 		logger.Debug("Using server-side filtering with matches", slog.Any("matches", matchList))
 		body, err = makePrometheusAPICallWithMatches(config, "/api/v1/label/__name__/values", matchList)
@@ -483,7 +504,14 @@ func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.Li
 
 	config := resolveTSDBConfig(args.TSDBOverride)
 
-	body, err := makePrometheusAPICall(config, "/api/v1/label/"+args.Label+"/values")
+	var body []byte
+	var err error
+	endpoint := "/api/v1/label/" + args.Label + "/values"
+	if config.LabelFilter != "" {
+		body, err = makePrometheusAPICallWithMatches(config, endpoint, []string{"{" + config.LabelFilter + "}"})
+	} else {
+		body, err = makePrometheusAPICall(config, endpoint)
+	}
 	if err != nil {
 		logger.Error("Failed to query Prometheus label values", slogx.Err(err), slog.String("label", args.Label))
 		return handlePrometheusError(err, fmt.Sprintf("query label values for '%s'", args.Label)), nil, nil
@@ -518,7 +546,14 @@ func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.Li
 // ListAllLabelNames lists all available label names (dimensions) from Prometheus
 func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListAllLabelNamesRequest) (*mcp.CallToolResult, any, error) {
 	config := resolveTSDBConfig(args.TSDBOverride)
-	body, err := makePrometheusAPICall(config, "/api/v1/labels")
+
+	var body []byte
+	var err error
+	if config.LabelFilter != "" {
+		body, err = makePrometheusAPICallWithMatches(config, "/api/v1/labels", []string{"{" + config.LabelFilter + "}"})
+	} else {
+		body, err = makePrometheusAPICall(config, "/api/v1/labels")
+	}
 	if err != nil {
 		return handlePrometheusError(err, "query Prometheus label names"), nil, nil
 	}
@@ -716,7 +751,8 @@ func checkClusterExists(config auth.TSDBConfig, cluster, clusterMatch string) (*
 		return nil, nil
 	}
 
-	existQuery := applyClusterFilter("cluster_new_status", cluster, clusterMatch)
+	existQuery := injectFilters("cluster_new_status", parsedLabelFilter)
+	existQuery = applyClusterFilter(existQuery, cluster, clusterMatch)
 	existValues := url.Values{}
 	existValues.Set("query", existQuery)
 	existResp, err := executeTSDBQuery(config, config.URL+"/api/v1/query", existValues)
@@ -731,7 +767,7 @@ func checkClusterExists(config auth.TSDBConfig, cluster, clusterMatch string) (*
 
 	var clusterList string
 	activeValues := url.Values{}
-	activeValues.Set("query", "cluster_new_status")
+	activeValues.Set("query", injectFilters("cluster_new_status", parsedLabelFilter))
 	if activeResp, activeErr := executeTSDBQuery(config, config.URL+"/api/v1/query", activeValues); activeErr == nil {
 		names := extractClusterNames(activeResp.Data.Result)
 		if len(names) > 0 {
@@ -755,50 +791,64 @@ func checkClusterExists(config auth.TSDBConfig, cluster, clusterMatch string) (*
 	}, nil
 }
 
-// applyClusterFilter injects a cluster label matcher into a bare PromQL query expression.
-//
-// Two query shapes are handled:
-//
-//  1. Queries that already open with a label selector:
-//     {__name__=~"health_.*"}  →  {__name__=~"health_.*", cluster="X"}
-//
-//  2. Queries whose first token is a metric name:
-//     volume_size_used_percent > 95  →  volume_size_used_percent{cluster="X"} > 95
-//
+// parseSelector parses a raw selector string like `job="harvest"` into a slice
+// of LabelFilter values. Returns nil if the selector is empty or not valid PromQL.
+func parseSelector(selector string) []metricsql.LabelFilter {
+	if selector == "" {
+		return nil
+	}
+	selectorExpr, err := metricsql.Parse("{" + selector + "}")
+	if err != nil {
+		return nil
+	}
+	selectorMetric, ok := selectorExpr.(*metricsql.MetricExpr)
+	if !ok || len(selectorMetric.LabelFilterss) == 0 {
+		return nil
+	}
+	var filters []metricsql.LabelFilter
+	for _, lf := range selectorMetric.LabelFilterss[0] {
+		if lf.Label != "__name__" {
+			filters = append(filters, lf)
+		}
+	}
+	return filters
+}
+
+// applyClusterFilter injects a cluster label matcher into a PromQL query expression.
 // When neither cluster nor clusterMatch is set the query is returned unchanged.
 func applyClusterFilter(query, cluster, clusterMatch string) string {
-	var labelFilter string
+	var filters []metricsql.LabelFilter
 	switch {
 	case cluster != "":
-		labelFilter = `cluster="` + cluster + `"`
+		filters = []metricsql.LabelFilter{{Label: "cluster", Value: cluster}}
 	case clusterMatch != "":
-		labelFilter = `cluster=~"` + clusterMatch + `"`
+		filters = []metricsql.LabelFilter{{Label: "cluster", Value: clusterMatch, IsRegexp: true}}
 	default:
 		return query
 	}
+	return injectFilters(query, filters)
+}
 
-	if strings.HasPrefix(query, "{") {
-		idx := strings.Index(query, "}")
-		if idx == -1 {
-			return query
+// injectFilters appends the given filters into every MetricExpr in a PromQL query.
+// Returns the query unchanged if filters is empty or the query cannot be parsed.
+func injectFilters(query string, filters []metricsql.LabelFilter) string {
+	if len(filters) == 0 {
+		return query
+	}
+	expr, err := metricsql.Parse(query)
+	if err != nil {
+		return query
+	}
+	metricsql.VisitAll(expr, func(node metricsql.Expr) {
+		me, ok := node.(*metricsql.MetricExpr)
+		if !ok {
+			return
 		}
-		return query[:idx] + ", " + labelFilter + query[idx:]
-	}
-
-	// metric_name{existing_labels...} — add cluster inside the braces
-	if strings.Contains(query, "{") {
-		closeIdx := strings.Index(query, "}")
-		if closeIdx == -1 {
-			return query
+		for i := range me.LabelFilterss {
+			me.LabelFilterss[i] = append(me.LabelFilterss[i], filters...)
 		}
-		return query[:closeIdx] + ", " + labelFilter + query[closeIdx:]
-	}
-
-	idx := strings.Index(query, " ")
-	if idx == -1 {
-		return query + "{" + labelFilter + "}"
-	}
-	return query[:idx] + "{" + labelFilter + "}" + query[idx:]
+	})
+	return string(expr.AppendString(nil))
 }
 
 func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.InfrastructureHealthRequest) (*mcp.CallToolResult, any, error) {
@@ -884,7 +934,8 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 	for _, check := range healthChecks {
 		queryURL := config.URL + "/api/v1/query"
 		urlValues := url.Values{}
-		filteredQuery := applyClusterFilter(check.query, args.Cluster, args.ClusterMatch)
+		filteredQuery := injectFilters(check.query, parsedLabelFilter)
+		filteredQuery = applyClusterFilter(filteredQuery, args.Cluster, args.ClusterMatch)
 		urlValues.Set("query", filteredQuery)
 
 		// Debug logging for infrastructure health check query
@@ -1157,6 +1208,17 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 	}
 
 	tsdbConfig = auth.GetTSDBConfig()
+
+	if tsdbConfig.LabelFilter != "" {
+		parsedLabelFilter = parseSelector(tsdbConfig.LabelFilter)
+		if parsedLabelFilter == nil {
+			logger.Error("invalid HARVEST_TSDB_LABEL_FILTER: not a valid PromQL label selector",
+				slog.String("value", tsdbConfig.LabelFilter),
+				slog.String("example", `job="harvest"`))
+			os.Exit(1)
+		}
+		logger.Info("label filter active", slog.String("filter", tsdbConfig.LabelFilter))
+	}
 
 	logger.Info("server configuration",
 		slog.String("tsdb_url", tsdbConfig.URL),

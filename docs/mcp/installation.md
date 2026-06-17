@@ -195,6 +195,28 @@ docker run --rm ghcr.io/netapp/harvest-mcp:latest start --help
 
 This displays all available environment variables with descriptions, authentication options, and advanced settings.
 
+### Scoping to Harvest Metrics (Multi-source TSDB)
+
+If your Prometheus or VictoriaMetrics instance contains metrics from multiple sources — for example, both Harvest and `node_exporter`, `kube-state-metrics`, or other exporters — use `HARVEST_TSDB_LABEL_FILTER` to scope every MCP query exclusively to Harvest metrics.
+
+**Environment variable**: `HARVEST_TSDB_LABEL_FILTER`
+
+**Value**: any valid PromQL label matcher, without the surrounding `{}`
+
+| Scenario | Value |
+|----------|-------|
+| Job label | `job="harvest"` |
+| Custom label | `source="harvest"` |
+
+When set, the filter is automatically injected into every query and `match[]` selector issued by the MCP server. You do not need to include it in any question you ask the AI — it is applied transparently.
+
+| Query type | Before | After (with `job="harvest"`) |
+|-----------|--------|------------------------------|
+| Bare metric | `volume_size_used_percent` | `volume_size_used_percent{job="harvest"}` |
+| With existing labels | `volume_size_used_percent{svm="vs1"}` | `volume_size_used_percent{svm="vs1",job="harvest"}` |
+| Aggregation | `count by (cluster) (cluster_new_status)` | `count(cluster_new_status{job="harvest"}) by(cluster)` |
+| Nested function | `sum(rate(http_requests_total[5m]))` | `sum(rate(http_requests_total{job="harvest"}[5m]))` |
+
 ## Next Steps
 
 - Explore [Usage Examples](examples.md)

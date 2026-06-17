@@ -53,6 +53,9 @@ graph LR
 - Docker environment for running the MCP server
 - Network connectivity from MCP server to your time series database
 
+!!! tip "Shared TSDB?"
+    If your Prometheus or VictoriaMetrics also collects metrics from other exporters (node_exporter, kube-state-metrics, etc.), set `HARVEST_TSDB_LABEL_FILTER` to automatically scope every query to Harvest metrics only. See [Scoping to Harvest Metrics](installation.md#scoping-to-harvest-metrics-multi-source-tsdb) in the installation guide.
+
 For information about Harvest deployment and configuration, see:
 
 - [Harvest Concepts](../concepts.md)

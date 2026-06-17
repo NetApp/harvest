@@ -41,10 +41,11 @@ type Config struct {
 
 // TSDBConfig holds Time Series Database configuration
 type TSDBConfig struct {
-	URL       string
-	Auth      Config
-	Timeout   time.Duration
-	RulesPath string
+	URL         string
+	Auth        Config
+	Timeout     time.Duration
+	RulesPath   string
+	LabelFilter string // Optional PromQL label selector injected into every query (e.g. job="harvest")
 }
 
 var logger = slog.Default()
@@ -190,11 +191,19 @@ func GetTSDBConfig() TSDBConfig {
 		}
 	}
 
+	// Label filter for scoping all queries to Harvest metrics
+	labelFilter := strings.TrimSpace(os.Getenv("HARVEST_TSDB_LABEL_FILTER"))
+	// Strip surrounding braces if user included them
+	labelFilter = strings.TrimPrefix(labelFilter, "{")
+	labelFilter = strings.TrimSuffix(labelFilter, "}")
+	labelFilter = strings.TrimSpace(labelFilter)
+
 	return TSDBConfig{
-		URL:       os.Getenv("HARVEST_TSDB_URL"),
-		Auth:      LoadAuthConfig(),
-		Timeout:   timeout,
-		RulesPath: rulesPath,
+		URL:         os.Getenv("HARVEST_TSDB_URL"),
+		Auth:        LoadAuthConfig(),
+		Timeout:     timeout,
+		RulesPath:   rulesPath,
+		LabelFilter: labelFilter,
 	}
 }
 

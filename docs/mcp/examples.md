@@ -55,6 +55,7 @@ Expected response: Detailed growth analysis by cluster and aggregate, mathematic
 3. **Ask follow-up questions** to dive deeper into specific areas
 4. **Combine multiple areas** (e.g., "Show me capacity and performance issues together")
 5. **Request different perspectives** (executive summary vs. technical details)
+6. **Shared TSDB?** If your Prometheus/VictoriaMetrics has metrics from multiple sources, use `HARVEST_TSDB_LABEL_FILTER` to scope every query to Harvest metrics only. Set it to whatever label value identifies your Harvest scrape job (e.g. `job="harvest"`, `job="netapp-harvest"`, or a custom label like `source="harvest"`). See [Scoping to Harvest Metrics](installation.md#scoping-to-harvest-metrics-multi-source-tsdb).
 
 ## MCP Clients
 
