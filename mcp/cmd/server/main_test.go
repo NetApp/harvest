@@ -81,6 +81,12 @@ func TestInjectLabelSelector(t *testing.T) {
 			selector: `job="harvest"`,
 			want:     `count_values("version", build_info{job="harvest"})`,
 		},
+		{
+			name:     "empty selector query - injects into bare braces (ListMetrics fallback)",
+			query:    `{}`,
+			selector: `job="harvest"`,
+			want:     `{job="harvest"}`,
+		},
 	}
 
 	for _, tt := range tests {

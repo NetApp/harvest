@@ -844,8 +844,12 @@ func injectFilters(query string, filters []metricsql.LabelFilter) string {
 		if !ok {
 			return
 		}
-		for i := range me.LabelFilterss {
-			me.LabelFilterss[i] = append(me.LabelFilterss[i], filters...)
+		if len(me.LabelFilterss) == 0 {
+			me.LabelFilterss = [][]metricsql.LabelFilter{append([]metricsql.LabelFilter{}, filters...)}
+		} else {
+			for i := range me.LabelFilterss {
+				me.LabelFilterss[i] = append(me.LabelFilterss[i], filters...)
+			}
 		}
 	})
 	return string(expr.AppendString(nil))
