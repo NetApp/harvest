@@ -12,6 +12,8 @@ WORKDIR $BUILD_DIR
 RUN mkdir -p $INSTALL_DIR
 
 COPY mcp/ ./mcp/
+COPY go.mod go.sum ./
+COPY pkg/ ./pkg/
 COPY .golangci.yml ./
 
 WORKDIR $BUILD_DIR/mcp
