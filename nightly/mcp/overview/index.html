@@ -2164,6 +2164,10 @@ The Harvest MCP server provides APIs for large language models (LLMs) to query y
 <li>Docker environment for running the MCP server</li>
 <li>Network connectivity from MCP server to your time series database</li>
 </ul>
+<div class="admonition tip">
+<p class="admonition-title">Shared TSDB?</p>
+<p>If your Prometheus or VictoriaMetrics also collects metrics from other exporters (node_exporter, kube-state-metrics, etc.), set <code>HARVEST_TSDB_LABEL_FILTER</code> to automatically scope every query to Harvest metrics only. See <a href="../installation/#scoping-to-harvest-metrics-multi-source-tsdb">Scoping to Harvest Metrics</a> in the installation guide.</p>
+</div>
 <p>For information about Harvest deployment and configuration, see:</p>
 <ul>
 <li><a href="../../concepts/">Harvest Concepts</a></li>

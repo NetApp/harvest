@@ -2247,6 +2247,7 @@
 <li><strong>Ask follow-up questions</strong> to dive deeper into specific areas</li>
 <li><strong>Combine multiple areas</strong> (e.g., "Show me capacity and performance issues together")</li>
 <li><strong>Request different perspectives</strong> (executive summary vs. technical details)</li>
+<li><strong>Shared TSDB?</strong> If your Prometheus/VictoriaMetrics has metrics from multiple sources, use <code>HARVEST_TSDB_LABEL_FILTER</code> to scope every query to Harvest metrics only. Set it to whatever label value identifies your Harvest scrape job (e.g. <code>job="harvest"</code>, <code>job="netapp-harvest"</code>, or a custom label like <code>source="harvest"</code>). See <a href="../installation/#scoping-to-harvest-metrics-multi-source-tsdb">Scoping to Harvest Metrics</a>.</li>
 </ol>
 <h2 id="mcp-clients">MCP Clients<a class="headerlink" href="#mcp-clients" title="Permanent link">&para;</a></h2>
 <p>Common MCP clients that work with Harvest MCP Server:</p>

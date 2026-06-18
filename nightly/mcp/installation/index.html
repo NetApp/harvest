@@ -1541,6 +1541,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scoping-to-harvest-metrics-multi-source-tsdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scoping to Harvest Metrics (Multi-source TSDB)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2309,6 +2324,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scoping-to-harvest-metrics-multi-source-tsdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scoping to Harvest Metrics (Multi-source TSDB)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2485,6 +2515,60 @@ docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>ghcr.io/netapp/harvest-mcp:latest<span class="w"> </span>start<span class="w"> </span>--help
 </code></pre></div>
 <p>This displays all available environment variables with descriptions, authentication options, and advanced settings.</p>
+<h3 id="scoping-to-harvest-metrics-multi-source-tsdb">Scoping to Harvest Metrics (Multi-source TSDB)<a class="headerlink" href="#scoping-to-harvest-metrics-multi-source-tsdb" title="Permanent link">&para;</a></h3>
+<p>If your Prometheus or VictoriaMetrics instance contains metrics from multiple sources — for example, both Harvest and <code>node_exporter</code>, <code>kube-state-metrics</code>, or other exporters — use <code>HARVEST_TSDB_LABEL_FILTER</code> to scope every MCP query exclusively to Harvest metrics.</p>
+<p><strong>Environment variable</strong>: <code>HARVEST_TSDB_LABEL_FILTER</code></p>
+<p><strong>Value</strong>: any valid PromQL label matcher, without the surrounding <code>{}</code></p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Job label</td>
+<td><code>job="harvest"</code></td>
+</tr>
+<tr>
+<td>Custom label</td>
+<td><code>source="harvest"</code></td>
+</tr>
+</tbody>
+</table>
+<p>When set, the filter is automatically injected into every query and <code>match[]</code> selector issued by the MCP server. You do not need to include it in any question you ask the AI — it is applied transparently.</p>
+<table>
+<thead>
+<tr>
+<th>Query type</th>
+<th>Before</th>
+<th>After (with <code>job="harvest"</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bare metric</td>
+<td><code>volume_size_used_percent</code></td>
+<td><code>volume_size_used_percent{job="harvest"}</code></td>
+</tr>
+<tr>
+<td>With existing labels</td>
+<td><code>volume_size_used_percent{svm="vs1"}</code></td>
+<td><code>volume_size_used_percent{svm="vs1",job="harvest"}</code></td>
+</tr>
+<tr>
+<td>Aggregation</td>
+<td><code>count by (cluster) (cluster_new_status)</code></td>
+<td><code>count(cluster_new_status{job="harvest"}) by(cluster)</code></td>
+</tr>
+<tr>
+<td>Nested function</td>
+<td><code>sum(rate(http_requests_total[5m]))</code></td>
+<td><code>sum(rate(http_requests_total{job="harvest"}[5m]))</code></td>
+</tr>
+</tbody>
+</table>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Explore <a href="../examples/">Usage Examples</a></li>
