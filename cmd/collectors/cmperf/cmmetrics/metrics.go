@@ -31,8 +31,6 @@ type CounterSchema struct {
 	Index     uint32
 	BaseIndex uint32
 	Type      CounterTypeEnum
-	DimX      uint32
-	DimY      uint32
 	LabelsX   []string
 	LabelsY   []string
 }
@@ -529,18 +527,6 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 				return counterSchema, fmt.Errorf("counter schema type %d exceeds uint8", val)
 			}
 			counterSchema.Type = CounterTypeEnum(val)
-		case 4:
-			val, ok := fc.Uint32()
-			if !ok {
-				return counterSchema, errors.New("failed to read counter schema dim_x")
-			}
-			counterSchema.DimX = val
-		case 5:
-			val, ok := fc.Uint32()
-			if !ok {
-				return counterSchema, errors.New("failed to read counter schema dim_y")
-			}
-			counterSchema.DimY = val
 		case 6:
 			val, ok := fc.String()
 			if !ok {
