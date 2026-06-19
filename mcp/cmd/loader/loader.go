@@ -12,9 +12,19 @@ import (
 func LoadMetricDescriptions(metadataDir string, logger *slog.Logger) map[string]string {
 	descriptions := make(map[string]string)
 
+	if _, err := os.Stat(metadataDir); os.IsNotExist(err) {
+		logger.Warn("metadata directory does not exist", slog.String("dir", metadataDir))
+		return descriptions
+	}
+
 	matches, err := filepath.Glob(filepath.Join(metadataDir, "*_metrics.json"))
 	if err != nil {
 		logger.Warn("failed to glob metadata directory", slog.String("dir", metadataDir), slog.Any("error", err))
+		return descriptions
+	}
+
+	if len(matches) == 0 {
+		logger.Warn("no *_metrics.json files found in metadata directory", slog.String("dir", metadataDir))
 		return descriptions
 	}
 
