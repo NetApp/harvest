@@ -8,33 +8,32 @@ import (
 	"path/filepath"
 )
 
-// LoadMetricDescriptions loads all metric descriptions from JSON files
+// LoadMetricDescriptions loads all metric descriptions from JSON files matching *_metrics.json
 func LoadMetricDescriptions(metadataDir string, logger *slog.Logger) map[string]string {
 	descriptions := make(map[string]string)
 
-	files := []string{"ontap_metrics.json", "storagegrid_metrics.json", "cisco_metrics.json", "eseries_metrics.json"}
+	matches, err := filepath.Glob(filepath.Join(metadataDir, "*_metrics.json"))
+	if err != nil {
+		logger.Warn("failed to glob metadata directory", slog.String("dir", metadataDir), slog.Any("error", err))
+		return descriptions
+	}
 
 	loadedCount := 0
-	for _, filename := range files {
-		filePath := filepath.Join(metadataDir, filename)
-		if data, err := os.ReadFile(filePath); err == nil {
-			var fileDescriptions map[string]string
-			if json.Unmarshal(data, &fileDescriptions) == nil {
-				maps.Copy(descriptions, fileDescriptions)
-				loadedCount++
-				logger.Info("loaded metadata file",
-					slog.String("file", filename),
-					slog.Int("metrics", len(fileDescriptions)))
-			} else {
-				logger.Warn("failed to parse metadata file",
-					slog.String("file", filename),
-					slog.Any("error", err))
-			}
-		} else {
-			logger.Warn("failed to read metadata file",
-				slog.String("file", filename),
-				slog.Any("error", err))
+	for _, filePath := range matches {
+		filename := filepath.Base(filePath)
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			logger.Warn("failed to read metadata file", slog.String("file", filename), slog.Any("error", err))
+			continue
 		}
+		var fileDescriptions map[string]string
+		if err := json.Unmarshal(data, &fileDescriptions); err != nil {
+			logger.Warn("failed to parse metadata file", slog.String("file", filename), slog.Any("error", err))
+			continue
+		}
+		maps.Copy(descriptions, fileDescriptions)
+		loadedCount++
+		logger.Info("loaded metadata file", slog.String("file", filename), slog.Int("metrics", len(fileDescriptions)))
 	}
 
 	logger.Info("metadata loading complete",
