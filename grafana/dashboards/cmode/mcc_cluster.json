@@ -2962,7 +2962,7 @@
                   }
                 ]
               },
-              "unit": "KBps"
+              "unit": "KBs"
             },
             "overrides": []
           },
@@ -3248,7 +3248,7 @@
                   }
                 ]
               },
-              "unit": "KBps"
+              "unit": "KBs"
             },
             "overrides": []
           },
