@@ -2901,7 +2901,7 @@
               "exemplar": false,
               "expr": "path_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "{{node}} - {{target_wwpn}}",
               "refId": "A",
               "textEditor": false
             }
@@ -2962,7 +2962,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "KBs"
             },
             "overrides": []
           },
@@ -2996,7 +2996,7 @@
               "exemplar": false,
               "expr": "path_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "{{node}} - {{target_wwpn}}",
               "refId": "A",
               "textEditor": false
             }
@@ -3092,7 +3092,7 @@
               "exemplar": false,
               "expr": "path_read_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "{{node}} - {{target_wwpn}}",
               "refId": "A",
               "textEditor": false
             }
@@ -3187,7 +3187,7 @@
               "exemplar": false,
               "expr": "path_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "{{node}} - {{target_wwpn}}",
               "refId": "A",
               "textEditor": false
             }
@@ -3248,7 +3248,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "KBs"
             },
             "overrides": []
           },
@@ -3282,7 +3282,7 @@
               "exemplar": false,
               "expr": "path_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "{{node}} - {{target_wwpn}}",
               "refId": "A",
               "textEditor": false
             }
@@ -3378,7 +3378,7 @@
               "exemplar": false,
               "expr": "path_write_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "{{node}} - {{target_wwpn}}",
               "refId": "A",
               "textEditor": false
             }
