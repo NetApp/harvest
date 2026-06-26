@@ -534,6 +534,8 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 							slog.Float64("prev_raw_base", prevBaseRawMetric.values[i]),
 							slog.Float64("current_raw_base", curBaseRawMetric.values[i]),
 							slog.Any("instanceLabels", instance.GetLabels()),
+							slog.Float64("minimumBase", minimumBase),
+							slog.Int("threshold", threshold),
 							slog.String("instKey", key),
 						)
 					}
