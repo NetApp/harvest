@@ -3075,6 +3075,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#disk_path_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      disk_path_count
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#disk_power_on_hours" class="md-nav__link">
     <span class="md-ellipsis">
       disk_power_on_hours
@@ -17544,6 +17553,15 @@
   <a href="#disk_new_status" class="md-nav__link">
     <span class="md-ellipsis">
       disk_new_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disk_path_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      disk_path_count
     </span>
   </a>
   
@@ -36315,6 +36333,53 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
+<h3 id="disk_path_count">disk_path_count<a class="headerlink" href="#disk_path_count" title="Permanent link">&para;</a></h3>
+<p>Number of active paths to the disk</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/private/cli/disk</code></td>
+<td><code>path_count</code></td>
+<td>conf/rest/9.12.0/disk.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/disk.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>disk_path_count</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Disk</td>
+<td>List of Disks</td>
+<td>table</td>
+<td><a href="/d/cdot-disk/ontap3a-disk?orgId=1&amp;viewPanel=18">Disks in Cluster</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h3 id="disk_power_on_hours">disk_power_on_hours<a class="headerlink" href="#disk_power_on_hours" title="Permanent link">&para;</a></h3>
 <p>Hours powered on.</p>
 <table>
