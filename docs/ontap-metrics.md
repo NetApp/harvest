@@ -2400,6 +2400,7 @@ Number of active paths to the disk
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/private/cli/disk` | `path_count` | conf/rest/9.12.0/disk.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 The `disk_path_count` metric is visualized in the following Grafana dashboards:
     

@@ -85,6 +85,15 @@ counters:
 
   - Name: disk_path_count
     Description: Number of active paths to the disk
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/disk
+        ONTAPCounter: path_count
+        Template: conf/rest/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/disk.yaml
 
   - Name: disk_stats_io_kbps
     Description: Total Disk Throughput in KBPS Across All Active Paths
