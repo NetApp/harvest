@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/cluster"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qtree"
@@ -154,6 +155,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return aggregate.New(abc)
 	case "Certificate":
 		return certificate.New(abc)
+	case "Disk":
+		return disk.New(abc)
 	case "Cluster":
 		return cluster.New(abc)
 	case "LIF":

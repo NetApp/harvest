@@ -20,6 +20,10 @@ counters:
         - ^home-node-name         => node
         - ^is-failed              => failed
         - ^owner-node-name        => owner_node
+        - ^pool                   => pool
+    - disk-paths:
+        - disk-path-info:
+            - ^disk-name          => path_list
     - disk-raid-info:
         - ^container-type         => container_type
         - disk-outage-info:
@@ -33,6 +37,7 @@ counters:
         - sectors-written
 
 plugins:
+  - Disk
   - LabelAgent:
     # metric label zapi_value rest_value `default_value`
       value_to_num:
@@ -51,6 +56,7 @@ export_options:
     - model
     - outage
     - owner_node
+    - pool
     - serial_number
     - shared
     - shelf

@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Jun-10
+Creation Date : 2026-Jun-26
 ONTAP Version: 9.16.1
 ```
 
@@ -2390,6 +2390,25 @@ This metric indicates a value of 1 if the disk is not in an outage (i.e., the ou
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/disk.yaml |
+
+
+
+### disk_path_count
+
+Number of active paths to the disk
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/disk` | `path_count` | conf/rest/9.12.0/disk.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/disk.yaml |
+
+The `disk_path_count` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Disk | List of Disks | table | [Disks in Cluster](/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=18) |
+///
 
 
 
