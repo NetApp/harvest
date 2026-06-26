@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/iwarp/rows?counters.name=average_latency%7Cops%7Cread_ops%7Cwrite_ops&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 10
+

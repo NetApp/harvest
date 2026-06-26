@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/headroom_aggregate/rows?counters.name=current_latency%7Ccurrent_ops%7Ccurrent_utilization%7Ccurrent_utilization_denominator%7Cewma.daily%7Cewma.hourly%7Cewma.monthly%7Cewma.weekly%7Coptimal_point.confidence_factor%7Coptimal_point.latency%7Coptimal_point.ops%7Coptimal_point.samples%7Coptimal_point.utilization&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 45
+

@@ -1,0 +1,1278 @@
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 08:53:14 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+65f7
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-01:e0M",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "type",
+          "value": "nic_igbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "1000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "full"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "no"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 334268515888
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 2145101351904
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-01:e0a",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "none"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 164513773681334
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 233904499794549
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 9
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-01:e0b",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "none"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 190946122157732
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 268481058208593
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 9
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-01:e0c",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "1000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "receive"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 2037461630648
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 8576
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 121203178601
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-01:e0d",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "1000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "receive"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 4494947248
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 8576
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 2517375803
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-01:e0g",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "type",
+          "value": "nic_qla"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "full"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 857189556875891
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 667830694350657
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-01:e0h",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "type",
+          "value": "nic_qla"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "full"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 4288610037
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 1948375721
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-02:e0M",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "type",
+          "value": "nic_igbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "1000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "full"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "no"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 10351302579
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 9860799327
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-02:e0a",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "none"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 1093332323929
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 1702603349337
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-02:e0b",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "none"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 2786909221352
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 3647217214162
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-02:e0c",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "1000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "receive"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 152599367467
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 4018
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 50967745366
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-02:e0d",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "type",
+          "value": "nic_ixgbe"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "1000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "receive"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 2148819944
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 4017
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 942600913
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-02:e0g",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "type",
+          "value": "nic_qla"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "full"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 862658820273
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 97784325252
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "nic_common"
+      },
+      "id": "umeng-aff300-02:e0h",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "type",
+          "value": "nic_qla"
+        },
+        {
+          "name": "link_current_state",
+          "value": "up"
+        },
+        {
+          "name": "link_media_state",
+          "value": "active"
+        },
+        {
+          "name": "link_duplex",
+          "value": "full"
+        },
+        {
+          "name": "link_speed",
+          "value": "10000M"
+        },
+        {
+          "name": "link_flowcontrol",
+          "value": "full"
+        },
+        {
+          "name": "rss_enabled",
+          "value": "yes"
+        }
+      ],
+      "counters": [
+        {
+          "name": "receive_bytes",
+          "value": 2049692826
+        },
+        {
+          "name": "receive_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_total_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_bytes",
+          "value": 948655466
+        },
+        {
+          "name": "transmit_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_total_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_crc_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_length_errors",
+          "value": 0
+        },
+        {
+          "name": "receive_alignment_errors",
+          "value": 0
+        },
+        {
+          "name": "transmit_hw_errors",
+          "value": 0
+        },
+        {
+          "name": "link_up_to_down",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "num_records": 14
+}
+0
+

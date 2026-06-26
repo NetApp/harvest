@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/wafl_comp_aggr_vol_bin/rows?counters.name=cloud_bin_op%7Ccloud_bin_op_latency_average&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 28
+

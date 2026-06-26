@@ -1,0 +1,8082 @@
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:10:18 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+2e6a4
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.0.P1:6002538A:4776AFA0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776AFA0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776AFA0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.0"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0b.01.0P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "dparity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.0.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 41129449
+        },
+        {
+          "name": "user_read_chain",
+          "value": 120768
+        },
+        {
+          "name": "user_read_count",
+          "value": 59467
+        },
+        {
+          "name": "user_write_chain",
+          "value": 249482645
+        },
+        {
+          "name": "user_write_count",
+          "value": 11526731
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 227948953
+        },
+        {
+          "name": "cp_read_count",
+          "value": 14059756
+        },
+        {
+          "name": "user_read_latency",
+          "value": 8613765
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 120768
+        },
+        {
+          "name": "user_write_latency",
+          "value": 2110490196
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 249482645
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 8420930296
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 227948953
+        },
+        {
+          "name": "total_data",
+          "value": 1956054491136
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1781664
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 20105139
+        },
+        {
+          "name": "io_queued",
+          "value": 202367655
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.0.P2:6002538A:4776AFA0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776AFA0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776AFA0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.0"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0b.01.0P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "dparity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.0.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 33808093
+        },
+        {
+          "name": "user_read_chain",
+          "value": 22552
+        },
+        {
+          "name": "user_read_count",
+          "value": 10359
+        },
+        {
+          "name": "user_write_chain",
+          "value": 245965095
+        },
+        {
+          "name": "user_write_count",
+          "value": 7902842
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 224431516
+        },
+        {
+          "name": "cp_read_count",
+          "value": 10432928
+        },
+        {
+          "name": "user_read_latency",
+          "value": 2303999
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 22552
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1879321023
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 245965095
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 7957781987
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 224431516
+        },
+        {
+          "name": "total_data",
+          "value": 1926836891648
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1706929
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 19287135
+        },
+        {
+          "name": "io_queued",
+          "value": 200240118
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.0.P3:6002538A:4776AFA0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776AFA0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776AFA0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.0"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0b.01.0P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "dparity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.0.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 52810598
+        },
+        {
+          "name": "user_read_chain",
+          "value": 61210370
+        },
+        {
+          "name": "user_read_count",
+          "value": 8259149
+        },
+        {
+          "name": "user_write_chain",
+          "value": 285084720
+        },
+        {
+          "name": "user_write_count",
+          "value": 26355874
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 262530237
+        },
+        {
+          "name": "cp_read_count",
+          "value": 13783123
+        },
+        {
+          "name": "user_read_latency",
+          "value": 2270097137
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 61210370
+        },
+        {
+          "name": "user_write_latency",
+          "value": 3427526157
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 285084720
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 8424309261
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 262530237
+        },
+        {
+          "name": "total_data",
+          "value": 2493748539392
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1576946
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17772445
+        },
+        {
+          "name": "io_queued",
+          "value": 57173021
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.1.P1:6002538A:4775FBC0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FBC0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FBC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.1"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0a.01.1P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "parity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.1.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 41274248
+        },
+        {
+          "name": "user_read_chain",
+          "value": 120774
+        },
+        {
+          "name": "user_read_count",
+          "value": 59470
+        },
+        {
+          "name": "user_write_chain",
+          "value": 249785661
+        },
+        {
+          "name": "user_write_count",
+          "value": 11678239
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 227777243
+        },
+        {
+          "name": "cp_read_count",
+          "value": 14053044
+        },
+        {
+          "name": "user_read_latency",
+          "value": 9062843
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 120774
+        },
+        {
+          "name": "user_write_latency",
+          "value": 2143359744
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 249785661
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 8425952157
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 227777243
+        },
+        {
+          "name": "total_data",
+          "value": 1956592345088
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1784157
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 20135406
+        },
+        {
+          "name": "io_queued",
+          "value": 207205371
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.1.P2:6002538A:4775FBC0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FBC0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FBC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.1"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0a.01.1P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "parity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.1.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 33954075
+        },
+        {
+          "name": "user_read_chain",
+          "value": 22558
+        },
+        {
+          "name": "user_read_count",
+          "value": 10362
+        },
+        {
+          "name": "user_write_chain",
+          "value": 246267613
+        },
+        {
+          "name": "user_write_count",
+          "value": 8054101
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 224278789
+        },
+        {
+          "name": "cp_read_count",
+          "value": 10427648
+        },
+        {
+          "name": "user_read_latency",
+          "value": 2199677
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 22558
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1910743481
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 246267613
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 7963848291
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 224278789
+        },
+        {
+          "name": "total_data",
+          "value": 1927450460160
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1709765
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 19321530
+        },
+        {
+          "name": "io_queued",
+          "value": 204281929
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.1.P3:6002538A:4775FBC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FBC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FBC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.1"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0a.01.1P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "parity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.1.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 50535804
+        },
+        {
+          "name": "user_read_chain",
+          "value": 58843471
+        },
+        {
+          "name": "user_read_count",
+          "value": 5892247
+        },
+        {
+          "name": "user_write_chain",
+          "value": 285280772
+        },
+        {
+          "name": "user_write_count",
+          "value": 26453900
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 262403944
+        },
+        {
+          "name": "cp_read_count",
+          "value": 13777205
+        },
+        {
+          "name": "user_read_latency",
+          "value": 2110171968
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 58843471
+        },
+        {
+          "name": "user_write_latency",
+          "value": 3384403067
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 285280772
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 8425470219
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 262403944
+        },
+        {
+          "name": "total_data",
+          "value": 2484339453952
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1548461
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17461935
+        },
+        {
+          "name": "io_queued",
+          "value": 56972494
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.11.P1:6002538A:47760F70:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760F70:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760F70:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.11"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0d.01.11P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.11.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55413183
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42714271
+        },
+        {
+          "name": "user_read_count",
+          "value": 26224595
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117586650
+        },
+        {
+          "name": "user_write_count",
+          "value": 5879026
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 60911384
+        },
+        {
+          "name": "cp_read_count",
+          "value": 7847598
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4033297932
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42714271
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1155120413
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117586650
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2343733926
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 60911384
+        },
+        {
+          "name": "total_data",
+          "value": 906085601280
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1534205
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17196849
+        },
+        {
+          "name": "io_queued",
+          "value": 283291641
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.11.P2:6002538A:47760F70:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760F70:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760F70:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.11"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0d.01.11P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.11.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 65806237
+        },
+        {
+          "name": "user_read_chain",
+          "value": 41620796
+        },
+        {
+          "name": "user_read_count",
+          "value": 25763563
+        },
+        {
+          "name": "user_write_chain",
+          "value": 121182734
+        },
+        {
+          "name": "user_write_count",
+          "value": 9491932
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67998965
+        },
+        {
+          "name": "cp_read_count",
+          "value": 15067247
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3972753848
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 41620796
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1412664143
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 121182734
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2999691918
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67998965
+        },
+        {
+          "name": "total_data",
+          "value": 945367019520
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1627419
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18213811
+        },
+        {
+          "name": "io_queued",
+          "value": 285851503
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.11.P3:6002538A:47760F70:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760F70:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760F70:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.11"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0d.01.11P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.11.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 61977241
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83197244
+        },
+        {
+          "name": "user_read_count",
+          "value": 18118986
+        },
+        {
+          "name": "user_write_chain",
+          "value": 136738786
+        },
+        {
+          "name": "user_write_count",
+          "value": 24375937
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 76274223
+        },
+        {
+          "name": "cp_read_count",
+          "value": 15069866
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4226194032
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83197244
+        },
+        {
+          "name": "user_write_latency",
+          "value": 2556559883
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 136738786
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 3177683029
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 76274223
+        },
+        {
+          "name": "total_data",
+          "value": 1213277196288
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1239271
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 14700240
+        },
+        {
+          "name": "io_queued",
+          "value": 77791576
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.12.P1:6002538A:4775FAC0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FAC0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FAC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.12"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0b.01.12P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.12.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 511321043
+        },
+        {
+          "name": "user_read_chain",
+          "value": 131517398
+        },
+        {
+          "name": "user_read_count",
+          "value": 33870656
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4205452663
+        },
+        {
+          "name": "user_write_count",
+          "value": 235161095
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1010215682
+        },
+        {
+          "name": "cp_read_count",
+          "value": 234885268
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6496214339
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 131517398
+        },
+        {
+          "name": "user_write_latency",
+          "value": 90532466203
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4205452663
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 126022802539
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1010215682
+        },
+        {
+          "name": "total_data",
+          "value": 21902072803328
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18427894
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 252132408
+        },
+        {
+          "name": "io_queued",
+          "value": 101677512
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.12.P2:6002538A:4775FAC0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FAC0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FAC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.12"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0b.01.12P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.12.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 542555079
+        },
+        {
+          "name": "user_read_chain",
+          "value": 128028381
+        },
+        {
+          "name": "user_read_count",
+          "value": 33864126
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4090072834
+        },
+        {
+          "name": "user_write_count",
+          "value": 245779219
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1093773301
+        },
+        {
+          "name": "cp_read_count",
+          "value": 255348407
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6459676929
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 128028381
+        },
+        {
+          "name": "user_write_latency",
+          "value": 92710615501
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4090072834
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 137316806805
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1093773301
+        },
+        {
+          "name": "total_data",
+          "value": 21757438017536
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19398973
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 266832285
+        },
+        {
+          "name": "io_queued",
+          "value": 101858025
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.13.P1:6002538A:4776BCD0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BCD0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BCD0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.13"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0a.01.13P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.13.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 510818485
+        },
+        {
+          "name": "user_read_chain",
+          "value": 131578424
+        },
+        {
+          "name": "user_read_count",
+          "value": 33827811
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4204602483
+        },
+        {
+          "name": "user_write_count",
+          "value": 234998168
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1007217347
+        },
+        {
+          "name": "cp_read_count",
+          "value": 234588482
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6497408342
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 131578424
+        },
+        {
+          "name": "user_write_latency",
+          "value": 94781567824
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4204602483
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 128415290784
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1007217347
+        },
+        {
+          "name": "total_data",
+          "value": 21886559248384
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18809191
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 258184506
+        },
+        {
+          "name": "io_queued",
+          "value": 93528491
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.13.P2:6002538A:4776BCD0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BCD0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BCD0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.13"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0a.01.13P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.13.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 542524460
+        },
+        {
+          "name": "user_read_chain",
+          "value": 127908306
+        },
+        {
+          "name": "user_read_count",
+          "value": 33477889
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4091970854
+        },
+        {
+          "name": "user_write_count",
+          "value": 245924941
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1093228729
+        },
+        {
+          "name": "cp_read_count",
+          "value": 255558303
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6409556192
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 127908306
+        },
+        {
+          "name": "user_write_latency",
+          "value": 97206311768
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4091970854
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 140121751167
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1093228729
+        },
+        {
+          "name": "total_data",
+          "value": 21762489913344
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19813753
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 273472576
+        },
+        {
+          "name": "io_queued",
+          "value": 94921148
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.14.P1:6002538A:47761090:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47761090:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47761090:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.14"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0c.01.14P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.14.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 510511177
+        },
+        {
+          "name": "user_read_chain",
+          "value": 131567487
+        },
+        {
+          "name": "user_read_count",
+          "value": 33666575
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4202579672
+        },
+        {
+          "name": "user_write_count",
+          "value": 234810456
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1010522739
+        },
+        {
+          "name": "cp_read_count",
+          "value": 234630122
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6467382672
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 131567487
+        },
+        {
+          "name": "user_write_latency",
+          "value": 91382907635
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4202579672
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 127307225512
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1010522739
+        },
+        {
+          "name": "total_data",
+          "value": 21891767902208
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18579811
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 254783792
+        },
+        {
+          "name": "io_queued",
+          "value": 90311330
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.14.P2:6002538A:47761090:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47761090:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47761090:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.14"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0c.01.14P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.14.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 542846291
+        },
+        {
+          "name": "user_read_chain",
+          "value": 128181647
+        },
+        {
+          "name": "user_read_count",
+          "value": 33705104
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4091112926
+        },
+        {
+          "name": "user_write_count",
+          "value": 245996321
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1092211276
+        },
+        {
+          "name": "cp_read_count",
+          "value": 255581539
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6433166437
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 128181647
+        },
+        {
+          "name": "user_write_latency",
+          "value": 93845669360
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4091112926
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 138795163471
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1092211276
+        },
+        {
+          "name": "total_data",
+          "value": 21755927957504
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19580551
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 269997936
+        },
+        {
+          "name": "io_queued",
+          "value": 91400965
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.15.P1:6002538A:47760EA0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760EA0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760EA0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.15"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0d.01.15P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.15.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 511093657
+        },
+        {
+          "name": "user_read_chain",
+          "value": 132046190
+        },
+        {
+          "name": "user_read_count",
+          "value": 33886669
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4204756857
+        },
+        {
+          "name": "user_write_count",
+          "value": 235005072
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1011397850
+        },
+        {
+          "name": "cp_read_count",
+          "value": 234797892
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6472531119
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 132046190
+        },
+        {
+          "name": "user_write_latency",
+          "value": 98244149724
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4204756857
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 127665311676
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1011397850
+        },
+        {
+          "name": "total_data",
+          "value": 21906230874112
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19198344
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 263599132
+        },
+        {
+          "name": "io_queued",
+          "value": 388164095
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.15.P2:6002538A:47760EA0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760EA0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760EA0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.15"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0d.01.15P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.15.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 542498534
+        },
+        {
+          "name": "user_read_chain",
+          "value": 128362123
+        },
+        {
+          "name": "user_read_count",
+          "value": 33708176
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4087929602
+        },
+        {
+          "name": "user_write_count",
+          "value": 245686107
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1094321956
+        },
+        {
+          "name": "cp_read_count",
+          "value": 255540924
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6412766191
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 128362123
+        },
+        {
+          "name": "user_write_latency",
+          "value": 100860280501
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4087929602
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 139288182424
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1094321956
+        },
+        {
+          "name": "total_data",
+          "value": 21752273637376
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 20211719
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 279124865
+        },
+        {
+          "name": "io_queued",
+          "value": 396131832
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.16.P1:6002538A:4776BED0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BED0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BED0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.16"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0b.01.16P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.16.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 511337558
+        },
+        {
+          "name": "user_read_chain",
+          "value": 132294348
+        },
+        {
+          "name": "user_read_count",
+          "value": 33950996
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4198974810
+        },
+        {
+          "name": "user_write_count",
+          "value": 235011051
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1012490136
+        },
+        {
+          "name": "cp_read_count",
+          "value": 234971487
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6473538307
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 132294348
+        },
+        {
+          "name": "user_write_latency",
+          "value": 97888379619
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4198974810
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 127077777368
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1012490136
+        },
+        {
+          "name": "total_data",
+          "value": 21888038068224
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19038118
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 261239445
+        },
+        {
+          "name": "io_queued",
+          "value": 391684927
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.16.P2:6002538A:4776BED0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BED0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BED0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.16"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0b.01.16P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.16.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 542926885
+        },
+        {
+          "name": "user_read_chain",
+          "value": 128378736
+        },
+        {
+          "name": "user_read_count",
+          "value": 33484042
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4092116015
+        },
+        {
+          "name": "user_write_count",
+          "value": 246164410
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1091896779
+        },
+        {
+          "name": "cp_read_count",
+          "value": 255715106
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6372791704
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 128378736
+        },
+        {
+          "name": "user_write_latency",
+          "value": 100736112038
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4092116015
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 138565031928
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1091896779
+        },
+        {
+          "name": "total_data",
+          "value": 21759555706880
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 20058181
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 276755336
+        },
+        {
+          "name": "io_queued",
+          "value": 400069627
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.17.P1:6002538A:47760DB0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760DB0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760DB0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.17"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0a.01.17P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "dparity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.17.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 452397870
+        },
+        {
+          "name": "user_read_chain",
+          "value": 18485
+        },
+        {
+          "name": "user_read_count",
+          "value": 7493
+        },
+        {
+          "name": "user_write_chain",
+          "value": 5529217557
+        },
+        {
+          "name": "user_write_count",
+          "value": 107860265
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 4113834309
+        },
+        {
+          "name": "cp_read_count",
+          "value": 337126088
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1672732
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 18485
+        },
+        {
+          "name": "user_write_latency",
+          "value": 61673666656
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 5529217557
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 242030196892
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 4113834309
+        },
+        {
+          "name": "total_data",
+          "value": 39498016157696
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 24019642
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 328678100
+        },
+        {
+          "name": "io_queued",
+          "value": 510502543
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.17.P2:6002538A:47760DB0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760DB0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760DB0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.17"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0a.01.17P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "dparity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.17.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 442084786
+        },
+        {
+          "name": "user_read_chain",
+          "value": 18485
+        },
+        {
+          "name": "user_read_count",
+          "value": 7493
+        },
+        {
+          "name": "user_write_chain",
+          "value": 5517310505
+        },
+        {
+          "name": "user_write_count",
+          "value": 105922089
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 4393310355
+        },
+        {
+          "name": "cp_read_count",
+          "value": 328591877
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1962186
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 18485
+        },
+        {
+          "name": "user_write_latency",
+          "value": 61246451014
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 5517310505
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 239746295602
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 4393310355
+        },
+        {
+          "name": "total_data",
+          "value": 40593978757120
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 23955767
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 325604612
+        },
+        {
+          "name": "io_queued",
+          "value": 515558218
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.18.P1:6002538A:47751F40:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47751F40:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47751F40:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.18"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0c.01.18P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "parity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.18.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 452459727
+        },
+        {
+          "name": "user_read_chain",
+          "value": 18491
+        },
+        {
+          "name": "user_read_count",
+          "value": 7496
+        },
+        {
+          "name": "user_write_chain",
+          "value": 5529425819
+        },
+        {
+          "name": "user_write_count",
+          "value": 107964396
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 4113255688
+        },
+        {
+          "name": "cp_read_count",
+          "value": 337083811
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1621277
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 18491
+        },
+        {
+          "name": "user_write_latency",
+          "value": 63849768354
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 5529425819
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 243564639762
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 4113255688
+        },
+        {
+          "name": "total_data",
+          "value": 39496499191808
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 24328452
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 332985246
+        },
+        {
+          "name": "io_queued",
+          "value": 522723147
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.18.P2:6002538A:47751F40:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47751F40:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47751F40:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.18"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0c.01.18P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "parity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.18.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 442146348
+        },
+        {
+          "name": "user_read_chain",
+          "value": 18491
+        },
+        {
+          "name": "user_read_count",
+          "value": 7496
+        },
+        {
+          "name": "user_write_chain",
+          "value": 5517518589
+        },
+        {
+          "name": "user_write_count",
+          "value": 106026131
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 4392753082
+        },
+        {
+          "name": "cp_read_count",
+          "value": 328549394
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1873042
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 18491
+        },
+        {
+          "name": "user_write_latency",
+          "value": 63469598152
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 5517518589
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 241305614110
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 4392753082
+        },
+        {
+          "name": "total_data",
+          "value": 40592548503552
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 24267978
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 329963550
+        },
+        {
+          "name": "io_queued",
+          "value": 528011920
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.19.P1:6002538A:4776AFC0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776AFC0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776AFC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.19"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0d.01.19P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.19.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 525035486
+        },
+        {
+          "name": "user_read_chain",
+          "value": 130785902
+        },
+        {
+          "name": "user_read_count",
+          "value": 33641720
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4201138411
+        },
+        {
+          "name": "user_write_count",
+          "value": 241568411
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1015406340
+        },
+        {
+          "name": "cp_read_count",
+          "value": 242421331
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6454826217
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 130785902
+        },
+        {
+          "name": "user_write_latency",
+          "value": 86794362993
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4201138411
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 128100630811
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1015406340
+        },
+        {
+          "name": "total_data",
+          "value": 21902666354688
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18407018
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 252916811
+        },
+        {
+          "name": "io_queued",
+          "value": 298495037
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.19.P2:6002538A:4776AFC0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776AFC0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776AFC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.19"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0d.01.19P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.19.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 553977837
+        },
+        {
+          "name": "user_read_chain",
+          "value": 126953738
+        },
+        {
+          "name": "user_read_count",
+          "value": 33663722
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4072069039
+        },
+        {
+          "name": "user_write_count",
+          "value": 251615064
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1102459187
+        },
+        {
+          "name": "cp_read_count",
+          "value": 261135724
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6428978520
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 126953738
+        },
+        {
+          "name": "user_write_latency",
+          "value": 89288089764
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4072069039
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 140113725701
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1102459187
+        },
+        {
+          "name": "total_data",
+          "value": 21714870124544
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19445293
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 268843133
+        },
+        {
+          "name": "io_queued",
+          "value": 303666422
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.20.P1:6002538A:4775FB00:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FB00:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FB00:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.20"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0b.01.20P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.20.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 518691280
+        },
+        {
+          "name": "user_read_chain",
+          "value": 131114169
+        },
+        {
+          "name": "user_read_count",
+          "value": 33791610
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4200236640
+        },
+        {
+          "name": "user_write_count",
+          "value": 239066175
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1013144210
+        },
+        {
+          "name": "cp_read_count",
+          "value": 238429471
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6438127429
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 131114169
+        },
+        {
+          "name": "user_write_latency",
+          "value": 86739955365
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4200236640
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 126415818110
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1013144210
+        },
+        {
+          "name": "total_data",
+          "value": 21891051597824
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18181942
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 249267555
+        },
+        {
+          "name": "io_queued",
+          "value": 385859288
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.20.P2:6002538A:4775FB00:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FB00:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FB00:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.20"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0b.01.20P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.20.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 554051464
+        },
+        {
+          "name": "user_read_chain",
+          "value": 126797269
+        },
+        {
+          "name": "user_read_count",
+          "value": 33471126
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4069898772
+        },
+        {
+          "name": "user_write_count",
+          "value": 251890948
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1104002034
+        },
+        {
+          "name": "cp_read_count",
+          "value": 261126063
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6363124320
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 126797269
+        },
+        {
+          "name": "user_write_latency",
+          "value": 89496317789
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4069898772
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 138692191293
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1104002034
+        },
+        {
+          "name": "total_data",
+          "value": 21711659315200
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19257563
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 265666360
+        },
+        {
+          "name": "io_queued",
+          "value": 393673418
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.21.P1:6002538A:47760E20:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760E20:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760E20:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.21"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0a.01.21P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.21.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 519007414
+        },
+        {
+          "name": "user_read_chain",
+          "value": 131190140
+        },
+        {
+          "name": "user_read_count",
+          "value": 33697124
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4202448086
+        },
+        {
+          "name": "user_write_count",
+          "value": 239420163
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1009909076
+        },
+        {
+          "name": "cp_read_count",
+          "value": 238486103
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6434967915
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 131190140
+        },
+        {
+          "name": "user_write_latency",
+          "value": 90273551024
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4202448086
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 128326002373
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1009909076
+        },
+        {
+          "name": "total_data",
+          "value": 21887169748992
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18484806
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 254028638
+        },
+        {
+          "name": "io_queued",
+          "value": 383448713
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.21.P2:6002538A:47760E20:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760E20:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760E20:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.21"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0a.01.21P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.21.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 554159715
+        },
+        {
+          "name": "user_read_chain",
+          "value": 127045515
+        },
+        {
+          "name": "user_read_count",
+          "value": 33410077
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4070937722
+        },
+        {
+          "name": "user_write_count",
+          "value": 252005942
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1100802252
+        },
+        {
+          "name": "cp_read_count",
+          "value": 261180369
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6349610635
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 127045515
+        },
+        {
+          "name": "user_write_latency",
+          "value": 92960914647
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4070937722
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 140727901402
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1100802252
+        },
+        {
+          "name": "total_data",
+          "value": 21703825362944
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19559220
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 270388132
+        },
+        {
+          "name": "io_queued",
+          "value": 390893704
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.22.P1:6002538A:4775F8D0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F8D0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F8D0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.22"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0c.01.22P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.22.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 511103540
+        },
+        {
+          "name": "user_read_chain",
+          "value": 132120348
+        },
+        {
+          "name": "user_read_count",
+          "value": 33828377
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4201405254
+        },
+        {
+          "name": "user_write_count",
+          "value": 235026464
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1010542153
+        },
+        {
+          "name": "cp_read_count",
+          "value": 234844675
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6373495686
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 132120348
+        },
+        {
+          "name": "user_write_latency",
+          "value": 95973177969
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4201405254
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 125672409219
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1010542153
+        },
+        {
+          "name": "total_data",
+          "value": 21889301524480
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18780081
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 258321457
+        },
+        {
+          "name": "io_queued",
+          "value": 386683837
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.22.P2:6002538A:4775F8D0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F8D0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F8D0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.22"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0c.01.22P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.22.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 542756239
+        },
+        {
+          "name": "user_read_chain",
+          "value": 128439548
+        },
+        {
+          "name": "user_read_count",
+          "value": 33499739
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4090212574
+        },
+        {
+          "name": "user_write_count",
+          "value": 246025434
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1094008373
+        },
+        {
+          "name": "cp_read_count",
+          "value": 255667739
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6293198445
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 128439548
+        },
+        {
+          "name": "user_write_latency",
+          "value": 98518392675
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4090212574
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 136891743494
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1094008373
+        },
+        {
+          "name": "total_data",
+          "value": 21760657387520
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19758767
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 273301322
+        },
+        {
+          "name": "io_queued",
+          "value": 394751619
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.23.P1:6002538A:47760F50:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760F50:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760F50:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.23"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg0/0d.01.23P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.23.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 519831696
+        },
+        {
+          "name": "user_read_chain",
+          "value": 131239200
+        },
+        {
+          "name": "user_read_count",
+          "value": 33754103
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4198390814
+        },
+        {
+          "name": "user_write_count",
+          "value": 239798239
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1010332986
+        },
+        {
+          "name": "cp_read_count",
+          "value": 238875330
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6360963371
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 131239200
+        },
+        {
+          "name": "user_write_latency",
+          "value": 91193717298
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4198390814
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 125556364235
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1010332986
+        },
+        {
+          "name": "total_data",
+          "value": 21872488448000
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 18485276
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 254232377
+        },
+        {
+          "name": "io_queued",
+          "value": 382178983
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.23.P2:6002538A:47760F50:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760F50:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760F50:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.23"
+        },
+        {
+          "name": "raid.name",
+          "value": "/umeng_aff300_aggr2/plex0/rg1/0d.01.23P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/umeng_aff300_aggr2/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.23.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 554319385
+        },
+        {
+          "name": "user_read_chain",
+          "value": 127108046
+        },
+        {
+          "name": "user_read_count",
+          "value": 33468272
+        },
+        {
+          "name": "user_write_chain",
+          "value": 4071045800
+        },
+        {
+          "name": "user_write_count",
+          "value": 251923323
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 1103015574
+        },
+        {
+          "name": "cp_read_count",
+          "value": 261364463
+        },
+        {
+          "name": "user_read_latency",
+          "value": 6286035951
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 127108046
+        },
+        {
+          "name": "user_write_latency",
+          "value": 93834716750
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 4071045800
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 137686524222
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 1103015574
+        },
+        {
+          "name": "total_data",
+          "value": 21713589944320
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 19542076
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057453
+        },
+        {
+          "name": "io_pending",
+          "value": 270361557
+        },
+        {
+          "name": "io_queued",
+          "value": 389513818
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.3.P1:6002538A:47760D10:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760D10:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760D10:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.3"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0d.01.3P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.3.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55407623
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42167709
+        },
+        {
+          "name": "user_read_count",
+          "value": 25852523
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117547763
+        },
+        {
+          "name": "user_write_count",
+          "value": 5871189
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67624010
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8200416
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3954758250
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42167709
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1153595128
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117547763
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2380972232
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67624010
+        },
+        {
+          "name": "total_data",
+          "value": 931182518272
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1555306
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17446125
+        },
+        {
+          "name": "io_queued",
+          "value": 684029584
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.3.P2:6002538A:47760D10:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760D10:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760D10:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.3"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0d.01.3P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.3.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55788999
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42806942
+        },
+        {
+          "name": "user_read_count",
+          "value": 26224276
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117615297
+        },
+        {
+          "name": "user_write_count",
+          "value": 5885831
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67673902
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8216928
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4008337754
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42806942
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1155954560
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117615297
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2385050837
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67673902
+        },
+        {
+          "name": "total_data",
+          "value": 934281793536
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1560212
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17506399
+        },
+        {
+          "name": "io_queued",
+          "value": 676717443
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.3.P3:6002538A:47760D10:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760D10:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760D10:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.3"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0d.01.3P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.3.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 39117930
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83150659
+        },
+        {
+          "name": "user_read_count",
+          "value": 18252397
+        },
+        {
+          "name": "user_write_chain",
+          "value": 118882853
+        },
+        {
+          "name": "user_write_count",
+          "value": 6494488
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 86262017
+        },
+        {
+          "name": "cp_read_count",
+          "value": 9958593
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4653027229
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83150659
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1256531766
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 118882853
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2746250343
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 86262017
+        },
+        {
+          "name": "total_data",
+          "value": 1180858486784
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1100818
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 13224270
+        },
+        {
+          "name": "io_queued",
+          "value": 228943259
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.4.P1:6002538A:47760C40:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760C40:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760C40:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.4"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0b.01.4P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.4.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55526571
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42508769
+        },
+        {
+          "name": "user_read_count",
+          "value": 25967966
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117541581
+        },
+        {
+          "name": "user_write_count",
+          "value": 5871701
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67723606
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8203409
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3964929761
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42508769
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1190396393
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117541581
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2387089071
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67723606
+        },
+        {
+          "name": "total_data",
+          "value": 932962123776
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1645745
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18441111
+        },
+        {
+          "name": "io_queued",
+          "value": 679762637
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.4.P2:6002538A:47760C40:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760C40:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760C40:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.4"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0b.01.4P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.4.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55911248
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42709977
+        },
+        {
+          "name": "user_read_count",
+          "value": 26355186
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117613928
+        },
+        {
+          "name": "user_write_count",
+          "value": 5880391
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67787050
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8213707
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4018012812
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42709977
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1193202124
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117613928
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2392051659
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67787050
+        },
+        {
+          "name": "total_data",
+          "value": 934342471680
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1650888
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18503747
+        },
+        {
+          "name": "io_queued",
+          "value": 672749698
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.4.P3:6002538A:47760C40:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760C40:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760C40:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.4"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0b.01.4P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.4.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 39038314
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83233048
+        },
+        {
+          "name": "user_read_count",
+          "value": 18179067
+        },
+        {
+          "name": "user_write_chain",
+          "value": 118833011
+        },
+        {
+          "name": "user_write_count",
+          "value": 6492124
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 86260043
+        },
+        {
+          "name": "cp_read_count",
+          "value": 9954671
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4637365132
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83233048
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1288975489
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 118833011
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2738821139
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 86260043
+        },
+        {
+          "name": "total_data",
+          "value": 1180983713792
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1121862
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 13413524
+        },
+        {
+          "name": "io_queued",
+          "value": 212221932
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.5.P1:6002538A:477691C0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:477691C0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:477691C0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.5"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0a.01.5P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.5.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55504705
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42003446
+        },
+        {
+          "name": "user_read_count",
+          "value": 25953075
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117544471
+        },
+        {
+          "name": "user_write_count",
+          "value": 5868627
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67657862
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8199508
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3954306407
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42003446
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1193795127
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117544471
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2379280157
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67657862
+        },
+        {
+          "name": "total_data",
+          "value": 930634870784
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1645222
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18433175
+        },
+        {
+          "name": "io_queued",
+          "value": 674370655
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.5.P2:6002538A:477691C0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:477691C0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:477691C0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.5"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0a.01.5P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.5.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55864352
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42765604
+        },
+        {
+          "name": "user_read_count",
+          "value": 26311971
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117620963
+        },
+        {
+          "name": "user_write_count",
+          "value": 5879132
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67756878
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8211285
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4009391309
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42765604
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1196406013
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117620963
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2384194895
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67756878
+        },
+        {
+          "name": "total_data",
+          "value": 934475550720
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1650572
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18496822
+        },
+        {
+          "name": "io_queued",
+          "value": 667898292
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.5.P3:6002538A:477691C0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:477691C0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:477691C0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.5"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0a.01.5P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.5.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 39074174
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83420030
+        },
+        {
+          "name": "user_read_count",
+          "value": 18207372
+        },
+        {
+          "name": "user_write_chain",
+          "value": 118858332
+        },
+        {
+          "name": "user_write_count",
+          "value": 6493820
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 86226222
+        },
+        {
+          "name": "cp_read_count",
+          "value": 9960530
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4637723032
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83420030
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1293433940
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 118858332
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2735998240
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 86226222
+        },
+        {
+          "name": "total_data",
+          "value": 1181714776064
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1119910
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 13400383
+        },
+        {
+          "name": "io_queued",
+          "value": 210148923
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.6.P1:6002538A:4776BEB0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BEB0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BEB0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.6"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0c.01.6P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.6.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55481936
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42511476
+        },
+        {
+          "name": "user_read_count",
+          "value": 25922293
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117527722
+        },
+        {
+          "name": "user_write_count",
+          "value": 5870562
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67762616
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8205586
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3963378686
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42511476
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1142459479
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117527722
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2371808803
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67762616
+        },
+        {
+          "name": "total_data",
+          "value": 933076230144
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1541716
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17293241
+        },
+        {
+          "name": "io_queued",
+          "value": 690926370
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.6.P2:6002538A:4776BEB0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BEB0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BEB0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.6"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0c.01.6P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.6.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55978272
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42850911
+        },
+        {
+          "name": "user_read_count",
+          "value": 26418715
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117587000
+        },
+        {
+          "name": "user_write_count",
+          "value": 5882823
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67677062
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8214770
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4035138331
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42850911
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1143830415
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117587000
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2370258305
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67677062
+        },
+        {
+          "name": "total_data",
+          "value": 934358929408
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1547610
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17361933
+        },
+        {
+          "name": "io_queued",
+          "value": 684622246
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.6.P3:6002538A:4776BEB0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BEB0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BEB0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.6"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0c.01.6P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.6.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 39044979
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83081809
+        },
+        {
+          "name": "user_read_count",
+          "value": 18183813
+        },
+        {
+          "name": "user_write_chain",
+          "value": 118885915
+        },
+        {
+          "name": "user_write_count",
+          "value": 6492968
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 86286183
+        },
+        {
+          "name": "cp_read_count",
+          "value": 9955746
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4616226816
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83081809
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1245253643
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 118885915
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2727133747
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 86286183
+        },
+        {
+          "name": "total_data",
+          "value": 1180688003072
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1091549
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 13106040
+        },
+        {
+          "name": "io_queued",
+          "value": 234614938
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.7.P1:6002538A:4775F610:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F610:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F610:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.7"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0d.01.7P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.7.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55444377
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42031067
+        },
+        {
+          "name": "user_read_count",
+          "value": 25898485
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117556755
+        },
+        {
+          "name": "user_write_count",
+          "value": 5864700
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67680099
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8197697
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3969949393
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42031067
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1176170812
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117556755
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2376373023
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67680099
+        },
+        {
+          "name": "total_data",
+          "value": 930889404416
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1598627
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17930837
+        },
+        {
+          "name": "io_queued",
+          "value": 699610254
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.7.P2:6002538A:4775F610:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F610:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F610:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.7"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0d.01.7P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.7.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55859695
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42897086
+        },
+        {
+          "name": "user_read_count",
+          "value": 26294814
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117578221
+        },
+        {
+          "name": "user_write_count",
+          "value": 5884428
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67795483
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8218489
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4020973812
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42897086
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1180785687
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117578221
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2384400204
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67795483
+        },
+        {
+          "name": "total_data",
+          "value": 934997155840
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1604322
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 17998178
+        },
+        {
+          "name": "io_queued",
+          "value": 692561330
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.7.P3:6002538A:4775F610:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F610:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F610:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.7"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0d.01.7P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.7.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 39040273
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83297218
+        },
+        {
+          "name": "user_read_count",
+          "value": 18163867
+        },
+        {
+          "name": "user_write_chain",
+          "value": 118837596
+        },
+        {
+          "name": "user_write_count",
+          "value": 6500710
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 86297653
+        },
+        {
+          "name": "cp_read_count",
+          "value": 9963244
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4621773587
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83297218
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1290950005
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 118837596
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2738043776
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 86297653
+        },
+        {
+          "name": "total_data",
+          "value": 1181419384832
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1104688
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 13248442
+        },
+        {
+          "name": "io_queued",
+          "value": 236231147
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.8.P1:6002538A:47760FF0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760FF0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760FF0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.8"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0b.01.8P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.8.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55590386
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42168608
+        },
+        {
+          "name": "user_read_count",
+          "value": 26030374
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117539032
+        },
+        {
+          "name": "user_write_count",
+          "value": 5871967
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67731691
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8204550
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3982326122
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42168608
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1209821450
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117539032
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2384170040
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67731691
+        },
+        {
+          "name": "total_data",
+          "value": 931591499776
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1666450
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18676344
+        },
+        {
+          "name": "io_queued",
+          "value": 682195322
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.8.P2:6002538A:47760FF0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760FF0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760FF0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.8"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0b.01.8P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.8.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 56027517
+        },
+        {
+          "name": "user_read_chain",
+          "value": 43279944
+        },
+        {
+          "name": "user_read_count",
+          "value": 26466083
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117622791
+        },
+        {
+          "name": "user_write_count",
+          "value": 5884371
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67727484
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8215099
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4038985892
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 43279944
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1214104042
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117622791
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2386080374
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67727484
+        },
+        {
+          "name": "total_data",
+          "value": 936469377024
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1672838
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18752439
+        },
+        {
+          "name": "io_queued",
+          "value": 675719435
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.8.P3:6002538A:47760FF0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760FF0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760FF0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.8"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0b.01.8P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.8.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 39264252
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83238061
+        },
+        {
+          "name": "user_read_count",
+          "value": 18393515
+        },
+        {
+          "name": "user_write_chain",
+          "value": 118851034
+        },
+        {
+          "name": "user_write_count",
+          "value": 6496886
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 86179515
+        },
+        {
+          "name": "cp_read_count",
+          "value": 9961399
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4661574333
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83238061
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1310601856
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 118851034
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2731982381
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 86179515
+        },
+        {
+          "name": "total_data",
+          "value": 1180748226560
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1125099
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 13495663
+        },
+        {
+          "name": "io_queued",
+          "value": 215935607
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.9.P1:6002538A:4775F5A0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F5A0:500A0981:00000001:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F5A0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.9"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg0/0a.01.9P1"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.9.P1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55381756
+        },
+        {
+          "name": "user_read_chain",
+          "value": 41846462
+        },
+        {
+          "name": "user_read_count",
+          "value": 25813019
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117513072
+        },
+        {
+          "name": "user_write_count",
+          "value": 5876079
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67753445
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8209163
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3946599872
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 41846462
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1213659335
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117513072
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2385941748
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67753445
+        },
+        {
+          "name": "total_data",
+          "value": 930254761984
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1662446
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18628839
+        },
+        {
+          "name": "io_queued",
+          "value": 682399847
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.9.P2:6002538A:4775F5A0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F5A0:500A0981:00000002:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F5A0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.9"
+        },
+        {
+          "name": "raid.name",
+          "value": "/test1/plex0/rg1/0a.01.9P2"
+        },
+        {
+          "name": "raid_group",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/test1/plex0/rg1"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.9.P2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 430122
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 55658071
+        },
+        {
+          "name": "user_read_chain",
+          "value": 42886001
+        },
+        {
+          "name": "user_read_count",
+          "value": 26095180
+        },
+        {
+          "name": "user_write_chain",
+          "value": 117620202
+        },
+        {
+          "name": "user_write_count",
+          "value": 5883067
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 67756710
+        },
+        {
+          "name": "cp_read_count",
+          "value": 8217860
+        },
+        {
+          "name": "user_read_latency",
+          "value": 3986132714
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 42886001
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1217270891
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 117620202
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2388989518
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 67756710
+        },
+        {
+          "name": "total_data",
+          "value": 934964891648
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1667785
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 18694318
+        },
+        {
+          "name": "io_queued",
+          "value": 675841822
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-01:1.1.9.P3:6002538A:4775F5A0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775F5A0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775F5A0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.9"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0/0a.01.9P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0_umeng_aff300_02_0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.9.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 39090913
+        },
+        {
+          "name": "user_read_chain",
+          "value": 83374803
+        },
+        {
+          "name": "user_read_count",
+          "value": 18218871
+        },
+        {
+          "name": "user_write_chain",
+          "value": 118884949
+        },
+        {
+          "name": "user_write_count",
+          "value": 6497382
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 86318442
+        },
+        {
+          "name": "cp_read_count",
+          "value": 9962208
+        },
+        {
+          "name": "user_read_latency",
+          "value": 4625453917
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 83374803
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1312630354
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 118884949
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 2740928295
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 86318442
+        },
+        {
+          "name": "total_data",
+          "value": 1182016282624
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 1121100
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 14868057452
+        },
+        {
+          "name": "io_pending",
+          "value": 13420290
+        },
+        {
+          "name": "io_queued",
+          "value": 214086572
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.12.P3:6002538A:4775FAC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FAC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FAC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.12"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0b.01.12P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "dparity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.12.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 24962139
+        },
+        {
+          "name": "user_read_chain",
+          "value": 33556649
+        },
+        {
+          "name": "user_read_count",
+          "value": 4166521
+        },
+        {
+          "name": "user_write_chain",
+          "value": 120961716
+        },
+        {
+          "name": "user_write_count",
+          "value": 12278143
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 109241859
+        },
+        {
+          "name": "cp_read_count",
+          "value": 5870011
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1132200446
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 33556649
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1479755476
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 120961716
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 3791352874
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 109241859
+        },
+        {
+          "name": "total_data",
+          "value": 1080361877504
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 724299
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 8160789
+        },
+        {
+          "name": "io_queued",
+          "value": 12690723
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.13.P3:6002538A:4776BCD0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BCD0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BCD0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.13"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0a.01.13P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "parity"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.13.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 24136245
+        },
+        {
+          "name": "user_read_chain",
+          "value": 32682189
+        },
+        {
+          "name": "user_read_count",
+          "value": 3292058
+        },
+        {
+          "name": "user_write_chain",
+          "value": 121056890
+        },
+        {
+          "name": "user_write_count",
+          "value": 12325730
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 109260364
+        },
+        {
+          "name": "cp_read_count",
+          "value": 5870993
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1077071232
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 32682189
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1455909150
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 121056890
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 3786152125
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 109260364
+        },
+        {
+          "name": "total_data",
+          "value": 1077245718528
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 713731
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 8046553
+        },
+        {
+          "name": "io_queued",
+          "value": 12461757
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.14.P3:6002538A:47761090:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47761090:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47761090:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.14"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0c.01.14P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.14.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 25293111
+        },
+        {
+          "name": "user_read_chain",
+          "value": 35820340
+        },
+        {
+          "name": "user_read_count",
+          "value": 5032430
+        },
+        {
+          "name": "user_write_chain",
+          "value": 57261002
+        },
+        {
+          "name": "user_write_count",
+          "value": 11200245
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 32135076
+        },
+        {
+          "name": "cp_read_count",
+          "value": 6412972
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1360735801
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 35820340
+        },
+        {
+          "name": "user_write_latency",
+          "value": 1083217345
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 57261002
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1358067414
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 32135076
+        },
+        {
+          "name": "total_data",
+          "value": 512886448128
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 489831
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5586545
+        },
+        {
+          "name": "io_queued",
+          "value": 15852654
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.15.P3:6002538A:47760EA0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760EA0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760EA0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.15"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0d.01.15P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.15.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 14476353
+        },
+        {
+          "name": "user_read_chain",
+          "value": 35820142
+        },
+        {
+          "name": "user_read_count",
+          "value": 5032237
+        },
+        {
+          "name": "user_write_chain",
+          "value": 48595631
+        },
+        {
+          "name": "user_write_count",
+          "value": 2529859
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 42116548
+        },
+        {
+          "name": "cp_read_count",
+          "value": 4266793
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1700195543
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 35820142
+        },
+        {
+          "name": "user_write_latency",
+          "value": 467624810
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 48595631
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1197394211
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 42116548
+        },
+        {
+          "name": "total_data",
+          "value": 518276386816
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 443291
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5093192
+        },
+        {
+          "name": "io_queued",
+          "value": 83732053
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.16.P3:6002538A:4776BED0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776BED0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776BED0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.16"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0b.01.16P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.16.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 14460593
+        },
+        {
+          "name": "user_read_chain",
+          "value": 35735408
+        },
+        {
+          "name": "user_read_count",
+          "value": 5019168
+        },
+        {
+          "name": "user_write_chain",
+          "value": 48612176
+        },
+        {
+          "name": "user_write_count",
+          "value": 2527381
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 42140894
+        },
+        {
+          "name": "cp_read_count",
+          "value": 4266580
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1680819161
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 35735408
+        },
+        {
+          "name": "user_write_latency",
+          "value": 481004683
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 48612176
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1195788613
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 42140894
+        },
+        {
+          "name": "total_data",
+          "value": 518096805888
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 457095
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5250048
+        },
+        {
+          "name": "io_queued",
+          "value": 84629648
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.17.P3:6002538A:47760DB0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760DB0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760DB0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.17"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0a.01.17P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.17.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 14412155
+        },
+        {
+          "name": "user_read_chain",
+          "value": 35716013
+        },
+        {
+          "name": "user_read_count",
+          "value": 4973010
+        },
+        {
+          "name": "user_write_chain",
+          "value": 48605884
+        },
+        {
+          "name": "user_write_count",
+          "value": 2527990
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 42081991
+        },
+        {
+          "name": "cp_read_count",
+          "value": 4263691
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1671664502
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 35716013
+        },
+        {
+          "name": "user_write_latency",
+          "value": 482873347
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 48605884
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1205935778
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 42081991
+        },
+        {
+          "name": "total_data",
+          "value": 517750325248
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 459070
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5264525
+        },
+        {
+          "name": "io_queued",
+          "value": 83720284
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.18.P3:6002538A:47751F40:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47751F40:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47751F40:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.18"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0c.01.18P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.18.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 14481082
+        },
+        {
+          "name": "user_read_chain",
+          "value": 35826243
+        },
+        {
+          "name": "user_read_count",
+          "value": 5039430
+        },
+        {
+          "name": "user_write_chain",
+          "value": 48594631
+        },
+        {
+          "name": "user_write_count",
+          "value": 2527901
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 42152930
+        },
+        {
+          "name": "cp_read_count",
+          "value": 4266287
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1706172861
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 35826243
+        },
+        {
+          "name": "user_write_latency",
+          "value": 468576434
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 48594631
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1207953348
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 42152930
+        },
+        {
+          "name": "total_data",
+          "value": 518446301184
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 448929
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5164762
+        },
+        {
+          "name": "io_queued",
+          "value": 85380180
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.19.P3:6002538A:4776AFC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4776AFC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4776AFC0:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.19"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0d.01.19P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.19.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 14546314
+        },
+        {
+          "name": "user_read_chain",
+          "value": 36038144
+        },
+        {
+          "name": "user_read_count",
+          "value": 5109519
+        },
+        {
+          "name": "user_write_chain",
+          "value": 48587866
+        },
+        {
+          "name": "user_write_count",
+          "value": 2524765
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 42093771
+        },
+        {
+          "name": "cp_read_count",
+          "value": 4264566
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1708780539
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 36038144
+        },
+        {
+          "name": "user_write_latency",
+          "value": 467320153
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 48587866
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1197670764
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 42093771
+        },
+        {
+          "name": "total_data",
+          "value": 519044222976
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 448876
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5163853
+        },
+        {
+          "name": "io_queued",
+          "value": 85083757
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.20.P3:6002538A:4775FB00:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:4775FB00:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:4775FB00:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.20"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0b.01.20P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.20.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 14520529
+        },
+        {
+          "name": "user_read_chain",
+          "value": 35768799
+        },
+        {
+          "name": "user_read_count",
+          "value": 5076528
+        },
+        {
+          "name": "user_write_chain",
+          "value": 48594304
+        },
+        {
+          "name": "user_write_count",
+          "value": 2529096
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 42091685
+        },
+        {
+          "name": "cp_read_count",
+          "value": 4267441
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1690286101
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 35768799
+        },
+        {
+          "name": "user_write_latency",
+          "value": 487444771
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 48594304
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1196222281
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 42091685
+        },
+        {
+          "name": "total_data",
+          "value": 517958811648
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 463034
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5326959
+        },
+        {
+          "name": "io_queued",
+          "value": 86024671
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "disk:constituent"
+      },
+      "id": "umeng-aff300-02:1.1.21.P3:6002538A:47760E20:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "6002538A:47760E20:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_id",
+          "value": "5002538A:47760E20:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000"
+        },
+        {
+          "name": "physical_disk_name",
+          "value": "1.1.21"
+        },
+        {
+          "name": "raid.name",
+          "value": "/aggr0/plex0/rg0/0a.01.21P3"
+        },
+        {
+          "name": "raid_group",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid_group_id",
+          "value": "/aggr0/plex0/rg0"
+        },
+        {
+          "name": "raid.type",
+          "value": "data"
+        },
+        {
+          "name": "speed",
+          "value": "N/A"
+        },
+        {
+          "name": "name",
+          "value": "1.1.21.P3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "capacity",
+          "value": 55176
+        },
+        {
+          "name": "total_transfer_count",
+          "value": 14477290
+        },
+        {
+          "name": "user_read_chain",
+          "value": 35819992
+        },
+        {
+          "name": "user_read_count",
+          "value": 5032614
+        },
+        {
+          "name": "user_write_chain",
+          "value": 48605872
+        },
+        {
+          "name": "user_write_count",
+          "value": 2528494
+        },
+        {
+          "name": "cp_read_chain",
+          "value": 42131144
+        },
+        {
+          "name": "cp_read_count",
+          "value": 4268718
+        },
+        {
+          "name": "user_read_latency",
+          "value": 1685370106
+        },
+        {
+          "name": "user_read_block_count",
+          "value": 35819992
+        },
+        {
+          "name": "user_write_latency",
+          "value": 487384482
+        },
+        {
+          "name": "user_write_block_count",
+          "value": 48605872
+        },
+        {
+          "name": "cp_read_latency",
+          "value": 1196028601
+        },
+        {
+          "name": "cp_read_blocks",
+          "value": 42131144
+        },
+        {
+          "name": "total_data",
+          "value": 518377504768
+        },
+        {
+          "name": "disk_busy_percent",
+          "value": 463936
+        },
+        {
+          "name": "base_for_disk_busy",
+          "value": 7239888346
+        },
+        {
+          "name": "io_pending",
+          "value": 5326436
+        },
+        {
+          "name": "io_queued",
+          "value": 86400150
+        }
+      ]
+    }
+  ],
+  "num_records": 64
+}
+0
+

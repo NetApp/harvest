@@ -1,0 +1,16 @@
+HTTP/1.1 200 OK
+Content-Length: 42
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:09:26 GMT
+Server: libzapid-httpd
+Vary: Origin
+X-Content-Type-Options: nosniff
+X-Dot-Ttag: 8803e90000bcaaa2
+
+{
+  "records": [
+  ],
+  "num_records": 0
+}

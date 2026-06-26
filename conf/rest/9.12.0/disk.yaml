@@ -13,6 +13,7 @@ counters:
   - ^node.name                  => node
   - ^node.uuid
   - ^outage.reason.message      => outage
+  - ^pool
   - ^serial_number
   - ^shelf.uid                  => shelf
   - ^state
@@ -30,6 +31,7 @@ endpoints:
       - disk_io_kbps_total      => stats_io_kbps
       - sectors_read            => stats_sectors_read
       - sectors_written         => stats_sectors_written
+      - path_count              => path_count
 
 plugins:
   - Disk
@@ -55,6 +57,7 @@ export_options:
     - model
     - outage
     - owner_node
+    - pool
     - serial_number
     - shared
     - shelf

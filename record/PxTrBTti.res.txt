@@ -1,0 +1,492 @@
+HTTP/1.1 200 OK
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 08:50:14 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "system:node"
+      },
+      "id": "umeng-aff300-01:1524afca-0580-11e8-ae74-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "system_model",
+          "value": "AFF-A300"
+        },
+        {
+          "name": "ontap_version",
+          "value": "NetApp Release R9.16.1xN_250118_0840: Sat Jan 18 09:32:15 EST 2025 "
+        },
+        {
+          "name": "compile_flags",
+          "value": "1"
+        },
+        {
+          "name": "serial_no",
+          "value": "721802000259"
+        },
+        {
+          "name": "system_id",
+          "value": "0537123843"
+        },
+        {
+          "name": "hostname",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "memory",
+          "value": 88736
+        },
+        {
+          "name": "nfs_ops",
+          "value": 22925448099
+        },
+        {
+          "name": "cifs_ops",
+          "value": 0
+        },
+        {
+          "name": "fcp_ops",
+          "value": 0
+        },
+        {
+          "name": "iscsi_ops",
+          "value": 101414943
+        },
+        {
+          "name": "nvme_fc_ops",
+          "value": 0
+        },
+        {
+          "name": "network_data_received",
+          "value": 1186552490294
+        },
+        {
+          "name": "network_data_sent",
+          "value": 1145006791937
+        },
+        {
+          "name": "fcp_data_received",
+          "value": 0
+        },
+        {
+          "name": "fcp_data_sent",
+          "value": 0
+        },
+        {
+          "name": "nvme_fc_data_received",
+          "value": 0
+        },
+        {
+          "name": "nvme_fc_data_sent",
+          "value": 0
+        },
+        {
+          "name": "disk_data_read",
+          "value": 317995786536
+        },
+        {
+          "name": "disk_data_written",
+          "value": 437422651328
+        },
+        {
+          "name": "hdd_data_read",
+          "value": 0
+        },
+        {
+          "name": "hdd_data_written",
+          "value": 0
+        },
+        {
+          "name": "ssd_data_read",
+          "value": 317995786536
+        },
+        {
+          "name": "ssd_data_written",
+          "value": 437422651328
+        },
+        {
+          "name": "read_ops",
+          "value": 9632713444
+        },
+        {
+          "name": "write_ops",
+          "value": 13137751568
+        },
+        {
+          "name": "other_ops",
+          "value": 256398030
+        },
+        {
+          "name": "total_ops",
+          "value": 23026863042
+        },
+        {
+          "name": "read_latency",
+          "value": 3266833451644
+        },
+        {
+          "name": "write_latency",
+          "value": 37747151315461
+        },
+        {
+          "name": "other_latency",
+          "value": 2209277227
+        },
+        {
+          "name": "total_latency",
+          "value": 41016194044332
+        },
+        {
+          "name": "read_data",
+          "value": 631705289682760
+        },
+        {
+          "name": "write_data",
+          "value": 847409856059212
+        },
+        {
+          "name": "other_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 1479115145741972
+        },
+        {
+          "name": "cpu_busy",
+          "value": 4744241138709
+        },
+        {
+          "name": "cpu_elapsed_time",
+          "value": 14867696672245
+        },
+        {
+          "name": "average_processor_busy_percent",
+          "value": 4737020837638
+        },
+        {
+          "name": "domain_busy",
+          "values": [
+            162090813615049,
+            145415340404,
+            53537394306,
+            5934908398381,
+            112850399094,
+            33249602113,
+            451500279590,
+            241574973563,
+            325966257,
+            5459265486126,
+            695502777311,
+            1928744453,
+            26892095039,
+            3849149390069,
+            637187684622,
+            28872753126384,
+            28475049031676,
+            1359602711,
+            33772332995,
+            10212030350,
+            30,
+            13,
+            12,
+            13,
+            19
+          ],
+          "labels": [
+            "idle",
+            "kahuna",
+            "storage",
+            "exempt",
+            "none",
+            "raid",
+            "raid_exempt",
+            "xor_exempt",
+            "target",
+            "wafl_exempt",
+            "wafl_mpcleaner",
+            "sm_exempt",
+            "protocol",
+            "nwk_exempt",
+            "network",
+            "hostOS",
+            "ssan_exempt",
+            "unclassified",
+            "kahuna_legacy",
+            "ha",
+            "ssan_exempt2",
+            "exempt_ise",
+            "exempt1",
+            "exempt2",
+            "reserved"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "system:node"
+      },
+      "id": "umeng-aff300-02:28e14eab-0580-11e8-bd9d-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "system_model",
+          "value": "AFF-A300"
+        },
+        {
+          "name": "ontap_version",
+          "value": "NetApp Release R9.16.1xN_250118_0840: Sat Jan 18 09:32:15 EST 2025 "
+        },
+        {
+          "name": "compile_flags",
+          "value": "1"
+        },
+        {
+          "name": "serial_no",
+          "value": "721802000260"
+        },
+        {
+          "name": "system_id",
+          "value": "0537124012"
+        },
+        {
+          "name": "hostname",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        }
+      ],
+      "counters": [
+        {
+          "name": "memory",
+          "value": 88736
+        },
+        {
+          "name": "nfs_ops",
+          "value": 0
+        },
+        {
+          "name": "cifs_ops",
+          "value": 0
+        },
+        {
+          "name": "fcp_ops",
+          "value": 0
+        },
+        {
+          "name": "iscsi_ops",
+          "value": 82010707
+        },
+        {
+          "name": "nvme_fc_ops",
+          "value": 0
+        },
+        {
+          "name": "network_data_received",
+          "value": 4794917334
+        },
+        {
+          "name": "network_data_sent",
+          "value": 5381107269
+        },
+        {
+          "name": "fcp_data_received",
+          "value": 0
+        },
+        {
+          "name": "fcp_data_sent",
+          "value": 0
+        },
+        {
+          "name": "nvme_fc_data_received",
+          "value": 0
+        },
+        {
+          "name": "nvme_fc_data_sent",
+          "value": 0
+        },
+        {
+          "name": "disk_data_read",
+          "value": 10451301952
+        },
+        {
+          "name": "disk_data_written",
+          "value": 2557568804
+        },
+        {
+          "name": "hdd_data_read",
+          "value": 0
+        },
+        {
+          "name": "hdd_data_written",
+          "value": 0
+        },
+        {
+          "name": "ssd_data_read",
+          "value": 10451301952
+        },
+        {
+          "name": "ssd_data_written",
+          "value": 2557568804
+        },
+        {
+          "name": "read_ops",
+          "value": 2976964
+        },
+        {
+          "name": "write_ops",
+          "value": 76318545
+        },
+        {
+          "name": "other_ops",
+          "value": 2715198
+        },
+        {
+          "name": "total_ops",
+          "value": 82010707
+        },
+        {
+          "name": "read_latency",
+          "value": 1095124807
+        },
+        {
+          "name": "write_latency",
+          "value": 80892733592
+        },
+        {
+          "name": "other_latency",
+          "value": 1276827820
+        },
+        {
+          "name": "total_latency",
+          "value": 83264686219
+        },
+        {
+          "name": "read_data",
+          "value": 66712482304
+        },
+        {
+          "name": "write_data",
+          "value": 812815273984
+        },
+        {
+          "name": "other_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 879527756288
+        },
+        {
+          "name": "cpu_busy",
+          "value": 2587272994076
+        },
+        {
+          "name": "cpu_elapsed_time",
+          "value": 8189685267460
+        },
+        {
+          "name": "average_processor_busy_percent",
+          "value": 2583045036897
+        },
+        {
+          "name": "domain_busy",
+          "values": [
+            89706243811023,
+            216791370,
+            25354574972,
+            1035447185566,
+            48531644985,
+            11105562054,
+            6770080275,
+            3512972483,
+            176726089,
+            208941452413,
+            3510063073,
+            291003074,
+            12235401583,
+            439948702715,
+            184468541971,
+            25122869885793,
+            13944636993484,
+            584252974,
+            73460239,
+            4267424644,
+            39,
+            13,
+            31,
+            14,
+            14
+          ],
+          "labels": [
+            "idle",
+            "kahuna",
+            "storage",
+            "exempt",
+            "none",
+            "raid",
+            "raid_exempt",
+            "xor_exempt",
+            "target",
+            "wafl_exempt",
+            "wafl_mpcleaner",
+            "sm_exempt",
+            "protocol",
+            "nwk_exempt",
+            "network",
+            "hostOS",
+            "ssan_exempt",
+            "unclassified",
+            "kahuna_legacy",
+            "ha",
+            "ssan_exempt2",
+            "exempt_ise",
+            "exempt1",
+            "exempt2",
+            "reserved"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    }
+  ],
+  "num_records": 2
+}

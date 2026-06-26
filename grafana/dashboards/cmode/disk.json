@@ -2118,6 +2118,34 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #F"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Path Count"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "pool"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Pool"
+                  }
+                ]
               }
             ]
           },
@@ -2200,6 +2228,17 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "disk_path_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "F"
             }
           ],
           "title": "Disks in Cluster",
@@ -2277,7 +2316,15 @@
                   "serial_number": true,
                   "shared": true,
                   "shelf": true,
-                  "shelf_bay": true
+                  "shelf_bay": true,
+                  "Time 6": true,
+                  "__name__ 5": true,
+                  "cluster 6": true,
+                  "datacenter 6": true,
+                  "disk 6": true,
+                  "instance 6": true,
+                  "job 6": true,
+                  "node 6": true
                 },
                 "indexByName": {
                   "Time": 51,
@@ -2334,7 +2381,17 @@
                   "shared": 47,
                   "shelf": 48,
                   "shelf_bay": 49,
-                  "type": 35
+                  "type": 35,
+                  "Value #F": 55,
+                  "Time 6": 56,
+                  "__name__ 5": 57,
+                  "cluster 6": 58,
+                  "datacenter 6": 59,
+                  "disk 6": 60,
+                  "instance 6": 61,
+                  "job 6": 62,
+                  "node 6": 63,
+                  "pool": 64
                 },
                 "renameByName": {
                   "cluster": "Cluster",

@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/host_adapter/rows?counters.name=bytes_read%7Cbytes_written&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 36
+

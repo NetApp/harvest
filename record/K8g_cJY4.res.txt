@@ -1,0 +1,330 @@
+HTTP/1.1 200 OK
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 08:54:13 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "headroom_aggregate"
+      },
+      "id": "umeng-aff300-01:DISK_SSD_test1_c1931ba8-bb35-4b12-84dc-1e0643487144:c1931ba8-bb35-4b12-84dc-1e0643487144",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "name",
+          "value": "DISK_SSD_test1_c1931ba8-bb35-4b12-84dc-1e0643487144"
+        },
+        {
+          "name": "uuid",
+          "value": "c1931ba8-bb35-4b12-84dc-1e0643487144"
+        }
+      ],
+      "counters": [
+        {
+          "name": "current_utilization",
+          "value": 25259197545
+        },
+        {
+          "name": "current_utilization_denominator",
+          "value": 237886944305504
+        },
+        {
+          "name": "current_ops",
+          "value": 895095362
+        },
+        {
+          "name": "current_latency",
+          "value": 269842700487
+        },
+        {
+          "name": "optimal_point.utilization",
+          "value": 21231287
+        },
+        {
+          "name": "optimal_point.latency",
+          "value": 167875875
+        },
+        {
+          "name": "optimal_point.ops",
+          "value": 245199760
+        },
+        {
+          "name": "optimal_point.confidence_factor",
+          "value": 247745
+        },
+        {
+          "name": "optimal_point.samples",
+          "value": 247745
+        },
+        {
+          "name": "ewma.hourly",
+          "values": [
+            20,
+            518,
+            237,
+            641,
+            0,
+            85,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        },
+        {
+          "name": "ewma.daily",
+          "values": [
+            45,
+            869,
+            220,
+            585,
+            0,
+            86,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        },
+        {
+          "name": "ewma.weekly",
+          "values": [
+            69,
+            1168,
+            236,
+            636,
+            0,
+            85,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        },
+        {
+          "name": "ewma.monthly",
+          "values": [
+            74,
+            1222,
+            245,
+            666,
+            0,
+            85,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "headroom_aggregate"
+      },
+      "id": "umeng-aff300-01:DISK_SSD_umeng_aff300_aggr2_3e59547d-298a-4967-bd0f-8ae96cead08c:3e59547d-298a-4967-bd0f-8ae96cead08c",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "name",
+          "value": "DISK_SSD_umeng_aff300_aggr2_3e59547d-298a-4967-bd0f-8ae96cead08c"
+        },
+        {
+          "name": "uuid",
+          "value": "3e59547d-298a-4967-bd0f-8ae96cead08c"
+        }
+      ],
+      "counters": [
+        {
+          "name": "current_utilization",
+          "value": 373272577426
+        },
+        {
+          "name": "current_utilization_denominator",
+          "value": 297358680381980
+        },
+        {
+          "name": "current_ops",
+          "value": 10273904205
+        },
+        {
+          "name": "current_latency",
+          "value": 21758271495414853
+        },
+        {
+          "name": "optimal_point.utilization",
+          "value": 10068905
+        },
+        {
+          "name": "optimal_point.latency",
+          "value": 168290957
+        },
+        {
+          "name": "optimal_point.ops",
+          "value": 1777321974
+        },
+        {
+          "name": "optimal_point.confidence_factor",
+          "value": 136478
+        },
+        {
+          "name": "optimal_point.samples",
+          "value": 136478
+        },
+        {
+          "name": "ewma.hourly",
+          "values": [
+            21,
+            320,
+            181,
+            496,
+            0,
+            84,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        },
+        {
+          "name": "ewma.daily",
+          "values": [
+            40,
+            671,
+            177,
+            497,
+            0,
+            84,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        },
+        {
+          "name": "ewma.weekly",
+          "values": [
+            53,
+            886,
+            182,
+            510,
+            0,
+            84,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        },
+        {
+          "name": "ewma.monthly",
+          "values": [
+            102,
+            1412,
+            191,
+            548,
+            0,
+            84,
+            1,
+            0,
+            0
+          ],
+          "labels": [
+            "ops",
+            "optimal_point_ops",
+            "latency",
+            "optimal_point_latency",
+            "utilization",
+            "optimal_point_utilization",
+            "optimal_point_confidence_factor",
+            "normalized_ops",
+            "normalized_optimal_point_ops"
+          ]
+        }
+      ]
+    }
+  ],
+  "num_records": 2
+}

@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/path/rows?counters.name=read_data%7Cread_iops%7Cread_latency%7Ctotal_data%7Ctotal_iops%7Cwrite_data%7Cwrite_iops%7Cwrite_latency&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 6
+

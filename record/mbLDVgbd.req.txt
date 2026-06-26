@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/wafl_comp_aggr_vol_bin/rows?counters.name=cloud_bin_op%7Ccloud_bin_op_latency_average&fields=%2A&max_records=500&return_records=true&start.counter_table.name=wafl_comp_aggr_vol_bin&start.id=umeng-aff300-01%3Atest1_trident_pvc_d0df7397_81a2_4c88_af77_949c99103d50_bin_1_cfg_id_1 HTTP/1.1
+Accept: application/json
+From: 47
+

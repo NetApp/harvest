@@ -1,0 +1,8015 @@
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:03:22 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+26b8d
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "astra_301:267",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "267"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_301"
+        },
+        {
+          "name": "name",
+          "value": "astra_301"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 70754388
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 242388926
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 70754388
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 736047317
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 978436243
+        },
+        {
+          "name": "total_ops",
+          "value": 141508776
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            31947314,
+            46123210,
+            35844263,
+            10103614,
+            16877920,
+            608996,
+            3303,
+            31,
+            18,
+            48,
+            58,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "dtfpoc:321",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "321"
+        },
+        {
+          "name": "svm.name",
+          "value": "dtfpoc"
+        },
+        {
+          "name": "name",
+          "value": "dtfpoc"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "harvest-captest:320",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "320"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest-captest"
+        },
+        {
+          "name": "name",
+          "value": "harvest-captest"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "harvest:292",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "292"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest"
+        },
+        {
+          "name": "name",
+          "value": "harvest"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "hasvm2:298",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "298"
+        },
+        {
+          "name": "svm.name",
+          "value": "hasvm2"
+        },
+        {
+          "name": "name",
+          "value": "hasvm2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "kk_svm:282",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "282"
+        },
+        {
+          "name": "svm.name",
+          "value": "kk_svm"
+        },
+        {
+          "name": "name",
+          "value": "kk_svm"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "new_svm2:276",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "276"
+        },
+        {
+          "name": "svm.name",
+          "value": "new_svm2"
+        },
+        {
+          "name": "name",
+          "value": "new_svm2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "pavanik_test:288",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "288"
+        },
+        {
+          "name": "svm.name",
+          "value": "pavanik_test"
+        },
+        {
+          "name": "name",
+          "value": "pavanik_test"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "test_banner_154_1:285",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "285"
+        },
+        {
+          "name": "svm.name",
+          "value": "test_banner_154_1"
+        },
+        {
+          "name": "name",
+          "value": "test_banner_154_1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "testsvm_154_22:277",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "277"
+        },
+        {
+          "name": "svm.name",
+          "value": "testsvm_154_22"
+        },
+        {
+          "name": "name",
+          "value": "testsvm_154_22"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v41"
+      },
+      "id": "testsvm_154_444:278",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.id",
+          "value": "278"
+        },
+        {
+          "name": "svm.name",
+          "value": "testsvm_154_444"
+        },
+        {
+          "name": "name",
+          "value": "testsvm_154_444"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.total",
+          "value": 0
+        },
+        {
+          "name": "backchannel_ctl.average_latency",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.total",
+          "value": 0
+        },
+        {
+          "name": "bind_connections_to_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.total",
+          "value": 0
+        },
+        {
+          "name": "exchange_id.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create_session.total",
+          "value": 0
+        },
+        {
+          "name": "create_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_session.average_latency",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "free_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "get_dir_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.total",
+          "value": 0
+        },
+        {
+          "name": "getdeviceinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.total",
+          "value": 0
+        },
+        {
+          "name": "getdevicelist.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.total",
+          "value": 0
+        },
+        {
+          "name": "layoutcommit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutget.total",
+          "value": 0
+        },
+        {
+          "name": "layoutget.average_latency",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.total",
+          "value": 0
+        },
+        {
+          "name": "layoutreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo_no_name.average_latency",
+          "value": 0
+        },
+        {
+          "name": "sequence.total",
+          "value": 0
+        },
+        {
+          "name": "sequence.average_latency",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.total",
+          "value": 0
+        },
+        {
+          "name": "set_ssv.average_latency",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.total",
+          "value": 0
+        },
+        {
+          "name": "test_stateid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.total",
+          "value": 0
+        },
+        {
+          "name": "want_delegation.average_latency",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.total",
+          "value": 0
+        },
+        {
+          "name": "destroy_clientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.total",
+          "value": 0
+        },
+        {
+          "name": "reclaim_complete.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "write_latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        },
+        {
+          "name": "total.latency_histogram",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "labels": [
+            "<2us",
+            "<6us",
+            "<10us",
+            "<14us",
+            "<20us",
+            "<40us",
+            "<60us",
+            "<80us",
+            "<100us",
+            "<200us",
+            "<400us",
+            "<600us",
+            "<800us",
+            "<1ms",
+            "<2ms",
+            "<4ms",
+            "<6ms",
+            "<8ms",
+            "<10ms",
+            "<12ms",
+            "<14ms",
+            "<16ms",
+            "<18ms",
+            "<20ms",
+            "<40ms",
+            "<60ms",
+            "<80ms",
+            "<100ms",
+            "<200ms",
+            "<400ms",
+            "<600ms",
+            "<800ms",
+            "<1s",
+            "<2s",
+            "<4s",
+            "<6s",
+            "<8s",
+            "<10s",
+            "<20s",
+            ">20s"
+          ]
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    }
+  ],
+  "num_records": 11
+}
+0
+

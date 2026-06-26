@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/lun/rows?counters.name=average_read_latency%7Caverage_write_latency%7Caverage_xcopy_latency%7Ccaw_requests%7Cenospc%7Cqueue_full%7Cread_align_histogram%7Cread_data%7Cread_ops%7Cread_ops_sent%7Cread_partial_blocks%7Cremote_bytes%7Cremote_ops%7Cunmap_requests%7Cwrite_align_histogram%7Cwrite_data%7Cwrite_ops%7Cwrite_ops_sent%7Cwrite_partial_blocks%7Cwritesame_requests%7Cwritesame_unmap_requests%7Cxcopy_requests&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 40
+

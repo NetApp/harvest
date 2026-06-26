@@ -1,0 +1,722 @@
+HTTP/1.1 200 OK
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:10:18 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "svm_nfs_v4:node"
+      },
+      "id": "umeng-aff300-01:1524afca-0580-11e8-ae74-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "svm.id",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-01"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 1
+        },
+        {
+          "name": "null.average_latency",
+          "value": 21
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_confirm.total",
+          "value": 0
+        },
+        {
+          "name": "open_confirm.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "renew.total",
+          "value": 0
+        },
+        {
+          "name": "renew.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setclientid.total",
+          "value": 0
+        },
+        {
+          "name": "setclientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setclientid_confirm.total",
+          "value": 0
+        },
+        {
+          "name": "setclientid_confirm.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "release_lock_owner.total",
+          "value": 0
+        },
+        {
+          "name": "release_lock_owner.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 21
+        },
+        {
+          "name": "total_ops",
+          "value": 1
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "svm_nfs_v4:node"
+      },
+      "id": "umeng-aff300-02:28e14eab-0580-11e8-bd9d-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "svm.id",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-02"
+        }
+      ],
+      "counters": [
+        {
+          "name": "null.total",
+          "value": 0
+        },
+        {
+          "name": "null.average_latency",
+          "value": 0
+        },
+        {
+          "name": "access.total",
+          "value": 0
+        },
+        {
+          "name": "access.average_latency",
+          "value": 0
+        },
+        {
+          "name": "close.total",
+          "value": 0
+        },
+        {
+          "name": "close.average_latency",
+          "value": 0
+        },
+        {
+          "name": "commit.total",
+          "value": 0
+        },
+        {
+          "name": "commit.average_latency",
+          "value": 0
+        },
+        {
+          "name": "create.total",
+          "value": 0
+        },
+        {
+          "name": "create.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.total",
+          "value": 0
+        },
+        {
+          "name": "delegpurge.average_latency",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.total",
+          "value": 0
+        },
+        {
+          "name": "delegreturn.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getattr.total",
+          "value": 0
+        },
+        {
+          "name": "getattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "getfh.total",
+          "value": 0
+        },
+        {
+          "name": "getfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "link.total",
+          "value": 0
+        },
+        {
+          "name": "link.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lock.total",
+          "value": 0
+        },
+        {
+          "name": "lock.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lockt.total",
+          "value": 0
+        },
+        {
+          "name": "lockt.average_latency",
+          "value": 0
+        },
+        {
+          "name": "locku.total",
+          "value": 0
+        },
+        {
+          "name": "locku.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookup.total",
+          "value": 0
+        },
+        {
+          "name": "lookup.average_latency",
+          "value": 0
+        },
+        {
+          "name": "lookupp.total",
+          "value": 0
+        },
+        {
+          "name": "lookupp.average_latency",
+          "value": 0
+        },
+        {
+          "name": "nverify.total",
+          "value": 0
+        },
+        {
+          "name": "nverify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open.total",
+          "value": 0
+        },
+        {
+          "name": "open.average_latency",
+          "value": 0
+        },
+        {
+          "name": "openattr.total",
+          "value": 0
+        },
+        {
+          "name": "openattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_confirm.total",
+          "value": 0
+        },
+        {
+          "name": "open_confirm.average_latency",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.total",
+          "value": 0
+        },
+        {
+          "name": "open_downgrade.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putfh.total",
+          "value": 0
+        },
+        {
+          "name": "putfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.total",
+          "value": 0
+        },
+        {
+          "name": "putpubfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.total",
+          "value": 0
+        },
+        {
+          "name": "putrootfh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "read.total",
+          "value": 0
+        },
+        {
+          "name": "read.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readdir.total",
+          "value": 0
+        },
+        {
+          "name": "readdir.average_latency",
+          "value": 0
+        },
+        {
+          "name": "readlink.total",
+          "value": 0
+        },
+        {
+          "name": "readlink.average_latency",
+          "value": 0
+        },
+        {
+          "name": "remove.total",
+          "value": 0
+        },
+        {
+          "name": "remove.average_latency",
+          "value": 0
+        },
+        {
+          "name": "rename.total",
+          "value": 0
+        },
+        {
+          "name": "rename.average_latency",
+          "value": 0
+        },
+        {
+          "name": "renew.total",
+          "value": 0
+        },
+        {
+          "name": "renew.average_latency",
+          "value": 0
+        },
+        {
+          "name": "restorefh.total",
+          "value": 0
+        },
+        {
+          "name": "restorefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "savefh.total",
+          "value": 0
+        },
+        {
+          "name": "savefh.average_latency",
+          "value": 0
+        },
+        {
+          "name": "secinfo.total",
+          "value": 0
+        },
+        {
+          "name": "secinfo.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setattr.total",
+          "value": 0
+        },
+        {
+          "name": "setattr.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setclientid.total",
+          "value": 0
+        },
+        {
+          "name": "setclientid.average_latency",
+          "value": 0
+        },
+        {
+          "name": "setclientid_confirm.total",
+          "value": 0
+        },
+        {
+          "name": "setclientid_confirm.average_latency",
+          "value": 0
+        },
+        {
+          "name": "verify.total",
+          "value": 0
+        },
+        {
+          "name": "verify.average_latency",
+          "value": 0
+        },
+        {
+          "name": "write.total",
+          "value": 0
+        },
+        {
+          "name": "write.average_latency",
+          "value": 0
+        },
+        {
+          "name": "release_lock_owner.total",
+          "value": 0
+        },
+        {
+          "name": "release_lock_owner.average_latency",
+          "value": 0
+        },
+        {
+          "name": "total.read_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.write_throughput",
+          "value": 0
+        },
+        {
+          "name": "total.throughput",
+          "value": 0
+        },
+        {
+          "name": "latency",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    }
+  ],
+  "num_records": 2
+}

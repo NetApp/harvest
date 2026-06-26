@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/disk:constituent/rows?counters.name=base_for_disk_busy%7Ccapacity%7Ccp_read_blocks%7Ccp_read_chain%7Ccp_read_count%7Ccp_read_latency%7Cdisk_busy_percent%7Cio_pending%7Cio_queued%7Ctotal_data%7Ctotal_transfer_count%7Cuser_read_block_count%7Cuser_read_chain%7Cuser_read_count%7Cuser_read_latency%7Cuser_write_block_count%7Cuser_write_chain%7Cuser_write_count%7Cuser_write_latency&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 36
+

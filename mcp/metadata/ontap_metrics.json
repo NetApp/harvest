@@ -151,6 +151,7 @@
   "disk_io_queued": "Number of I/Os queued to the disk but not yet issued",
   "disk_labels": "This metric provides information about Disk",
   "disk_new_status": "This metric indicates a value of 1 if the disk is not in an outage (i.e., the outage label is empty) and a value of 0 if the shelf is in an outage.",
+  "disk_path_count": "Number of active paths to the disk",
   "disk_power_on_hours": "Hours powered on.",
   "disk_sectors": "Number of sectors on the disk.",
   "disk_stats_average_latency": "Average I/O latency across all active paths, in milliseconds.",

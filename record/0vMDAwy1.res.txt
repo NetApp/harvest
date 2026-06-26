@@ -1,0 +1,1890 @@
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:08:12 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+9535
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-01:port.0e:50:0a:09:82:80:f3:dc:03",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:82:80:f3:dc:03"
+        },
+        {
+          "name": "name",
+          "value": "port.0e"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 430157
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 430157
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 399
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-01:port.0f:50:0a:09:81:80:f3:dc:03",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:81:80:f3:dc:03"
+        },
+        {
+          "name": "name",
+          "value": "port.0f"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 430061
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 430061
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 334
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-01:port.0g:50:0a:09:84:80:f3:dc:03",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:84:80:f3:dc:03"
+        },
+        {
+          "name": "name",
+          "value": "port.0g"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 5
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 5
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-01:port.0h:50:0a:09:83:80:f3:dc:03",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "node.uuid",
+          "value": "1524afca-0580-11e8-ae74-00a098d390f2"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:83:80:f3:dc:03"
+        },
+        {
+          "name": "name",
+          "value": "port.0h"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 10
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 10
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-02:port.0e:50:0a:09:82:80:73:dc:ac",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:82:80:73:dc:ac"
+        },
+        {
+          "name": "name",
+          "value": "port.0e"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 275460
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 275460
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 221
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-02:port.0f:50:0a:09:81:80:73:dc:ac",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:81:80:73:dc:ac"
+        },
+        {
+          "name": "name",
+          "value": "port.0f"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 275476
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 275476
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 208
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-02:port.0g:50:0a:09:84:80:73:dc:ac",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:84:80:73:dc:ac"
+        },
+        {
+          "name": "name",
+          "value": "port.0g"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 5
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 5
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "fcp"
+      },
+      "id": "umeng-aff300-02:port.0h:50:0a:09:83:80:73:dc:ac",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "node.uuid",
+          "value": "28e14eab-0580-11e8-bd9d-00a098d39e12"
+        },
+        {
+          "name": "port.wwpn",
+          "value": "50:0a:09:83:80:73:dc:ac"
+        },
+        {
+          "name": "name",
+          "value": "port.0h"
+        }
+      ],
+      "counters": [
+        {
+          "name": "reset_count",
+          "value": 0
+        },
+        {
+          "name": "link.down",
+          "value": 0
+        },
+        {
+          "name": "link.up",
+          "value": 0
+        },
+        {
+          "name": "link.speed",
+          "value": 0
+        },
+        {
+          "name": "isr.count",
+          "value": 10
+        },
+        {
+          "name": "queue_full",
+          "value": 0
+        },
+        {
+          "name": "threshold_full",
+          "value": 0
+        },
+        {
+          "name": "interrupt_count",
+          "value": 10
+        },
+        {
+          "name": "shared_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "spurious_interrupt_count",
+          "value": 0
+        },
+        {
+          "name": "loss_of_sync",
+          "value": 0
+        },
+        {
+          "name": "loss_of_signal",
+          "value": 0
+        },
+        {
+          "name": "primitive_seq_err",
+          "value": 0
+        },
+        {
+          "name": "discarded_frames_count",
+          "value": 0
+        },
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "total_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "total_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_ops",
+          "value": 0
+        },
+        {
+          "name": "nvmf.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.caw_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf_remote.total_data",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_read_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_write_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.average_remote_other_latency",
+          "value": 0
+        },
+        {
+          "name": "nvmf.command_slots",
+          "value": 0
+        },
+        {
+          "name": "link_failure",
+          "value": 0
+        },
+        {
+          "name": "invalid.transmission_word",
+          "value": 0
+        },
+        {
+          "name": "invalid.crc",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "num_records": 8
+}
+0
+

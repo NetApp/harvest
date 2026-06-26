@@ -1,0 +1,190 @@
+HTTP/1.1 200 OK
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:01:15 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-01:0a",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 102936558342800
+        },
+        {
+          "name": "bytes_written",
+          "value": 122642906953840
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-01:0b",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 77106287709360
+        },
+        {
+          "name": "bytes_written",
+          "value": 110852953199040
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-01:0c",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 78929885609120
+        },
+        {
+          "name": "bytes_written",
+          "value": 117933154991600
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-01:0d",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 75383151494560
+        },
+        {
+          "name": "bytes_written",
+          "value": 109051157451600
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-02:0a",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 3417363254240
+        },
+        {
+          "name": "bytes_written",
+          "value": 917911223840
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-02:0b",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 3424498991680
+        },
+        {
+          "name": "bytes_written",
+          "value": 917493668000
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-02:0c",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 2051114158080
+        },
+        {
+          "name": "bytes_written",
+          "value": 444511727920
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "host_adapter"
+      },
+      "id": "umeng-aff300-02:0d",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        }
+      ],
+      "counters": [
+        {
+          "name": "bytes_read",
+          "value": 2107673228960
+        },
+        {
+          "name": "bytes_written",
+          "value": 408439880160
+        }
+      ]
+    }
+  ],
+  "num_records": 8
+}

@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/rewind_context/rows?counters.name=cifs_give_ups%7Ccifs_rewinds%7Cnfs_give_ups%7Cnfs_rewinds&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 26
+

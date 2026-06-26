@@ -1,0 +1,2396 @@
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:03:14 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+b6d5
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:astra_300_lif:1028",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1028"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_300"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "astra_300_lif"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671387
+        },
+        {
+          "name": "received_data",
+          "value": 15976
+        },
+        {
+          "name": "received_packets",
+          "value": 391
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 425016
+        },
+        {
+          "name": "sent_packets",
+          "value": 363
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:astra_301_lif:1232",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1232"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_301"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "astra_301_lif"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671270
+        },
+        {
+          "name": "received_data",
+          "value": 389234803848
+        },
+        {
+          "name": "received_packets",
+          "value": 174078005
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 26163670148
+        },
+        {
+          "name": "sent_packets",
+          "value": 102145103
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:cluster_mgmt:1025",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1025"
+        },
+        {
+          "name": "svm.name",
+          "value": "umeng-aff300-01-02"
+        },
+        {
+          "name": "current_port",
+          "value": "e0M"
+        },
+        {
+          "name": "name",
+          "value": "cluster_mgmt"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190480437
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:dat_lif1:1055",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1055"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_iscsi_sec"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "dat_lif1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867548991
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:data_lif1:1047",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1047"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_iscsi"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "data_lif1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867549005
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:intercluster-lif2:1033",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1033"
+        },
+        {
+          "name": "svm.name",
+          "value": "umeng-aff300-01-02"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "intercluster-lif2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867570476
+        },
+        {
+          "name": "received_data",
+          "value": 1641836480031
+        },
+        {
+          "name": "received_packets",
+          "value": 35336002
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 2070469754
+        },
+        {
+          "name": "sent_packets",
+          "value": 35420812
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:ipv6_lif:1034",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1034"
+        },
+        {
+          "name": "svm.name",
+          "value": "umeng-aff300-01-02"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "ipv6_lif"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190480423
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:iscsi_data02:1231",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1231"
+        },
+        {
+          "name": "svm.name",
+          "value": "osc"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "iscsi_data02"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867549076
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif1:1051",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1051"
+        },
+        {
+          "name": "svm.name",
+          "value": "new_svm2"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "lif1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671712
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif2:1036",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1036"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_304"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "lif2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14765628343
+        },
+        {
+          "name": "received_data",
+          "value": 25748
+        },
+        {
+          "name": "received_packets",
+          "value": 629
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 93692
+        },
+        {
+          "name": "sent_packets",
+          "value": 580
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_data:1039",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1039"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_nvme"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "lif_data"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867549034
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvest-captest_4220:1035",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1035"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest-captest"
+        },
+        {
+          "name": "current_port",
+          "value": "e0d-700"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvest-captest_4220"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 5443098520
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvest1:1045",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1045"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvesttest1"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvest1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671592
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvest_347:1050",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1050"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvest_347"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671749
+        },
+        {
+          "name": "received_data",
+          "value": 1120
+        },
+        {
+          "name": "received_packets",
+          "value": 28
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 28
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvest_393:1037",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1037"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest"
+        },
+        {
+          "name": "current_port",
+          "value": "e0d-18"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvest_393"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671511
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvest_682:1038",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1038"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c-63"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvest_682"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14765628230
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvests3_72:1043",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1043"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvests66"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c-8"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvests3_72"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671633
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvesttest1_100:1046",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1046"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvesttest1"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvesttest1_100"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671782
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_harvesttest1_973:1044",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1044"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvesttest1"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "lif_harvesttest1_973"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671350
+        },
+        {
+          "name": "received_data",
+          "value": 1120
+        },
+        {
+          "name": "received_packets",
+          "value": 28
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 112
+        },
+        {
+          "name": "sent_packets",
+          "value": 4
+        },
+        {
+          "name": "sent_errors",
+          "value": 24
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_hasvm2_815:1054",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1054"
+        },
+        {
+          "name": "svm.name",
+          "value": "hasvm2"
+        },
+        {
+          "name": "current_port",
+          "value": "e0d-8"
+        },
+        {
+          "name": "name",
+          "value": "lif_hasvm2_815"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671430
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:lif_kk_svm_266:1030",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1030"
+        },
+        {
+          "name": "svm.name",
+          "value": "kk_svm"
+        },
+        {
+          "name": "current_port",
+          "value": "e0d-18"
+        },
+        {
+          "name": "name",
+          "value": "lif_kk_svm_266"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671560
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:os_1edecf1d-781a-4e71-9a59-ed87d32c2f37:1052",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1052"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_migr_83cc3772-bc06-4483-a2db-cbe6f2db74b7"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "os_1edecf1d-781a-4e71-9a59-ed87d32c2f37"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14765627789
+        },
+        {
+          "name": "received_data",
+          "value": 53243
+        },
+        {
+          "name": "received_packets",
+          "value": 360
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 4772
+        },
+        {
+          "name": "sent_packets",
+          "value": 68
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:os_2aeba5cf-f15f-4544-acdd-188e1b418d10:1053",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1053"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_migr_83cc3772-bc06-4483-a2db-cbe6f2db74b7"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "os_2aeba5cf-f15f-4544-acdd-188e1b418d10"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 8190671314
+        },
+        {
+          "name": "received_data",
+          "value": 14776
+        },
+        {
+          "name": "received_packets",
+          "value": 361
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 37672
+        },
+        {
+          "name": "sent_packets",
+          "value": 333
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:ostack-iscsi-dnd-lif1:1027",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1027"
+        },
+        {
+          "name": "svm.name",
+          "value": "ostack-iscsi-dnd"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "ostack-iscsi-dnd-lif1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867549059
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:test_154_lif1:1029",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1029"
+        },
+        {
+          "name": "svm.name",
+          "value": "testsvm_154_22"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c-63"
+        },
+        {
+          "name": "name",
+          "value": "test_154_lif1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14765627732
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:umeng-aff300-01-d3:1229",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1229"
+        },
+        {
+          "name": "svm.name",
+          "value": "osc"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-01-d3"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14765627843
+        },
+        {
+          "name": "received_data",
+          "value": 851767069227996
+        },
+        {
+          "name": "received_packets",
+          "value": 29105414129
+        },
+        {
+          "name": "received_errors",
+          "value": 1
+        },
+        {
+          "name": "sent_data",
+          "value": 634115904672574
+        },
+        {
+          "name": "sent_packets",
+          "value": 22610081110
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:umeng-aff300-02_clus1:1011",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1011"
+        },
+        {
+          "name": "svm.name",
+          "value": "Cluster"
+        },
+        {
+          "name": "current_port",
+          "value": "e0a"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-02_clus1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867590572
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:umeng-aff300-02_clus2:1012",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1012"
+        },
+        {
+          "name": "svm.name",
+          "value": "Cluster"
+        },
+        {
+          "name": "current_port",
+          "value": "e0b"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-02_clus2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867580533
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-01:umeng-aff300-02_mgmt1:1013",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-01"
+        },
+        {
+          "name": "unique_id",
+          "value": "1013"
+        },
+        {
+          "name": "svm.name",
+          "value": "umeng-aff300-01-02"
+        },
+        {
+          "name": "current_port",
+          "value": "e0M"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-02_mgmt1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 14867580526
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:__empty__:1048",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1048"
+        },
+        {
+          "name": "svm.name",
+          "value": "hasvm2"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c-70"
+        },
+        {
+          "name": "name",
+          "value": "__empty__"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239215440
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:dat_lif2:1056",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1056"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_iscsi_sec"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "dat_lif2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239231082
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:data_lif2:1057",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1057"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_iscsi"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "data_lif2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239231094
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:intercluster-lif1:1032",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1032"
+        },
+        {
+          "name": "svm.name",
+          "value": "umeng-aff300-01-02"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "intercluster-lif1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239241545
+        },
+        {
+          "name": "received_data",
+          "value": 215511564
+        },
+        {
+          "name": "received_packets",
+          "value": 4450051
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 216288004
+        },
+        {
+          "name": "sent_packets",
+          "value": 4464244
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:ipv6:1031",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1031"
+        },
+        {
+          "name": "svm.name",
+          "value": "umeng-aff300-01-02"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c-8"
+        },
+        {
+          "name": "name",
+          "value": "ipv6"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239251562
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:iscsi_data01:1230",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1230"
+        },
+        {
+          "name": "svm.name",
+          "value": "osc"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "iscsi_data01"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239231174
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:lif1:1049",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1049"
+        },
+        {
+          "name": "svm.name",
+          "value": "hasvm2"
+        },
+        {
+          "name": "current_port",
+          "value": "e0d-63"
+        },
+        {
+          "name": "name",
+          "value": "lif1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239215404
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:lif_data_1:1040",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1040"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_nvme"
+        },
+        {
+          "name": "current_port",
+          "value": "e0c"
+        },
+        {
+          "name": "name",
+          "value": "lif_data_1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239231118
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:ostack-iscsi-dnd-lif2:1026",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1026"
+        },
+        {
+          "name": "svm.name",
+          "value": "ostack-iscsi-dnd"
+        },
+        {
+          "name": "current_port",
+          "value": "e0g"
+        },
+        {
+          "name": "name",
+          "value": "ostack-iscsi-dnd-lif2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239231147
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:umeng-aff300-01_clus1:1024",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1024"
+        },
+        {
+          "name": "svm.name",
+          "value": "Cluster"
+        },
+        {
+          "name": "current_port",
+          "value": "e0a"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-01_clus1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239254602
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:umeng-aff300-01_clus2:1023",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1023"
+        },
+        {
+          "name": "svm.name",
+          "value": "Cluster"
+        },
+        {
+          "name": "current_port",
+          "value": "e0b"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-01_clus2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239261650
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "counter_table": {
+        "name": "lif"
+      },
+      "id": "umeng-aff300-02:umeng-aff300-01_mgmt1:1022",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-02"
+        },
+        {
+          "name": "unique_id",
+          "value": "1022"
+        },
+        {
+          "name": "svm.name",
+          "value": "umeng-aff300-01-02"
+        },
+        {
+          "name": "current_port",
+          "value": "e0M"
+        },
+        {
+          "name": "name",
+          "value": "umeng-aff300-01_mgmt1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "up_time",
+          "value": 7239251586
+        },
+        {
+          "name": "received_data",
+          "value": 0
+        },
+        {
+          "name": "received_packets",
+          "value": 0
+        },
+        {
+          "name": "received_errors",
+          "value": 0
+        },
+        {
+          "name": "sent_data",
+          "value": 0
+        },
+        {
+          "name": "sent_packets",
+          "value": 0
+        },
+        {
+          "name": "sent_errors",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "num_records": 41
+}
+0
+

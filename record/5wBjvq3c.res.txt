@@ -1,0 +1,202 @@
+HTTP/1.1 200 OK
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:02:13 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "namespace"
+      },
+      "id": "/vol/NS_svm_nvme/NS_svm_nvme_1:8c147434-b23a-4f6a-94de-77877cc4e385",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "aggregated_namespace_vdisk_id",
+          "value": "8c147434-b23a-4f6a-94de-77877cc4e385"
+        },
+        {
+          "name": "aggregated_namespace_path",
+          "value": "/vol/NS_svm_nvme/NS_svm_nvme_1"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_nvme"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "651a7693-c957-11ed-bc46-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "/vol/NS_svm_nvme/NS_svm_nvme_1"
+        },
+        {
+          "name": "uuid",
+          "value": "8c147434-b23a-4f6a-94de-77877cc4e385"
+        }
+      ],
+      "counters": [
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "namespace"
+      },
+      "id": "/vol/NS_svm_nvme/NS_svm_nvme_2:624b29b0-0dd3-4764-9609-ebeccc35642b",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "aggregated_namespace_vdisk_id",
+          "value": "624b29b0-0dd3-4764-9609-ebeccc35642b"
+        },
+        {
+          "name": "aggregated_namespace_path",
+          "value": "/vol/NS_svm_nvme/NS_svm_nvme_2"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_nvme"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "651a7693-c957-11ed-bc46-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "/vol/NS_svm_nvme/NS_svm_nvme_2"
+        },
+        {
+          "name": "uuid",
+          "value": "624b29b0-0dd3-4764-9609-ebeccc35642b"
+        }
+      ],
+      "counters": [
+        {
+          "name": "read_ops",
+          "value": 0
+        },
+        {
+          "name": "write_ops",
+          "value": 0
+        },
+        {
+          "name": "other_ops",
+          "value": 0
+        },
+        {
+          "name": "remote.read_ops",
+          "value": 0
+        },
+        {
+          "name": "remote.write_ops",
+          "value": 0
+        },
+        {
+          "name": "remote.other_ops",
+          "value": 0
+        },
+        {
+          "name": "read_data",
+          "value": 0
+        },
+        {
+          "name": "write_data",
+          "value": 0
+        },
+        {
+          "name": "remote.read_data",
+          "value": 0
+        },
+        {
+          "name": "remote.write_data",
+          "value": 0
+        },
+        {
+          "name": "average_read_latency",
+          "value": 0
+        },
+        {
+          "name": "average_write_latency",
+          "value": 0
+        },
+        {
+          "name": "average_other_latency",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    }
+  ],
+  "num_records": 2
+}

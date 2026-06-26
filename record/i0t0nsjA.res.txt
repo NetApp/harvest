@@ -1,0 +1,2232 @@
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Cache-Control: no-cache,no-store,must-revalidate
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors: 'self'
+Content-Type: application/json
+Date: Fri, 26 Jun 2026 09:07:12 GMT
+Server: libzapid-httpd
+Vary: Accept-Encoding,Origin
+X-Content-Type-Options: nosniff
+
+c1f0
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "abcdef:0eb01187-2536-11ee-90be-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "abcdef"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "0eb01187-2536-11ee-90be-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "abcdef"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "astra_300:835c0d25-ceb0-11eb-80e3-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_300"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "835c0d25-ceb0-11eb-80e3-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "astra_300"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "astra_301:3fb7b0b7-ef89-11eb-80e3-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_301"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "3fb7b0b7-ef89-11eb-80e3-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "astra_301"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "astra_302:2a595a2f-ef8e-11eb-80e3-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_302"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "2a595a2f-ef8e-11eb-80e3-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "astra_302"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "astra_304:c8558dc1-b8f0-11ed-b61b-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "astra_304"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "c8558dc1-b8f0-11ed-b61b-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "astra_304"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "destsvm_1777026801:2a5a933f-3fc9-11f1-9672-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "destsvm_1777026801"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "2a5a933f-3fc9-11f1-9672-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "destsvm_1777026801"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "dtfpoc:da86ffed-10b1-11f1-b341-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "dtfpoc"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "da86ffed-10b1-11f1-b341-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "dtfpoc"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "harvest-captest:1d310828-d1d9-11f0-9c6c-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest-captest"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "1d310828-d1d9-11f0-9c6c-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "harvest-captest"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "harvest:fa6fca76-c74e-11ed-bc46-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "fa6fca76-c74e-11ed-bc46-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "harvest"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "harvest_cifs:10fafd20-e282-11ed-9baf-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvest_cifs"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "10fafd20-e282-11ed-9baf-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "harvest_cifs"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "harvests66:8c80bb3b-c968-11ed-b61b-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvests66"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "8c80bb3b-c968-11ed-b61b-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "harvests66"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "harvesttest1:3714d058-ca36-11ed-bc46-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "harvesttest1"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "3714d058-ca36-11ed-bc46-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "harvesttest1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "hasvm2:05f53957-cef7-11ed-bc46-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "hasvm2"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "05f53957-cef7-11ed-bc46-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "hasvm2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "kk_svm:76934a24-39b8-11ed-8553-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "kk_svm"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "76934a24-39b8-11ed-8553-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "kk_svm"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "marketing:2f363018-1338-11f1-b341-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "marketing"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "2f363018-1338-11f1-b341-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "marketing"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "marketing_1776068710:635e1d93-3712-11f1-8293-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "marketing_1776068710"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "635e1d93-3712-11f1-8293-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "marketing_1776068710"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "new_svm2:7693d638-f38c-11ec-9e8d-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "new_svm2"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "7693d638-f38c-11ec-9e8d-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "new_svm2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "osc:ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "osc"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "osc"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "ostack-iscsi-dnd:29fcc946-4956-11ec-8f05-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "ostack-iscsi-dnd"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "29fcc946-4956-11ec-8f05-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "ostack-iscsi-dnd"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "pavanik_test:2438f349-5440-11ed-bc87-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "pavanik_test"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "2438f349-5440-11ed-bc87-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "pavanik_test"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "scaledestination:8336da57-1939-11ef-9356-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "scaledestination"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "8336da57-1939-11ef-9356-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "scaledestination"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "svm-test:1f6e7d99-1338-11f1-b341-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm-test"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "1f6e7d99-1338-11f1-b341-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "svm-test"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "svm01:e3afbc80-5398-11ee-8dc4-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm01"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "e3afbc80-5398-11ee-8dc4-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "svm01"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "svm1-mcc:21240b7a-3bd6-11f0-b6de-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm1-mcc"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "21240b7a-3bd6-11f0-b6de-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "svm1-mcc"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "svm_migr_83cc3772-bc06-4483-a2db-cbe:5a8400ec-5aa5-11ee-868b-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_migr_83cc3772-bc06-4483-a2db-cbe"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "5a8400ec-5aa5-11ee-868b-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "svm_migr_83cc3772-bc06-4483-a2db-cbe"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "svm_nvme:651a7693-c957-11ed-bc46-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "svm_nvme"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "651a7693-c957-11ed-bc46-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "svm_nvme"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "svmh1:61d7482d-7d5f-11ee-9a7d-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "svmh1"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "61d7482d-7d5f-11ee-9a7d-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "svmh1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "test-scale-svm:82bd5d76-2e7a-11f1-86c5-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "test-scale-svm"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "82bd5d76-2e7a-11f1-86c5-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "test-scale-svm"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "test_banner_154_1:39272b52-4a02-11ed-bc87-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "test_banner_154_1"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "39272b52-4a02-11ed-bc87-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "test_banner_154_1"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "test_vserver:4cecc497-1581-11ee-b8c0-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "test_vserver"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "4cecc497-1581-11ee-b8c0-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "test_vserver"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "testsvm2:4acfed0b-cc9b-11ed-bc46-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "testsvm2"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "4acfed0b-cc9b-11ed-bc46-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "testsvm2"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "testsvm_154_22:cda3e5e7-f6a3-11ec-9e8d-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "testsvm_154_22"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "cda3e5e7-f6a3-11ec-9e8d-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "testsvm_154_22"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "testsvm_154_444:e37ff8d3-f6a3-11ec-9e8d-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "testsvm_154_444"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "e37ff8d3-f6a3-11ec-9e8d-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "testsvm_154_444"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "vs:004f1fb6-539a-11ee-90be-00a098d390f2",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "004f1fb6-539a-11ee-90be-00a098d390f2"
+        },
+        {
+          "name": "name",
+          "value": "vs"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "vs_demo_238fb4f4-ef9e-494e-9556-8690:03d57563-bc73-11ef-8417-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_demo_238fb4f4-ef9e-494e-9556-8690"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "03d57563-bc73-11ef-8417-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "vs_demo_238fb4f4-ef9e-494e-9556-8690"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "vs_demo_a4bb3c94-b328-4564-b1fd-4dc0:180f7102-bc71-11ef-8417-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_demo_a4bb3c94-b328-4564-b1fd-4dc0"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "180f7102-bc71-11ef-8417-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "vs_demo_a4bb3c94-b328-4564-b1fd-4dc0"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "vs_iscsi:75df4d55-819f-11f0-9211-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_iscsi"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "75df4d55-819f-11f0-9211-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "vs_iscsi"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "vs_iscsi_sec:b62c7c54-81a9-11f0-9211-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_iscsi_sec"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "b62c7c54-81a9-11f0-9211-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "vs_iscsi_sec"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "vs_test:68e3bbe5-8c01-11ed-a5cd-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "vs_test"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "68e3bbe5-8c01-11ed-a5cd-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "vs_test"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "vtest:22447aac-ea94-11ef-8417-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "vtest"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "22447aac-ea94-11ef-8417-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "vtest"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    },
+    {
+      "counter_table": {
+        "name": "copy_manager"
+      },
+      "id": "xyz:8f304a77-3789-11ef-87a8-00a098d39e12",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "node.uuid",
+          "value": "(multiple-values)"
+        },
+        {
+          "name": "svm.name",
+          "value": "xyz"
+        },
+        {
+          "name": "svm.uuid",
+          "value": "8f304a77-3789-11ef-87a8-00a098d39e12"
+        },
+        {
+          "name": "name",
+          "value": "xyz"
+        }
+      ],
+      "counters": [
+        {
+          "name": "KB_copied",
+          "value": 0
+        },
+        {
+          "name": "ontap_copy_subsystem_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "system_continuous_engineering_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "block_copy_engine_current_copy_count",
+          "value": 0
+        },
+        {
+          "name": "spince_current_copy_count",
+          "value": 0
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      }
+    }
+  ],
+  "num_records": 41
+}
+0
+

@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/wafl/rows?counters.name=average_msg_latency%7Caverage_non_wafl_msg_latency%7Caverage_replication_msg_latency%7Ccp_count%7Ccp_phase_times%7Ccpu_elapsed_time%7Cmemory_free%7Cmemory_used%7Cmsg_total%7Cnon_wafl_msg_total%7Cread_io_type%7Cread_io_type_base%7Creads_from_cache%7Creads_from_cloud%7Creads_from_cloud_s2c_bin%7Creads_from_disk%7Creads_from_external_cache%7Creads_from_fc_miss%7Creads_from_ssd%7Creplication_msg_total%7Ctotal_cp_msecs%7Ctotal_cp_util&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 31
+

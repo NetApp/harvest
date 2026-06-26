@@ -1,5 +1,4 @@
 counters:
-
   - Name: aggr_object_store_logical_used
     Description: Logical space usage of aggregates in the attached object store.
     APIs:
@@ -83,6 +82,9 @@ counters:
 
   - Name: cluster_subsystem_suppressed_alerts
     Description: Number of suppressed alerts
+
+  - Name: disk_path_count
+    Description: Number of active paths to the disk
 
   - Name: disk_stats_io_kbps
     Description: Total Disk Throughput in KBPS Across All Active Paths

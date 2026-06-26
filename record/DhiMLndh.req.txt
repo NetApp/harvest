@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/nvmf_lif/rows?counters.name=average_latency%7Caverage_other_latency%7Caverage_read_latency%7Caverage_write_latency%7Cother_ops%7Cread_data%7Cread_ops%7Ctotal_ops%7Cwrite_data%7Cwrite_ops&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 8
+

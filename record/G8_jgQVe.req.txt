@@ -1,0 +1,4 @@
+GET /api/cluster/counter/tables/lif/rows?counters.name=received_data%7Creceived_errors%7Creceived_packets%7Csent_data%7Csent_errors%7Csent_packets%7Cup_time&fields=%2A&max_records=500&return_records=true HTTP/1.1
+Accept: application/json
+From: 43
+
