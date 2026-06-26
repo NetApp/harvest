@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/vscan/rows?counters.name=scan.latency%7Cscan.request_dispatched_rate%7Cscan.requests%7Cscanner.stats_percent_cpu_used%7Cscanner.stats_percent_mem_used%7Cscanner.stats_percent_network_used&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 7
-

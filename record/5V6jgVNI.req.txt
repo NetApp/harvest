@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/fcvi/rows?counters.name=firmware.invalid_crc_count%7Cfirmware.invalid_transmit_word_count%7Cfirmware.link_failure_count%7Cfirmware.loss_of_signal_count%7Cfirmware.loss_of_sync_count%7Cfirmware.systat.discard_frames%7Chard_reset_count%7Crdma.write_average_latency%7Crdma.write_ops%7Crdma.write_throughput%7Csoft_reset_count&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 9
-

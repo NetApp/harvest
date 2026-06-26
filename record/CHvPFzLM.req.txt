@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/system:node/rows?counters.name=average_processor_busy_percent%7Ccifs_ops%7Ccpu_busy%7Ccpu_elapsed_time%7Cdisk_data_read%7Cdisk_data_written%7Cdomain_busy%7Cfcp_data_received%7Cfcp_data_sent%7Cfcp_ops%7Chdd_data_read%7Chdd_data_written%7Ciscsi_ops%7Cmemory%7Cnetwork_data_received%7Cnetwork_data_sent%7Cnfs_ops%7Cnvme_fc_data_received%7Cnvme_fc_data_sent%7Cnvme_fc_ops%7Cother_data%7Cother_latency%7Cother_ops%7Cread_data%7Cread_latency%7Cread_ops%7Cssd_data_read%7Cssd_data_written%7Ctotal_data%7Ctotal_latency%7Ctotal_ops%7Cwrite_data%7Cwrite_latency%7Cwrite_ops&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 30
-

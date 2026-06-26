@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/external_cache/rows?counters.name=accesses%7Cdisk_reads_replaced%7Cevicts%7Chit.directory%7Chit.indirect%7Chit.metadata_file%7Chit.normal_level_zero%7Chit.percent%7Chit.total%7Cinserts%7Cinvalidates%7Cmiss.directory%7Cmiss.indirect%7Cmiss.metadata_file%7Cmiss.normal_level_zero%7Cmiss.total%7Cusage&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 10
-

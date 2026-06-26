@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/qos/rows?counters.name=concurrency%7Clatency%7Cops%7Cother_ops%7Cread_data%7Cread_io_type_base%7Cread_io_type_percent%7Cread_latency%7Cread_ops%7Csequential_reads_base%7Csequential_reads_percent%7Csequential_writes_base%7Csequential_writes_percent%7Ctotal_data%7Cwrite_data%7Cwrite_latency%7Cwrite_ops&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 11
-

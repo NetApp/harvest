@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/nic_common/rows?counters.name=link_up_to_down%7Creceive_alignment_errors%7Creceive_bytes%7Creceive_crc_errors%7Creceive_errors%7Creceive_length_errors%7Creceive_total_errors%7Ctransmit_bytes%7Ctransmit_errors%7Ctransmit_hw_errors%7Ctransmit_total_errors&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 27
-

@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/smb2/rows?counters.name=close_latency%7Cclose_ops%7Ccreate_latency%7Ccreate_ops%7Clock_latency%7Clock_ops%7Cnegotiate_latency%7Cnegotiate_ops%7Coplock_break_latency%7Coplock_break_ops%7Cquery_directory_latency%7Cquery_directory_ops%7Cquery_info_latency%7Cquery_info_ops%7Cread_latency%7Cread_ops%7Csession_setup_latency%7Csession_setup_ops%7Cset_info_latency%7Cset_info_ops%7Ctree_connect_latency%7Ctree_connect_ops%7Cwrite_latency%7Cwrite_ops&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 10
-

@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/svm_cifs:node/rows?counters.name=average_read_latency%7Caverage_write_latency%7Cconnections%7Cestablished_sessions%7Clatency%7Clatency_base%7Cop_count%7Copen_files%7Ctotal_ops%7Ctotal_read_ops%7Ctotal_write_ops&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 9
-

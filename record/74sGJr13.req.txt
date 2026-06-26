@@ -1,4 +1,0 @@
-GET /api/cluster/counter/tables/copy_manager/rows?counters.name=KB_copied%7Cblock_copy_engine_current_copy_count%7Contap_copy_subsystem_current_copy_count%7Cspince_current_copy_count%7Csystem_continuous_engineering_current_copy_count&fields=%2A&max_records=500&return_records=true HTTP/1.1
-Accept: application/json
-From: 46
-

@@ -29,9 +29,9 @@ endpoints:
       - ^^uid                   => uuid
       - ^type
       - disk_io_kbps_total      => stats_io_kbps
+      - path_count              => path_count
       - sectors_read            => stats_sectors_read
       - sectors_written         => stats_sectors_written
-      - path_count              => path_count
 
 plugins:
   - Disk
