@@ -8,11 +8,12 @@ object:                   qos
 # recommended to use large interval, since workload objects are expensive
 client_timeout: 1m30s
 schedule:
+  - instance: 10m
   - data: 3m
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name      => workload
+  - ^^aggregated_workload_uuid
+  - ^aggregated_workload_name  => workload
   - concurrency
   - latency
   - ops
@@ -31,14 +32,14 @@ override:
   - read_io_type_base: delta
 
 qos_labels:
-  - vserver       => svm
+  - svm.name     => svm
   - volume
   - qtree
   - lun
   - file
-  - policy-group
+  - policy.name  => policy_group
   - wid
-  - workload-name => workload
+  - name         => workload
 
 export_options:
   instance_keys:

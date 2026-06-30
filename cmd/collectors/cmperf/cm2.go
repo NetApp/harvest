@@ -418,6 +418,13 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 
 		matInst := curMat.GetInstance(instanceKey)
 		if matInst == nil {
+			if isWorkloadObject(c.Prop.Query) {
+				// Workload instances are created exclusively by PollInstance. Skipping here mirrors RestPerf behavior and prevents
+				// exporting new volumes with empty svm/volume labels before PollInstance runs.
+				c.Logger.Debug("skip unknown workload instance in PollData, defer to PollInstance",
+					slog.String("key", instanceKey))
+				continue
+			}
 			var newErr error
 			matInst, newErr = curMat.NewInstance(instanceKey)
 			if newErr != nil {

@@ -15,22 +15,31 @@ import (
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
 
 const (
-	latencyIoReqd       = 0
-	arrayKeyToken       = "#"
-	timestampMetricName = "timestamp"
+	latencyIoReqd          = 0
+	arrayKeyToken          = "#"
+	timestampMetricName    = "timestamp"
+	qosWorkloadQuery       = "api/storage/qos/workloads"
+	objWorkloadClass       = "user_defined|system_defined"
+	objWorkloadVolumeClass = "autovolume"
 )
+
+var constituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 type CmPerf struct {
 	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -238,8 +247,13 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	c.RequestMetadata.Reset()
 	prevMat = c.Matrix[c.Object]
 
-	// clone matrix without numeric data
-	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
+	// For workload objects, preserve instances and QoS labels set by PollInstance.
+	// For all other objects, instances are created fresh from the CM2 protobuf.
+	if isWorkloadObject(c.Prop.Query) {
+		curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	} else {
+		curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
+	}
 	curMat.Reset()
 
 	apiD += time.Since(startTime)
@@ -259,7 +273,6 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	if dlErr != nil {
 		return nil, dlErr
 	}
-	// TODO: We keep publishing older data from the Prometheus cache until it expires.What if no cm2 files are available for very long time?
 	if filePath == "" {
 		// No new file this poll — leave r.Matrix[r.Object] (prevMat) intact so
 		// the next poll with fresh data can diff correctly against it.
@@ -274,6 +287,7 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	if pollErr != nil {
 		return nil, pollErr
 	}
+
 	// Advance lastTimestamp only after the file has been successfully parsed,
 	// so a parse failure does not permanently skip the file.
 	c.lastTimestamp = fileTS
@@ -527,6 +541,109 @@ func (c *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plug
 
 func isWorkloadObject(query string) bool {
 	return query == "workload" || query == "workload_volume"
+}
+
+// PollInstance fetches QoS workload metadata from ONTAP REST and populates
+// the matrix with instance labels (svm, volume, qtree, lun, file, policy_group, wid).
+// It is only active for workload and workload_volume objects.
+func (c *CmPerf) PollInstance() (map[string]*matrix.Matrix, error) {
+	if !isWorkloadObject(c.Prop.Query) {
+		return nil, nil
+	}
+
+	mat := c.Matrix[c.Object]
+	oldInstances := set.New()
+	for key := range mat.GetInstances() {
+		oldInstances.Add(key)
+	}
+
+	workloadClass := objWorkloadClass
+	if c.Prop.Query == "workload_volume" {
+		workloadClass = objWorkloadVolumeClass
+	}
+
+	href := rest.NewHrefBuilder().
+		APIPath(qosWorkloadQuery).
+		Fields([]string{"*"}).
+		Filter([]string{"workload_class=" + workloadClass}).
+		MaxRecords(c.BatchSize).
+		ReturnTimeout(c.Prop.ReturnTimeOut).
+		Build()
+
+	c.Logger.Debug("polling QoS workloads", slog.String("href", href))
+
+	apiT := time.Now()
+	c.RequestMetadata.Reset()
+	records, err := rest.FetchAll(c.Client, &c.RequestMetadata, href)
+	if err != nil {
+		return nil, fmt.Errorf("PollInstance fetch %s: %w", href, err)
+	}
+	apiD := time.Since(apiT)
+
+	parseT := time.Now()
+	var added, removed int
+
+	for _, instanceData := range records {
+		if !instanceData.IsObject() {
+			continue
+		}
+
+		// Skip FlexGroup constituents if configured
+		if c.perfProp.disableConstituents {
+			if constituentRegex.MatchString(instanceData.Get("volume").ClonedString()) {
+				continue
+			}
+		}
+
+		instanceKey := instanceData.Get("uuid").ClonedString()
+		if instanceKey == "" {
+			c.Logger.Warn("skipping QoS workload with no uuid")
+			continue
+		}
+
+		if oldInstances.Has(instanceKey) {
+			oldInstances.Remove(instanceKey)
+			c.updateQosLabels(instanceData, mat.GetInstance(instanceKey))
+		} else {
+			instance, newErr := mat.NewInstance(instanceKey)
+			if newErr != nil {
+				c.Logger.Error("add QoS instance", slogx.Err(newErr), slog.String("uuid", instanceKey))
+				continue
+			}
+			c.updateQosLabels(instanceData, instance)
+			added++
+		}
+	}
+
+	// Remove stale instances no longer reported by ONTAP
+	for key := range oldInstances.Iter() {
+		mat.RemoveInstance(key)
+		removed++
+	}
+
+	c.Logger.Debug("QoS instances", slog.Int("added", added), slog.Int("removed", removed), slog.Int("total", len(mat.GetInstances())))
+
+	_ = c.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
+	_ = c.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
+	_ = c.Metadata.LazySetValueUint64("instances", "instance", uint64(len(mat.GetInstances())))
+	_ = c.Metadata.LazySetValueUint64("bytesRx", "instance", c.RequestMetadata.BytesRx.Load())
+	_ = c.Metadata.LazySetValueUint64("numCalls", "instance", c.RequestMetadata.NumCalls.Load())
+
+	if len(mat.GetInstances()) == 0 {
+		return nil, errs.New(errs.ErrNoInstance, "no "+c.Prop.Object+" instances on cluster")
+	}
+	return nil, nil
+}
+
+func (c *CmPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance) {
+	if instance == nil {
+		return
+	}
+	for label, display := range c.perfProp.qosLabels {
+		if value := qos.Get(label); value.Exists() {
+			instance.SetLabel(display, value.ClonedString())
+		}
+	}
 }
 
 // Interface guards
