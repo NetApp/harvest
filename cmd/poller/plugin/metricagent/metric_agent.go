@@ -87,7 +87,7 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 			metric.SetProperty("compute_metric mapping")
 		}
 
-		for _, instance := range m[0].GetInstances() {
+		for iKey, instance := range m[0].GetInstances() {
 			var result float64
 
 			// Parse first operand and store in result for further processing
@@ -107,12 +107,14 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 				if value, err := strconv.Atoi(r.metricNames[i]); err == nil {
 					v = float64(value)
 				} else {
-					metricVal = a.getMetric(m[i], r.metricNames[i])
-					if metricVal != nil {
-						v, _ = metricVal.GetValueFloat64(instance)
-					} else {
-						metricNotFound = append(metricNotFound, err)
-						break
+					if m[i] != nil && m[i].GetInstance(iKey) != nil {
+						metricVal = a.getMetric(m[i], r.metricNames[i])
+						if metricVal != nil {
+							v, _ = metricVal.GetValueFloat64(m[i].GetInstance(iKey))
+						} else {
+							metricNotFound = append(metricNotFound, err)
+							break
+						}
 					}
 				}
 

@@ -181,7 +181,7 @@ func TestComputeMetricsRuleWithMultiMatrix(t *testing.T) {
 	instanceA, err = m1.NewInstance("A")
 	assert.Nil(t, err)
 
-	instanceB, err = m2.NewInstance("B")
+	instanceB, err = m2.NewInstance("A")
 	assert.Nil(t, err)
 
 	metricDataBytes, err = m1.NewMetricFloat64("storagegrid_storage_utilization_data_bytes")
