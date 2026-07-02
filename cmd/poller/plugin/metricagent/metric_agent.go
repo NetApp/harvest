@@ -18,7 +18,7 @@ import (
 
 type MetricAgent struct {
 	*plugin.AbstractPlugin
-	actions            []func(*matrix.Matrix) error
+	actions            []func(map[string]*matrix.Matrix) error
 	computeMetricRules []computeMetricRule
 }
 
@@ -49,39 +49,49 @@ func (a *MetricAgent) Init(remote conf.Remote) error {
 func (a *MetricAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var err error
-	data := dataMap[a.Object]
 
 	for _, foo := range a.actions {
-		_ = foo(data)
+		_ = foo(dataMap)
 	}
 
 	return nil, nil, err
 }
 
-func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
+func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 
 	var (
 		metric                    *matrix.Metric
 		metricVal, firstMetricVal *matrix.Metric
+		m                         []*matrix.Matrix
 		err                       error
 		metricNotFound            []error
 	)
 
+	data := dataMap[a.Object]
+
 	// map values for compute_metric mapping rules
 	for _, r := range a.computeMetricRules {
-		if metric = a.getMetric(m, r.metric); metric == nil {
-			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
+		m = make([]*matrix.Matrix, len(r.metricNames))
+		for i := range len(r.metricNames) {
+			if data == nil {
+				m[i] = dataMap[r.metricNames[i]]
+			} else {
+				m[i] = data
+			}
+		}
+		if metric = a.getMetric(m[0], r.metric); metric == nil {
+			if metric, err = m[0].NewMetricFloat64(r.metric); err != nil {
 				a.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", r.metric))
 				return err
 			}
 			metric.SetProperty("compute_metric mapping")
 		}
 
-		for _, instance := range m.GetInstances() {
+		for _, instance := range m[0].GetInstances() {
 			var result float64
 
 			// Parse first operand and store in result for further processing
-			if firstMetricVal = a.getMetric(m, r.metricNames[0]); firstMetricVal != nil {
+			if firstMetricVal = a.getMetric(m[0], r.metricNames[0]); firstMetricVal != nil {
 				if val, ok := firstMetricVal.GetValueFloat64(instance); ok {
 					result = val
 				} else {
@@ -97,7 +107,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 				if value, err := strconv.Atoi(r.metricNames[i]); err == nil {
 					v = float64(value)
 				} else {
-					metricVal = a.getMetric(m, r.metricNames[i])
+					metricVal = a.getMetric(m[i], r.metricNames[i])
 					if metricVal != nil {
 						v, _ = metricVal.GetValueFloat64(instance)
 					} else {

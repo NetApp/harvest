@@ -36,7 +36,7 @@ func (a *MetricAgent) parseRules() int {
 		}
 	}
 
-	a.actions = make([]func(matrix *matrix.Matrix) error, 0)
+	a.actions = make([]func(map[string]*matrix.Matrix) error, 0)
 	count := 0
 
 	for _, c := range a.Params.GetChildren() {

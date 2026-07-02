@@ -41,7 +41,7 @@ func newAgent() *MetricAgent {
 	return p
 }
 
-func TestComputeMetricsRule(t *testing.T) {
+func TestComputeMetricsRuleWithSingleMatrix(t *testing.T) {
 
 	var (
 		instanceA, instanceB                                                *matrix.Instance
@@ -112,7 +112,9 @@ func TestComputeMetricsRule(t *testing.T) {
 	assert.Nil(t, err)
 	metricTotalDuration.SetValueFloat64(instanceB, 3600)
 
-	err = p.computeMetrics(m)
+	dataMap := make(map[string]*matrix.Matrix)
+	dataMap[""] = m
+	_, _, err = p.Run(dataMap)
 	assert.Nil(t, err)
 
 	// check "space_total" for instanceA
@@ -153,4 +155,52 @@ func TestComputeMetricsRule(t *testing.T) {
 	metricTransmissionRateVal, ok := metricTransmissionRate.GetValueFloat64(instanceB)
 	assert.True(t, ok)
 	assert.Equal(t, metricTransmissionRateVal, expected)
+}
+
+func TestComputeMetricsRuleWithMultiMatrix(t *testing.T) {
+
+	var (
+		instanceA, instanceB                                   *matrix.Instance
+		metricDataBytes, metricTotalSpaceBytes, metricUsedPerc *matrix.Metric
+		expected                                               float64
+		err                                                    error
+	)
+
+	params := node.NewS("MetricAgent")
+	// create metric "storagegrid_storage_utilization_used_percent", which is percent of the metric value of storagegrid_storage_utilization_data_bytes by storagegrid_storage_utilization_total_space_bytes
+	params.NewChildS("compute_metric", "").NewChildS("", "storagegrid_storage_utilization_used_percent PERCENT storagegrid_storage_utilization_data_bytes storagegrid_storage_utilization_total_space_bytes")
+	abc := plugin.New("Test", nil, params, nil, "", nil)
+	p := &MetricAgent{AbstractPlugin: abc}
+	if err := p.Init(conf.Remote{}); err != nil {
+		panic(err)
+	}
+
+	m1 := matrix.New("Matrix1", "", "Prometheus")
+	m2 := matrix.New("Matrix2", "", "Prometheus")
+
+	instanceA, err = m1.NewInstance("A")
+	assert.Nil(t, err)
+
+	instanceB, err = m2.NewInstance("B")
+	assert.Nil(t, err)
+
+	metricDataBytes, err = m1.NewMetricFloat64("storagegrid_storage_utilization_data_bytes")
+	assert.Nil(t, err)
+	metricDataBytes.SetValueFloat64(instanceA, 9000000)
+
+	metricTotalSpaceBytes, err = m2.NewMetricFloat64("storagegrid_storage_utilization_total_space_bytes")
+	assert.Nil(t, err)
+	metricTotalSpaceBytes.SetValueFloat64(instanceB, 36000000)
+
+	dataMap := make(map[string]*matrix.Matrix)
+	dataMap["storagegrid_storage_utilization_data_bytes"] = m1
+	dataMap["storagegrid_storage_utilization_total_space_bytes"] = m2
+	_, _, err = p.Run(dataMap)
+	assert.Nil(t, err)
+
+	expected = 25
+	metricUsedPerc = m1.GetMetric("storagegrid_storage_utilization_used_percent")
+	metricUsedPercVal, ok := metricUsedPerc.GetValueFloat64(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, metricUsedPercVal, expected)
 }
