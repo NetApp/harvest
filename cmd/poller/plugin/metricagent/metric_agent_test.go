@@ -113,7 +113,7 @@ func TestComputeMetricsRuleWithSingleMatrix(t *testing.T) {
 	metricTotalDuration.SetValueFloat64(instanceB, 3600)
 
 	dataMap := make(map[string]*matrix.Matrix)
-	dataMap[""] = m
+	dataMap[p.Object] = m
 	_, _, err = p.Run(dataMap)
 	assert.Nil(t, err)
 

@@ -5,6 +5,7 @@
 package metricagent
 
 import (
+	"errors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -48,13 +49,14 @@ func (a *MetricAgent) Init(remote conf.Remote) error {
 
 func (a *MetricAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
-	var err error
+	ee := make([]error, 0, len(a.actions))
 
 	for _, foo := range a.actions {
-		_ = foo(dataMap)
+		err := foo(dataMap)
+		ee = append(ee, err)
 	}
 
-	return nil, nil, err
+	return nil, nil, errors.Join(ee...)
 }
 
 func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
@@ -72,12 +74,15 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 	// map values for compute_metric mapping rules
 	for _, r := range a.computeMetricRules {
 		m = make([]*matrix.Matrix, len(r.metricNames))
-		for i := range len(r.metricNames) {
+		for i := range r.metricNames {
 			if data == nil {
 				m[i] = dataMap[r.metricNames[i]]
 			} else {
 				m[i] = data
 			}
+		}
+		if m[0] == nil {
+			return errs.New(errs.ErrMissingMetric, "matrix not found for metric "+r.metricNames[0])
 		}
 		if metric = a.getMetric(m[0], r.metric); metric == nil {
 			if metric, err = m[0].NewMetricFloat64(r.metric); err != nil {
@@ -107,16 +112,15 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 				if value, err := strconv.Atoi(r.metricNames[i]); err == nil {
 					v = float64(value)
 				} else {
-					if m[i] != nil && m[i].GetInstance(iKey) != nil {
-						metricVal = a.getMetric(m[i], r.metricNames[i])
-						if metricVal != nil {
-							v, _ = metricVal.GetValueFloat64(m[i].GetInstance(iKey))
-						} else {
-							metricNotFound = append(metricNotFound, err)
-							break
-						}
+					if m[i] == nil || m[i].GetInstance(iKey) == nil {
+						return errs.New(errs.ErrMissingMetric, "matrix or instance not found for metric "+r.metricNames[i])
+					}
+					metricVal = a.getMetric(m[i], r.metricNames[i])
+					if metricVal != nil {
+						v, _ = metricVal.GetValueFloat64(m[i].GetInstance(iKey))
 					} else {
-						a.SLogger.Warn("computeMetrics: instance not found", slog.String("iKey", iKey))
+						metricNotFound = append(metricNotFound, err)
+						break
 					}
 				}
 
