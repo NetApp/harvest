@@ -115,6 +115,8 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 							metricNotFound = append(metricNotFound, err)
 							break
 						}
+					} else {
+						a.SLogger.Warn("computeMetrics: instance not found", slog.String("iKey", iKey))
 					}
 				}
 
