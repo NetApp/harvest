@@ -837,6 +837,10 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 		return nil, err
 	}
 
+	if template.GetChildContentS("latency_io_reqd") != "" {
+		logger.Info("latency_io_reqd", slog.Any("value", template.GetChildContentS("latency_io_reqd")))
+	}
+
 	objects := make([]objectCollector, 0)
 	templateObject := template.GetChildContentS("object")
 
