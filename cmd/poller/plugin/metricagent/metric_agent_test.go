@@ -250,6 +250,7 @@ func TestComputeMetricsRuleWithMultiMatrix(t *testing.T) {
 
 	expectedA = 25
 	metricUsedPerc = m1.GetMetric("storagegrid_storage_utilization_used_percent")
+	assert.NotNil(t, metricUsedPerc)
 	metricUsedPercValA, ok := metricUsedPerc.GetValueFloat64(instanceA)
 	assert.True(t, ok)
 	assert.Equal(t, metricUsedPercValA, expectedA)
@@ -272,6 +273,7 @@ func TestComputeMetricsRuleWithMultiMatrix(t *testing.T) {
 	assert.Nil(t, err)
 
 	metricStorage = m3.GetMetric("storagegrid_storage_metric")
+	assert.NotNil(t, metricStorage)
 	_, ok = metricStorage.GetValueFloat64(instanceE)
 	assert.False(t, ok)
 	_, ok = metricStorage.GetValueFloat64(instanceF)
