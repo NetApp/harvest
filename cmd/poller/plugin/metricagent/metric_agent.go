@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
+	"maps"
 	"strconv"
 	"strings"
 )
@@ -65,6 +66,10 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 		metric                    *matrix.Metric
 		metricVal, firstMetricVal *matrix.Metric
 		m                         []*matrix.Matrix
+		sgMatrix                  bool
+		skipMetric                bool
+		sgIndex                   string
+		sgLableMap                map[string]string
 		err                       error
 		metricNotFound            []error
 	)
@@ -74,9 +79,11 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 	// map values for compute_metric mapping rules
 	for _, r := range a.computeMetricRules {
 		m = make([]*matrix.Matrix, len(r.metricNames))
+		sgLableMap = make(map[string]string)
 		for i := range r.metricNames {
 			if data == nil {
 				m[i] = dataMap[r.metricNames[i]]
+				sgMatrix = true
 			} else {
 				m[i] = data
 			}
@@ -93,6 +100,11 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 		}
 
 		for iKey, instance := range m[0].GetInstances() {
+			skipMetric = false
+			if sgMatrix {
+				sgIndex = strings.Split(iKey, "-")[1]
+				sgLableMap = instance.GetLabels()
+			}
 			var result float64
 
 			// Parse first operand and store in result for further processing
@@ -112,12 +124,24 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 				if value, err := strconv.Atoi(r.metricNames[i]); err == nil {
 					v = float64(value)
 				} else {
-					if m[i] == nil || m[i].GetInstance(iKey) == nil {
-						return errs.New(errs.ErrMissingMetric, "matrix or instance not found for metric "+r.metricNames[i])
+					if sgMatrix {
+						iKey = r.metricNames[i] + "-" + sgIndex
+						if m[i] == nil || m[i].GetInstance(iKey) == nil {
+							a.SLogger.Warn("computeMetrics: matrix or instance not found for metric", slog.String("metric", r.metricNames[i]))
+							skipMetric = true
+							break
+						}
+						instance = m[i].GetInstance(iKey)
+						if len(sgLableMap) != len(instance.GetLabels()) || !maps.Equal(sgLableMap, instance.GetLabels()) {
+							a.SLogger.Warn("computeMetrics: skipping compute metric calculation as instance labels are not matching for given metrics", slog.String("metric", r.metric), slog.Any("given metrics", r.metricNames))
+							skipMetric = true
+							break
+						}
 					}
+
 					metricVal = a.getMetric(m[i], r.metricNames[i])
 					if metricVal != nil {
-						v, _ = metricVal.GetValueFloat64(m[i].GetInstance(iKey))
+						v, _ = metricVal.GetValueFloat64(instance)
 					} else {
 						metricNotFound = append(metricNotFound, err)
 						break
@@ -150,7 +174,10 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 				}
 			}
 
-			metric.SetValueFloat64(instance, result)
+			if !skipMetric {
+				metric.SetValueFloat64(instance, result)
+			}
+
 		}
 	}
 	if len(metricNotFound) > 0 {
