@@ -1,0 +1,30 @@
+name: SsdCache
+query: storage-systems/{array_id}/flash-cache
+object: eseries_ssd_cache
+
+counters:
+  - ^^id                                                                                        => ssd_cache_id
+  - ^cachedVolumes                                                                              => cached_volume_ids
+  - ^driveRefs                                                                                  => drive_ids
+  - ^fcDriveInfo.fcWithDrives.protectionInformationCapabilities.protectionInformationCapable    => da_capable
+  - ^fcDriveInfo.fcWithDrives.securityLevel                                                     => security_level
+  - ^fcDriveInfo.fcWithDrives.securityType                                                      => security_type
+  - ^fcDriveInfo.flashCacheType                                                                 => type
+  - ^flashCacheBase.status                                                                      => status
+  - ^name                                                                                       => ssd_cache
+  - ^wwn
+  - fcDriveInfo.fcWithDrives.usedCapacity                                                       => current_capacity
+
+plugins:
+  - SsdCacheCapacity
+
+export_options:
+  instance_keys:
+    - ssd_cache
+    - ssd_cache_id
+  instance_labels:
+    - status
+    - type
+    - security_level
+    - security_type
+    - da_capable

@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
@@ -19,6 +20,7 @@ type Controller struct {
 	client           *rest.Client
 	schedule         int
 	controllerLabels map[string]string // Maps controller_id -> label ("A", "B", etc.)
+	labelToUUID      map[string]string // Maps label -> controller_id UUID (reverse of controllerLabels)
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -76,6 +78,7 @@ func (c *Controller) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 func (c *Controller) refreshControllerLabels(arrayID string) {
 	c.controllerLabels = make(map[string]string)
+	c.labelToUUID = make(map[string]string)
 
 	controllerLabels, err := c.buildControllerLabelMap(arrayID)
 	if err != nil {
@@ -84,6 +87,9 @@ func (c *Controller) refreshControllerLabels(arrayID string) {
 	}
 
 	c.controllerLabels = controllerLabels
+	for uuid, label := range controllerLabels {
+		c.labelToUUID[label] = uuid
+	}
 	c.SLogger.Debug("Refreshed controller labels", slog.Int("count", len(c.controllerLabels)))
 }
 
@@ -120,6 +126,17 @@ func (c *Controller) applyControllerLabels(data *matrix.Matrix) {
 			controllerID = instance.GetLabel("id")
 		}
 		if controllerID == "" {
+			continue
+		}
+
+		// Handle synthetic SYMbol controller IDs ("a"/"b").
+		// Resolve them to the real UUID and label so exported metrics match the REST path.
+		if controllerID == "a" || controllerID == "b" {
+			label := strings.ToUpper(controllerID)
+			instance.SetLabel("controller", label)
+			if uuid, ok := c.labelToUUID[label]; ok {
+				instance.SetLabel("controller_id", uuid)
+			}
 			continue
 		}
 

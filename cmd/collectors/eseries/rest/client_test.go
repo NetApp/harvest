@@ -91,9 +91,9 @@ func TestClient_normalizeBundleVersion(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := client.normalizeBundleVersion(tt.bundleDisplay)
+			result := client.normalizeVersion(tt.bundleDisplay)
 			if result != tt.expectedOutput {
-				t.Errorf("normalizeBundleVersion(%q) = %q, want %q",
+				t.Errorf("normalizeVersion(%q) = %q, want %q",
 					tt.bundleDisplay, result, tt.expectedOutput)
 			}
 		})

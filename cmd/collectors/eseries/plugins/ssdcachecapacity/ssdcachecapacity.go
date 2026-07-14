@@ -353,7 +353,10 @@ func (s *SsdCacheCapacity) populateCapacityMetrics(data *matrix.Matrix) {
 		}
 	}
 
-	usedCapMetric := data.GetMetric("usedCapacity")
+	// Look up the used-capacity metric by its exported (display) name so this works
+	// across templates that source it from different paths (ssd-caches "usedCapacity"
+	// on 12.00 vs flash-cache "fcDriveInfo.fcWithDrives.usedCapacity" on < 12.00).
+	usedCapMetric := data.DisplayMetric("current_capacity")
 
 	for _, instance := range data.GetInstances() {
 		maxCapMetric.SetValueFloat64(instance, s.maxFlashCacheSize)
