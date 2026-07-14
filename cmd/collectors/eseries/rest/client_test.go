@@ -87,6 +87,11 @@ func TestClient_normalizeBundleVersion(t *testing.T) {
 			bundleDisplay:  "11.70.R4",
 			expectedOutput: "11.70.0",
 		},
+		{
+			name:           "Four-component version",
+			bundleDisplay:  "12.00.00.9018",
+			expectedOutput: "12.00.00",
+		},
 	}
 
 	for _, tt := range tests {

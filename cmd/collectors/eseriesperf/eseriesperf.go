@@ -115,12 +115,8 @@ func (ep *EseriesPerf) Init(a *collector.AbstractCollector) error {
 
 	if ep.Params.GetChildContentS("type") == "ssd_cache" {
 		ep.useSymbolPath = isLegacyFlashCache(ep)
-		path := "REST"
-		if ep.useSymbolPath {
-			path = "SYMbol"
-		}
 		ep.Logger.Info("ssd_cache fetch path selected",
-			slog.String("path", path),
+			slog.Bool("isLegacyFlashCache", ep.useSymbolPath),
 			slog.String("version", ep.Remote.Version))
 	}
 

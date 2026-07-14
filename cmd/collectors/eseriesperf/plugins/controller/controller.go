@@ -80,26 +80,25 @@ func (c *Controller) refreshControllerLabels(arrayID string) {
 	c.controllerLabels = make(map[string]string)
 	c.labelToUUID = make(map[string]string)
 
-	controllerLabels, err := c.buildControllerLabelMap(arrayID)
+	controllerLabels, labelToUUID, err := c.buildControllerLabelMap(arrayID)
 	if err != nil {
 		c.SLogger.Warn("Failed to build controller label map", slogx.Err(err))
 		return
 	}
 
 	c.controllerLabels = controllerLabels
-	for uuid, label := range controllerLabels {
-		c.labelToUUID[label] = uuid
-	}
+	c.labelToUUID = labelToUUID
 	c.SLogger.Debug("Refreshed controller labels", slog.Int("count", len(c.controllerLabels)))
 }
 
-func (c *Controller) buildControllerLabelMap(arrayID string) (map[string]string, error) {
+func (c *Controller) buildControllerLabelMap(arrayID string) (map[string]string, map[string]string, error) {
 	controllerLabels := make(map[string]string)
+	labelToUUID := make(map[string]string)
 
 	apiPath := c.client.APIPath + "/storage-systems/" + arrayID + "/controllers"
 	controllers, err := c.client.Fetch(apiPath, nil)
 	if err != nil {
-		return controllerLabels, fmt.Errorf("failed to fetch controllers: %w", err)
+		return controllerLabels, labelToUUID, fmt.Errorf("failed to fetch controllers: %w", err)
 	}
 
 	for _, controller := range controllers {
@@ -112,11 +111,12 @@ func (c *Controller) buildControllerLabelMap(arrayID string) (map[string]string,
 
 		if controllerID != "" && label != "" {
 			controllerLabels[controllerID] = label
+			labelToUUID[label] = controllerID
 		}
 	}
 
 	c.SLogger.Debug("Built controller label map", slog.Int("count", len(controllerLabels)))
-	return controllerLabels, nil
+	return controllerLabels, labelToUUID, nil
 }
 
 func (c *Controller) applyControllerLabels(data *matrix.Matrix) {
