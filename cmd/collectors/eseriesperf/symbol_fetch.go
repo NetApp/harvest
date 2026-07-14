@@ -28,7 +28,7 @@ func isLegacyFlashCache(ep *EseriesPerf) bool {
 // via the SYMbol POST getFlashCacheStatistics endpoint.
 func symbolSsdCacheFetch(ep *EseriesPerf, systemID string, headers map[string]string) ([]gjson.Result, error) {
 	endpoint := fmt.Sprintf("%s/storage-systems/%s/flash-cache", ep.Client.APIPath, systemID)
-	fc, err := ep.Client.Fetch(endpoint, nil)
+	fc, err := ep.Client.Fetch(endpoint, nil, headers)
 	if err != nil {
 		// 404 means no SSD cache is configured on this array — treat as no instances.
 		if re, ok := errors.AsType[*errs.RestError](err); ok && re.StatusCode == http.StatusNotFound {
