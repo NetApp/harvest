@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net/http"
 
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
@@ -30,7 +31,7 @@ func symbolSsdCacheFetch(ep *EseriesPerf, systemID string, headers map[string]st
 	fc, err := ep.Client.Fetch(endpoint, nil)
 	if err != nil {
 		// 404 means no SSD cache is configured on this array — treat as no instances.
-		if re, ok := errors.AsType[*errs.RestError](err); ok && re.StatusCode == 404 {
+		if re, ok := errors.AsType[*errs.RestError](err); ok && re.StatusCode == http.StatusNotFound {
 			return nil, errs.New(errs.ErrNoInstance, "no SSD cache configured")
 		}
 		return nil, fmt.Errorf("failed to fetch flash-cache: %w", err)
