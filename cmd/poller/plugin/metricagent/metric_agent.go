@@ -153,7 +153,7 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 					if metricVal != nil {
 						v, _ = metricVal.GetValueFloat64(otherInstance)
 					} else {
-						metricNotFound = append(metricNotFound, err)
+						metricNotFound = append(metricNotFound, errs.New(errs.ErrMissingMetric, "metric not found: "+r.metricNames[i]))
 						skipMetric = true
 						break
 					}
