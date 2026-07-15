@@ -66,9 +66,9 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 		metric                    *matrix.Metric
 		metricVal, firstMetricVal *matrix.Metric
 		m                         []*matrix.Matrix
-		sgMatrix                  bool
+		isMultiMatrix             bool
 		skipMetric                bool
-		sgIndex                   string
+		instanceIndex             string
 		sgLabelMap                map[string]string
 		err                       error
 		metricNotFound            []error
@@ -83,7 +83,7 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 		for i := range r.metricNames {
 			if data == nil {
 				m[i] = dataMap[r.metricNames[i]]
-				sgMatrix = true
+				isMultiMatrix = true
 			} else {
 				m[i] = data
 			}
@@ -101,13 +101,14 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 
 		for iKey, instance := range m[0].GetInstances() {
 			skipMetric = false
-			if sgMatrix {
+			if isMultiMatrix {
+				// In multi matrix cases like storagegrid.go, where instances would be generated based on metricName + "-" + index
 				idx := strings.LastIndex(iKey, "-")
 				if idx == -1 || idx == len(iKey)-1 {
 					a.SLogger.Warn("computeMetrics: unexpected instance key format", slog.String("instanceKey", iKey))
 					continue
 				}
-				sgIndex = iKey[idx+1:]
+				instanceIndex = iKey[idx+1:]
 				sgLabelMap = instance.GetLabels()
 			}
 			var result float64
@@ -131,16 +132,17 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 					v = float64(value)
 				} else {
 					otherInstance = instance
-					if sgMatrix {
-						iKey = r.metricNames[i] + "-" + sgIndex
+					if isMultiMatrix {
+						// In multi matrix cases like storagegrid.go, where instances would be generated based on metricName + "-" + index
+						iKey = r.metricNames[i] + "-" + instanceIndex
 						if m[i] == nil || m[i].GetInstance(iKey) == nil {
 							a.SLogger.Warn("computeMetrics: matrix or instance not found for metric", slog.String("metric", r.metricNames[i]))
 							skipMetric = true
 							break
 						}
 						otherInstance = m[i].GetInstance(iKey)
-						if len(sgLabelMap) != len(otherInstance.GetLabels()) || !maps.Equal(sgLabelMap, otherInstance.GetLabels()) {
-							a.SLogger.Warn("computeMetrics: skipping compute metric calculation as instance labels are not matching for given metrics", slog.String("metric", r.metric), slog.Any("given metrics", r.metricNames))
+						if !maps.Equal(sgLabelMap, otherInstance.GetLabels()) {
+							a.SLogger.Warn("computeMetrics: skip compute metric since instance labels do not match", slog.String("metric", r.metric), slog.Any("given metrics", r.metricNames))
 							skipMetric = true
 							break
 						}
