@@ -122,7 +122,7 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 					continue
 				}
 			} else {
-				a.SLogger.Warn("computeMetrics: metric not found", slogx.Err(err), slog.String("metricName", r.metricNames[0]))
+				a.SLogger.Warn("computeMetrics: metric not found", slog.String("metricName", r.metricNames[0]))
 				break
 			}
 
@@ -149,9 +149,12 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 						}
 					}
 
-					metricVal = a.getMetric(m[i], r.metricNames[i])
-					if metricVal != nil {
-						v, _ = metricVal.GetValueFloat64(otherInstance)
+					if metricVal = a.getMetric(m[i], r.metricNames[i]); metricVal != nil {
+						if val, ok := metricVal.GetValueFloat64(otherInstance); ok {
+							v = val
+						} else {
+							continue
+						}
 					} else {
 						metricNotFound = append(metricNotFound, errs.New(errs.ErrMissingMetric, "metric not found: "+r.metricNames[i]))
 						skipMetric = true
