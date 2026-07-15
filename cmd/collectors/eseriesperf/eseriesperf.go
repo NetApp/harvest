@@ -30,6 +30,22 @@ type EseriesPerf struct {
 	pollDataCalls int
 	recordsToSave int
 	ssdCacheID    string
+	useSymbolPath bool // true when ssd_cache on SANtricity < 12.00 (SYMbol POST API)
+}
+
+func defaultFetch(ep *EseriesPerf, systemID string, headers map[string]string) ([]gjson.Result, error) {
+	if ep.Params.GetChildContentS("type") == "ssd_cache" {
+		if err := ep.discoverSsdCacheID(); err != nil {
+			return nil, err
+		}
+	}
+	query := rest.NewURLBuilder().
+		APIPath(ep.Prop.Query).
+		ArrayID(systemID).
+		SsdCacheID(ep.ssdCacheID).
+		Filter(ep.Prop.Filter).
+		Build()
+	return ep.Client.Fetch(ep.Client.APIPath+"/"+query, ep.Prop.CacheConfig, headers)
 }
 
 type counter struct {
@@ -96,6 +112,13 @@ func (ep *EseriesPerf) Init(a *collector.AbstractCollector) error {
 		slog.String("object", ep.Prop.Object),
 		slog.String("timeout", ep.Client.Timeout.String()),
 	)
+
+	if ep.Params.GetChildContentS("type") == "ssd_cache" {
+		ep.useSymbolPath = isLegacyFlashCache(ep)
+		ep.Logger.Info("ssd_cache fetch path selected",
+			slog.Bool("isLegacyFlashCache", ep.useSymbolPath),
+			slog.String("version", ep.Remote.Version))
+	}
 
 	return nil
 }
@@ -278,25 +301,27 @@ func (ep *EseriesPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 // Called every PollData cycle to handle SSD cache creation/removal.
 func (ep *EseriesPerf) discoverSsdCacheID() error {
 	systemID := ep.GetArray()
-	endpoint := fmt.Sprintf("%s/storage-systems/%s/ssd-caches", ep.Client.APIPath, systemID)
 
+	endpoint := fmt.Sprintf("%s/storage-systems/%s/ssd-caches", ep.Client.APIPath, systemID)
 	results, err := ep.Client.Fetch(endpoint, nil)
 	if err != nil {
 		ep.ssdCacheID = ""
-		return fmt.Errorf("failed to fetch ssd-caches: %w", err)
+		return err
 	}
-
 	if len(results) == 0 {
 		ep.ssdCacheID = ""
 		return errs.New(errs.ErrNoInstance, "no SSD cache found")
 	}
 
-	ep.ssdCacheID = results[0].Get("id").ClonedString()
-	if ep.ssdCacheID == "" {
-		return errs.New(errs.ErrNoInstance, "SSD cache missing id")
+	cacheID := results[0].Get("id").ClonedString()
+	cacheName := results[0].Get("name").ClonedString()
+
+	if cacheID == "" {
+		ep.ssdCacheID = ""
+		return errs.New(errs.ErrNoInstance, "SSD cache missing id/ref")
 	}
 
-	cacheName := results[0].Get("name").ClonedString()
+	ep.ssdCacheID = cacheID
 	ep.Logger.Debug("discovered SSD cache",
 		slog.String("ssdCacheID", ep.ssdCacheID),
 		slog.String("name", cacheName))
@@ -347,29 +372,17 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	systemID := ep.GetArray()
 
-	objType := ep.Params.GetChildContentS("type")
-	if objType == "ssd_cache" {
-		if err := ep.discoverSsdCacheID(); err != nil {
-			return nil, err
-		}
-	}
-
-	// Build query - filters are intentionally disabled when using shared cache
-	// to prevent cache poisoning (subset of filtered data being cached for all consumers)
-	// See applyFilter() in template.go for the filter-disabling logic
-	filters := ep.Prop.Filter
-
-	query := rest.NewURLBuilder().
-		APIPath(ep.Prop.Query).
-		ArrayID(systemID).
-		SsdCacheID(ep.ssdCacheID).
-		Filter(filters).
-		Build()
-
 	var results []gjson.Result
 	apiStart := time.Now()
 
-	results, err = ep.Client.Fetch(ep.Client.APIPath+"/"+query, ep.Prop.CacheConfig, headers)
+	// useSymbolPath is only true for ssd_cache on SANtricity < 12.00 — see Init.
+	// All other object types (volume, drive, etc.) always use defaultFetch.
+	if ep.useSymbolPath {
+		results, err = symbolSsdCacheFetch(ep, systemID, headers)
+	} else {
+		results, err = defaultFetch(ep, systemID, headers)
+	}
+
 	apiTime = time.Since(apiStart)
 
 	if err != nil {

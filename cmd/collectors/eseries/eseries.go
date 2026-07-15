@@ -1,7 +1,9 @@
 package eseries
 
 import (
+	"errors"
 	"log/slog"
+	"net/http"
 	"strings"
 	"time"
 
@@ -252,6 +254,13 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 	apiTime = time.Since(apiStart)
 
 	if err != nil {
+		// On SANtricity < 12.00, /flash-cache returns 404 when no SSD cache is configured.
+		// Treat this as no instances rather than a hard error.
+		if strings.Contains(e.Prop.Query, "flash-cache") {
+			if re, ok := errors.AsType[*errs.RestError](err); ok && re.StatusCode == http.StatusNotFound {
+				return nil, errs.New(errs.ErrNoInstance, "no SSD cache configured")
+			}
+		}
 		return nil, err
 	}
 

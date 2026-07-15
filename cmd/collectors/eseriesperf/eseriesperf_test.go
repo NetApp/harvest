@@ -33,7 +33,7 @@ func newEseriesPerf(object string, path string) *EseriesPerf {
 	opts.HomePath = "testdata"
 	opts.IsTest = true
 
-	ac := collector.New("EseriesPerf", object, opts, params(object, path), nil, conf.Remote{})
+	ac := collector.New("EseriesPerf", object, opts, params(object, path), nil, conf.Remote{Version: "12.00.0"})
 	ep := &EseriesPerf{}
 	err = ep.Init(ac)
 	if err != nil {
