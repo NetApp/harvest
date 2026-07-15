@@ -123,6 +123,7 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 				}
 			} else {
 				a.SLogger.Warn("computeMetrics: metric not found", slogx.Err(err), slog.String("metricName", r.metricNames[0]))
+				break
 			}
 
 			// Parse other operands and process them
@@ -153,6 +154,7 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 						v, _ = metricVal.GetValueFloat64(otherInstance)
 					} else {
 						metricNotFound = append(metricNotFound, err)
+						skipMetric = true
 						break
 					}
 				}
