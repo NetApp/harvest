@@ -12,7 +12,6 @@ Examples:
 package matrix
 
 import (
-	"fmt"
 	"maps"
 	"strconv"
 )
@@ -31,7 +30,7 @@ type Metric struct {
 	values     []float64
 }
 
-func (m *Metric) Clone(deep bool) *Metric {
+func (m *Metric) clone(deep bool) *Metric {
 	clone := Metric{
 		name:       m.name,
 		dataType:   m.dataType,
@@ -138,16 +137,8 @@ func (m *Metric) HasLabels() bool {
 	return len(m.labels) > 0
 }
 
-func (m *Metric) GetRecords() []bool {
-	return m.record
-}
-
 func (m *Metric) SetValueNAN(i *Instance) {
 	m.record[i.index] = false
-}
-
-func (m *Metric) GetValues() []float64 {
-	return m.values
 }
 
 // Storage resizing methods
@@ -174,24 +165,39 @@ func (m *Metric) Remove(index int) {
 
 // Write methods
 
-func (m *Metric) SetValueInt64(i *Instance, v int64) {
+// numeric is the set of types that can be stored in a Metric's underlying float64 slice.
+type numeric interface {
+	~int64 | ~uint8 | ~uint64 | ~float64
+}
+
+func setValue[T numeric](m *Metric, i *Instance, v T) {
 	m.record[i.index] = true
 	m.values[i.index] = float64(v)
+}
+
+func getValue[T numeric](m *Metric, i *Instance) (T, bool) {
+	return T(m.values[i.index]), m.record[i.index]
+}
+
+func addValue[T numeric](m *Metric, i *Instance, n T) {
+	v, _ := getValue[T](m, i)
+	setValue(m, i, v+n)
+}
+
+func (m *Metric) SetValueInt64(i *Instance, v int64) {
+	setValue(m, i, v)
 }
 
 func (m *Metric) SetValueUint8(i *Instance, v uint8) {
-	m.record[i.index] = true
-	m.values[i.index] = float64(v)
+	setValue(m, i, v)
 }
 
 func (m *Metric) SetValueUint64(i *Instance, v uint64) {
-	m.record[i.index] = true
-	m.values[i.index] = float64(v)
+	setValue(m, i, v)
 }
 
 func (m *Metric) SetValueFloat64(i *Instance, v float64) {
-	m.record[i.index] = true
-	m.values[i.index] = v
+	setValue(m, i, v)
 }
 
 func (m *Metric) SetValueString(i *Instance, v string) error {
@@ -205,28 +211,16 @@ func (m *Metric) SetValueString(i *Instance, v string) error {
 	return err
 }
 
-func (m *Metric) SetValueBytes(i *Instance, v []byte) error {
-	return m.SetValueString(i, string(v))
-}
-
 func (m *Metric) AddValueInt64(i *Instance, n int64) {
-	v, _ := m.GetValueInt64(i)
-	m.SetValueInt64(i, v+n)
-}
-
-func (m *Metric) AddValueUint8(i *Instance, n uint8) {
-	v, _ := m.GetValueUint8(i)
-	m.SetValueUint8(i, v+n)
+	addValue(m, i, n)
 }
 
 func (m *Metric) AddValueUint64(i *Instance, n uint64) {
-	v, _ := m.GetValueUint64(i)
-	m.SetValueUint64(i, v+n)
+	addValue(m, i, n)
 }
 
 func (m *Metric) AddValueFloat64(i *Instance, n float64) {
-	v, _ := m.GetValueFloat64(i)
-	m.SetValueFloat64(i, v+n)
+	addValue(m, i, n)
 }
 
 func (m *Metric) AddValueString(i *Instance, v string) error {
@@ -249,32 +243,20 @@ func (m *Metric) AddValueString(i *Instance, v string) error {
 
 // Read methods
 
-func (m *Metric) GetValueInt(i *Instance) (int, bool) {
-	v := m.values[i.index]
-	val := int(v)
-	return val, m.record[i.index]
-}
-
 func (m *Metric) GetValueInt64(i *Instance) (int64, bool) {
-	v := m.values[i.index]
-	val := int64(v)
-	return val, m.record[i.index]
+	return getValue[int64](m, i)
 }
 
 func (m *Metric) GetValueUint8(i *Instance) (uint8, bool) {
-	v := m.values[i.index]
-	return uint8(v), m.record[i.index]
+	return getValue[uint8](m, i)
 }
 
 func (m *Metric) GetValueUint64(i *Instance) (uint64, bool) {
-	v := m.values[i.index]
-	val := uint64(v)
-	return val, m.record[i.index]
+	return getValue[uint64](m, i)
 }
 
 func (m *Metric) GetValueFloat64(i *Instance) (float64, bool) {
-	v := m.values[i.index]
-	return v, m.record[i.index]
+	return getValue[float64](m, i)
 }
 
 func (m *Metric) GetValueString(i *Instance) (string, bool) {
@@ -287,19 +269,4 @@ func (m *Metric) GetValueString(i *Instance) (string, bool) {
 		return "1", isValid
 	}
 	return strconv.FormatFloat(v, 'f', -1, 64), isValid
-}
-
-func (m *Metric) GetValueBytes(i *Instance) ([]byte, bool) {
-	s, ok := m.GetValueString(i)
-	return []byte(s), ok
-}
-
-func (m *Metric) Print() {
-	for i := range m.values {
-		if m.record[i] {
-			fmt.Printf("%s%v ", " ", m.values[i])
-		} else {
-			fmt.Printf("%s%v ", "!", m.values[i])
-		}
-	}
 }

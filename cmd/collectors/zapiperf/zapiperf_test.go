@@ -205,9 +205,8 @@ func (z *ZapiPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 			if !met.IsExportable() {
 				continue
 			}
-			records := met.GetRecords()
-			for _, v := range records {
-				if v {
+			for _, instance := range mat.GetInstances() {
+				if _, recorded := met.GetValueFloat64(instance); recorded {
 					totalMetrics++
 				}
 			}

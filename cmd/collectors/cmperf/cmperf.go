@@ -250,9 +250,9 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// For workload objects, preserve instances and QoS labels set by PollInstance.
 	// For all other objects, instances are created fresh from the CM2 protobuf.
 	if isWorkloadObject(c.Prop.Query) {
-		curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+		curMat = prevMat.CloneForCollection()
 	} else {
-		curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
+		curMat = prevMat.CloneMetricTemplate()
 	}
 	curMat.Reset()
 
@@ -296,13 +296,14 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 	parseD += time.Since(startTime)
 
-	_ = c.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = c.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = c.Metadata.LazySetValueUint64("metrics", "data", metricCount)
-	_ = c.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = c.Metadata.LazySetValueUint64("bytesRx", "data", c.RequestMetadata.BytesRx.Load())
-	_ = c.Metadata.LazySetValueUint64("numCalls", "data", c.RequestMetadata.NumCalls.Load())
-	_ = c.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
+	dataInst := c.Metadata.MustGetInstance("data")
+	c.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	c.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	c.Metadata.MustSetValueUint64("metrics", dataInst, metricCount)
+	c.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(curMat.GetInstances())))
+	c.Metadata.MustSetValueUint64("bytesRx", dataInst, c.RequestMetadata.BytesRx.Load())
+	c.Metadata.MustSetValueUint64("numCalls", dataInst, c.RequestMetadata.NumCalls.Load())
+	c.Metadata.MustSetValueUint64("numPartials", dataInst, numPartials)
 	c.AddCollectCount(metricCount)
 
 	return c.cookCounters(curMat, prevMat)
@@ -325,7 +326,7 @@ func (c *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 	calcStart := time.Now()
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
+	cachedData := curMat.Clone()
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
@@ -488,9 +489,10 @@ func (c *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 	}
 
 	calcD := time.Since(calcStart)
-	_ = c.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = c.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = c.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
+	calcDataInst := c.Metadata.MustGetInstance("data")
+	c.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
+	c.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
+	c.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	c.Matrix[c.Object] = cachedData
@@ -623,11 +625,12 @@ func (c *CmPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	c.Logger.Debug("QoS instances", slog.Int("added", added), slog.Int("removed", removed), slog.Int("total", len(mat.GetInstances())))
 
-	_ = c.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
-	_ = c.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
-	_ = c.Metadata.LazySetValueUint64("instances", "instance", uint64(len(mat.GetInstances())))
-	_ = c.Metadata.LazySetValueUint64("bytesRx", "instance", c.RequestMetadata.BytesRx.Load())
-	_ = c.Metadata.LazySetValueUint64("numCalls", "instance", c.RequestMetadata.NumCalls.Load())
+	instanceInst := c.Metadata.MustGetInstance("instance")
+	c.Metadata.MustSetValueInt64("api_time", instanceInst, apiD.Microseconds())
+	c.Metadata.MustSetValueInt64("parse_time", instanceInst, time.Since(parseT).Microseconds())
+	c.Metadata.MustSetValueUint64("instances", instanceInst, uint64(len(mat.GetInstances())))
+	c.Metadata.MustSetValueUint64("bytesRx", instanceInst, c.RequestMetadata.BytesRx.Load())
+	c.Metadata.MustSetValueUint64("numCalls", instanceInst, c.RequestMetadata.NumCalls.Load())
 
 	if len(mat.GetInstances()) == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+c.Prop.Object+" instances on cluster")

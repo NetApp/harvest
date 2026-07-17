@@ -83,15 +83,9 @@ func (v *VolumeAnalytics) initMatrix() error {
 
 	v.data[explorer] = matrix.New(v.Parent+explorer, explorer, explorer)
 
-	for _, v1 := range v.data {
-		v1.SetExportOptions(matrix.DefaultExportOptions())
-	}
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, v.data[explorer])
-		if err != nil {
-			v.SLogger.Warn("error while creating metric", slog.String("key", k))
-			return err
-		}
+	if err := v.data[explorer].NewMetricsFloat64(metrics...); err != nil {
+		v.SLogger.Warn("error while creating metric", slogx.Err(err))
+		return err
 	}
 	return nil
 }
@@ -144,6 +138,9 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 			}
 		} else {
 			explorerMatrix := v.data[explorer]
+			bytesUsedMetric := explorerMatrix.MustGetMetric("dir_bytes_used")
+			fileCountMetric := explorerMatrix.MustGetMetric("dir_file_count")
+			subDirCountMetric := explorerMatrix.MustGetMetric("dir_subdir_count")
 			for _, record := range records {
 				name := record.Get("name").ClonedString()
 				fileCount := record.Get("analytics.file_count").ClonedString()
@@ -168,22 +165,22 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 					instance.SetLabel(k1, v1)
 				}
 				if bytesUsed != "" {
-					if err = explorerMatrix.GetMetric("dir_bytes_used").SetValueString(instance, bytesUsed); err != nil {
+					if err = bytesUsedMetric.SetValueString(instance, bytesUsed); err != nil {
 						v.SLogger.Error("set metric", slogx.Err(err), slog.String("value", bytesUsed))
 					}
 				}
 				if fileCount != "" {
-					if err = explorerMatrix.GetMetric("dir_file_count").SetValueString(instance, fileCount); err != nil {
+					if err = fileCountMetric.SetValueString(instance, fileCount); err != nil {
 						v.SLogger.Error("set metric", slogx.Err(err), slog.String("value", fileCount))
 					}
 				}
 				if subDirCount != "" {
 					if name == "." {
-						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, num.AddIntString(subDirCount, 1)); err != nil {
+						if err = subDirCountMetric.SetValueString(instance, num.AddIntString(subDirCount, 1)); err != nil {
 							v.SLogger.Error("set metric", slogx.Err(err), slog.String("value", subDirCount))
 						}
 					} else {
-						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, subDirCount); err != nil {
+						if err = subDirCountMetric.SetValueString(instance, subDirCount); err != nil {
 							v.SLogger.Error("set metric", slogx.Err(err), slog.String("value", subDirCount))
 						}
 					}

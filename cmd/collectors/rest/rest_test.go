@@ -76,8 +76,8 @@ func Test_pollDataVolume(t *testing.T) {
 			assert.Equal(t, tt.numInstances, len(m.GetInstances()))
 
 			metadata := r.Metadata
-			numMetrics, _ := metadata.GetMetric("metrics").GetValueInt(metadata.GetInstance("data"))
-			assert.Equal(t, tt.numMetrics, numMetrics)
+			numMetrics, _ := metadata.GetMetric("metrics").GetValueInt64(metadata.GetInstance("data"))
+			assert.Equal(t, tt.numMetrics, int(numMetrics))
 		})
 	}
 }

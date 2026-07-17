@@ -8,7 +8,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
@@ -129,8 +128,8 @@ func TestSymbolSsdCache_CacheRemovedOverPoll(t *testing.T) {
 		oldInstances.Add(key)
 	}
 
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	// No results → pollData touches no instances, so oldInstances retains the stale key

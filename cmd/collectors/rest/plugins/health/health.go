@@ -110,15 +110,9 @@ func (h *Health) InitAllMatrix() error {
 
 func (h *Health) initMatrix(name string, prefix string, inputMat map[string]*matrix.Matrix) error {
 	inputMat[name] = matrix.New(h.Parent+name+prefix, name, name)
-	for _, v1 := range h.data {
-		v1.SetExportOptions(matrix.DefaultExportOptions())
-	}
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, inputMat[name])
-		if err != nil {
-			h.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
-			return err
-		}
+	if err := inputMat[name].NewMetricsFloat64(metrics...); err != nil {
+		h.SLogger.Warn("error while creating metric", slogx.Err(err))
+		return err
 	}
 	return nil
 }
@@ -885,17 +879,14 @@ func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 }
 
 func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
-	var err error
-	m := mat.GetMetric("alerts")
-	if m == nil {
-		if m, err = mat.NewMetricFloat64("alerts"); err != nil {
-			h.SLogger.Warn(
-				"error while creating metric",
-				slogx.Err(err),
-				slog.String("key", "alerts"),
-			)
-			return
-		}
+	m, err := mat.GetOrCreateMetric("alerts")
+	if err != nil {
+		h.SLogger.Warn(
+			"error while creating metric",
+			slogx.Err(err),
+			slog.String("key", "alerts"),
+		)
+		return
 	}
 	m.SetValueFloat64(instance, value)
 }

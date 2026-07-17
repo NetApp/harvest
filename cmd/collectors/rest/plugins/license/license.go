@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
@@ -31,20 +30,14 @@ func (l *License) Init(_ conf.Remote) error {
 
 	l.data = matrix.New(l.Parent+".License", licenseMatrix, licenseMatrix)
 
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	for _, k := range []string{"license", "scope", "owner", "serial_number"} {
-		instanceKeys.NewChildS("", k)
-	}
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	for _, il := range []string{
-		"description", "entitlement_action", "entitlement_risk",
-		"installed_license", "host_id",
-		"active", "evaluation", "compliance_state",
-	} {
-		instanceLabels.NewChildS("", il)
-	}
-	l.data.SetExportOptions(exportOptions)
+	l.data.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"license", "scope", "owner", "serial_number"},
+		[]string{
+			"description", "entitlement_action", "entitlement_risk",
+			"installed_license", "host_id",
+			"active", "evaluation", "compliance_state",
+		},
+	))
 
 	for _, m := range []string{"capacity_maximum_size", "capacity_used_size", "capacity_used_percent", "expiry_time"} {
 		if _, err := l.data.NewMetricFloat64(m, m); err != nil {
@@ -62,6 +55,11 @@ func (l *License) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 	l.data.PurgeInstances()
 	l.data.Reset()
 	l.data.SetGlobalLabels(data.GetGlobalLabels())
+
+	expiryTimeMetric := l.data.MustGetMetric("expiry_time")
+	capacityMaxSizeMetric := l.data.MustGetMetric("capacity_maximum_size")
+	capacityUsedSizeMetric := l.data.MustGetMetric("capacity_used_size")
+	capacityUsedPercentMetric := l.data.MustGetMetric("capacity_used_percent")
 
 	for _, instance := range data.GetInstances() {
 		licenseName := instance.GetLabel("license")
@@ -103,21 +101,15 @@ func (l *License) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 			newInstance.SetLabel("compliance_state", lic.Get("compliance.state").ClonedString())
 
 			if expiryStr := lic.Get("expiry_time").ClonedString(); expiryStr != "" {
-				if m := l.data.GetMetric("expiry_time"); m != nil {
-					m.SetValueFloat64(newInstance, collectors.HandleTimestamp(expiryStr)*1000)
-				}
+				expiryTimeMetric.SetValueFloat64(newInstance, collectors.HandleTimestamp(expiryStr)*1000)
 			}
 			if lic.Get("capacity").Exists() {
 				maxSize := lic.Get("capacity.maximum_size").Float()
 				usedSize := lic.Get("capacity.used_size").Float()
-				if m := l.data.GetMetric("capacity_maximum_size"); m != nil {
-					m.SetValueFloat64(newInstance, maxSize)
-				}
-				if m := l.data.GetMetric("capacity_used_size"); m != nil {
-					m.SetValueFloat64(newInstance, usedSize)
-				}
-				if m := l.data.GetMetric("capacity_used_percent"); m != nil && maxSize > 0 {
-					m.SetValueFloat64(newInstance, usedSize/maxSize*100)
+				capacityMaxSizeMetric.SetValueFloat64(newInstance, maxSize)
+				capacityUsedSizeMetric.SetValueFloat64(newInstance, usedSize)
+				if maxSize > 0 {
+					capacityUsedPercentMetric.SetValueFloat64(newInstance, usedSize/maxSize*100)
 				}
 			}
 		}

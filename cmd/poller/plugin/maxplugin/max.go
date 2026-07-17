@@ -129,7 +129,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 			key := strconv.Itoa(i) + k
 
 			// Create matrix for each metric as each metric may have an instance with different label
-			matrices[key] = data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+			matrices[key] = data.CloneMetricTemplate()
 
 			matrices[key].RemoveExceptMetric(k)
 			if rule.object != "" {

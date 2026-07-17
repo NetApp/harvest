@@ -205,9 +205,6 @@ func Init(c Collector) error {
 	mx := matrix.New(name, object, object)
 	if exportOptions := params.GetChildS("export_options"); exportOptions != nil {
 		mx.SetExportOptions(exportOptions)
-	} else {
-		mx.SetExportOptions(matrix.DefaultExportOptions())
-		// @TODO log warning for user
 	}
 	mx.SetGlobalLabel("datacenter", params.GetChildContentS("datacenter"))
 
@@ -278,8 +275,6 @@ func Init(c Collector) error {
 		t := task.GetInterval().Seconds()
 		instance.SetLabel("interval", strconv.FormatFloat(t, 'f', 4, 32))
 	}
-
-	md.SetExportOptions(matrix.DefaultExportOptions())
 
 	c.SetMetadata(md)
 	c.SetStatus(0, "initialized")
@@ -487,6 +482,7 @@ func (c *AbstractCollector) Start(
 				if task.Name == "data" {
 
 					pluginStart = time.Now()
+					dataTaskInst := c.Metadata.MustGetInstance(task.Name)
 
 					for _, v := range c.Plugins {
 						for _, plg := range v {
@@ -500,22 +496,23 @@ func (c *AbstractCollector) Start(
 								results = append(results, pluginData...)
 							}
 							if pluginMetadata != nil {
-								_ = c.Metadata.LazyAddValueUint64("bytesRx", task.Name, pluginMetadata.BytesRx.Load())
-								_ = c.Metadata.LazyAddValueUint64("numCalls", task.Name, pluginMetadata.NumCalls.Load())
-								_ = c.Metadata.LazySetValueUint64("pluginInstances", task.Name, pluginMetadata.PluginInstances.Load())
+								c.Metadata.MustAddValueUint64("bytesRx", dataTaskInst, pluginMetadata.BytesRx.Load())
+								c.Metadata.MustAddValueUint64("numCalls", dataTaskInst, pluginMetadata.NumCalls.Load())
+								c.Metadata.MustSetValueUint64("pluginInstances", dataTaskInst, pluginMetadata.PluginInstances.Load())
 							}
 						}
 					}
 
 					pluginTime = time.Since(pluginStart)
-					_ = c.Metadata.LazySetValueInt64("plugin_time", task.Name, pluginTime.Microseconds())
+					c.Metadata.MustSetValueInt64("plugin_time", dataTaskInst, pluginTime.Microseconds())
 				}
 			}
 
 			// update task metadata
-			_ = c.Metadata.LazySetValueInt64("poll_time", task.Name, task.GetDuration().Microseconds())
-			_ = c.Metadata.LazySetValueInt64("task_time", task.Name, taskTime.Microseconds())
-			_ = c.Metadata.LazySetValueInt64(begin, task.Name, start.UnixMilli())
+			taskInst := c.Metadata.MustGetInstance(task.Name)
+			c.Metadata.MustSetValueInt64("poll_time", taskInst, task.GetDuration().Microseconds())
+			c.Metadata.MustSetValueInt64("task_time", taskInst, taskTime.Microseconds())
+			c.Metadata.MustSetValueInt64(begin, taskInst, start.UnixMilli())
 
 			// Log non-data tasks immediately. Data task is logged after export
 			if task.Name != "data" {
@@ -577,7 +574,7 @@ func (c *AbstractCollector) Start(
 
 		// Only pollData adds results
 		if len(results) > 0 {
-			_ = c.Metadata.LazySetValueInt64("export_time", "data", time.Since(exportStart).Microseconds())
+			c.Metadata.MustSetValueInt64("export_time", c.Metadata.MustGetInstance("data"), time.Since(exportStart).Microseconds())
 			c.logMetadata("data", exporterStats)
 		}
 

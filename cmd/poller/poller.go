@@ -133,8 +133,12 @@ type Poller struct {
 	exporterParams       map[string]conf.Exporter
 	params               *conf.Poller
 	metadata             *matrix.Matrix
-	metadataTarget       *matrix.Matrix // exported as metadata_target_
-	status               *matrix.Matrix // exported as poller_status
+	metadataTarget       *matrix.Matrix   // exported as metadata_target_
+	status               *matrix.Matrix   // exported as poller_status
+	pingMetricTarget     *matrix.Metric   // "ping" metric on metadataTarget, resolved once at Init
+	metadataHostInstance *matrix.Instance // "host" instance on metadataTarget, resolved once at Init
+	memoryPercentMetric  *matrix.Metric   // "memory_percent" metric on status, resolved once at Init
+	statusHostInstance   *matrix.Instance // "host" instance on status, resolved once at Init
 	certPool             *x509.CertPool
 	client               *http.Client
 	auth                 *auth.Credentials
@@ -576,19 +580,18 @@ func (p *Poller) Run() {
 
 			// ping target system
 			if ping, ok := p.ping(); ok {
-				_ = p.metadataTarget.LazySetValueUint8("status", "host", 0)
-				_ = p.metadataTarget.LazySetValueFloat64("ping", "host", float64(ping))
-				_ = p.status.LazySetValueUint8("status", "host", 1)
-				_ = p.status.LazySetValueFloat64("ping", "host", float64(ping))
+				p.metadataTarget.MustSetValueUint8("status", p.metadataHostInstance, 0)
+				p.pingMetricTarget.SetValueFloat64(p.metadataHostInstance, float64(ping))
+				p.status.MustSetValueUint8("status", p.statusHostInstance, 1)
 			} else {
-				_ = p.metadataTarget.LazySetValueUint8("status", "host", 1)
-				_ = p.status.LazySetValueUint8("status", "host", 0)
+				p.metadataTarget.MustSetValueUint8("status", p.metadataHostInstance, 1)
+				p.status.MustSetValueUint8("status", p.statusHostInstance, 0)
 			}
 
 			p.addMemoryMetadata()
 
 			// add number of goroutines to metadata
-			_ = p.metadataTarget.LazySetValueInt64("goroutines", "host", int64(runtime.NumGoroutine()))
+			p.metadataTarget.MustSetValueInt64("goroutines", p.metadataHostInstance, int64(runtime.NumGoroutine()))
 
 			upc := 0 // up collectors
 			upe := 0 // up exporters
@@ -603,13 +606,12 @@ func (p *Poller) Run() {
 
 				key := c.GetName() + "." + c.GetObject()
 
-				_ = p.metadata.LazySetValueUint64("count", key, c.GetCollectCount())
-				_ = p.metadata.LazySetValueUint8("status", key, code)
+				collectorInst := p.metadata.MustGetInstance(key)
+				p.metadata.MustSetValueUint64("count", collectorInst, c.GetCollectCount())
+				p.metadata.MustSetValueUint8("status", collectorInst, code)
 
 				if msg != "" {
-					if instance := p.metadata.GetInstance(key); instance != nil {
-						instance.SetLabel("reason", p.truncateReason(msg))
-					}
+					collectorInst.SetLabel("reason", p.truncateReason(msg))
 				}
 			}
 
@@ -634,13 +636,12 @@ func (p *Poller) Run() {
 
 				key := ee.GetClass() + "." + ee.GetName()
 
-				_ = p.metadata.LazySetValueUint64("count", key, ee.GetExportCount())
-				_ = p.metadata.LazySetValueUint8("status", key, code)
+				exporterInst := p.metadata.MustGetInstance(key)
+				p.metadata.MustSetValueUint64("count", exporterInst, ee.GetExportCount())
+				p.metadata.MustSetValueUint8("status", exporterInst, code)
 
 				if msg != "" {
-					if instance := p.metadata.GetInstance(key); instance != nil {
-						instance.SetLabel("reason", p.truncateReason(msg))
-					}
+					exporterInst.SetLabel("reason", p.truncateReason(msg))
 				}
 			}
 
@@ -1264,18 +1265,16 @@ func (p *Poller) loadMetadata() {
 	if p.options.PromPort != 0 {
 		p.metadata.SetGlobalLabel("promport", strconv.Itoa(p.options.PromPort))
 	}
-	p.metadata.SetExportOptions(matrix.DefaultExportOptions())
-
 	// metadata for the target system
 	p.metadataTarget = matrix.New("poller", "metadata_target", "metadata_component")
 	_, _ = p.metadataTarget.NewMetricUint8("status")
-	_, _ = p.metadataTarget.NewMetricFloat64("ping")
+	p.pingMetricTarget, _ = p.metadataTarget.NewMetricFloat64("ping")
 	_, _ = p.metadataTarget.NewMetricUint64("goroutines")
 
 	// metadata for the poller itself
 	p.status = matrix.New("poller", "poller", "poller_target")
 	_, _ = p.status.NewMetricUint8("status")
-	_, _ = p.status.NewMetricFloat64("memory_percent")
+	p.memoryPercentMetric, _ = p.status.NewMetricFloat64("memory_percent")
 	newMemoryMetric(p.status, "memory", "rss")
 	newMemoryMetric(p.status, "memory", "vms")
 	newMemoryMetric(p.status, "memory", "swap")
@@ -1283,6 +1282,8 @@ func (p *Poller) loadMetadata() {
 
 	instance, _ := p.metadataTarget.NewInstance("host")
 	pInstance, _ := p.status.NewInstance("host")
+	p.metadataHostInstance = instance
+	p.statusHostInstance = pInstance
 	pRemote, _ := p.status.NewInstance("remote")
 	pRemote.SetExportable(false)
 
@@ -1315,8 +1316,6 @@ func (p *Poller) loadMetadata() {
 			p.status.SetGlobalLabels(labelPtr)
 		}
 	}
-	p.metadataTarget.SetExportOptions(matrix.DefaultExportOptions())
-	p.status.SetExportOptions(matrix.DefaultExportOptions())
 }
 
 func newMemoryMetric(status *matrix.Matrix, label string, sub string) {
@@ -1732,11 +1731,11 @@ func (p *Poller) addMemoryMetadata() {
 	memMetrics := collector.MemoryMetrics()
 
 	// The unix poller used KB for memory so use the same here
-	_ = p.status.LazySetValueUint64("memory.rss", "host", memMetrics.RSSBytes/1024)
-	_ = p.status.LazySetValueUint64("memory.vms", "host", memMetrics.VMSBytes/1024)
-	_ = p.status.LazySetValueUint64("memory.swap", "host", memMetrics.SwapBytes/1024)
-	_ = p.status.LazySetValueFloat64("memory_percent", "host", memMetrics.PercentageRssUsed)
-	_ = p.status.LazyAddValueInt64("concurrent_collectors", "host", int64(p.concurrentCollectors.Load()))
+	p.status.MustSetValueUint64("memory.rss", p.statusHostInstance, memMetrics.RSSBytes/1024)
+	p.status.MustSetValueUint64("memory.vms", p.statusHostInstance, memMetrics.VMSBytes/1024)
+	p.status.MustSetValueUint64("memory.swap", p.statusHostInstance, memMetrics.SwapBytes/1024)
+	p.memoryPercentMetric.SetValueFloat64(p.statusHostInstance, memMetrics.PercentageRssUsed)
+	p.status.MustAddValueInt64("concurrent_collectors", p.statusHostInstance, int64(p.concurrentCollectors.Load()))
 
 	// Update maxRssBytes
 	p.maxRssBytes = max(p.maxRssBytes, memMetrics.RSSBytes)

@@ -27,11 +27,8 @@ func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 	data := dataMap[p.Object]
 
 	// create metrics
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, data)
-		if err != nil {
-			p.SLogger.Error("error while creating metric", slogx.Err(err), slog.String("key", k))
-		}
+	if err := data.NewMetricsFloat64(metrics...); err != nil {
+		p.SLogger.Error("error while creating metric", slogx.Err(err))
 	}
 
 	for _, instance := range data.GetInstances() {

@@ -367,7 +367,7 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 		oldInstances.Add(key)
 	}
 
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	systemID := ep.GetArray()
@@ -402,13 +402,14 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 		curMat.RemoveInstance(key)
 	}
 
-	_ = ep.Metadata.LazySetValueInt64("api_time", "data", apiTime.Microseconds())
-	_ = ep.Metadata.LazySetValueInt64("parse_time", "data", parseTime.Microseconds())
-	_ = ep.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = ep.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = ep.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
-	_ = ep.Metadata.LazySetValueUint64("bytesRx", "data", ep.Client.Metadata.BytesRx.Load())
-	_ = ep.Metadata.LazySetValueUint64("numCalls", "data", ep.Client.Metadata.NumCalls.Load())
+	dataInst := ep.Metadata.MustGetInstance("data")
+	ep.Metadata.MustSetValueInt64("api_time", dataInst, apiTime.Microseconds())
+	ep.Metadata.MustSetValueInt64("parse_time", dataInst, parseTime.Microseconds())
+	ep.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	ep.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(curMat.GetInstances())))
+	ep.Metadata.MustSetValueUint64("numPartials", dataInst, numPartials)
+	ep.Metadata.MustSetValueUint64("bytesRx", dataInst, ep.Client.Metadata.BytesRx.Load())
+	ep.Metadata.MustSetValueUint64("numCalls", dataInst, ep.Client.Metadata.NumCalls.Load())
 
 	ep.AddCollectCount(count)
 
@@ -607,7 +608,7 @@ func (ep *EseriesPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matri
 
 	calcStart := time.Now()
 
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
+	cachedData := curMat.Clone()
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0)
 	orderedNonDenominatorKeys := make([]string, 0)
@@ -779,10 +780,11 @@ func (ep *EseriesPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matri
 	}
 
 	calcD := time.Since(calcStart)
-	_ = ep.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = ep.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
+	calcDataInst := ep.Metadata.MustGetInstance("data")
+	ep.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
+	ep.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
 	if totalSkips >= 0 {
-		_ = ep.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
+		ep.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips))
 	}
 
 	ep.Matrix[ep.Object] = cachedData

@@ -51,7 +51,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		return nil, nil, err
 	}
 
-	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+	cache := data.CloneMetricTemplate()
 	cache.UUID += ".Volume"
 
 	for _, i := range data.GetInstances() {
@@ -61,8 +61,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		case "flexgroup_constituent":
 			match := flexgroupRegex.FindStringSubmatch(volName)
 			key := svmName + "." + match[1]
-			if cache.GetInstance(key) == nil {
-				fg, _ := cache.NewInstance(key)
+			if fg, created := cache.GetOrCreateInstance(key); created {
 				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
 				fg.SetLabel("node", "")
@@ -71,8 +70,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				fgAggrMap[key] = set.New()
 			}
 
-			if volumeAggrMatrix.GetInstance(key) == nil {
-				flexgroupInstance, _ := volumeAggrMatrix.NewInstance(key)
+			if flexgroupInstance, created := volumeAggrMatrix.GetOrCreateInstance(key); created {
 				flexgroupInstance.SetLabels(maps.Clone(i.GetLabels()))
 				flexgroupInstance.SetLabel("volume", match[1])
 				flexgroupInstance.SetLabel("node", "")
@@ -88,8 +86,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		case "flexvol":
 			i.SetLabel(style, "flexvol")
 			key := svmName + "." + volName
-			if volumeAggrMatrix.GetInstance(key) == nil {
-				flexvolInstance, _ := volumeAggrMatrix.NewInstance(key)
+			if flexvolInstance, created := volumeAggrMatrix.GetOrCreateInstance(key); created {
 				flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
 				flexvolInstance.SetLabel("node", "")
 				flexvolInstance.SetLabel(style, "flexvol")
@@ -263,7 +260,7 @@ func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix
 	fgAggrMap := make(map[string]*set.Set)
 	var err error
 
-	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+	cache := data.CloneMetricTemplate()
 	cache.UUID += ".VolumeFootPrint.Flexgroup"
 	// remove instance_labels from this matrix otherwise it will emit volume_labels
 	cache.GetExportOptions().PopChildS("instance_labels")
@@ -297,8 +294,7 @@ func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix
 			continue
 		}
 		key := svmName + "." + match[1]
-		if cache.GetInstance(key) == nil {
-			fg, _ := cache.NewInstance(key)
+		if fg, created := cache.GetOrCreateInstance(key); created {
 			fg.SetLabels(maps.Clone(i.GetLabels()))
 			fg.SetLabel("volume", match[1])
 			fg.SetLabel("node", "")

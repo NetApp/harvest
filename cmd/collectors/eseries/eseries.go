@@ -89,8 +89,6 @@ func (e *ESeries) Init(a *collector.AbstractCollector) error {
 		mx := matrix.New(e.Name, e.Object, e.Object)
 		if exportOptions := e.Params.GetChildS("export_options"); exportOptions != nil {
 			mx.SetExportOptions(exportOptions)
-		} else {
-			mx.SetExportOptions(matrix.DefaultExportOptions())
 		}
 		e.Matrix = make(map[string]*matrix.Matrix)
 		e.Matrix[e.Object] = mx
@@ -290,12 +288,13 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no instances found")
 	}
 
-	_ = e.Metadata.LazySetValueInt64("api_time", "data", apiTime.Microseconds())
-	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseTime.Microseconds())
-	_ = e.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = e.Metadata.LazySetValueUint64("instances", "data", uint64(len(mat.GetInstances())))
-	_ = e.Metadata.LazySetValueUint64("bytesRx", "data", e.Client.Metadata.BytesRx.Load())
-	_ = e.Metadata.LazySetValueUint64("numCalls", "data", e.Client.Metadata.NumCalls.Load())
+	dataInst := e.Metadata.MustGetInstance("data")
+	e.Metadata.MustSetValueInt64("api_time", dataInst, apiTime.Microseconds())
+	e.Metadata.MustSetValueInt64("parse_time", dataInst, parseTime.Microseconds())
+	e.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	e.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(mat.GetInstances())))
+	e.Metadata.MustSetValueUint64("bytesRx", dataInst, e.Client.Metadata.BytesRx.Load())
+	e.Metadata.MustSetValueUint64("numCalls", dataInst, e.Client.Metadata.NumCalls.Load())
 	e.AddCollectCount(count)
 
 	return e.Matrix, nil

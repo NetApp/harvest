@@ -392,8 +392,11 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	prevMat := z.Matrix[z.Object]
 	z.Client.Metadata.Reset()
 
-	// clone matrix without numeric data and non-exportable all instances
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: false})
+	// clone matrix without numeric data and mark all instances non-exportable
+	curMat := prevMat.CloneForCollection()
+	for _, instance := range curMat.GetInstances() {
+		instance.SetExportable(false)
+	}
 	curMat.Reset()
 
 	timestamp := curMat.GetMetric(timestampMetricName)
@@ -773,13 +776,14 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// update metadata
-	_ = z.Metadata.LazySetValueInt64("api_time", "data", apiT.Microseconds())
-	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseT.Microseconds())
-	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(len(instanceKeys)))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx.Load())
-	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls.Load())
-	_ = z.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
+	dataInst := z.Metadata.MustGetInstance("data")
+	z.Metadata.MustSetValueInt64("api_time", dataInst, apiT.Microseconds())
+	z.Metadata.MustSetValueInt64("parse_time", dataInst, parseT.Microseconds())
+	z.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	z.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(instanceKeys)))
+	z.Metadata.MustSetValueUint64("bytesRx", dataInst, z.Client.Metadata.BytesRx.Load())
+	z.Metadata.MustSetValueUint64("numCalls", dataInst, z.Client.Metadata.NumCalls.Load())
+	z.Metadata.MustSetValueUint64("numPartials", dataInst, numPartials)
 
 	z.AddCollectCount(count)
 
@@ -794,7 +798,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	calcStart := time.Now()
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true}) // @TODO implement copy data
+	cachedData := curMat.Clone()
 
 	// order metrics, such that those requiring base counters are processed last
 	orderedMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
@@ -932,8 +936,9 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	calcD := time.Since(calcStart)
 
-	_ = z.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = z.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
+	calcDataInst := z.Metadata.MustGetInstance("data")
+	z.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
+	z.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	z.Matrix[z.Object] = cachedData
@@ -1374,11 +1379,12 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	numMetrics := len(mat.GetMetrics())
 
 	// update metadata for collector logs
-	_ = z.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
-	_ = z.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
-	_ = z.Metadata.LazySetValueUint64("metrics", "counter", uint64(numMetrics))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "counter", z.Client.Metadata.BytesRx.Load())
-	_ = z.Metadata.LazySetValueUint64("numCalls", "counter", z.Client.Metadata.NumCalls.Load())
+	counterInst := z.Metadata.MustGetInstance("counter")
+	z.Metadata.MustSetValueInt64("api_time", counterInst, apiD.Microseconds())
+	z.Metadata.MustSetValueInt64("parse_time", counterInst, time.Since(parseT).Microseconds())
+	z.Metadata.MustSetValueUint64("metrics", counterInst, uint64(numMetrics))
+	z.Metadata.MustSetValueUint64("bytesRx", counterInst, z.Client.Metadata.BytesRx.Load())
+	z.Metadata.MustSetValueUint64("numCalls", counterInst, z.Client.Metadata.NumCalls.Load())
 
 	if numMetrics == 0 {
 		return nil, errs.New(errs.ErrNoMetric, "")
@@ -1762,11 +1768,12 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	newSize = len(mat.GetInstances())
 
 	// update metadata for collector logs
-	_ = z.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
-	_ = z.Metadata.LazySetValueInt64("parse_time", "instance", parseD.Microseconds())
-	_ = z.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "instance", z.Client.Metadata.BytesRx.Load())
-	_ = z.Metadata.LazySetValueUint64("numCalls", "instance", z.Client.Metadata.NumCalls.Load())
+	instanceInst := z.Metadata.MustGetInstance("instance")
+	z.Metadata.MustSetValueInt64("api_time", instanceInst, apiD.Microseconds())
+	z.Metadata.MustSetValueInt64("parse_time", instanceInst, parseD.Microseconds())
+	z.Metadata.MustSetValueUint64("instances", instanceInst, uint64(newSize))
+	z.Metadata.MustSetValueUint64("bytesRx", instanceInst, z.Client.Metadata.BytesRx.Load())
+	z.Metadata.MustSetValueUint64("numCalls", instanceInst, z.Client.Metadata.NumCalls.Load())
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "")
 	}

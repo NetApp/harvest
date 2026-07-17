@@ -221,7 +221,6 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	var (
 		metrics     [][]byte
 		stats       exporter.Stats
-		err         error
 		metricNames *set.Set
 	)
 
@@ -243,14 +242,8 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
-	err = p.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
-	if err != nil {
-		p.Logger.Error("error", slogx.Err(err))
-	}
-	err = p.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
-	if err != nil {
-		p.Logger.Error("error", slogx.Err(err))
-	}
+	p.Metadata.MustAddValueInt64("time", p.Metadata.MustGetInstance("render"), d.Microseconds())
+	p.Metadata.MustAddValueInt64("time", p.Metadata.MustGetInstance("export"), time.Since(start).Microseconds())
 
 	return stats, nil
 }

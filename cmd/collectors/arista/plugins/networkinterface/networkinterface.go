@@ -74,7 +74,10 @@ func (i *Interface) Init(remote conf.Remote) error {
 	i.client = client
 	i.templateObject = i.ParentParams.GetChildContentS("object")
 
-	i.matrix = matrix.New(i.Parent+".Interface", i.templateObject, i.templateObject)
+	i.matrix = matrix.New(i.Parent+i.templateObject, i.templateObject, i.templateObject)
+	if err := i.matrix.NewMetricsFloat64(metrics...); err != nil {
+		return fmt.Errorf("error while initializing matrix: %w", err)
+	}
 
 	return nil
 }
@@ -83,13 +86,11 @@ func (i *Interface) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 	data := dataMap[i.Object]
 	i.client.Metadata.Reset()
 
-	interfaceMat, err := i.initMatrix(i.templateObject)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	i.matrix.PurgeInstances()
+	i.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	interfaceMat.SetGlobalLabels(data.GetGlobalLabels())
+	i.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -100,26 +101,13 @@ func (i *Interface) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	i.parseInterface(output, interfaceMat)
+	i.parseInterface(output, i.matrix)
 
 	i.client.Metadata.NumCalls.Store(1)
 	i.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	i.client.Metadata.PluginInstances.Store(uint64(len(interfaceMat.GetInstances())))
+	i.client.Metadata.PluginInstances.Store(uint64(len(i.matrix.GetInstances())))
 
-	return []*matrix.Matrix{interfaceMat}, i.client.Metadata, nil
-}
-
-func (i *Interface) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(i.Parent+name, name, name)
-
-	for _, k := range metrics {
-		if err := matrix.CreateMetric(k, mat); err != nil {
-			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
-		}
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{i.matrix}, i.client.Metadata, nil
 }
 
 func (i *Interface) parseInterface(output gjson.Result, ifMat *matrix.Matrix) {
@@ -132,6 +120,19 @@ func (i *Interface) parseInterface(output gjson.Result, ifMat *matrix.Matrix) {
 		i.SLogger.Warn("Unable to parse interfaces because interfaces are missing", slog.String("query", rowQuery))
 		return
 	}
+
+	crcErrorsMetric := ifMat.MustGetMetric(crcErrors)
+	receiveBytesMetric := ifMat.MustGetMetric(receiveBytes)
+	receiveErrorsMetric := ifMat.MustGetMetric(receiveErrors)
+	transmitBytesMetric := ifMat.MustGetMetric(transmitBytes)
+	transmitErrorsMetric := ifMat.MustGetMetric(transmitErrors)
+	receiveMulticastMetric := ifMat.MustGetMetric(receiveMulticast)
+	receiveBroadcastMetric := ifMat.MustGetMetric(receiveBroadcast)
+	receiveDropsMetric := ifMat.MustGetMetric(receiveDrops)
+	transmitDropsMetric := ifMat.MustGetMetric(transmitDrops)
+	adminUpMetric := ifMat.MustGetMetric(adminUp)
+	upMetric := ifMat.MustGetMetric(up)
+	errorStatusMetric := ifMat.MustGetMetric(errorStatus)
 
 	rows.ForEach(func(key, value gjson.Result) bool {
 		interfaceName := value.Get("name").ClonedString()
@@ -172,36 +173,36 @@ func (i *Interface) parseInterface(output gjson.Result, ifMat *matrix.Matrix) {
 		instance.SetLabel("mac", macAddr)
 		instance.SetLabel("description", desc)
 
-		ifMat.GetMetric(crcErrors).SetValueFloat64(instance, crc)
-		ifMat.GetMetric(receiveBytes).SetValueFloat64(instance, inBytes)
-		ifMat.GetMetric(receiveErrors).SetValueFloat64(instance, inErrors)
-		ifMat.GetMetric(transmitBytes).SetValueFloat64(instance, outBytes)
-		ifMat.GetMetric(transmitErrors).SetValueFloat64(instance, outErrors)
-		ifMat.GetMetric(receiveMulticast).SetValueFloat64(instance, inMcast)
-		ifMat.GetMetric(receiveBroadcast).SetValueFloat64(instance, inBcast)
-		ifMat.GetMetric(receiveDrops).SetValueFloat64(instance, inDiscards)
-		ifMat.GetMetric(transmitDrops).SetValueFloat64(instance, outDiscards)
+		crcErrorsMetric.SetValueFloat64(instance, crc)
+		receiveBytesMetric.SetValueFloat64(instance, inBytes)
+		receiveErrorsMetric.SetValueFloat64(instance, inErrors)
+		transmitBytesMetric.SetValueFloat64(instance, outBytes)
+		transmitErrorsMetric.SetValueFloat64(instance, outErrors)
+		receiveMulticastMetric.SetValueFloat64(instance, inMcast)
+		receiveBroadcastMetric.SetValueFloat64(instance, inBcast)
+		receiveDropsMetric.SetValueFloat64(instance, inDiscards)
+		transmitDropsMetric.SetValueFloat64(instance, outDiscards)
 
 		// interfaceStatus is one of: connected, notconnect, disabled, errdisabled
 		adminEnabled := interfaceStatus != "disabled"
 		if adminEnabled {
-			ifMat.GetMetric(adminUp).SetValueFloat64(instance, 1)
+			adminUpMetric.SetValueFloat64(instance, 1)
 		} else {
-			ifMat.GetMetric(adminUp).SetValueFloat64(instance, 0)
+			adminUpMetric.SetValueFloat64(instance, 0)
 		}
 
 		linkUp := lineProtocol == "up"
 		if linkUp {
-			ifMat.GetMetric(up).SetValueFloat64(instance, 1)
+			upMetric.SetValueFloat64(instance, 1)
 		} else {
-			ifMat.GetMetric(up).SetValueFloat64(instance, 0)
+			upMetric.SetValueFloat64(instance, 0)
 		}
 
 		// Flag an error when the interface is administratively enabled but the line protocol is down.
 		if adminEnabled != linkUp {
-			ifMat.GetMetric(errorStatus).SetValueFloat64(instance, 1)
+			errorStatusMetric.SetValueFloat64(instance, 1)
 		} else {
-			ifMat.GetMetric(errorStatus).SetValueFloat64(instance, 0)
+			errorStatusMetric.SetValueFloat64(instance, 0)
 		}
 
 		return true

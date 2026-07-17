@@ -342,7 +342,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 	// 		scan_latency
 
 	// create per scanner instance cache
-	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+	cache := data.CloneMetricTemplate()
 	var err error
 	cache.UUID += ".Vscan"
 	opsKeyPrefix := "temp_"
@@ -356,8 +356,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 		if scanner == "" {
 			continue
 		}
-		if cache.GetInstance(scanner) == nil {
-			s, _ := cache.NewInstance(scanner)
+		if s, created := cache.GetOrCreateInstance(scanner); created {
 			s.SetLabel("scanner", scanner)
 		}
 	}

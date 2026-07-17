@@ -272,7 +272,7 @@ objects:
 }
 
 func processAndCookCounters(s *StatPerf, pollData []gjson.Result, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 	metricCount, _, _ := s.processPerfRecords(pollData, curMat, prevMat)
 	got, err := s.cookCounters(curMat, prevMat)

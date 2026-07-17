@@ -269,7 +269,7 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 				latency = "average_latency"
 			}
 			prevMat, curMat := setupMatrixAdv(latency, tt.prevRaw, tt.curRaw, tt.matrixOp)
-			cachedData := curMat.Clone(With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+			cachedData := curMat.Clone()
 
 			for k := range curMat.GetMetrics() {
 				_, err := curMat.Delta(k, prevMat, curMat, false, slog.Default())
@@ -306,7 +306,7 @@ func matrixTestAdv(t *testing.T, tt testAdv, cur *Matrix, skips int, err error, 
 		assert.Equal(t, cooked[i], tt.cooked[i])
 	}
 
-	record := cur.GetMetric(latency).GetRecords()
+	record := cur.GetMetric(latency).record
 	for i := range record {
 		assert.Equal(t, record[i], tt.record[i])
 	}
@@ -320,7 +320,7 @@ func matrixTest(t *testing.T, tt test, cur *Matrix, skips int, err error) {
 		assert.Equal(t, cooked[i], tt.cooked[i])
 	}
 
-	record := cur.GetMetric("speed").GetRecords()
+	record := cur.GetMetric("speed").record
 	for i := range record {
 		assert.Equal(t, record[i], tt.record[i])
 	}
@@ -328,10 +328,10 @@ func matrixTest(t *testing.T, tt test, cur *Matrix, skips int, err error) {
 
 func TestMetricReset(t *testing.T) {
 	m := New("Test", "test", "test")
-	_, _ = m.NewInstance("task1")
-	_, _ = m.NewMetricInt64("poll_time")
-	_ = m.LazySetValueInt64("poll_time", "task1", 10)
+	instance, _ := m.NewInstance("task1")
+	metric, _ := m.NewMetricInt64("poll_time")
+	metric.SetValueInt64(instance, 10)
 	m.ResetInstance("task1")
-	_, pass := m.LazyGetValueInt64("poll_time", "task1")
+	_, pass := metric.GetValueInt64(instance)
 	assert.False(t, pass)
 }

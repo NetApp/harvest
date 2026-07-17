@@ -349,7 +349,7 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	prevMat = kp.Matrix[kp.Object]
 	// clone matrix without numeric data
-	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat = prevMat.CloneForCollection()
 	curMat.Reset()
 
 	processBatch := func(perfRecords []gjson.Result, timestamp int64) error {
@@ -384,13 +384,14 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 		curMat.RemoveInstance(key)
 	}
 
-	_ = kp.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = kp.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = kp.Metadata.LazySetValueUint64("metrics", "data", metricCount)
-	_ = kp.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = kp.Metadata.LazySetValueUint64("bytesRx", "data", kp.RequestMetadata.BytesRx.Load())
-	_ = kp.Metadata.LazySetValueUint64("numCalls", "data", kp.RequestMetadata.NumCalls.Load())
-	_ = kp.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
+	dataInst := kp.Metadata.MustGetInstance("data")
+	kp.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	kp.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	kp.Metadata.MustSetValueUint64("metrics", dataInst, metricCount)
+	kp.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(curMat.GetInstances())))
+	kp.Metadata.MustSetValueUint64("bytesRx", dataInst, kp.RequestMetadata.BytesRx.Load())
+	kp.Metadata.MustSetValueUint64("numCalls", dataInst, kp.RequestMetadata.NumCalls.Load())
+	kp.Metadata.MustSetValueUint64("numPartials", dataInst, numPartials)
 
 	kp.AddCollectCount(metricCount)
 
@@ -447,7 +448,7 @@ func (kp *KeyPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	calcStart := time.Now()
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
+	cachedData := curMat.Clone()
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
@@ -613,9 +614,10 @@ func (kp *KeyPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	}
 
 	calcD := time.Since(calcStart)
-	_ = kp.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = kp.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = kp.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
+	calcDataInst := kp.Metadata.MustGetInstance("data")
+	kp.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
+	kp.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
+	kp.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	kp.Matrix[kp.Object] = cachedData

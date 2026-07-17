@@ -115,7 +115,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 	// initialize cache
 	for i, rule := range a.rules {
-		matrices[i] = data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+		matrices[i] = data.CloneMetricTemplate()
 		if rule.object != "" {
 			matrices[i].Object = rule.object
 		} else {

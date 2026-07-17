@@ -265,17 +265,14 @@ func (m *Mav) collectMAVRequests() error {
 }
 
 func (m *Mav) setMetric(mat *matrix.Matrix, instance *matrix.Instance, name string, value float64) {
-	var err error
-	met := mat.GetMetric(name)
-	if met == nil {
-		if met, err = mat.NewMetricFloat64(name); err != nil {
-			m.SLogger.Warn(
-				"error while creating metric",
-				slogx.Err(err),
-				slog.String("key", name),
-			)
-			return
-		}
+	met, err := mat.GetOrCreateMetric(name)
+	if err != nil {
+		m.SLogger.Warn(
+			"error while creating metric",
+			slogx.Err(err),
+			slog.String("key", name),
+		)
+		return
 	}
 	met.SetValueFloat64(instance, value)
 }

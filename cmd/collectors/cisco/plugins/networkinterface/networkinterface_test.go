@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
@@ -21,7 +22,8 @@ func TestInterface_parseInterface(t *testing.T) {
 
 	i := &Interface{AbstractPlugin: plugin.New("cisco_interface", options.New(), nil, nil, "cisco_interface", nil)}
 	i.SLogger = slog.Default()
-	m, err := i.initMatrix("cisco_interface")
+	m := matrix.New(i.Parent+"cisco_interface", "cisco_interface", "cisco_interface")
+	err = m.NewMetricsFloat64(metrics...)
 	assert.Nil(t, err)
 	i.matrix = m
 
@@ -166,7 +168,8 @@ func TestInterface_ZeroHandling(t *testing.T) {
 
 			i := &Interface{AbstractPlugin: plugin.New("cisco_interface", options.New(), nil, nil, "cisco_interface", nil)}
 			i.SLogger = slog.Default()
-			m, err := i.initMatrix("cisco_interface")
+			m := matrix.New(i.Parent+"cisco_interface", "cisco_interface", "cisco_interface")
+			err := m.NewMetricsFloat64(metrics...)
 			assert.Nil(t, err)
 			i.matrix = m
 
