@@ -9,27 +9,16 @@ import (
 
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
 // initSFPMatrix creates the matrix for SFP data
 func (h *Hardware) initSFPMatrix() {
 	mat := matrix.New(h.Parent+"."+sfpMatrix, sfpMatrix, sfpMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "id")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "port")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "part_number")
-	instanceLabels.NewChildS("", "serial_number")
-	instanceLabels.NewChildS("", "vendor")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"id"},
+		[]string{"controller", "port", "status", "part_number", "serial_number", "vendor"},
+	))
 
 	h.data[sfpMatrix] = mat
 }

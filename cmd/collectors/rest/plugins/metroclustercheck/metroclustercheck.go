@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
@@ -30,12 +29,7 @@ func (m *MetroclusterCheck) Init(conf.Remote) error {
 	}
 
 	m.data = matrix.New(m.Parent+".Metrocluster", "metrocluster_check", "metrocluster_check")
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	for _, label := range pluginLabels {
-		instanceKeys.NewChildS("", label)
-	}
-	m.data.SetExportOptions(exportOptions)
+	m.data.SetExportOptions(matrix.NewExportOptions(pluginLabels...))
 
 	for _, metric := range pluginMetrics {
 		if err := m.createMetric(metric); err != nil {

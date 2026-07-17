@@ -61,6 +61,28 @@ type InstanceInfo struct {
 	Ids             []ID `json:"Ids,omitempty"` // revive:disable-line var-naming
 }
 
+// InstanceInfoFromMetadata builds an InstanceInfo from the "data" task instance of a
+// collector's metadata matrix, as recorded during PollData. The metrics and the "data"
+// instance are registered unconditionally during collector Init, so it's safe to use
+// MustGetMetric/MustGetInstance here.
+func InstanceInfoFromMetadata(md *matrix.Matrix) InstanceInfo {
+	instance := md.MustGetInstance("data")
+	count, _ := md.MustGetMetric("instances").GetValueInt64(instance)
+	dataPoints, _ := md.MustGetMetric("metrics").GetValueInt64(instance)
+	pollTime, _ := md.MustGetMetric("poll_time").GetValueInt64(instance)
+	apiTime, _ := md.MustGetMetric("api_time").GetValueInt64(instance)
+	parseTime, _ := md.MustGetMetric("parse_time").GetValueInt64(instance)
+	pluginTime, _ := md.MustGetMetric("plugin_time").GetValueInt64(instance)
+	return InstanceInfo{
+		Count:      count,
+		DataPoints: dataPoints,
+		PollTime:   pollTime,
+		APITime:    apiTime,
+		ParseTime:  parseTime,
+		PluginTime: pluginTime,
+	}
+}
+
 type Process struct {
 	Pid      int32
 	User     string
@@ -210,6 +232,9 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 
 	// add info about the platform (where Harvest is running)
 	arch, cpus = getCPUInfo()
+	// "ping" and "host" are registered unconditionally during poller Init, so it's safe
+	// to use MustGetMetric/MustGetInstance here.
+	ping, _ := status.MustGetMetric("ping").GetValueFloat64(status.MustGetInstance("host"))
 	msg = &Payload{
 		Platform: &platformInfo{
 			Arch: arch,
@@ -217,7 +242,7 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 			OS:   GetOSName(),
 		},
 		Target: &TargetInfo{
-			Ping: status.LazyValueFloat64("ping", "host"),
+			Ping: ping,
 		},
 	}
 	attachMemory(msg)

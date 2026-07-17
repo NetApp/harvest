@@ -344,8 +344,9 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 	parseD := time.Since(startTime)
 
 	// update metadata for collector logs
-	_ = r.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
-	_ = r.Metadata.LazySetValueInt64("parse_time", "counter", parseD.Microseconds())
+	counterInst := r.Metadata.MustGetInstance("counter")
+	r.Metadata.MustSetValueInt64("api_time", counterInst, apiD.Microseconds())
+	r.Metadata.MustSetValueInt64("parse_time", counterInst, parseD.Microseconds())
 	return nil, nil
 }
 
@@ -425,12 +426,13 @@ func (r *Rest) postPollData(apiD time.Duration, parseD time.Duration, metricCoun
 
 	numRecords := len(r.Matrix[r.Object].GetInstances())
 
-	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(numRecords))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.RequestMetadata.BytesRx.Load())
-	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.RequestMetadata.NumCalls.Load())
+	dataInst := r.Metadata.MustGetInstance("data")
+	r.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	r.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	r.Metadata.MustSetValueUint64("metrics", dataInst, metricCount)
+	r.Metadata.MustSetValueUint64("instances", dataInst, uint64(numRecords))
+	r.Metadata.MustSetValueUint64("bytesRx", dataInst, r.RequestMetadata.BytesRx.Load())
+	r.Metadata.MustSetValueUint64("numCalls", dataInst, r.RequestMetadata.NumCalls.Load())
 
 	r.AddCollectCount(metricCount)
 }
@@ -787,14 +789,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 
 	// Add collector information
 	md := r.GetMetadata()
-	info := collector.InstanceInfo{
-		Count:      md.LazyValueInt64("instances", "data"),
-		DataPoints: md.LazyValueInt64("metrics", "data"),
-		PollTime:   md.LazyValueInt64("poll_time", "data"),
-		APITime:    md.LazyValueInt64("api_time", "data"),
-		ParseTime:  md.LazyValueInt64("parse_time", "data"),
-		PluginTime: md.LazyValueInt64("plugin_time", "data"),
-	}
+	info := collector.InstanceInfoFromMetadata(md)
 
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      r.Name,

@@ -8,7 +8,6 @@ import (
 
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
@@ -108,23 +107,10 @@ func getDNSServerAddress(server gjson.Result) string {
 
 func (h *Hardware) initControllerMatrix() {
 	mat := matrix.New(h.Parent+"."+controllerMatrix, controllerMatrix, controllerMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "controller_id")
-	instanceKeys.NewChildS("", "controller")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "app_version")
-	instanceLabels.NewChildS("", "boot_version")
-	instanceLabels.NewChildS("", "manufacturer")
-	instanceLabels.NewChildS("", "model")
-	instanceLabels.NewChildS("", "part_number")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "serial_number")
-	instanceLabels.NewChildS("", "status")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"controller_id", "controller"},
+		[]string{"app_version", "boot_version", "manufacturer", "model", "part_number", "controller", "serial_number", "status"},
+	))
 
 	if _, err := mat.NewMetricFloat64("used_cache_memory"); err != nil {
 		h.SLogger.Error("Failed to create used_cache_memory metric", slogx.Err(err))
@@ -142,26 +128,13 @@ func (h *Hardware) initControllerMatrix() {
 // initHostInterfaceMatrix creates the matrix for host interface data
 func (h *Hardware) initHostInterfaceMatrix() {
 	mat := matrix.New(h.Parent+"."+hostInterfaceMatrix, hostInterfaceMatrix, hostInterfaceMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "controller_id")
-	instanceKeys.NewChildS("", "channel")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "controller_id")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "interface_type")
-	instanceLabels.NewChildS("", "port")
-	instanceLabels.NewChildS("", "channel")
-	instanceLabels.NewChildS("", "link_state")
-	instanceLabels.NewChildS("", "speed")
-	instanceLabels.NewChildS("", "physical_port_state")
-	instanceLabels.NewChildS("", "nvme_supported")
-	instanceLabels.NewChildS("", "max_transmission_unit")
-	instanceLabels.NewChildS("", "ip_address")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"controller_id", "channel"},
+		[]string{
+			"controller_id", "controller", "interface_type", "port", "channel", "link_state", "speed",
+			"physical_port_state", "nvme_supported", "max_transmission_unit", "ip_address",
+		},
+	))
 
 	h.data[hostInterfaceMatrix] = mat
 }
@@ -169,22 +142,10 @@ func (h *Hardware) initHostInterfaceMatrix() {
 // initDriveInterfaceMatrix creates the matrix for drive interface data
 func (h *Hardware) initDriveInterfaceMatrix() {
 	mat := matrix.New(h.Parent+"."+driveInterfaceMatrix, driveInterfaceMatrix, driveInterfaceMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "controller_id")
-	instanceKeys.NewChildS("", "channel")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "controller_id")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "interface_type")
-	instanceLabels.NewChildS("", "channel")
-	instanceLabels.NewChildS("", "current_speed")
-	instanceLabels.NewChildS("", "maximum_speed")
-	instanceLabels.NewChildS("", "protection_info_capable")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"controller_id", "channel"},
+		[]string{"controller_id", "controller", "interface_type", "channel", "current_speed", "maximum_speed", "protection_info_capable"},
+	))
 
 	h.data[driveInterfaceMatrix] = mat
 }
@@ -192,19 +153,10 @@ func (h *Hardware) initDriveInterfaceMatrix() {
 // initCodeVersionMatrix creates the matrix for code version data
 func (h *Hardware) initCodeVersionMatrix() {
 	mat := matrix.New(h.Parent+"."+codeVersionMatrix, codeVersionMatrix, codeVersionMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "controller_id")
-	instanceKeys.NewChildS("", "code_module")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "controller_id")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "code_module")
-	instanceLabels.NewChildS("", "version")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"controller_id", "code_module"},
+		[]string{"controller_id", "controller", "code_module", "version"},
+	))
 
 	h.data[codeVersionMatrix] = mat
 }
@@ -212,20 +164,10 @@ func (h *Hardware) initCodeVersionMatrix() {
 // initDNSMatrix creates the matrix for DNS property data
 func (h *Hardware) initDNSMatrix() {
 	mat := matrix.New(h.Parent+"."+dnsPropertyMatrix, dnsPropertyMatrix, dnsPropertyMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "controller_id")
-	instanceKeys.NewChildS("", "dns_server")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "controller_id")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "dns_server")
-	instanceLabels.NewChildS("", "address_type")
-	instanceLabels.NewChildS("", "acquisition_type")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"controller_id", "dns_server"},
+		[]string{"controller_id", "controller", "dns_server", "address_type", "acquisition_type"},
+	))
 
 	h.data[dnsPropertyMatrix] = mat
 }
@@ -233,39 +175,16 @@ func (h *Hardware) initDNSMatrix() {
 // initNetInterfaceMatrix creates the matrix for network interface (management port) data
 func (h *Hardware) initNetInterfaceMatrix() {
 	mat := matrix.New(h.Parent+"."+netInterfaceMatrix, netInterfaceMatrix, netInterfaceMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "controller_id")
-	instanceKeys.NewChildS("", "interface_name")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "controller_id")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "interface_name")
-	instanceLabels.NewChildS("", "alias")
-	instanceLabels.NewChildS("", "port")
-	instanceLabels.NewChildS("", "mac_address")
-	instanceLabels.NewChildS("", "link_status")
-	instanceLabels.NewChildS("", "ipv4_enabled")
-	instanceLabels.NewChildS("", "ipv4_address")
-	instanceLabels.NewChildS("", "ipv4_subnet_mask")
-	instanceLabels.NewChildS("", "ipv4_gateway")
-	instanceLabels.NewChildS("", "ipv4_config_method")
-	instanceLabels.NewChildS("", "ipv6_enabled")
-	instanceLabels.NewChildS("", "ipv6_local_address")
-	instanceLabels.NewChildS("", "ipv6_routable_address")
-	instanceLabels.NewChildS("", "ipv6_config_method")
-	instanceLabels.NewChildS("", "full_duplex")
-	instanceLabels.NewChildS("", "configured_speed")
-	instanceLabels.NewChildS("", "current_speed")
-	instanceLabels.NewChildS("", "remote_access_enabled")
-	instanceLabels.NewChildS("", "dns_config_method")
-	instanceLabels.NewChildS("", "primary_dns_server")
-	instanceLabels.NewChildS("", "backup_dns_server")
-	instanceLabels.NewChildS("", "ntp_service")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"controller_id", "interface_name"},
+		[]string{
+			"controller_id", "controller", "interface_name", "alias", "port", "mac_address", "link_status",
+			"ipv4_enabled", "ipv4_address", "ipv4_subnet_mask", "ipv4_gateway", "ipv4_config_method",
+			"ipv6_enabled", "ipv6_local_address", "ipv6_routable_address", "ipv6_config_method",
+			"full_duplex", "configured_speed", "current_speed", "remote_access_enabled",
+			"dns_config_method", "primary_dns_server", "backup_dns_server", "ntp_service",
+		},
+	))
 
 	h.data[netInterfaceMatrix] = mat
 }
@@ -318,21 +237,19 @@ func (h *Hardware) processController(controller gjson.Result, controllerID strin
 	inst.SetLabelTrimmed("serial_number", controller.Get("serialNumber").ClonedString())
 	inst.SetLabelTrimmed("status", controller.Get("status").ClonedString())
 
+	usedCacheMemoryMetric := mat.MustGetMetric("used_cache_memory")
+	totalCacheMemoryMetric := mat.MustGetMetric("total_cache_memory")
+	processorMemoryMetric := mat.MustGetMetric("processor_memory")
+
 	// Set metrics
-	if m := mat.GetMetric("used_cache_memory"); m != nil {
-		if val := controller.Get("cacheMemorySize"); val.Exists() {
-			m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
-		}
+	if val := controller.Get("cacheMemorySize"); val.Exists() {
+		usedCacheMemoryMetric.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 	}
-	if m := mat.GetMetric("total_cache_memory"); m != nil {
-		if val := controller.Get("physicalCacheMemorySize"); val.Exists() {
-			m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
-		}
+	if val := controller.Get("physicalCacheMemorySize"); val.Exists() {
+		totalCacheMemoryMetric.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 	}
-	if m := mat.GetMetric("processor_memory"); m != nil {
-		if val := controller.Get("processorMemorySize"); val.Exists() {
-			m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
-		}
+	if val := controller.Get("processorMemorySize"); val.Exists() {
+		processorMemoryMetric.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 	}
 
 	h.SLogger.Debug("Processed controller", slog.String("id", controllerID))
@@ -730,24 +647,10 @@ func (h *Hardware) processNetInterfaces(controller gjson.Result, controllerID, c
 // initCacheMemoryDimmMatrix creates the matrix for cache memory DIMM data
 func (h *Hardware) initCacheMemoryDimmMatrix() {
 	mat := matrix.New(h.Parent+"."+cacheMemoryDimmMatrix, cacheMemoryDimmMatrix, cacheMemoryDimmMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "dimm_id")
-	instanceKeys.NewChildS("", "controller")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "dimm_id")
-	instanceLabels.NewChildS("", "controller_id")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "slot")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "serial_number")
-	instanceLabels.NewChildS("", "part_number")
-	instanceLabels.NewChildS("", "manufacturer_part_number")
-	instanceLabels.NewChildS("", "manufacturer")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"dimm_id", "controller"},
+		[]string{"dimm_id", "controller_id", "controller", "slot", "status", "serial_number", "part_number", "manufacturer_part_number", "manufacturer"},
+	))
 
 	_, _ = mat.NewMetricFloat64("capacity")
 
@@ -757,24 +660,10 @@ func (h *Hardware) initCacheMemoryDimmMatrix() {
 // initCacheBackupDeviceMatrix creates the matrix for cache backup device data
 func (h *Hardware) initCacheBackupDeviceMatrix() {
 	mat := matrix.New(h.Parent+"."+cacheBackupDeviceMatrix, cacheBackupDeviceMatrix, cacheBackupDeviceMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "device_id")
-	instanceKeys.NewChildS("", "controller")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "device_id")
-	instanceLabels.NewChildS("", "controller_id")
-	instanceLabels.NewChildS("", "slot")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "device_type")
-	instanceLabels.NewChildS("", "serial_number")
-	instanceLabels.NewChildS("", "part_number")
-	instanceLabels.NewChildS("", "product_id")
-	instanceLabels.NewChildS("", "manufacturer")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"device_id", "controller"},
+		[]string{"device_id", "controller_id", "slot", "status", "device_type", "serial_number", "part_number", "product_id", "manufacturer"},
+	))
 
 	_, _ = mat.NewMetricFloat64("capacity")
 
@@ -790,6 +679,8 @@ func (h *Hardware) processCacheMemoryDimms(response gjson.Result, controllerLabe
 		h.SLogger.Debug("No cacheMemoryDimms found in response")
 		return
 	}
+
+	capacityMetric := mat.MustGetMetric("capacity")
 
 	for _, dimm := range dimms.Array() {
 		dimmRef := dimm.Get("cacheMemoryDimmRef").ClonedString()
@@ -812,9 +703,7 @@ func (h *Hardware) processCacheMemoryDimms(response gjson.Result, controllerLabe
 		inst.SetLabelTrimmed("slot", dimm.Get("physicalLocation.label").ClonedString())
 		inst.SetLabelTrimmed("status", dimm.Get("status").ClonedString())
 		if val := dimm.Get("capacityInMegabytes"); val.Exists() {
-			if m := mat.GetMetric("capacity"); m != nil {
-				m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
-			}
+			capacityMetric.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 		}
 		inst.SetLabelTrimmed("serial_number", dimm.Get("serialNumber").ClonedString())
 		inst.SetLabelTrimmed("part_number", dimm.Get("partNumber").ClonedString())
@@ -834,6 +723,8 @@ func (h *Hardware) processCacheBackupDevices(response gjson.Result, controllerLa
 		h.SLogger.Debug("No cacheBackupDevices found in response")
 		return
 	}
+
+	capacityMetric := mat.MustGetMetric("capacity")
 
 	for _, device := range devices.Array() {
 		deviceRef := device.Get("backupDeviceRef").ClonedString()
@@ -860,9 +751,7 @@ func (h *Hardware) processCacheBackupDevices(response gjson.Result, controllerLa
 		inst.SetLabelTrimmed("status", device.Get("backupDeviceStatus").ClonedString())
 		inst.SetLabelTrimmed("device_type", device.Get("backupDeviceType").ClonedString())
 		if val := device.Get("backupDeviceCapacity"); val.Exists() {
-			if m := mat.GetMetric("capacity"); m != nil {
-				m.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
-			}
+			capacityMetric.SetValueFloat64(inst, float64(val.Uint()*1024*1024))
 		}
 		inst.SetLabelTrimmed("serial_number", device.Get("backupDeviceVpd.serialNumber").ClonedString())
 		inst.SetLabelTrimmed("part_number", device.Get("backupDeviceVpd.partNumber").ClonedString())

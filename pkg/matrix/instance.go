@@ -18,7 +18,7 @@ type Instance struct {
 	partial    bool
 }
 
-func NewInstance(index int) *Instance {
+func newInstance(index int) *Instance {
 	me := &Instance{index: index}
 	me.labels = make(map[string]string)
 	me.exportable = true
@@ -27,10 +27,6 @@ func NewInstance(index int) *Instance {
 
 func (i *Instance) GetLabel(key string) string {
 	return i.labels[key]
-}
-
-func (i *Instance) GetIndex() int {
-	return i.index
 }
 
 func (i *Instance) GetLabels() map[string]string {
@@ -74,14 +70,14 @@ func (i *Instance) SetPartial(b bool) {
 	i.partial = b
 }
 
-func (i *Instance) Clone(isExportable bool, labels ...string) *Instance {
-	clone := NewInstance(i.index)
-	clone.labels = i.Copy(labels...)
+func (i *Instance) clone(isExportable bool, labels ...string) *Instance {
+	clone := newInstance(i.index)
+	clone.labels = i.copyLabels(labels...)
 	clone.exportable = isExportable
 	return clone
 }
 
-func (i *Instance) Copy(labels ...string) map[string]string {
+func (i *Instance) copyLabels(labels ...string) map[string]string {
 	if len(labels) == 0 {
 		return maps.Clone(i.labels)
 	}

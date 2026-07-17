@@ -59,7 +59,10 @@ func (e *Environment) Init(remote conf.Remote) error {
 	e.client = client
 	e.templateObject = e.ParentParams.GetChildContentS("object")
 
-	e.matrix = matrix.New(e.Parent+".Environment", e.templateObject, e.templateObject)
+	e.matrix = matrix.New(e.Parent+e.templateObject, e.templateObject, e.templateObject)
+	if err := e.matrix.NewMetricsFloat64(metrics...); err != nil {
+		return fmt.Errorf("error while initializing matrix: %w", err)
+	}
 
 	return nil
 }
@@ -68,13 +71,11 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	data := dataMap[e.Object]
 	e.client.Metadata.Reset()
 
-	envMat, err := e.initMatrix("cisco_environment")
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	e.matrix.PurgeInstances()
+	e.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	envMat.SetGlobalLabels(data.GetGlobalLabels())
+	e.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -88,27 +89,14 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	envOutput := output.Get("output.0.body")
 	fanDetailsOutput := output.Get("output.1.body")
 
-	e.parseEnvironment(envOutput, envMat)
-	e.parseFanDetails(fanDetailsOutput, envMat)
+	e.parseEnvironment(envOutput, e.matrix)
+	e.parseFanDetails(fanDetailsOutput, e.matrix)
 
 	e.client.Metadata.NumCalls.Store(1)
 	e.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	e.client.Metadata.PluginInstances.Store(uint64(len(envMat.GetInstances())))
+	e.client.Metadata.PluginInstances.Store(uint64(len(e.matrix.GetInstances())))
 
-	return []*matrix.Matrix{envMat}, e.client.Metadata, nil
-}
-
-func (e *Environment) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(e.Parent+name, name, name)
-
-	for _, k := range metrics {
-		if err := matrix.CreateMetric(k, mat); err != nil {
-			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
-		}
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{e.matrix}, e.client.Metadata, nil
 }
 
 func (e *Environment) parseEnvironment(content gjson.Result, envMat *matrix.Matrix) {
@@ -128,6 +116,7 @@ func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matri
 		return
 	}
 
+	sensorTempMetric := envMat.MustGetMetric("sensor_temp")
 	rows.ForEach(func(_, value gjson.Result) bool {
 		sensorName := value.Get("sensor").ClonedString()
 		sensorName = strings.ReplaceAll(sensorName, " ", "")
@@ -143,7 +132,7 @@ func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matri
 
 		instance.SetLabel("sensor", sensorName)
 
-		if err := envMat.GetMetric("sensor_temp").SetValueString(instance, curTemp); err != nil {
+		if err := sensorTempMetric.SetValueString(instance, curTemp); err != nil {
 			e.SLogger.Error(
 				"Unable to set value on metric",
 				slogx.Err(err),
@@ -190,14 +179,21 @@ func (e *Environment) parseFanZoneSpeed(output gjson.Result, envMat *matrix.Matr
 		return
 	}
 
+	fanZoneSpeedMetric := envMat.MustGetMetric("fan_zone_speed")
+
 	// Calculate the fan zone speed as a percentage
 	fanZonePerc := math.Round(float64(zoneSpeed) / 255 * 100)
 
-	envMat.GetMetric("fan_zone_speed").SetValueFloat64(instance, fanZonePerc)
+	fanZoneSpeedMetric.SetValueFloat64(instance, fanZonePerc)
 }
 
 func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 	model := NewPowerModel(output, e.SLogger)
+
+	powerUpMetric := envMat.MustGetMetric("power_up")
+	powerOutMetric := envMat.MustGetMetric("power_out")
+	powerCapacityMetric := envMat.MustGetMetric("power_capacity")
+	powerInMetric := envMat.MustGetMetric("power_in")
 
 	for _, ps := range model.PowerSupplies {
 		instanceKey := ps.Num + "_" + ps.Model
@@ -213,7 +209,6 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 		instance.SetLabel("ps", ps.Num)
 		instance.SetLabel("model", ps.Model)
 
-		powerUpMetric := envMat.GetMetric("power_up")
 		if ps.Status == "ok" {
 			powerUpMetric.SetValueFloat64(instance, 1)
 		} else {
@@ -222,9 +217,9 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 
 		// If actualOut is 0, we don't want to export the other metrics
 		if ps.ActualOut > 0 {
-			envMat.GetMetric("power_out").SetValueFloat64(instance, ps.ActualOut)
-			envMat.GetMetric("power_capacity").SetValueFloat64(instance, ps.TotalCapacity)
-			envMat.GetMetric("power_in").SetValueFloat64(instance, ps.ActualIn)
+			powerOutMetric.SetValueFloat64(instance, ps.ActualOut)
+			powerCapacityMetric.SetValueFloat64(instance, ps.TotalCapacity)
+			powerInMetric.SetValueFloat64(instance, ps.ActualIn)
 		}
 	}
 
@@ -241,7 +236,8 @@ func (e *Environment) setRedundancyMode(key string, mode string, envMat *matrix.
 	}
 	instance.SetLabel("item", key)
 	instance.SetLabel("value", mode)
-	envMat.GetMetric("power_mode").SetValueFloat64(instance, 1.0)
+	powerModeMetric := envMat.MustGetMetric("power_mode")
+	powerModeMetric.SetValueFloat64(instance, 1.0)
 }
 
 func (e *Environment) parseFanDetails(output gjson.Result, envMat *matrix.Matrix) {

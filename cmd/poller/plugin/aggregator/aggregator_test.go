@@ -104,6 +104,30 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 	}
 }
 
+// TestRuleResetsExportOptions guards against a regression where the aggregated matrix inherited
+// the source matrix's export options (e.g. an explicit instance_keys list like "aggr,volume")
+// instead of being reset to include_all_labels. Inheriting the source's instance_keys caused
+// labels that the rollup never sets (e.g. aggr, volume) to be exported as empty strings.
+func TestRuleResetsExportOptions(t *testing.T) {
+	m := newArtificialData()
+	// Simulate a source (e.g. Volume) matrix with explicit instance_keys that don't apply
+	// to the aggregated "node" rollup instances.
+	m.SetExportOptions(matrix.NewExportOptions("aggr", "volume"))
+
+	p := newAggregator()
+
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
+	results, _, err := p.Run(dataMap)
+	assert.Nil(t, err)
+	assert.Equal(t, len(results), 1)
+
+	exportOptions := results[0].GetExportOptions()
+	assert.Equal(t, exportOptions.GetChildContentS("include_all_labels"), "true")
+	assert.Nil(t, exportOptions.GetChildS("instance_keys"))
+}
+
 func TestComplexRuleRegex(t *testing.T) {
 
 	var n *matrix.Matrix

@@ -157,14 +157,9 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	// update metadata
 	p.Metadata.Reset()
-	err = p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
-	if err != nil {
-		p.Logger.Error("metadata time", slogx.Err(err))
-	}
-	err = p.Metadata.LazySetValueInt64("count", "http", int64(count))
-	if err != nil {
-		p.Logger.Error("metadata count", slogx.Err(err))
-	}
+	httpInst := p.Metadata.MustGetInstance("http")
+	p.Metadata.MustSetValueInt64("time", httpInst, time.Since(start).Microseconds())
+	p.Metadata.MustSetValueInt64("count", httpInst, int64(count))
 }
 
 // ServeInfo provides a human-friendly overview of metric types and source collectors
@@ -226,8 +221,5 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		p.Logger.Error("write info", slogx.Err(err))
 	}
 
-	err = p.Metadata.LazyAddValueInt64("time", "info", time.Since(start).Microseconds())
-	if err != nil {
-		p.Logger.Error("metadata time", slogx.Err(err))
-	}
+	p.Metadata.MustAddValueInt64("time", p.Metadata.MustGetInstance("info"), time.Since(start).Microseconds())
 }

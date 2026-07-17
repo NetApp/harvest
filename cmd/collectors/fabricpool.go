@@ -26,7 +26,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 	opsKeyPrefix := "temp_"
 	flexgroupConstituentsMap = make(map[string]constituentData)
 
-	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+	cache := data.CloneMetricTemplate()
 	cache.UUID += ".FabricPool"
 
 	// collect latency_average metrics names
@@ -44,8 +44,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 		if match := fabricpoolRegex.FindStringSubmatch(fetchVolumeName(i)); len(match) == 3 {
 			key := i.GetLabel("svm") + "." + match[1] + "." + i.GetLabel("cloud_target")
-			if cache.GetInstance(key) == nil {
-				fg, _ := cache.NewInstance(key)
+			if fg, created := cache.GetOrCreateInstance(key); created {
 				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
 			}

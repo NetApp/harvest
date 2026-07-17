@@ -230,9 +230,8 @@ func (r *RestPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 			if !met.IsExportable() {
 				continue
 			}
-			records := met.GetRecords()
-			for _, v := range records {
-				if v {
+			for _, instance := range mat.GetInstances() {
+				if _, recorded := met.GetValueFloat64(instance); recorded {
 					totalMetrics++
 				}
 			}
@@ -489,7 +488,7 @@ func TestSkipsSequence(t *testing.T) {
 }
 
 func processAndCookCounters(r *RestPerf, pollData []rest.PerfRecord, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 	metricCount, _, _ := r.processPerfRecords(pollData, curMat, prevMat, set.New())
 	got, err := r.cookCounters(curMat, prevMat)

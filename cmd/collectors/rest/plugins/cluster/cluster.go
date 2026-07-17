@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"strings"
 )
@@ -29,10 +28,7 @@ func (c *Cluster) Init(_ conf.Remote) error {
 	}
 
 	c.tags = matrix.New(c.Parent+".Cluster", "cluster", "cluster")
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "tag")
-	c.tags.SetExportOptions(exportOptions)
+	c.tags.SetExportOptions(matrix.NewExportOptions("tag"))
 	_, err = c.tags.NewMetricFloat64("tags", "tags")
 	if err != nil {
 		c.SLogger.Error("add metric", slogx.Err(err))

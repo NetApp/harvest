@@ -54,7 +54,10 @@ func (v *Version) Init(remote conf.Remote) error {
 	v.client = client
 	v.templateObject = v.ParentParams.GetChildContentS("object")
 
-	v.matrix = matrix.New(v.Parent+".Version", v.templateObject, v.templateObject)
+	v.matrix = matrix.New(v.Parent+v.templateObject, v.templateObject, v.templateObject)
+	if err := v.matrix.NewMetricsFloat64(metrics...); err != nil {
+		return fmt.Errorf("error while initializing matrix: %w", err)
+	}
 
 	return nil
 }
@@ -63,13 +66,11 @@ func (v *Version) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 	data := dataMap[v.Object]
 	v.client.Metadata.Reset()
 
-	versionMat, err := v.initMatrix(v.templateObject)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	v.matrix.PurgeInstances()
+	v.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	versionMat.SetGlobalLabels(data.GetGlobalLabels())
+	v.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -80,26 +81,13 @@ func (v *Version) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	v.parseVersion(output, versionMat)
+	v.parseVersion(output, v.matrix)
 
 	v.client.Metadata.NumCalls.Store(1)
 	v.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	v.client.Metadata.PluginInstances.Store(uint64(len(versionMat.GetInstances())))
+	v.client.Metadata.PluginInstances.Store(uint64(len(v.matrix.GetInstances())))
 
-	return []*matrix.Matrix{versionMat}, v.client.Metadata, nil
-}
-
-func (v *Version) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(v.Parent+name, name, name)
-
-	for _, k := range metrics {
-		if err := matrix.CreateMetric(k, mat); err != nil {
-			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
-		}
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{v.matrix}, v.client.Metadata, nil
 }
 
 func (v *Version) parseVersion(output gjson.Result, versionMat *matrix.Matrix) {
@@ -150,6 +138,8 @@ func (v *Version) parseVersion(output gjson.Result, versionMat *matrix.Matrix) {
 	instance.SetLabel("hardwareRevision", hardwareRevision)
 	instance.SetLabel("architecture", architecture)
 
-	versionMat.GetMetric(labels).SetValueFloat64(instance, 1.0)
-	versionMat.GetMetric(uptime).SetValueFloat64(instance, uptimeSeconds)
+	labelsMetric := versionMat.MustGetMetric(labels)
+	uptimeMetric := versionMat.MustGetMetric(uptime)
+	labelsMetric.SetValueFloat64(instance, 1.0)
+	uptimeMetric.SetValueFloat64(instance, uptimeSeconds)
 }

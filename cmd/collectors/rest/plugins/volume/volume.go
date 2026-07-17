@@ -14,7 +14,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -88,10 +87,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	}
 
 	v.arw = matrix.New(v.Parent+".Volume", "volume_arw", "volume_arw")
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "ArwStatus")
-	v.arw.SetExportOptions(exportOptions)
+	v.arw.SetExportOptions(matrix.NewExportOptions("ArwStatus"))
 	_, err = v.arw.NewMetricFloat64("status", "status")
 	if err != nil {
 		v.SLogger.Error("add metric", slogx.Err(err))
@@ -99,12 +95,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	}
 
 	v.tags = matrix.New(v.Parent+".Volume", "volume", "volume")
-	exportOptions = node.NewS("export_options")
-	instanceKeys = exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "tag")
-	instanceKeys.NewChildS("", "svm")
-	instanceKeys.NewChildS("", "volume")
-	v.tags.SetExportOptions(exportOptions)
+	v.tags.SetExportOptions(matrix.NewExportOptions("tag", "svm", "volume"))
 	_, err = v.tags.NewMetricFloat64("tags", "tags")
 	if err != nil {
 		v.SLogger.Error("add metric", slogx.Err(err))

@@ -113,30 +113,24 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 	mat := n.Matrix[n.Object]
 	mat.Reset()
 
-	toQuery := []string{"alloc", "num_gc", "num_cpu"}
+	statusMetric := mat.MustGetMetric("status")
+	allocMetric := mat.GetMetric("alloc")
+	numGcMetric := mat.GetMetric("num_gc")
+	numCPUMetric := mat.GetMetric("num_cpu")
 
-	for key, instance := range mat.GetInstances() {
-		err := mat.LazySetValueUint64("status", key, 0)
-		if err != nil {
-			n.Logger.Error(
-				"initializing metric cache",
-				slogx.Err(err),
-				slog.String("key", key),
-			)
+	for _, instance := range mat.GetInstances() {
+		statusMetric.SetValueUint64(instance, 0)
+
+		var memStats runtime.MemStats
+		runtime.ReadMemStats(&memStats)
+		if allocMetric != nil {
+			allocMetric.SetValueUint64(instance, memStats.Alloc)
 		}
-		for _, key2 := range toQuery {
-			if metric := mat.GetMetric(key2); metric != nil {
-				var m runtime.MemStats
-				runtime.ReadMemStats(&m)
-				switch key2 {
-				case "alloc":
-					metric.SetValueUint64(instance, m.Alloc)
-				case "num_gc":
-					metric.SetValueUint64(instance, uint64(m.NumGC))
-				case "num_cpu":
-					metric.SetValueInt64(instance, int64(runtime.NumCPU()))
-				}
-			}
+		if numGcMetric != nil {
+			numGcMetric.SetValueUint64(instance, uint64(memStats.NumGC))
+		}
+		if numCPUMetric != nil {
+			numCPUMetric.SetValueInt64(instance, int64(runtime.NumCPU()))
 		}
 	}
 

@@ -3,30 +3,16 @@ package hardware
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
 
 func (h *Hardware) initHostBoardMatrix() {
 	mat := matrix.New(h.Parent+"."+hostBoardMatrix, hostBoardMatrix, hostBoardMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "id")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "type")
-	instanceLabels.NewChildS("", "slot")
-	instanceLabels.NewChildS("", "part_number")
-	instanceLabels.NewChildS("", "serial_number")
-	instanceLabels.NewChildS("", "vendor")
-	instanceLabels.NewChildS("", "fru_type")
-	instanceLabels.NewChildS("", "number_of_ports")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"id"},
+		[]string{"controller", "status", "type", "slot", "part_number", "serial_number", "vendor", "fru_type", "number_of_ports"},
+	))
 
 	h.data[hostBoardMatrix] = mat
 }

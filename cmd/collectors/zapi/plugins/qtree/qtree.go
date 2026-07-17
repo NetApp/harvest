@@ -233,7 +233,7 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 
 	if q.qtreeMetrics || q.historicalLabels {
 		// metrics with qtree prefix and quota prefix are available to support backward compatibility
-		qtreePluginData := q.data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
+		qtreePluginData := q.data.Clone()
 		qtreePluginData.UUID = q.Parent + ".Qtree"
 		qtreePluginData.Object = "qtree"
 		qtreePluginData.Identifier = "qtree"

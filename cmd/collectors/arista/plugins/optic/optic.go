@@ -57,7 +57,10 @@ func (o *Optic) Init(remote conf.Remote) error {
 	o.client = client
 	o.templateObject = o.ParentParams.GetChildContentS("object")
 
-	o.matrix = matrix.New(o.Parent+".Optic", o.templateObject, o.templateObject)
+	o.matrix = matrix.New(o.Parent+o.templateObject, o.templateObject, o.templateObject)
+	if err := o.matrix.NewMetricsFloat64(metrics...); err != nil {
+		return fmt.Errorf("error while initializing matrix: %w", err)
+	}
 
 	return nil
 }
@@ -66,13 +69,11 @@ func (o *Optic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 	data := dataMap[o.Object]
 	o.client.Metadata.Reset()
 
-	opticMat, err := o.initMatrix(o.templateObject)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	o.matrix.PurgeInstances()
+	o.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	opticMat.SetGlobalLabels(data.GetGlobalLabels())
+	o.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -83,26 +84,13 @@ func (o *Optic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	o.parseOptic(output, opticMat)
+	o.parseOptic(output, o.matrix)
 
 	o.client.Metadata.NumCalls.Store(1)
 	o.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	o.client.Metadata.PluginInstances.Store(uint64(len(opticMat.GetInstances())))
+	o.client.Metadata.PluginInstances.Store(uint64(len(o.matrix.GetInstances())))
 
-	return []*matrix.Matrix{opticMat}, o.client.Metadata, nil
-}
-
-func (o *Optic) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(o.Parent+name, name, name)
-
-	for _, k := range metrics {
-		if err := matrix.CreateMetric(k, mat); err != nil {
-			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
-		}
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{o.matrix}, o.client.Metadata, nil
 }
 
 func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
@@ -117,6 +105,11 @@ func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
 	}
 
 	var models []Model
+
+	rxMetric := opticMat.MustGetMetric(rx)
+	txMetric := opticMat.MustGetMetric(tx)
+	temperatureMetric := opticMat.MustGetMetric(temperature)
+	voltageMetric := opticMat.MustGetMetric(voltage)
 
 	rows.ForEach(func(key, value gjson.Result) bool {
 		opticModel := NewOpticModel(key.ClonedString(), value)
@@ -139,10 +132,10 @@ func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
 
 		instance.SetLabel("interface", model.Name)
 
-		opticMat.GetMetric(rx).SetValueFloat64(instance, model.RxPower)
-		opticMat.GetMetric(tx).SetValueFloat64(instance, model.TxPower)
-		opticMat.GetMetric(temperature).SetValueFloat64(instance, model.Temperature)
-		opticMat.GetMetric(voltage).SetValueFloat64(instance, model.Voltage)
+		rxMetric.SetValueFloat64(instance, model.RxPower)
+		txMetric.SetValueFloat64(instance, model.TxPower)
+		temperatureMetric.SetValueFloat64(instance, model.Temperature)
+		voltageMetric.SetValueFloat64(instance, model.Voltage)
 	}
 }
 

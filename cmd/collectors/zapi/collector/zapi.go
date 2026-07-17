@@ -418,12 +418,13 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 
 	numInstances := len(mat.GetInstances())
 	// update metadata
-	_ = z.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = z.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = z.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = z.Metadata.LazySetValueUint64("instances", "data", uint64(numInstances))
-	_ = z.Metadata.LazySetValueUint64("bytesRx", "data", z.Client.Metadata.BytesRx.Load())
-	_ = z.Metadata.LazySetValueUint64("numCalls", "data", z.Client.Metadata.NumCalls.Load())
+	dataInst := z.Metadata.MustGetInstance("data")
+	z.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	z.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	z.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	z.Metadata.MustSetValueUint64("instances", dataInst, uint64(numInstances))
+	z.Metadata.MustSetValueUint64("bytesRx", dataInst, z.Client.Metadata.BytesRx.Load())
+	z.Metadata.MustSetValueUint64("numCalls", dataInst, z.Client.Metadata.NumCalls.Load())
 
 	z.AddCollectCount(count)
 
@@ -466,14 +467,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 
 	// Add collector information
 	md := z.GetMetadata()
-	info := collector.InstanceInfo{
-		Count:      md.LazyValueInt64("instances", "data"),
-		DataPoints: md.LazyValueInt64("metrics", "data"),
-		PollTime:   md.LazyValueInt64("poll_time", "data"),
-		APITime:    md.LazyValueInt64("api_time", "data"),
-		ParseTime:  md.LazyValueInt64("parse_time", "data"),
-		PluginTime: md.LazyValueInt64("plugin_time", "data"),
-	}
+	info := collector.InstanceInfoFromMetadata(md)
 
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      z.Name,
@@ -520,8 +514,9 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		case "Volume":
 			p.Volumes = &info
 		case "Qtree":
+			pluginInstances, _ := md.MustGetMetric("pluginInstances").GetValueInt64(md.MustGetInstance("data"))
 			info = collector.InstanceInfo{
-				PluginInstances: md.LazyValueInt64("pluginInstances", "data"),
+				PluginInstances: pluginInstances,
 			}
 			p.Quotas = &info
 		}

@@ -121,11 +121,7 @@ func (t *TopMetrics) InitAllMatrix() error {
 func (t *TopMetrics) initMatrix(name string, object string, inputMat map[string]*matrix.Matrix, metric string) error {
 	matrixName := t.Parent + name
 	inputMat[name] = matrix.New(matrixName, object, name)
-	for _, v1 := range t.data {
-		v1.SetExportOptions(matrix.DefaultExportOptions())
-	}
-	err := matrix.CreateMetric(metric, inputMat[name])
-	if err != nil {
+	if _, err := inputMat[name].GetOrCreateMetric(metric); err != nil {
 		t.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", metric))
 		return err
 	}
@@ -544,13 +540,10 @@ func (t *TopMetrics) processTopUsersByMetric(volumes, svms *set.Set, matrixName,
 }
 
 func (t *TopMetrics) setMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64, metricType string) {
-	var err error
-	m := mat.GetMetric(metricType)
-	if m == nil {
-		if m, err = mat.NewMetricFloat64(metricType); err != nil {
-			t.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", metricType))
-			return
-		}
+	m, err := mat.GetOrCreateMetric(metricType)
+	if err != nil {
+		t.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", metricType))
+		return
 	}
 	m.SetValueFloat64(instance, value)
 }

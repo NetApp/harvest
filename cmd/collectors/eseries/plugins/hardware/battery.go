@@ -9,27 +9,15 @@ import (
 
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
 func (h *Hardware) initBatteryMatrix() {
 	mat := matrix.New(h.Parent+"."+batteryMatrix, batteryMatrix, batteryMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "id")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "fru_type")
-	instanceLabels.NewChildS("", "location")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "vendor")
-	instanceLabels.NewChildS("", "vendor_part_number")
-	instanceLabels.NewChildS("", "vendor_serial_number")
-	instanceLabels.NewChildS("", "controller")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"id"},
+		[]string{"fru_type", "location", "status", "vendor", "vendor_part_number", "vendor_serial_number", "controller"},
+	))
 
 	h.data[batteryMatrix] = mat
 }

@@ -175,12 +175,13 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 
 	apiD = time.Since(startTime)
 
-	_ = s.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = s.Metadata.LazySetValueInt64("parse_time", "data", 0)
-	_ = s.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = s.Metadata.LazySetValueInt64("instances", "data", int64(numRecords))
-	_ = s.Metadata.LazySetValueUint64("bytesRx", "data", s.client.Metadata.BytesRx.Load())
-	_ = s.Metadata.LazySetValueUint64("numCalls", "data", s.client.Metadata.NumCalls.Load())
+	dataInst := s.Metadata.MustGetInstance("data")
+	s.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	s.Metadata.MustSetValueInt64("parse_time", dataInst, 0)
+	s.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	s.Metadata.MustSetValueInt64("instances", dataInst, int64(numRecords))
+	s.Metadata.MustSetValueUint64("bytesRx", dataInst, s.client.Metadata.BytesRx.Load())
+	s.Metadata.MustSetValueUint64("numCalls", dataInst, s.client.Metadata.NumCalls.Load())
 
 	s.AddCollectCount(count)
 
@@ -194,7 +195,7 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 		err      error
 	)
 
-	mat := s.Matrix[s.Object].Clone(matrix.With{Data: false, Metrics: false, Instances: false, ExportInstances: true})
+	mat := s.Matrix[s.Object].CloneEmpty()
 	mat.SetExportOptions(matrix.DefaultExportOptions())
 	mat.Object = s.Props.Object
 	mat.UUID += "." + metricName
@@ -281,12 +282,13 @@ func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 
 	numRecords := len(s.Matrix[s.Object].GetInstances())
 
-	_ = s.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = s.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = s.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = s.Metadata.LazySetValueInt64("instances", "data", int64(numRecords))
-	_ = s.Metadata.LazySetValueUint64("bytesRx", "data", s.client.Metadata.BytesRx.Load())
-	_ = s.Metadata.LazySetValueUint64("numCalls", "data", s.client.Metadata.NumCalls.Load())
+	dataInst := s.Metadata.MustGetInstance("data")
+	s.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	s.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	s.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	s.Metadata.MustSetValueInt64("instances", dataInst, int64(numRecords))
+	s.Metadata.MustSetValueUint64("bytesRx", dataInst, s.client.Metadata.BytesRx.Load())
+	s.Metadata.MustSetValueUint64("numCalls", dataInst, s.client.Metadata.NumCalls.Load())
 
 	s.AddCollectCount(count)
 
@@ -544,14 +546,7 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 
 	// Add collector information
 	md := s.GetMetadata()
-	info := collector.InstanceInfo{
-		Count:      md.LazyValueInt64("instances", "data"),
-		DataPoints: md.LazyValueInt64("metrics", "data"),
-		PollTime:   md.LazyValueInt64("poll_time", "data"),
-		APITime:    md.LazyValueInt64("api_time", "data"),
-		ParseTime:  md.LazyValueInt64("parse_time", "data"),
-		PluginTime: md.LazyValueInt64("plugin_time", "data"),
-	}
+	info := collector.InstanceInfoFromMetadata(md)
 
 	p.AddCollectorAsup(collector.AsupCollector{
 		Name:      s.Name,

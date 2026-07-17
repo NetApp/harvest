@@ -388,6 +388,8 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 
 	var metricCount uint64
 
+	tsMetric := curMat.MustGetMetric(timestampMetricName)
+
 	for _, inst := range oc.Data.Instances {
 		stringVals := make(map[string]string)
 
@@ -434,9 +436,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 			}
 		}
 
-		if tsMetric := curMat.GetMetric(timestampMetricName); tsMetric != nil {
-			tsMetric.SetValueFloat64(matInst, ts)
-		}
+		tsMetric.SetValueFloat64(matInst, ts)
 
 		for name, sv := range stringVals {
 			display, ok := c.Prop.InstanceLabels[name]

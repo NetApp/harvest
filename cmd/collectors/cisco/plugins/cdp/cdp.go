@@ -49,7 +49,10 @@ func (c *CDP) Init(remote conf.Remote) error {
 	c.client = client
 	c.templateObject = c.ParentParams.GetChildContentS("object")
 
-	c.matrix = matrix.New(c.Parent+".CDP", c.templateObject, c.templateObject)
+	c.matrix = matrix.New(c.Parent+c.templateObject, c.templateObject, c.templateObject)
+	if _, err := c.matrix.GetOrCreateMetric(labels); err != nil {
+		return fmt.Errorf("error while creating metric %s: %w", labels, err)
+	}
 
 	return nil
 }
@@ -58,13 +61,11 @@ func (c *CDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	data := dataMap[c.Object]
 	c.client.Metadata.Reset()
 
-	cdpMat, err := c.initMatrix(c.templateObject)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	c.matrix.PurgeInstances()
+	c.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	cdpMat.SetGlobalLabels(data.GetGlobalLabels())
+	c.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -75,24 +76,13 @@ func (c *CDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	c.parseCDP(output, cdpMat)
+	c.parseCDP(output, c.matrix)
 
 	c.client.Metadata.NumCalls.Store(1)
 	c.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	c.client.Metadata.PluginInstances.Store(uint64(len(cdpMat.GetInstances())))
+	c.client.Metadata.PluginInstances.Store(uint64(len(c.matrix.GetInstances())))
 
-	return []*matrix.Matrix{cdpMat}, c.client.Metadata, nil
-}
-
-func (c *CDP) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(c.Parent+name, name, name)
-
-	if err := matrix.CreateMetric(labels, mat); err != nil {
-		return nil, fmt.Errorf("error while creating metric %s: %w", labels, err)
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{c.matrix}, c.client.Metadata, nil
 }
 
 func (c *CDP) parseCDP(output gjson.Result, mat *matrix.Matrix) {
@@ -114,6 +104,8 @@ func (c *CDP) parseCDP(output gjson.Result, mat *matrix.Matrix) {
 		return true
 	})
 
+	labelsMetric := mat.MustGetMetric(labels)
+
 	for _, model := range models {
 		instanceKey := model.RemoteName + "-" + model.RemotePort + "-" + model.LocalPort
 		instance, err := mat.NewInstance(instanceKey)
@@ -132,7 +124,7 @@ func (c *CDP) parseCDP(output gjson.Result, mat *matrix.Matrix) {
 		instance.SetLabel("remote_port", model.RemotePort)
 		instance.SetLabel("remote_version", model.RemoteVersion)
 
-		mat.GetMetric(labels).SetValueFloat64(instance, 1.0)
+		labelsMetric.SetValueFloat64(instance, 1.0)
 	}
 }
 

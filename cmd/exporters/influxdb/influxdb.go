@@ -165,9 +165,7 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	// render the metrics, i.e. convert to InfluxDb line protocol
 	if metrics, stats, err = e.Render(data); err == nil && len(metrics) != 0 {
 		// fix render time
-		if err = e.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
-			e.Logger.Error("metadata render time", slogx.Err(err))
-		}
+		e.Metadata.MustAddValueInt64("time", e.Metadata.MustGetInstance("render"), time.Since(s).Microseconds())
 		// in test mode, don't emit metrics
 		if e.Options.IsTest {
 			return stats, nil
@@ -185,9 +183,7 @@ func (e *InfluxDB) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	)
 
 	// update metadata
-	if err = e.Metadata.LazySetValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
-		e.Logger.Error("metadata export time", slogx.Err(err))
-	}
+	e.Metadata.MustSetValueInt64("time", e.Metadata.MustGetInstance("export"), time.Since(s).Microseconds())
 
 	if metrics, stats, err = e.Render(e.Metadata); err != nil {
 		e.Logger.Error("render metadata", slogx.Err(err))
@@ -355,8 +351,6 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 
 	// update metadata
 	e.AddExportCount(count)
-	if err := e.Metadata.LazySetValueUint64("count", "export", count); err != nil {
-		e.Logger.Error("metadata export count", slogx.Err(err))
-	}
+	e.Metadata.MustSetValueUint64("count", e.Metadata.MustGetInstance("export"), count)
 	return rendered, exporter.Stats{InstancesExported: instancesExported, MetricsExported: count}, nil
 }

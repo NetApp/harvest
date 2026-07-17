@@ -67,12 +67,7 @@ func (n *Nic) Init(remote conf.Remote) error {
 
 	n.data = matrix.New(n.Parent+".NicCommon", "nic_ifgrp", "nic_ifgrp")
 
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "node")
-	instanceKeys.NewChildS("", "ifgroup")
-	instanceKeys.NewChildS("", "ports")
-	n.data.SetExportOptions(exportOptions)
+	n.data.SetExportOptions(matrix.NewExportOptions("node", "ifgroup", "ports"))
 
 	for _, obj := range ifgrpMetrics {
 		metricName, display, _, _ := template.ParseMetric(obj)
@@ -111,29 +106,20 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		return nil, nil, errs.New(errs.ErrNoMetric, "tx_bytes")
 	}
 
-	if rx = data.GetMetric("rx_percent"); rx == nil {
-		if rx, err = data.NewMetricFloat64("rx_percent"); err == nil {
-			rx.SetProperty("raw")
-		} else {
-			return nil, nil, err
-		}
+	if rx, err = data.GetOrCreateMetric("rx_percent"); err != nil {
+		return nil, nil, err
+	}
+	rx.SetProperty("raw")
 
+	if tx, err = data.GetOrCreateMetric("tx_percent"); err != nil {
+		return nil, nil, err
 	}
-	if tx = data.GetMetric("tx_percent"); tx == nil {
-		if tx, err = data.NewMetricFloat64("tx_percent"); err == nil {
-			tx.SetProperty("raw")
-		} else {
-			return nil, nil, err
-		}
-	}
+	tx.SetProperty("raw")
 
-	if utilPercent = data.GetMetric("util_percent"); utilPercent == nil {
-		if utilPercent, err = data.NewMetricFloat64("util_percent"); err == nil {
-			utilPercent.SetProperty("raw")
-		} else {
-			return nil, nil, err
-		}
+	if utilPercent, err = data.GetOrCreateMetric("util_percent"); err != nil {
+		return nil, nil, err
 	}
+	utilPercent.SetProperty("raw")
 
 	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {

@@ -314,7 +314,7 @@ func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 	// If there were removals, the indexes need to be rewritten since gaps were created
 	if rewriteIndexes {
-		newMatrix := mat.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+		newMatrix := mat.CloneMetricTemplate()
 		for key := range mat.GetInstances() {
 			_, _ = newMatrix.NewInstance(key)
 		}

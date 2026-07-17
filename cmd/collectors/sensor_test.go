@@ -100,7 +100,7 @@ func loadTestdata() {
 	sensor.SLogger = slog.Default()
 
 	for _, k := range eMetrics {
-		_ = matrix.CreateMetric(k, sensor.data)
+		_, _ = sensor.data.GetOrCreateMetric(k)
 	}
 }
 

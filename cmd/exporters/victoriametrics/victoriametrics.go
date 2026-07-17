@@ -155,9 +155,7 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	metrics, stats, _ = exporters.Render(data, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
 
 	// fix render time
-	if err = v.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
-		v.Logger.Error("metadata render time", slogx.Err(err))
-	}
+	v.Metadata.MustAddValueInt64("time", v.Metadata.MustGetInstance("render"), time.Since(s).Microseconds())
 	// in test mode, don't emit metrics
 	if v.Options.IsTest {
 		return stats, nil
@@ -174,9 +172,7 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	)
 
 	// update metadata
-	if err = v.Metadata.LazySetValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
-		v.Logger.Error("metadata export time", slogx.Err(err))
-	}
+	v.Metadata.MustSetValueInt64("time", v.Metadata.MustGetInstance("export"), time.Since(s).Microseconds())
 
 	// render metadata metrics into open metrics format with timestamp
 	metrics, stats, _ = exporters.Render(v.Metadata, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)

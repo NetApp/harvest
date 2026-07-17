@@ -52,7 +52,10 @@ func (l *LLDP) Init(remote conf.Remote) error {
 	l.RemoteSerial = client.Remote().Serial
 	l.templateObject = l.ParentParams.GetChildContentS("object")
 
-	l.matrix = matrix.New(l.Parent+".LLDP", l.templateObject, l.templateObject)
+	l.matrix = matrix.New(l.Parent+l.templateObject, l.templateObject, l.templateObject)
+	if _, err := l.matrix.GetOrCreateMetric(labels); err != nil {
+		return fmt.Errorf("error while creating metric %s: %w", labels, err)
+	}
 
 	return nil
 }
@@ -61,13 +64,11 @@ func (l *LLDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 	data := dataMap[l.Object]
 	l.client.Metadata.Reset()
 
-	lldpMat, err := l.initMatrix(l.templateObject)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	l.matrix.PurgeInstances()
+	l.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	lldpMat.SetGlobalLabels(data.GetGlobalLabels())
+	l.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -78,24 +79,13 @@ func (l *LLDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	l.parseLLDP(output, lldpMat)
+	l.parseLLDP(output, l.matrix)
 
 	l.client.Metadata.NumCalls.Store(1)
 	l.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	l.client.Metadata.PluginInstances.Store(uint64(len(lldpMat.GetInstances())))
+	l.client.Metadata.PluginInstances.Store(uint64(len(l.matrix.GetInstances())))
 
-	return []*matrix.Matrix{lldpMat}, l.client.Metadata, nil
-}
-
-func (l *LLDP) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(l.Parent+name, name, name)
-
-	if err := matrix.CreateMetric(labels, mat); err != nil {
-		return nil, fmt.Errorf("error while creating metric %s: %w", labels, err)
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{l.matrix}, l.client.Metadata, nil
 }
 
 func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
@@ -117,6 +107,8 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 		return true
 	})
 
+	labelsMetric := mat.MustGetMetric(labels)
+
 	for _, model := range models {
 		instanceKey := model.ChassisID + "-" + model.LocalPort
 		instance, err := mat.NewInstance(instanceKey)
@@ -133,7 +125,7 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 		instance.SetLabel("capabilities", strings.Join(model.Capabilities, ","))
 		instance.SetLabel("local_platform", l.RemoteSerial)
 
-		mat.GetMetric(labels).SetValueFloat64(instance, 1.0)
+		labelsMetric.SetValueFloat64(instance, 1.0)
 	}
 }
 

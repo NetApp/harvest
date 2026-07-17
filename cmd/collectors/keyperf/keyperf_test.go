@@ -148,9 +148,8 @@ func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 			if !met.IsExportable() {
 				continue
 			}
-			records := met.GetRecords()
-			for _, v := range records {
-				if v {
+			for _, instance := range mat.GetInstances() {
+				if _, recorded := met.GetValueFloat64(instance); recorded {
 					totalMetrics++
 				}
 			}
@@ -165,7 +164,7 @@ func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 }
 
 func processAndCookCounters(kp *KeyPerf, pollData []gjson.Result, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 	metricCount, _, _ := kp.processPerfRecords(pollData, curMat, set.New(), time.Now().UnixNano()/collector2.BILLION)
 	got, err := kp.cookCounters(curMat, prevMat)

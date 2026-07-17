@@ -57,6 +57,16 @@ func ErrorIs(t *testing.T, got, want error) {
 	}
 }
 
+func Panics(t *testing.T, f func()) {
+	t.Helper()
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("expected panic; got none")
+		}
+	}()
+	f()
+}
+
 func isEqual[T any](got, want T) bool {
 	if isNil(got) && isNil(want) {
 		return true

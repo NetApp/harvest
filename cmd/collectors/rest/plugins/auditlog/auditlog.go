@@ -88,13 +88,9 @@ func (a *AuditLog) InitVolumeCache() {
 
 func (a *AuditLog) initMatrix() error {
 	a.data = matrix.New(a.Parent+auditMatrix, auditMatrix, auditMatrix)
-	a.data.SetExportOptions(matrix.DefaultExportOptions())
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, a.data)
-		if err != nil {
-			a.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
-			return err
-		}
+	if err := a.data.NewMetricsFloat64(metrics...); err != nil {
+		a.SLogger.Warn("error while creating metric", slogx.Err(err))
+		return err
 	}
 	return nil
 }
@@ -250,13 +246,6 @@ func (a *AuditLog) GetVolumeInfo(uuid string) (VolumeInfo, bool) {
 	}
 	volumeInfo, exists = a.volumeCache.cacheCopy[uuid]
 	return volumeInfo, exists
-}
-
-func (a *AuditLog) setLogMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
-	m := mat.GetMetric("log")
-	if m != nil {
-		m.SetValueFloat64(instance, value)
-	}
 }
 
 func (a *AuditLog) RefreshVolumeCache(refreshCache bool) error {

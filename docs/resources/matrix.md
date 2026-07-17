@@ -78,21 +78,16 @@ instance.GetLabel("owner") // returns ""
 
 ## Add Metrics
 ```go
-func (x *Matrix) NewMetricInt64(key string) (Metric, error)
-// returns pointer to a new MetricInt64, or nil with error (if key is not unique)
-// note that Metric is an interface
+func (x *Matrix) NewMetricInt64(key string) (*Metric, error)
+// returns pointer to a new Metric of type int64, or nil with error (if key is not unique)
 ```
 
-Metrics are typed and there are currently 8 types, all can be created with the same signature as above:
+Metrics are typed and there are currently 4 types, all can be created with the same signature as above:
 * `MetricUint8`
-* `MetricUint32`
 * `MetricUint64`
-* `MetricInt`
-* `MetricInt32`
 * `MetricInt64`
-* `MetricFloat32`
 * `MetricFloat64`
-*
+
 We are able to read from and write to a metric instance using different types (as displayed in the next section), however choosing a type wisely ensures that this is done efficiently and overflow does not occur.
 
 We can add labels to metrics just like instances. This is usually done when we deal with histograms:
@@ -117,10 +112,10 @@ var (
     err error
 )
 
-if speed, err = myMatrix.NewMetricUint32("max_speed"); err != nil {
+if speed, err = myMatrix.NewMetricUint64("max_speed"); err != nil {
     return err
 }
-if length, err = myMatrix.NewMetricFloat32("length_in_mm"); err != nil {
+if length, err = myMatrix.NewMetricFloat64("length_in_mm"); err != nil {
     return err
 }
 ```
@@ -132,19 +127,19 @@ func (x *Matrix) Reset()
 // flush numeric data from previous poll
 ```
 ```go
-func (m Metric) SetValueInt64(i *Instance, v int64) error
-func (m Metric) SetValueUint8(i *Instance, v uint8) error
-func (m Metric) SetValueUint64(i *Instance, v uint64) error
-func (m Metric) SetValueFloat64(i *Instance, v float64) error
-func (m Metric) SetValueBytes(i *Instance, v []byte) error
-func (m Metric) SetValueString(i *Instance, v []string) error
-// sets the numeric value for the instance i to v
-// returns error if v is invalid (explained below)
+func (m *Metric) SetValueInt64(i *Instance, v int64)
+func (m *Metric) SetValueUint8(i *Instance, v uint8)
+func (m *Metric) SetValueUint64(i *Instance, v uint64)
+func (m *Metric) SetValueFloat64(i *Instance, v float64)
+func (m *Metric) SetValueString(i *Instance, v string) error
+// sets the value for the instance i to v
+// SetValueString returns an error if v can not be converted to the metric's type;
+// the numeric setters never return an error
 
 ```
 ```go
-func (m Metric) AddValueInt64(i *Instance, v int64) error
-// increments the numeric value for the instance i by v
+func (m *Metric) AddValueInt64(i *Instance, n int64)
+// increments the numeric value for the instance i by n
 // same signatures for all the types defined above
 ```
 
@@ -152,9 +147,9 @@ When possible you should reuse a Matrix for each data poll, but to do that, you 
 
 The `SetValue*()` and `AddValue*()` methods are typed same as the metrics. Even though you are not required to use the same type as the metric, it is the safest and most efficient way.
 
-Since most collectors get their data as bytes or strings, it is recommended to use the `SetValueString()` and `SetValueBytes()` methods.
+Since most collectors get their data as strings, it is recommended to use the `SetValueString()` method.
 
-These methods return an error if value `v` can not be converted to the type of the metric. Error is always `nil` when the type of `v` matches the type of the metric.
+`SetValueString()` and `AddValueString()` return an error if value `v` can not be converted to the type of the metric; error is always `nil` when the type of `v` matches the type of the metric. The numeric `SetValue*()`/`AddValue*()` methods never return an error.
 
 ### Example
 
@@ -182,14 +177,10 @@ if instance2, err = myMatrix.NewInstance("SomeOtherCar"); err != nil {
 }
 
 // possible and safe even though speed has type Float32
-} if err = length.SetValueInt64(instance2, 13000); err != nil {
-    logger.Error(me.Prefix, "set speed value:", err)
-}
+length.SetValueInt64(instance2, 13000)
 
 // possible, but will overflow since speed is unsigned
-} if err = speed.SetValueInt64(instance2, -500); err != nil {
-    logger.Error(me.Prefix, "set length value:", err)
-}
+speed.SetValueInt64(instance2, -500)
 ```
 
 ## Read metrics and instances
@@ -224,7 +215,7 @@ Each instance has a set of labels. We can iterate over these labels with the `Ge
 
 ```go
 func PrintLabels(instance *matrix.Instance) {
-    for label, value, := range instance.GetLabels().Map() {
+    for label, value := range instance.GetLabels() {
         fmt.Printf("%s=%s\n", label, value)
     }
 }

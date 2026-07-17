@@ -8,24 +8,16 @@ import (
 	"log/slog"
 
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
 // initThermalSensorMatrix initializes the thermal sensor matrix
 func (h *Hardware) initThermalSensorMatrix() {
 	mat := matrix.New(h.Parent+"."+thermalSensorMatrix, thermalSensorMatrix, thermalSensorMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "id")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "slot")
-	instanceLabels.NewChildS("", "location")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"id"},
+		[]string{"status", "slot", "location"},
+	))
 
 	h.data[thermalSensorMatrix] = mat
 }

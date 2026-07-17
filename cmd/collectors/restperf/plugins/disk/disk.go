@@ -738,22 +738,16 @@ func (d *Disk) initShelfPowerMatrix() {
 	d.powerData = make(map[string]*matrix.Matrix)
 	d.powerData["shelf"] = matrix.New(d.Parent+".Shelf", "shelf", "shelf")
 
-	for _, k := range shelfMetrics {
-		err := matrix.CreateMetric(k, d.powerData["shelf"])
-		if err != nil {
-			d.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
-		}
+	if err := d.powerData["shelf"].NewMetricsFloat64(shelfMetrics...); err != nil {
+		d.SLogger.Warn("error while creating metric", slogx.Err(err))
 	}
 }
 
 func (d *Disk) initAggrPowerMatrix() {
 	d.powerData["aggr"] = matrix.New(d.Parent+".Aggr", "aggr", "aggr")
 
-	for _, k := range aggrMetrics {
-		err := matrix.CreateMetric(k, d.powerData["aggr"])
-		if err != nil {
-			d.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
-		}
+	if err := d.powerData["aggr"].NewMetricsFloat64(aggrMetrics...); err != nil {
+		d.SLogger.Warn("error while creating metric", slogx.Err(err))
 	}
 }
 
@@ -845,11 +839,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 		}
 	}
 
-	for _, k := range shelfMetrics {
-		err := matrix.CreateMetric(k, data)
-		if err != nil {
-			d.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
-		}
+	if err := data.NewMetricsFloat64(shelfMetrics...); err != nil {
+		d.SLogger.Warn("error while creating metric", slogx.Err(err))
 	}
 	for key, v := range shelfEnvironmentMetricMap {
 		for _, k := range shelfMetrics {
