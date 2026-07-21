@@ -89,12 +89,13 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 			}
 		}
 		if m[0] == nil {
-			return errs.New(errs.ErrMissingMetric, "matrix not found for metric "+r.metricNames[0])
+			a.SLogger.Error("matrix not found", slog.String("metric", r.metricNames[0]))
+			continue
 		}
 		if metric = a.getMetric(m[0], r.metric); metric == nil {
 			if metric, err = m[0].NewMetricFloat64(r.metric); err != nil {
 				a.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", r.metric))
-				return err
+				continue
 			}
 			metric.SetProperty("compute_metric mapping")
 		}
@@ -153,7 +154,8 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 						if val, ok := metricVal.GetValueFloat64(otherInstance); ok {
 							v = val
 						} else {
-							continue
+							skipMetric = true
+							break
 						}
 					} else {
 						metricNotFound = append(metricNotFound, errs.New(errs.ErrMissingMetric, "metric not found: "+r.metricNames[i]))
