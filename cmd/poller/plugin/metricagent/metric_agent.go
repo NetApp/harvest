@@ -5,6 +5,7 @@
 package metricagent
 
 import (
+	"errors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -12,13 +13,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
+	"maps"
 	"strconv"
 	"strings"
 )
 
 type MetricAgent struct {
 	*plugin.AbstractPlugin
-	actions            []func(*matrix.Matrix) error
+	actions            []func(map[string]*matrix.Matrix) error
 	computeMetricRules []computeMetricRule
 }
 
@@ -48,47 +50,81 @@ func (a *MetricAgent) Init(remote conf.Remote) error {
 
 func (a *MetricAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
-	var err error
-	data := dataMap[a.Object]
+	ee := make([]error, 0, len(a.actions))
 
 	for _, foo := range a.actions {
-		_ = foo(data)
+		err := foo(dataMap)
+		ee = append(ee, err)
 	}
 
-	return nil, nil, err
+	return nil, nil, errors.Join(ee...)
 }
 
-func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
+func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 
 	var (
 		metric                    *matrix.Metric
 		metricVal, firstMetricVal *matrix.Metric
+		m                         []*matrix.Matrix
+		isMultiMatrix             bool
+		skipMetric                bool
+		instanceIndex             string
+		sgLabelMap                map[string]string
 		err                       error
 		metricNotFound            []error
 	)
 
+	data := dataMap[a.Object]
+
 	// map values for compute_metric mapping rules
 	for _, r := range a.computeMetricRules {
-		if metric = a.getMetric(m, r.metric); metric == nil {
-			if metric, err = m.NewMetricFloat64(r.metric); err != nil {
+		m = make([]*matrix.Matrix, len(r.metricNames))
+		sgLabelMap = make(map[string]string)
+		for i := range r.metricNames {
+			if data == nil {
+				m[i] = dataMap[r.metricNames[i]]
+				isMultiMatrix = true
+			} else {
+				m[i] = data
+			}
+		}
+		if m[0] == nil {
+			a.SLogger.Error("matrix not found", slog.String("metric", r.metricNames[0]))
+			continue
+		}
+		if metric = a.getMetric(m[0], r.metric); metric == nil {
+			if metric, err = m[0].NewMetricFloat64(r.metric); err != nil {
 				a.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", r.metric))
-				return err
+				continue
 			}
 			metric.SetProperty("compute_metric mapping")
 		}
 
-		for _, instance := range m.GetInstances() {
+		for iKey, instance := range m[0].GetInstances() {
+			skipMetric = false
+			if isMultiMatrix {
+				// In multi matrix cases like storagegrid.go, where instances would be generated based on metricName + "-" + index
+				idx := strings.LastIndex(iKey, "-")
+				if idx == -1 || idx == len(iKey)-1 {
+					a.SLogger.Warn("computeMetrics: unexpected instance key format", slog.String("instanceKey", iKey))
+					continue
+				}
+				instanceIndex = iKey[idx+1:]
+				sgLabelMap = instance.GetLabels()
+			}
 			var result float64
+			var otherInstance *matrix.Instance
 
 			// Parse first operand and store in result for further processing
-			if firstMetricVal = a.getMetric(m, r.metricNames[0]); firstMetricVal != nil {
+			if firstMetricVal = a.getMetric(m[0], r.metricNames[0]); firstMetricVal != nil {
 				if val, ok := firstMetricVal.GetValueFloat64(instance); ok {
 					result = val
 				} else {
 					continue
 				}
 			} else {
-				a.SLogger.Warn("computeMetrics: metric not found", slogx.Err(err), slog.String("metricName", r.metricNames[0]))
+				a.SLogger.Warn("computeMetrics: metric not found", slog.String("metricName", r.metricNames[0]))
+				break
 			}
 
 			// Parse other operands and process them
@@ -97,11 +133,33 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 				if value, err := strconv.Atoi(r.metricNames[i]); err == nil {
 					v = float64(value)
 				} else {
-					metricVal = a.getMetric(m, r.metricNames[i])
-					if metricVal != nil {
-						v, _ = metricVal.GetValueFloat64(instance)
+					otherInstance = instance
+					if isMultiMatrix {
+						// In multi matrix cases like storagegrid.go, where instances would be generated based on metricName + "-" + index
+						iKey = r.metricNames[i] + "-" + instanceIndex
+						if m[i] == nil || m[i].GetInstance(iKey) == nil {
+							a.SLogger.Warn("computeMetrics: matrix or instance not found for metric", slog.String("metric", r.metricNames[i]))
+							skipMetric = true
+							break
+						}
+						otherInstance = m[i].GetInstance(iKey)
+						if !maps.Equal(sgLabelMap, otherInstance.GetLabels()) {
+							a.SLogger.Warn("computeMetrics: skip compute metric since instance labels do not match", slog.String("metric", r.metric), slog.Any("given metrics", r.metricNames))
+							skipMetric = true
+							break
+						}
+					}
+
+					if metricVal = a.getMetric(m[i], r.metricNames[i]); metricVal != nil {
+						if val, ok := metricVal.GetValueFloat64(otherInstance); ok {
+							v = val
+						} else {
+							skipMetric = true
+							break
+						}
 					} else {
-						metricNotFound = append(metricNotFound, err)
+						metricNotFound = append(metricNotFound, errs.New(errs.ErrMissingMetric, "metric not found: "+r.metricNames[i]))
+						skipMetric = true
 						break
 					}
 				}
@@ -132,7 +190,10 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 				}
 			}
 
-			metric.SetValueFloat64(instance, result)
+			if !skipMetric {
+				metric.SetValueFloat64(instance, result)
+			}
+
 		}
 	}
 	if len(metricNotFound) > 0 {
