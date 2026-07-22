@@ -2151,6 +2151,12 @@ When using <code>url</code>, the <code>addr</code> and <code>port</code> field w
 <td>client timeout in seconds</td>
 <td><code>5</code></td>
 </tr>
+<tr>
+<td><code>sort_labels</code></td>
+<td>bool, optional</td>
+<td>sort metric labels before exporting. Required for VictoriaMetrics — without it, VictoriaMetrics will mark series stale if label order changes between polls.</td>
+<td><code>false</code></td>
+</tr>
 </tbody>
 </table>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
@@ -2159,12 +2165,14 @@ When using <code>url</code>, the <code>addr</code> and <code>port</code> field w
 <span class="w">  </span><span class="nt">my_victoriametrics</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VictoriaMetrics</span>
 <span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
+<span class="w">    </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 <p>snippet from <code>harvest.yml</code> using <code>url</code>: (supports both HTTP/HTTPS))</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">victoriametrics2</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VictoriaMetrics</span>
 <span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:8428/api/v1/import/prometheus</span>
+<span class="w">    </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 
 
