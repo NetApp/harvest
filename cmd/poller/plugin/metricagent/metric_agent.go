@@ -153,10 +153,13 @@ func (a *MetricAgent) computeMetrics(dataMap map[string]*matrix.Matrix) error {
 					if metricVal = a.getMetric(m[i], r.metricNames[i]); metricVal != nil {
 						if val, ok := metricVal.GetValueFloat64(otherInstance); ok {
 							v = val
-						} else {
+						} else if isMultiMatrix {
 							skipMetric = true
 							break
 						}
+						// else: single-matrix case, operand is an optional field
+						// that is legitimately absent for this instance (e.g. hybrid_cache.disk_count
+						// when hybrid cache is disabled) - treat as 0 rather than skipping the metric.
 					} else {
 						metricNotFound = append(metricNotFound, errs.New(errs.ErrMissingMetric, "metric not found: "+r.metricNames[i]))
 						skipMetric = true
