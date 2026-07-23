@@ -74,9 +74,6 @@ var restCounterMap = map[string]struct{}{
 	"rw_ctx_":                          {},
 	"snapshot_policy_labels":           {},
 	"support_labels":                   {},
-	// The CI cluster's environment sensors are not reporting data due to cluster issue,
-	// so these counters are missing from Prometheus. Skip them until the cluster is fixed.
-	"environment_sensor_": {},
 }
 
 // excludeCounters consists of counters which should be excluded from both Zapi/Rest in CI test
