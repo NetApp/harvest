@@ -46,12 +46,12 @@ type ObjectConfig struct {
 func GetESeriesPerfObjectConfig(objType string) ObjectConfig {
 	configs := map[string]ObjectConfig{
 		"controller":  {ArrayPath: "controllerStats", Filter: "type=controller", UsesSharedCache: true},
-		"pool":        {ArrayPath: "poolStats", Filter: "type=storagePool", UsesSharedCache: true},
+		"pool":        {ArrayPath: "poolStats", Filter: "type=storagePool", UsesSharedCache: true, CalculateUtilization: true, CalculateQueueDepthAverage: true},
 		"volume":      {ArrayPath: "volumeStats", Filter: "type=volume", UsesSharedCache: true, CalculateQueueDepthAverage: true},
 		"drive":       {ArrayPath: "diskStats", Filter: "type=drive", UsesSharedCache: true, CalculateUtilization: true},
-		"interface":   {ArrayPath: "interfaceStats", Filter: "type=ioInterface", UsesSharedCache: true},
-		"application": {ArrayPath: "applicationStats", Filter: "type=application", UsesSharedCache: true},
-		"workload":    {ArrayPath: "workloadStats", Filter: "type=workload", UsesSharedCache: true},
+		"interface":   {ArrayPath: "interfaceStats", Filter: "type=ioInterface", UsesSharedCache: true, CalculateQueueDepthAverage: true},
+		"application": {ArrayPath: "applicationStats", Filter: "type=application", UsesSharedCache: true, CalculateUtilization: true, CalculateQueueDepthAverage: true},
+		"workload":    {ArrayPath: "workloadStats", Filter: "type=workload", UsesSharedCache: true, CalculateUtilization: true, CalculateQueueDepthAverage: true},
 		"array":       {ArrayPath: "systemStats", Filter: "type=storageSystem", UsesSharedCache: true},
 	}
 	if config, ok := configs[objType]; ok {

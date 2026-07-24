@@ -1,0 +1,15 @@
+name: Workload
+query: storage-systems/{array_id}/workloads
+object: eseries_workload
+
+counters:
+  - ^^id                          => id
+  - ^name                         => workload
+  - ^workloadAttributes.0.value   => profile_id
+
+export_options:
+  instance_keys:
+    - id
+    - workload
+  instance_labels:
+    - profile_id

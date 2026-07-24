@@ -13,7 +13,10 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/cachehitratio"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/controller"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/drive"
+	interfacename "github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/interface"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/pool"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/ssdcachestats"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -284,8 +287,14 @@ func (ep *EseriesPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.
 		return controller.New(p)
 	case "Drive":
 		return drive.New(p)
+	case "Interface":
+		return interfacename.New(p)
+	case "Pool":
+		return pool.New(p)
 	case "SsdCacheStats":
 		return ssdcachestats.New(p)
+	case "Workload":
+		return workload.New(p)
 	default:
 		ep.Logger.Info("No eseries plugin found", slog.String("kind", kind))
 	}
