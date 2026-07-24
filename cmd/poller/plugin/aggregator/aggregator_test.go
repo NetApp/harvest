@@ -5,12 +5,13 @@
 package aggregator
 
 import (
+	"testing"
+
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"testing"
 )
 
 func newAggregator() *Aggregator {
@@ -102,6 +103,47 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 		assert.Equal(t, instance.GetLabel("datacenter"), "DatacenterA")
 		break
 	}
+}
+
+func TestRuleAllLabelsInstanceKey(t *testing.T) {
+	m := newArtificialData()
+	p := newAggregator()
+
+	params := node.NewS("Aggregator")
+	params.NewChildS("", "svm ...")
+	p.Params = params
+
+	err := p.Init(conf.Remote{})
+	assert.Nil(t, err)
+
+	instances := m.GetInstances()
+	instanceA := instances["InstanceA"]
+	instanceB := instances["InstanceB"]
+	instanceA.SetLabel("svm", "svmA")
+	instanceA.SetLabel("datacenter", "DatacenterA")
+	instanceB.SetLabel("svm", "svmB")
+	instanceB.SetLabel("datacenter", "DatacenterB")
+
+	dataMap := map[string]*matrix.Matrix{
+		m.Object: m,
+	}
+	results, _, err := p.Run(dataMap)
+	assert.Nil(t, err)
+	assert.Equal(t, len(results), 1)
+
+	n := results[0]
+
+	assert.Equal(t, len(n.GetInstances()), 2)
+
+	instA := n.GetInstance("DatacenterA.nodeA.svmA")
+	assert.NotNil(t, instA)
+	assert.Equal(t, instA.GetLabel("svm"), "svmA")
+	assert.Equal(t, instA.GetLabel("datacenter"), "DatacenterA")
+
+	instB := n.GetInstance("DatacenterB.nodeA.svmB")
+	assert.NotNil(t, instB)
+	assert.Equal(t, instB.GetLabel("svm"), "svmB")
+	assert.Equal(t, instB.GetLabel("datacenter"), "DatacenterB")
 }
 
 // TestRuleResetsExportOptions guards against a regression where the aggregated matrix inherited
