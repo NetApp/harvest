@@ -5,7 +5,7 @@ go 1.26.1
 replace github.com/netapp/harvest/v2 => ../
 
 require (
-	github.com/VictoriaMetrics/metricsql v0.87.2
+	github.com/VictoriaMetrics/metricsql v0.87.3
 	github.com/goccy/go-yaml v1.19.2
 	github.com/modelcontextprotocol/go-sdk v1.6.1
 	github.com/netapp/harvest/v2 v2.0.0-20260327161100-5f32698d9c23
