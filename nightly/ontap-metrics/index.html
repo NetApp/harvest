@@ -4074,6 +4074,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#fcp_read_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      fcp_read_percent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fcp_reset_count" class="md-nav__link">
     <span class="md-ellipsis">
       fcp_reset_count
@@ -4149,6 +4158,15 @@
   <a href="#fcp_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       fcp_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fcp_write_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      fcp_write_percent
     </span>
   </a>
   
@@ -18558,6 +18576,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#fcp_read_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      fcp_read_percent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fcp_reset_count" class="md-nav__link">
     <span class="md-ellipsis">
       fcp_reset_count
@@ -18633,6 +18660,15 @@
   <a href="#fcp_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       fcp_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fcp_write_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      fcp_write_percent
     </span>
   </a>
   
@@ -40815,6 +40851,32 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
+<h3 id="fcp_read_percent">fcp_read_percent<a class="headerlink" href="#fcp_read_percent" title="Permanent link">&para;</a></h3>
+<p>Percentage of FCP read bytes relative to port speed. Value is in the 0-1 range, multiply by 100 to display as a percentage.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RestPerf</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/fcp.yaml</td>
+</tr>
+<tr>
+<td>ZapiPerf</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.10.1/fcp.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="fcp_reset_count">fcp_reset_count<a class="headerlink" href="#fcp_reset_count" title="Permanent link">&para;</a></h3>
 <p>Number of physical port resets</p>
 <table>
@@ -41014,7 +41076,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="fcp_util_percent">fcp_util_percent<a class="headerlink" href="#fcp_util_percent" title="Permanent link">&para;</a></h3>
-<p>Represent the FCP utilization percentage</p>
+<p>Represent the FCP utilization percentage (max of read/write percent). Value is in the 0-1 range, multiply by 100 to display as a percentage.</p>
 <table>
 <thead>
 <tr>
@@ -41030,6 +41092,12 @@ ONTAP Version: 9.16.1
 <td><code>NA</code></td>
 <td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/fcp.yaml</td>
+</tr>
+<tr>
+<td>ZapiPerf</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.10.1/fcp.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -41142,6 +41210,32 @@ ONTAP Version: 9.16.1
 <td><code>perf-object-get-instances fcp_port</code></td>
 <td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/fcp.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fcp_write_percent">fcp_write_percent<a class="headerlink" href="#fcp_write_percent" title="Permanent link">&para;</a></h3>
+<p>Percentage of FCP write bytes relative to port speed. Value is in the 0-1 range, multiply by 100 to display as a percentage.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RestPerf</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/fcp.yaml</td>
+</tr>
+<tr>
+<td>ZapiPerf</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.10.1/fcp.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -54156,7 +54250,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="nic_rx_percent">nic_rx_percent<a class="headerlink" href="#nic_rx_percent" title="Permanent link">&para;</a></h3>
-<p>Bytes received percentage.</p>
+<p>Bytes received percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.</p>
 <table>
 <thead>
 <tr>
@@ -54433,7 +54527,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="nic_tx_percent">nic_tx_percent<a class="headerlink" href="#nic_tx_percent" title="Permanent link">&para;</a></h3>
-<p>Bytes sent percentage.</p>
+<p>Bytes sent percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.</p>
 <table>
 <thead>
 <tr>
@@ -54539,7 +54633,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="nic_util_percent">nic_util_percent<a class="headerlink" href="#nic_util_percent" title="Permanent link">&para;</a></h3>
-<p>Max of Bytes received percentage and Bytes sent percentage.</p>
+<p>Max of Bytes received percentage and Bytes sent percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.</p>
 <table>
 <thead>
 <tr>
