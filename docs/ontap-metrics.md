@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Jul-24
+Creation Date : 2026-Jul-27
 ONTAP Version: 9.16.1
 ```
 
@@ -4186,6 +4186,17 @@ Number of read operations
 
 
 
+### fcp_read_percent
+
+Percentage of FCP read bytes relative to port speed. Value is in the 0-1 range, multiply by 100 to display as a percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
+| ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
+
+
 ### fcp_reset_count
 
 Number of physical port resets
@@ -4270,11 +4281,12 @@ Total number of FCP operations
 
 ### fcp_util_percent
 
-Represent the FCP utilization percentage
+Represent the FCP utilization percentage (max of read/write percent). Value is in the 0-1 range, multiply by 100 to display as a percentage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
+| ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 The `fcp_util_percent` metric is visualized in the following Grafana dashboards:
     
@@ -4316,6 +4328,17 @@ Number of write operations
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/fcp` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZapiPerf | `perf-object-get-instances fcp_port` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+
+### fcp_write_percent
+
+Percentage of FCP write bytes relative to port speed. Value is in the 0-1 range, multiply by 100 to display as a percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
+| ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
 
@@ -9410,7 +9433,7 @@ The `nic_rx_length_errors` metric is visualized in the following Grafana dashboa
 
 ### nic_rx_percent
 
-Bytes received percentage.
+Bytes received percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9512,7 +9535,7 @@ The `nic_tx_hw_errors` metric is visualized in the following Grafana dashboards:
 
 ### nic_tx_percent
 
-Bytes sent percentage.
+Bytes sent percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9552,7 +9575,7 @@ The `nic_tx_total_errors` metric is visualized in the following Grafana dashboar
 
 ### nic_util_percent
 
-Max of Bytes received percentage and Bytes sent percentage.
+Max of Bytes received percentage and Bytes sent percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
