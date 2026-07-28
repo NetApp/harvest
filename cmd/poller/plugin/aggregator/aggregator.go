@@ -164,8 +164,13 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 			switch {
 			case rule.allLabels:
-				values := slices.Collect(maps.Keys(instance.GetLabels()))
-				objKey = strings.Join(values, ".")
+				labelMap := instance.GetLabels()
+				sortedKeys := slices.Sorted(maps.Keys(labelMap))
+				parts := make([]string, 0, len(sortedKeys))
+				for _, k := range sortedKeys {
+					parts = append(parts, labelMap[k])
+				}
+				objKey = strings.Join(parts, ".")
 			case len(rule.includeLabels) != 0:
 				var ob strings.Builder
 				ob.WriteString(objName)
