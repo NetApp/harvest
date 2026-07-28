@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Jul-27
+Creation Date : 2026-Jul-28
 E-Series Version: 11.80.0
 ```
 
@@ -38,6 +38,312 @@ Volume read I/O operations per second. <span class="key">Description of the E-Se
 
 
 ## Metrics
+
+
+### eseries_application_other_ops
+
+Application other I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `otherOps` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_other_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Highlights | timeseries | [Top $TopResources Applications by Other IOPs](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=8) |
+///
+
+
+
+### eseries_application_queue_depth_average
+
+Average queue depth per I/O operation
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_queue_depth_average` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Queue Depth | timeseries | [Top $TopResources Applications by Queue Depth Average](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=14) |
+///
+
+
+
+### eseries_application_queue_depth_max
+
+Maximum queue depth seen over the observation window
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `queueDepthMax` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_queue_depth_max` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Queue Depth | timeseries | [Top $TopResources Applications by Queue Depth Max](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=15) |
+///
+
+
+
+### eseries_application_read_cache_hit_ratio
+
+Application read cache hit ratio calculated from read hit operations and total read operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/application.yaml (CacheHitRatio plugin) |
+
+The `eseries_application_read_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Cache | timeseries | [Top $TopResources Applications by Read Cache Hit Ratio](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=10) |
+///
+
+
+
+### eseries_application_read_data
+
+Application read data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readBytes` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_read_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Highlights | timeseries | [Top $TopResources Applications by Read Throughput](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=6) |
+///
+
+
+
+### eseries_application_read_hit_ops
+
+Number of read operations that hit cache
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readHitOps` | conf/eseriesperf/11.80.0/application.yaml |
+
+
+### eseries_application_read_latency
+
+Read response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readTimeTotal` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_read_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Highlights | timeseries | [Top $TopResources Applications by Read Latency](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=2) |
+///
+
+
+
+### eseries_application_read_ops
+
+Application read I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readOps` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_read_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Highlights | timeseries | [Top $TopResources Applications by Read IOPs](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=4) |
+| E-Series: Application | Application Table | table | [Applications](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=21) |
+///
+
+
+
+### eseries_application_read_utilization
+
+Percentage of the observation window the application spent servicing read I/O
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_read_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Utilization | timeseries | [Top $TopResources Applications by Read Utilization](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=17) |
+///
+
+
+
+### eseries_application_total_cache_hit_ratio
+
+Application total cache hit ratio combining read and write cache hit operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/application.yaml (CacheHitRatio plugin) |
+
+The `eseries_application_total_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Cache | timeseries | [Top $TopResources Applications by Total Cache Hit Ratio](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=12) |
+///
+
+
+
+### eseries_application_total_utilization
+
+Percentage of the observation window the application spent servicing I/O (read + write)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_total_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Utilization | timeseries | [Top $TopResources Applications by Total Utilization](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=19) |
+///
+
+
+
+### eseries_application_write_cache_hit_ratio
+
+Application write cache hit ratio calculated from write hit operations and total write operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/application.yaml (CacheHitRatio plugin) |
+
+The `eseries_application_write_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Cache | timeseries | [Top $TopResources Applications by Write Cache Hit Ratio](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=11) |
+///
+
+
+
+### eseries_application_write_data
+
+Application write data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeBytes` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_write_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Highlights | timeseries | [Top $TopResources Applications by Write Throughput](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=7) |
+///
+
+
+
+### eseries_application_write_hit_ops
+
+Application write cache hit operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeHitOps` | conf/eseriesperf/11.80.0/application.yaml |
+
+
+### eseries_application_write_latency
+
+Write response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeTimeTotal` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_write_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Highlights | timeseries | [Top $TopResources Applications by Write Latency](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=3) |
+///
+
+
+
+### eseries_application_write_ops
+
+Application write I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeOps` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_write_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Highlights | timeseries | [Top $TopResources Applications by Write IOPs](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=5) |
+///
+
+
+
+### eseries_application_write_utilization
+
+Percentage of the observation window the application spent servicing write I/O
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/application.yaml |
+
+The `eseries_application_write_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Application | Utilization | timeseries | [Top $TopResources Applications by Write Utilization](/d/eseries-application/e-series3a-application?orgId=1&viewPanel=18) |
+///
+
 
 
 ### eseries_array_cache_hit_ops
@@ -269,7 +575,7 @@ Capacity of the cache backup device in bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/hardware-inventory` | `cacheBackupDevices.capacityInMegabytes` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+| REST | `storage-systems/{array_id}/hardware-inventory` | `cacheBackupDevices.backupDeviceCapacity` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
 
 The `eseries_cache_backup_device_capacity` metric is visualized in the following Grafana dashboards:
 
@@ -480,7 +786,7 @@ Controller processor memory size in bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers.processorMemorySizeMiB` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers.processorMemorySize` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
 
 The `eseries_controller_processor_memory` metric is visualized in the following Grafana dashboards:
 
@@ -539,7 +845,7 @@ Total cache memory on the controller in bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers.cacheMemorySize` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers.physicalCacheMemorySize` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
 
 The `eseries_controller_total_cache_memory` metric is visualized in the following Grafana dashboards:
 
@@ -560,7 +866,7 @@ Used cache memory on the controller in bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers.cacheMemorySize` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
 
 The `eseries_controller_used_cache_memory` metric is visualized in the following Grafana dashboards:
 
@@ -670,16 +976,6 @@ The `eseries_drive_capacity` metric is visualized in the following Grafana dashb
 | E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=112) |
 ///
 
-
-
-### eseries_drive_idle_time
-
-Average drive idle time in microseconds; used internally to compute utilization metrics and not exported
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/live-statistics` | `idleTime` | conf/eseriesperf/11.80.0/drive.yaml |
 
 
 ### eseries_drive_labels
@@ -946,6 +1242,688 @@ The `eseries_host_labels` metric is visualized in the following Grafana dashboar
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Array | Host | table | [Host Configuration](/d/eseries-array/e-series3a-array?orgId=1&viewPanel=15) |
+///
+
+
+
+### eseries_interface_channel_error_count
+
+Number of errors detected on the channel
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `channelErrorCount` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_channel_error_count` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Channel Errors | timeseries | [Top $TopResources Interfaces by Channel Error Count](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=14) |
+///
+
+
+
+### eseries_interface_interface
+
+Friendly interface/port name (physicalLocation.label) resolved from hardware-inventory
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/hardware-inventory` | `physicalLocation.label` | conf/eseriesperf/11.80.0/interface.yaml (Interface plugin) |
+
+
+### eseries_interface_other_latency
+
+Other command response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `otherTimeTotal` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_other_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Other Latency](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=9) |
+///
+
+
+
+### eseries_interface_other_ops
+
+Interface other I/O operations per second (e.g. control/management commands)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `otherOps` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_other_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Other IOPs](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=8) |
+///
+
+
+
+### eseries_interface_queue_depth_average
+
+Average queue depth per I/O operation
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_queue_depth_average` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Queue Depth | timeseries | [Top $TopResources Interfaces by Queue Depth Average](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=11) |
+///
+
+
+
+### eseries_interface_queue_depth_max
+
+Maximum queue depth seen over the observation window
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `queueDepthMax` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_queue_depth_max` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Queue Depth | timeseries | [Top $TopResources Interfaces by Queue Depth Max](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=12) |
+///
+
+
+
+### eseries_interface_read_data
+
+Interface read data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readBytes` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_read_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Read Throughput](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=6) |
+///
+
+
+
+### eseries_interface_read_latency
+
+Read response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readTimeTotal` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_read_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Read Latency](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=2) |
+///
+
+
+
+### eseries_interface_read_ops
+
+Interface read I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readOps` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_read_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Read IOPs](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=4) |
+| E-Series: Interface | Interface Table | table | [Interfaces](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=16) |
+///
+
+
+
+### eseries_interface_write_data
+
+Interface write data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeBytes` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_write_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Write Throughput](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=7) |
+///
+
+
+
+### eseries_interface_write_latency
+
+Write response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeTimeTotal` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_write_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Write Latency](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=3) |
+///
+
+
+
+### eseries_interface_write_ops
+
+Interface write I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeOps` | conf/eseriesperf/11.80.0/interface.yaml |
+
+The `eseries_interface_write_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Write IOPs](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=5) |
+///
+
+
+
+### eseries_pool_block_size
+
+Recommended block size of the storage pool in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `blkSizeRecommended` | conf/eseries/11.80.0/pool.yaml |
+
+The `eseries_pool_block_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Pool Table | table | [Pools](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=21) |
+///
+
+
+
+### eseries_pool_block_sizes_supported
+
+Volume block sizes supported by the storage pool (e.g. 512,4096)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `blkSizeSupported` | conf/eseries/11.80.0/pool.yaml (Pool plugin) |
+
+
+### eseries_pool_da_capable
+
+Whether all drives in the storage pool are Data Assurance (T10 PI) capable
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `protectionInformationCapabilities.protectionInformationCapable` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_drive_media_type
+
+Media type of the drives that make up the storage pool (e.g. ssd, hdd)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `driveMediaType` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_drive_physical_type
+
+Physical type of the drives that make up the storage pool (e.g. nvme4k)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `drivePhysicalType` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_free_capacity
+
+Free capacity of the storage pool in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `freeSpace` | conf/eseries/11.80.0/pool.yaml |
+
+The `eseries_pool_free_capacity` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Pool Table | table | [Pools](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=21) |
+///
+
+
+
+### eseries_pool_labels
+
+This metric provides information about storage pools (volume groups and disk pools).
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `Harvest generated` | conf/eseries/11.80.0/pool.yaml |
+
+The `eseries_pool_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Pool Table | table | [Pools](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=21) |
+///
+
+
+
+### eseries_pool_other_ops
+
+Pool other I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `otherOps` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_other_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Other IOPs](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=8) |
+///
+
+
+
+### eseries_pool_pool
+
+Friendly storage pool name resolved from storage-pools, attached directly to every pool performance metric
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `name` | conf/eseriesperf/11.80.0/pool.yaml (Pool plugin) |
+
+
+### eseries_pool_queue_depth_average
+
+Average queue depth per I/O operation
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_queue_depth_average` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Queue Depth | timeseries | [Top $TopResources Pools by Queue Depth Average](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=14) |
+///
+
+
+
+### eseries_pool_queue_depth_max
+
+Maximum queue depth seen over the observation window
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `queueDepthMax` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_queue_depth_max` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Queue Depth | timeseries | [Top $TopResources Pools by Queue Depth Max](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=15) |
+///
+
+
+
+### eseries_pool_raid_level
+
+RAID level of the storage pool
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `raidLevel` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_read_cache_hit_ratio
+
+Pool read cache hit ratio calculated from read hit operations and total read operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/pool.yaml (CacheHitRatio plugin) |
+
+The `eseries_pool_read_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Cache | timeseries | [Top $TopResources Pools by Read Cache Hit Ratio](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=10) |
+///
+
+
+
+### eseries_pool_read_data
+
+Pool read data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readBytes` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_read_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Read Throughput](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=6) |
+///
+
+
+
+### eseries_pool_read_hit_ops
+
+Number of read operations that hit cache
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readHitOps` | conf/eseriesperf/11.80.0/pool.yaml |
+
+
+### eseries_pool_read_latency
+
+Read response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readTimeTotal` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_read_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Read Latency](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=2) |
+///
+
+
+
+### eseries_pool_read_ops
+
+Pool read I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readOps` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_read_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Read IOPs](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=4) |
+///
+
+
+
+### eseries_pool_read_utilization
+
+Percentage of the observation window the pool spent servicing read I/O
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_read_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Utilization | timeseries | [Top $TopResources Pools by Read Utilization](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=17) |
+///
+
+
+
+### eseries_pool_security_level
+
+Security level of the storage pool (e.g. fde)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `securityLevel` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_security_type
+
+Security capability type of the storage pool (e.g. capable)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `securityType` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_shelf_loss_protection
+
+Whether the storage pool is protected against the loss of an entire drive shelf/tray
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `trayLossProtection` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_status
+
+RAID status of the storage pool
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/storage-pools` | `raidStatus` | conf/eseries/11.80.0/pool.yaml |
+
+
+### eseries_pool_total_cache_hit_ratio
+
+Pool total cache hit ratio combining read and write cache hit operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/pool.yaml (CacheHitRatio plugin) |
+
+The `eseries_pool_total_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Cache | timeseries | [Top $TopResources Pools by Total Cache Hit Ratio](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=12) |
+///
+
+
+
+### eseries_pool_total_utilization
+
+Percentage of the observation window the pool spent servicing I/O (read + write)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_total_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Utilization | timeseries | [Top $TopResources Pools by Total Utilization](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=19) |
+///
+
+
+
+### eseries_pool_write_cache_hit_ratio
+
+Pool write cache hit ratio calculated from write hit operations and total write operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/pool.yaml (CacheHitRatio plugin) |
+
+The `eseries_pool_write_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Cache | timeseries | [Top $TopResources Pools by Write Cache Hit Ratio](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=11) |
+///
+
+
+
+### eseries_pool_write_data
+
+Pool write data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeBytes` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_write_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Write Throughput](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=7) |
+///
+
+
+
+### eseries_pool_write_hit_ops
+
+Pool write cache hit operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeHitOps` | conf/eseriesperf/11.80.0/pool.yaml |
+
+
+### eseries_pool_write_latency
+
+Write response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeTimeTotal` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_write_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Write Latency](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=3) |
+///
+
+
+
+### eseries_pool_write_ops
+
+Pool write I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeOps` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_write_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Write IOPs](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=5) |
+///
+
+
+
+### eseries_pool_write_utilization
+
+Percentage of the observation window the pool spent servicing write I/O
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/pool.yaml |
+
+The `eseries_pool_write_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Pool | Utilization | timeseries | [Top $TopResources Pools by Write Utilization](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=18) |
 ///
 
 
@@ -1922,6 +2900,350 @@ The `eseries_volume_write_ops` metric is visualized in the following Grafana das
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Volume | Highlights | timeseries | [Top $TopResources Volumes by Write IOPs](/d/eseries-volume/e-series3a-volume?orgId=1&viewPanel=35) |
+///
+
+
+
+### eseries_workload_labels
+
+This metric provides information about workloads.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/workloads` | `Harvest generated` | conf/eseries/11.80.0/workload.yaml |
+
+The `eseries_workload_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Workload Table | table | [Workloads](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=21) |
+///
+
+
+
+### eseries_workload_other_ops
+
+Workload other I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `otherOps` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_other_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Highlights | timeseries | [Top $TopResources Workloads by Other IOPs](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=8) |
+///
+
+
+
+### eseries_workload_profile_id
+
+Workload profile identifier assigned to the workload (links to the corresponding Application object)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/workloads` | `workloadAttributes.0.value` | conf/eseries/11.80.0/workload.yaml |
+
+
+### eseries_workload_queue_depth_average
+
+Average queue depth per I/O operation
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_queue_depth_average` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Queue Depth | timeseries | [Top $TopResources Workloads by Queue Depth Average](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=14) |
+///
+
+
+
+### eseries_workload_queue_depth_max
+
+Maximum queue depth seen over the observation window
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `queueDepthMax` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_queue_depth_max` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Queue Depth | timeseries | [Top $TopResources Workloads by Queue Depth Max](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=15) |
+///
+
+
+
+### eseries_workload_read_cache_hit_ratio
+
+Workload read cache hit ratio calculated from read hit operations and total read operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/workload.yaml (CacheHitRatio plugin) |
+
+The `eseries_workload_read_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Cache | timeseries | [Top $TopResources Workloads by Read Cache Hit Ratio](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=10) |
+///
+
+
+
+### eseries_workload_read_data
+
+Workload read data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readBytes` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_read_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Highlights | timeseries | [Top $TopResources Workloads by Read Throughput](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=6) |
+///
+
+
+
+### eseries_workload_read_hit_ops
+
+Number of read operations that hit cache
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readHitOps` | conf/eseriesperf/11.80.0/workload.yaml |
+
+
+### eseries_workload_read_latency
+
+Read response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readTimeTotal` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_read_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Highlights | timeseries | [Top $TopResources Workloads by Read Latency](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=2) |
+///
+
+
+
+### eseries_workload_read_ops
+
+Workload read I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `readOps` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_read_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Highlights | timeseries | [Top $TopResources Workloads by Read IOPs](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=4) |
+///
+
+
+
+### eseries_workload_read_utilization
+
+Percentage of the observation window the workload spent servicing read I/O
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_read_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Utilization | timeseries | [Top $TopResources Workloads by Read Utilization](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=17) |
+///
+
+
+
+### eseries_workload_total_cache_hit_ratio
+
+Workload total cache hit ratio combining read and write cache hit operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/workload.yaml (CacheHitRatio plugin) |
+
+The `eseries_workload_total_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Cache | timeseries | [Top $TopResources Workloads by Total Cache Hit Ratio](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=12) |
+///
+
+
+
+### eseries_workload_total_utilization
+
+Percentage of the observation window the workload spent servicing I/O (read + write)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_total_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Utilization | timeseries | [Top $TopResources Workloads by Total Utilization](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=19) |
+///
+
+
+
+### eseries_workload_workload
+
+Friendly workload name resolved from workloads, attached directly to every workload performance metric
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/workloads` | `name` | conf/eseriesperf/11.80.0/workload.yaml (Workload plugin) |
+
+
+### eseries_workload_write_cache_hit_ratio
+
+Workload write cache hit ratio calculated from write hit operations and total write operations
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/workload.yaml (CacheHitRatio plugin) |
+
+The `eseries_workload_write_cache_hit_ratio` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Cache | timeseries | [Top $TopResources Workloads by Write Cache Hit Ratio](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=11) |
+///
+
+
+
+### eseries_workload_write_data
+
+Workload write data throughput in bytes per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeBytes` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_write_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Highlights | timeseries | [Top $TopResources Workloads by Write Throughput](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=7) |
+///
+
+
+
+### eseries_workload_write_hit_ops
+
+Workload write cache hit operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeHitOps` | conf/eseriesperf/11.80.0/workload.yaml |
+
+
+### eseries_workload_write_latency
+
+Write response time average in microseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeTimeTotal` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_write_latency` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Highlights | timeseries | [Top $TopResources Workloads by Write Latency](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=3) |
+///
+
+
+
+### eseries_workload_write_ops
+
+Workload write I/O operations per second
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `writeOps` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_write_ops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Highlights | timeseries | [Top $TopResources Workloads by Write IOPs](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=5) |
+///
+
+
+
+### eseries_workload_write_utilization
+
+Percentage of the observation window the workload spent servicing write I/O
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/live-statistics` | `Harvest Generated` | conf/eseriesperf/11.80.0/workload.yaml |
+
+The `eseries_workload_write_utilization` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Workload | Utilization | timeseries | [Top $TopResources Workloads by Write Utilization](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=18) |
 ///
 
 
