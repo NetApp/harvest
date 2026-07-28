@@ -30,7 +30,5 @@ func (p *Pool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 
 // stripBrackets converts a raw JSON array string like "[512,4096]" into "512,4096"
 func stripBrackets(s string) string {
-	s = strings.TrimPrefix(s, "[")
-	s = strings.TrimSuffix(s, "]")
-	return s
+	return strings.Trim(s, "[]")
 }

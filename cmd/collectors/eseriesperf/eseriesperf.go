@@ -450,6 +450,12 @@ func (ep *EseriesPerf) pollData(curMat *matrix.Matrix, results []gjson.Result, o
 
 	prevMat := ep.Matrix[ep.Object]
 
+	var prevLastResetTimeMetric, prevObservedTimeMetric *matrix.Metric
+	if prevMat != nil {
+		prevLastResetTimeMetric = prevMat.GetMetric("lastResetTimeInMS")
+		prevObservedTimeMetric = prevMat.GetMetric("observedTimeInMS")
+	}
+
 	for _, instanceData := range dataArray {
 		if !instanceData.IsObject() {
 			ep.Logger.Warn("instance data is not object, skipping")
@@ -498,33 +504,31 @@ func (ep *EseriesPerf) pollData(curMat *matrix.Matrix, results []gjson.Result, o
 				// Check if previous observedTimeInMS < current lastResetTimeInMS
 				// This indicates a counter reset occurred
 				// Note: Previous values are stored in seconds (converted), so we need to convert current values too
-				if lastResetTimeMetric := prevMat.GetMetric("lastResetTimeInMS"); lastResetTimeMetric != nil {
-					if observedTimeMetric := prevMat.GetMetric("observedTimeInMS"); observedTimeMetric != nil {
-						prevObservedTime, prevObsOk := observedTimeMetric.GetValueFloat64(prevInstance)
-						prevLastResetTime, prevResetOk := lastResetTimeMetric.GetValueFloat64(prevInstance)
+				if prevLastResetTimeMetric != nil && prevObservedTimeMetric != nil {
+					prevObservedTime, prevObsOk := prevObservedTimeMetric.GetValueFloat64(prevInstance)
+					prevLastResetTime, prevResetOk := prevLastResetTimeMetric.GetValueFloat64(prevInstance)
 
-						// Get current lastResetTime from instanceData and convert to seconds
-						lastResetCur := instanceData.Get("lastResetTimeInMS")
-						curLastResetTime := lastResetCur.Float() / 1000.0
-						if lastResetCur.Exists() && prevObsOk {
-							if prevObservedTime > 0 && prevObservedTime < curLastResetTime {
-								isPartial = true
-								ep.Logger.Debug("Partial detected: counter reset detected",
-									slog.String("instance", instKey),
-									slog.Float64("prevObservedTime", prevObservedTime),
-									slog.Float64("curLastResetTime", curLastResetTime))
-							}
+					// Get current lastResetTime from instanceData and convert to seconds
+					lastResetCur := instanceData.Get("lastResetTimeInMS")
+					curLastResetTime := lastResetCur.Float() / 1000.0
+					if lastResetCur.Exists() && prevObsOk {
+						if prevObservedTime > 0 && prevObservedTime < curLastResetTime {
+							isPartial = true
+							ep.Logger.Debug("Partial detected: counter reset detected",
+								slog.String("instance", instKey),
+								slog.Float64("prevObservedTime", prevObservedTime),
+								slog.Float64("curLastResetTime", curLastResetTime))
 						}
+					}
 
-						// Check if lastResetTimeInMS value changed between polls
-						if lastResetCur.Exists() && prevResetOk {
-							if prevLastResetTime > 0 && prevLastResetTime != curLastResetTime {
-								isPartial = true
-								ep.Logger.Debug("Partial detected: lastResetTimeInMS changed",
-									slog.String("instance", instKey),
-									slog.Float64("prev", prevLastResetTime),
-									slog.Float64("cur", curLastResetTime))
-							}
+					// Check if lastResetTimeInMS value changed between polls
+					if lastResetCur.Exists() && prevResetOk {
+						if prevLastResetTime > 0 && prevLastResetTime != curLastResetTime {
+							isPartial = true
+							ep.Logger.Debug("Partial detected: lastResetTimeInMS changed",
+								slog.String("instance", instKey),
+								slog.Float64("prev", prevLastResetTime),
+								slog.Float64("cur", curLastResetTime))
 						}
 					}
 				}

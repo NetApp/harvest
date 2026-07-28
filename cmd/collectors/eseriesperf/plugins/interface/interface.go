@@ -1,6 +1,7 @@
 package interfacename
 
 import (
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -74,45 +75,59 @@ func (n *InterfaceName) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 }
 
 func (n *InterfaceName) refreshInterfaceLabels(arrayID string) {
-	n.interfaceLabels = n.buildInterfaceLabelMap(arrayID)
+	n.interfaceLabels = make(map[string]string)
+
+	interfaceLabels, err := n.buildInterfaceLabelMap(arrayID)
+	if err != nil {
+		n.SLogger.Warn("Failed to build interface label map", slogx.Err(err))
+		return
+	}
+
+	n.interfaceLabels = interfaceLabels
 	n.SLogger.Debug("Refreshed interface labels", slog.Int("count", len(n.interfaceLabels)))
 }
 
 // buildPortLabelMap builds a map of channel number -> port label (e.g. "1" -> "1a")
 // from the channelPorts array in hardware-inventory, filtered to hostside channels.
-func (n *InterfaceName) buildPortLabelMap(arrayID string) map[string]string {
+func (n *InterfaceName) buildPortLabelMap(arrayID string) (map[string]string, error) {
 	apiPath := n.client.APIPath + "/storage-systems/" + arrayID + "/hardware-inventory"
 	results, err := n.client.Fetch(apiPath, nil)
 	if err != nil {
-		n.SLogger.Warn("Failed to fetch hardware-inventory", slogx.Err(err))
-		return map[string]string{}
+		return map[string]string{}, fmt.Errorf("failed to fetch hardware-inventory: %w", err)
 	}
 	if len(results) == 0 {
-		return map[string]string{}
+		return map[string]string{}, nil
 	}
 
 	portLabelMap := iointerface.BuildPortLabelMap(results[0])
 	n.SLogger.Debug("Built port label map", slog.Int("entries", len(portLabelMap)))
-	return portLabelMap
+	return portLabelMap, nil
 }
 
-func (n *InterfaceName) fetchInterfaces(arrayID string, channelType string) []gjson.Result {
+func (n *InterfaceName) fetchInterfaces(arrayID string, channelType string) ([]gjson.Result, error) {
 	apiPath := n.client.APIPath + "/storage-systems/" + arrayID + "/interfaces?interfaceType=&channelType=" + channelType
 	results, err := n.client.Fetch(apiPath, nil)
 	if err != nil {
-		n.SLogger.Warn("Failed to fetch interfaces", slog.String("channelType", channelType), slogx.Err(err))
-		return nil
+		return nil, fmt.Errorf("failed to fetch interfaces for channelType=%s: %w", channelType, err)
 	}
-	return results
+	return results, nil
 }
 
-func (n *InterfaceName) buildInterfaceLabelMap(arrayID string) map[string]string {
+func (n *InterfaceName) buildInterfaceLabelMap(arrayID string) (map[string]string, error) {
 	interfaceLabels := make(map[string]string)
 
-	portLabelMap := n.buildPortLabelMap(arrayID)
+	portLabelMap, err := n.buildPortLabelMap(arrayID)
+	if err != nil {
+		return interfaceLabels, err
+	}
 
 	for _, channelType := range []string{"hostside", "driveside"} {
-		for _, iface := range n.fetchInterfaces(arrayID, channelType) {
+		results, err := n.fetchInterfaces(arrayID, channelType)
+		if err != nil {
+			return interfaceLabels, err
+		}
+
+		for _, iface := range results {
 			interfaceRef := iface.Get("interfaceRef").ClonedString()
 			if interfaceRef == "" {
 				continue
@@ -133,7 +148,7 @@ func (n *InterfaceName) buildInterfaceLabelMap(arrayID string) map[string]string
 	}
 
 	n.SLogger.Debug("Built interface label map", slog.Int("count", len(interfaceLabels)))
-	return interfaceLabels
+	return interfaceLabels, nil
 }
 
 func (n *InterfaceName) applyInterfaceLabels(data *matrix.Matrix) {
