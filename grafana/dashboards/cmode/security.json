@@ -4596,16 +4596,6 @@
                           }
                         },
                         "type": "special"
-                      },
-                      {
-                        "options": {
-                          "match": "nan",
-                          "result": {
-                            "index": 2,
-                            "text": "Enabled"
-                          }
-                        },
-                        "type": "special"
                       }
                     ]
                   },
@@ -4636,16 +4626,6 @@
                           }
                         },
                         "type": "value"
-                      },
-                      {
-                        "options": {
-                          "match": "empty",
-                          "result": {
-                            "index": 2,
-                            "text": "N/A"
-                          }
-                        },
-                        "type": "special"
                       }
                     ]
                   },
@@ -4760,7 +4740,7 @@
                           "match": "nan",
                           "result": {
                             "index": 3,
-                            "text": "❌   Disabled"
+                            "text": "Disabled"
                           }
                         },
                         "type": "special"
@@ -5001,7 +4981,7 @@
                           },
                           "true": {
                             "index": 0,
-                            "text": "❌   Enabled"
+                            "text": "Enabled"
                           }
                         },
                         "type": "value"
@@ -5300,19 +5280,20 @@
                 },
                 "indexByName": {
                   "Value #B": 0,
-                  "Value #G": 9,
-                  "Value #I": 8,
-                  "anti_ransomware_state": 7,
+                  "Value #G": 10,
+                  "Value #I": 9,
+                  "anti_ransomware_state": 8,
+                  "audit_protocol_enabled": 5,
                   "banner": 3,
-                  "cifs_ntlm_enabled": 6,
+                  "cifs_ntlm_enabled": 7,
                   "cluster": 1,
-                  "fpolicy_enabled": 12,
+                  "fpolicy_enabled": 13,
                   "insecured": 4,
-                  "iscsi_authentication_type": 10,
-                  "nfs_kerberos_protocol_enabled": 11,
-                  "nis_authentication_enabled": 5,
-                  "smb_encryption_required": 13,
-                  "smb_signing_required": 14,
+                  "iscsi_authentication_type": 11,
+                  "nfs_kerberos_protocol_enabled": 12,
+                  "nis_authentication_enabled": 6,
+                  "smb_encryption_required": 14,
+                  "smb_signing_required": 15,
                   "svm": 2
                 },
                 "renameByName": {
