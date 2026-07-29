@@ -8,6 +8,9 @@ objects:
   Volume:            volume.yaml
   Controller:        controller.yaml
   Drive:             drive.yaml
-#  Pool:              pool.yaml
+  Pool:              pool.yaml
   Array:             array.yaml
   SsdCache:          ssd_cache.yaml
+  Interface:         interface.yaml
+  Application:       application.yaml
+  Workload:          workload.yaml

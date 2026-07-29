@@ -9,6 +9,7 @@ import (
 
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/hardware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/host"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/pool"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/ssdcachecapacity"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volumemapping"
@@ -402,6 +403,8 @@ func (e *ESeries) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plu
 		return hardware.New(abc)
 	case "Host":
 		return host.New(abc)
+	case "Pool":
+		return pool.New(abc)
 	case "SsdCacheCapacity":
 		return ssdcachecapacity.New(abc)
 	case "Volume":

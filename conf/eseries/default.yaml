@@ -10,3 +10,5 @@ objects:
   Host:              host.yaml
   Hardware:          hardware.yaml
   SsdCache:          ssd_cache.yaml
+  Pool:              pool.yaml
+  Workload:          workload.yaml

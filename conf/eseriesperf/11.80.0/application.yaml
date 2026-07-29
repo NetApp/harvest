@@ -1,10 +1,10 @@
-name: Pool
+name: Application
 query: storage-systems/{array_id}/live-statistics
-object: eseries_pool
-type: pool
+object: eseries_application
+type: application
 
 counters:
-  - ^^poolId                      => id
+  - ^^applicationId               => application
   - idleTime                      => idle_time
   - lastResetTimeInMS             => last_reset_time
   - observedTimeInMS              => observed_time
@@ -22,9 +22,7 @@ counters:
 
 plugins:
   - CacheHitRatio
-  - Pool
 
 export_options:
   instance_keys:
-    - id
-    - pool
+    - application

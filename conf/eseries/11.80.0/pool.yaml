@@ -1,0 +1,36 @@
+name: Pool
+query: storage-systems/{array_id}/storage-pools
+object: eseries_pool
+
+counters:
+  - ^^id                                                              => id
+  - ^blkSizeSupported                                                 => block_sizes_supported
+  - ^driveMediaType                                                   => drive_media_type
+  - ^drivePhysicalType                                                => drive_physical_type
+  - ^name                                                             => pool
+  - ^protectionInformationCapabilities.protectionInformationCapable   => da_capable
+  - ^raidLevel                                                        => raid_level
+  - ^raidStatus                                                       => status
+  - ^securityLevel                                                    => security_level
+  - ^securityType                                                     => security_type
+  - ^trayLossProtection                                               => shelf_loss_protection
+  - blkSizeRecommended                                                => block_size
+  - freeSpace                                                         => free_capacity
+
+plugins:
+  - Pool
+
+export_options:
+  instance_keys:
+    - id
+    - pool
+  instance_labels:
+    - block_sizes_supported
+    - da_capable
+    - drive_media_type
+    - drive_physical_type
+    - raid_level
+    - security_level
+    - security_type
+    - shelf_loss_protection
+    - status
