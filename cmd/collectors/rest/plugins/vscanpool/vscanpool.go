@@ -98,6 +98,7 @@ func (v *VscanPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 }
 
 func (v *VscanPool) updateVscanLabels(svmPoolMap map[string][]string, vserverServerStateMap map[string]map[string]string) {
+	disconnectedMetric := v.vscanServer.MustGetMetric("disconnected")
 	for svm, pools := range svmPoolMap {
 		notConectedServers := make([]string, 0)
 		serverStateMap := vserverServerStateMap[svm]
@@ -118,7 +119,7 @@ func (v *VscanPool) updateVscanLabels(svmPoolMap map[string][]string, vserverSer
 			}
 			vscanDisconnectedInstance.SetLabel("vscan_server", strings.Join(notConectedServers, ","))
 			vscanDisconnectedInstance.SetLabel("svm", svm)
-			v.vscanServer.GetMetric("disconnected").SetValueFloat64(vscanDisconnectedInstance, 1)
+			disconnectedMetric.SetValueFloat64(vscanDisconnectedInstance, 1)
 		}
 	}
 }

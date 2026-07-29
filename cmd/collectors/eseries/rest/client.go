@@ -5,6 +5,7 @@
 package rest
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -309,6 +310,112 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 	return results, err
 }
 
+// Post makes a REST POST request with the given body and returns parsed results.
+// Used for SYMbol API passthrough endpoints
+func (c *Client) Post(endpoint string, body []byte, headers ...map[string]string) ([]gjson.Result, error) {
+	var (
+		err     error
+		results []gjson.Result
+	)
+
+	doInvoke := func() ([]gjson.Result, error) {
+		var (
+			req      *http.Request
+			res      *http.Response
+			respBody []byte
+			innerErr error
+			innerRes []gjson.Result
+		)
+
+		url := c.baseURL + endpoint
+
+		if req, innerErr = http.NewRequest(http.MethodPost, url, bytes.NewReader(body)); innerErr != nil {
+			return nil, innerErr
+		}
+		req.Header.Set("Content-Type", "application/json")
+
+		for _, hs := range headers {
+			for k, v := range hs {
+				req.Header.Set(k, v)
+			}
+		}
+
+		pollerAuth, innerErr := c.auth.GetPollerAuth()
+		if innerErr != nil {
+			c.Logger.Error("failed to get auth credentials", slog.String("url", url), slogx.Err(innerErr))
+			return nil, innerErr
+		}
+		req.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
+
+		if res, innerErr = c.client.Do(req); innerErr != nil {
+			c.Logger.Error("request failed", slog.String("url", url), slog.String("err", innerErr.Error()))
+			return nil, innerErr
+		}
+		defer res.Body.Close()
+
+		if respBody, innerErr = io.ReadAll(res.Body); innerErr != nil {
+			return nil, innerErr
+		}
+
+		c.Metadata.NumCalls.Add(1)
+		c.Metadata.BytesRx.Add(uint64(len(respBody)))
+
+		if res.StatusCode == http.StatusUnauthorized {
+			c.Logger.Warn("Authentication failed",
+				slog.Int("status", res.StatusCode),
+				slog.String("url", url),
+			)
+			return nil, errs.NewRest().
+				StatusCode(res.StatusCode).
+				Error(errs.ErrAuthFailed).
+				Message(res.Status).
+				API(endpoint).
+				Build()
+		}
+
+		if res.StatusCode != http.StatusOK {
+			return nil, errs.NewRest().
+				StatusCode(res.StatusCode).
+				API(endpoint).
+				Build()
+		}
+
+		parsed := gjson.ParseBytes(respBody)
+		switch {
+		case parsed.IsArray():
+			innerRes = parsed.Array()
+		case parsed.IsObject():
+			innerRes = []gjson.Result{parsed}
+		default:
+			return nil, fmt.Errorf("unexpected response format from %s", url)
+		}
+
+		return innerRes, nil
+	}
+
+	results, err = doInvoke()
+
+	if err != nil {
+		if re, ok := errors.AsType[*errs.RestError](err); ok {
+			if errors.Is(re, errs.ErrAuthFailed) {
+				pollerAuth, err2 := c.auth.GetPollerAuth()
+				if err2 != nil {
+					return nil, err2
+				}
+				if pollerAuth.HasCredentialScript {
+					c.Logger.Debug("Expiring cached credential script credentials after 401 response")
+					c.auth.Expire()
+					c.Logger.Debug("Retrying POST with refreshed credentials from script")
+					results, err = doInvoke()
+					return results, err
+				}
+			}
+		}
+	}
+
+	return results, err
+}
+
 func (c *Client) Init(retries int, remote conf.Remote) error {
 	var (
 		err     error
@@ -331,21 +438,21 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 			firstSystem := systems[0]
 			systemID := firstSystem.Get("id").ClonedString()
 
-			bundleVersion, err := c.getBundleDisplayVersion(systemID)
+			managementVersion, err := c.getManagementVersion(systemID)
 			if err != nil {
 				c.Logger.Warn(
-					"Failed to get bundleDisplay version, using default version",
+					"Failed to get management version, using default version",
 					slogx.Err(err),
 					slog.String("arrayID", systemID),
-					slog.String("bundleVersion", bundleVersion),
+					slog.String("managementVersion", managementVersion),
 					slog.String("defaultVersion", DefaultESeriesVersion),
 				)
 				c.remote.Version = DefaultESeriesVersion
 			} else {
-				c.remote.Version = bundleVersion
+				c.remote.Version = managementVersion
 				c.Logger.Debug(
-					"Using bundleDisplay version",
-					slog.String("version", bundleVersion),
+					"Using management version",
+					slog.String("version", managementVersion),
 				)
 			}
 
@@ -364,8 +471,9 @@ func (c *Client) Remote() conf.Remote {
 	return c.remote
 }
 
-// Returns normalized version like "11.70.4" from bundleDisplay values like "11.70.4R1"
-func (c *Client) getBundleDisplayVersion(systemID string) (string, error) {
+// getManagementVersion returns the normalized SANtricity OS version from the
+// "management" codeModule (e.g. "12.00.00.9018" -> "12.00.0").
+func (c *Client) getManagementVersion(systemID string) (string, error) {
 	endpoint := c.APIPath + "/firmware/embedded-firmware/" + systemID + "/versions"
 	results, err := c.get(endpoint)
 	if err != nil {
@@ -379,12 +487,12 @@ func (c *Client) getBundleDisplayVersion(systemID string) (string, error) {
 		}
 
 		for _, version := range codeVersions.Array() {
-			if version.Get("codeModule").ClonedString() == "bundleDisplay" {
+			if version.Get("codeModule").ClonedString() == "management" {
 				versionString := version.Get("versionString").ClonedString()
 				if versionString != "" {
-					normalized := c.normalizeBundleVersion(versionString)
+					normalized := c.normalizeVersion(versionString)
 					if normalized == "" {
-						return "", errors.New("failed to parse bundleDisplay version")
+						return "", errors.New("failed to parse management version")
 					}
 					return normalized, nil
 				}
@@ -392,20 +500,21 @@ func (c *Client) getBundleDisplayVersion(systemID string) (string, error) {
 		}
 	}
 
-	return "", errors.New("bundleDisplay not found in firmware versions")
+	return "", errors.New("management codeModule not found in firmware versions")
 }
 
-// normalizeBundleVersion converts bundleDisplay format to template-matchable version
+// normalizeVersion converts a raw versionString to a template-matchable version
 // Examples:
 //
-//	"11.70.4R1" -> "11.70.4"
-//	"11.90.R4"  -> "11.90.0"
-//	"12.00GA"   -> "12.00.0"
-//	"11.30"     -> "11.30.0"
+//	"11.70.4R1"     -> "11.70.4"
+//	"11.90.R4"      -> "11.90.0"
+//	"12.00GA"       -> "12.00.0"
+//	"12.00.00.9018" -> "12.00.00"
+//	"11.30"         -> "11.30.0"
 //
 // Returns empty string if parsing fails
-func (c *Client) normalizeBundleVersion(bundleDisplay string) string {
-	matches := bundleRe.FindStringSubmatch(bundleDisplay)
+func (c *Client) normalizeVersion(versionString string) string {
+	matches := bundleRe.FindStringSubmatch(versionString)
 
 	if len(matches) == 0 {
 		// No match, return empty string to trigger default version fallback

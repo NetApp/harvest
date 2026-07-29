@@ -65,7 +65,10 @@ func (e *Environment) Init(remote conf.Remote) error {
 	e.client = client
 	e.templateObject = e.ParentParams.GetChildContentS("object")
 
-	e.matrix = matrix.New(e.Parent+".Environment", e.templateObject, e.templateObject)
+	e.matrix = matrix.New(e.Parent+e.templateObject, e.templateObject, e.templateObject)
+	if err := e.matrix.NewMetricsFloat64(metrics...); err != nil {
+		return fmt.Errorf("error while initializing matrix: %w", err)
+	}
 
 	return nil
 }
@@ -74,13 +77,11 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	data := dataMap[e.Object]
 	e.client.Metadata.Reset()
 
-	envMat, err := e.initMatrix(e.templateObject)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	e.matrix.PurgeInstances()
+	e.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	envMat.SetGlobalLabels(data.GetGlobalLabels())
+	e.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -95,28 +96,15 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	powerOutput := output.Get("1")
 	coolingOutput := output.Get("2")
 
-	e.parseTemperature(temperatureOutput, envMat)
-	e.parsePower(powerOutput, envMat)
-	e.parseCooling(coolingOutput, envMat)
+	e.parseTemperature(temperatureOutput, e.matrix)
+	e.parsePower(powerOutput, e.matrix)
+	e.parseCooling(coolingOutput, e.matrix)
 
 	e.client.Metadata.NumCalls.Store(1)
 	e.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	e.client.Metadata.PluginInstances.Store(uint64(len(envMat.GetInstances())))
+	e.client.Metadata.PluginInstances.Store(uint64(len(e.matrix.GetInstances())))
 
-	return []*matrix.Matrix{envMat}, e.client.Metadata, nil
-}
-
-func (e *Environment) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(e.Parent+name, name, name)
-
-	for _, k := range metrics {
-		if err := matrix.CreateMetric(k, mat); err != nil {
-			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
-		}
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{e.matrix}, e.client.Metadata, nil
 }
 
 func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matrix) {
@@ -138,6 +126,7 @@ func (e *Environment) addTempSensors(sensors gjson.Result, envMat *matrix.Matrix
 	if !sensors.Exists() {
 		return
 	}
+	metric := envMat.MustGetMetric(sensorTemp)
 	sensors.ForEach(func(_, sensor gjson.Result) bool {
 		name := sensor.Get("name").ClonedString()
 		if name == "" {
@@ -152,7 +141,7 @@ func (e *Environment) addTempSensors(sensors gjson.Result, envMat *matrix.Matrix
 		instance.SetLabel("sensor", name)
 		instance.SetLabel("description", sensor.Get("description").ClonedString())
 		instance.SetLabel("status", sensor.Get("hwStatus").ClonedString())
-		envMat.GetMetric(sensorTemp).SetValueFloat64(instance, sensor.Get("currentTemperature").Float())
+		metric.SetValueFloat64(instance, sensor.Get("currentTemperature").Float())
 		return true
 	})
 }
@@ -162,6 +151,10 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 	if !supplies.Exists() {
 		return
 	}
+	powerCapacityMetric := envMat.MustGetMetric(powerCapacity)
+	powerInMetric := envMat.MustGetMetric(powerIn)
+	powerOutMetric := envMat.MustGetMetric(powerOut)
+	powerUpMetric := envMat.MustGetMetric(powerUp)
 	supplies.ForEach(func(key, supply gjson.Result) bool {
 		psID := key.ClonedString()
 		instanceKey := "power_" + psID
@@ -175,19 +168,19 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 		instance.SetLabel("model", supply.Get("modelName").ClonedString())
 		instance.SetLabel("status", state)
 
-		envMat.GetMetric(powerCapacity).SetValueFloat64(instance, supply.Get("capacity").Float())
+		powerCapacityMetric.SetValueFloat64(instance, supply.Get("capacity").Float())
 
 		if inputPower := supply.Get("inputPower"); inputPower.Exists() {
-			envMat.GetMetric(powerIn).SetValueFloat64(instance, inputPower.Float())
+			powerInMetric.SetValueFloat64(instance, inputPower.Float())
 		}
 		if outputPower := supply.Get("outputPower"); outputPower.Exists() {
-			envMat.GetMetric(powerOut).SetValueFloat64(instance, outputPower.Float())
+			powerOutMetric.SetValueFloat64(instance, outputPower.Float())
 		}
 
 		if state == "ok" {
-			envMat.GetMetric(powerUp).SetValueFloat64(instance, 1)
+			powerUpMetric.SetValueFloat64(instance, 1)
 		} else {
-			envMat.GetMetric(powerUp).SetValueFloat64(instance, 0)
+			powerUpMetric.SetValueFloat64(instance, 0)
 		}
 		return true
 	})
@@ -202,9 +195,11 @@ func (e *Environment) parseCooling(output gjson.Result, envMat *matrix.Matrix) {
 		}
 		instance.SetLabel("sensor", "ambient")
 		instance.SetLabel("status", output.Get("systemStatus").ClonedString())
-		envMat.GetMetric(ambientTemp).SetValueFloat64(instance, ambient.Float())
+		envMat.MustSetValueFloat64(ambientTemp, instance, ambient.Float())
 	}
 
+	fanSpeedMetric := envMat.MustGetMetric(fanSpeed)
+	fanUpMetric := envMat.MustGetMetric(fanUp)
 	output.Get("fanTraySlots").ForEach(func(_, tray gjson.Result) bool {
 		trayLabel := tray.Get("label").ClonedString()
 		tray.Get("fans").ForEach(func(_, fan gjson.Result) bool {
@@ -223,11 +218,11 @@ func (e *Environment) parseCooling(output gjson.Result, envMat *matrix.Matrix) {
 			instance.SetLabel("fan_tray", trayLabel)
 			instance.SetLabel("status", status)
 
-			envMat.GetMetric(fanSpeed).SetValueFloat64(instance, fan.Get("actualSpeed").Float())
+			fanSpeedMetric.SetValueFloat64(instance, fan.Get("actualSpeed").Float())
 			if status == "ok" {
-				envMat.GetMetric(fanUp).SetValueFloat64(instance, 1)
+				fanUpMetric.SetValueFloat64(instance, 1)
 			} else {
-				envMat.GetMetric(fanUp).SetValueFloat64(instance, 0)
+				fanUpMetric.SetValueFloat64(instance, 0)
 			}
 			return true
 		})

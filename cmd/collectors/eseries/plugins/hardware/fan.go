@@ -10,7 +10,6 @@ import (
 
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
@@ -24,20 +23,10 @@ type supportCRUInfo struct {
 // initFanMatrix creates the matrix for fan data
 func (h *Hardware) initFanMatrix() {
 	mat := matrix.New(h.Parent+"."+fanMatrix, fanMatrix, fanMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "id")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "location")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "slot")
-	instanceLabels.NewChildS("", "controller")
-	instanceLabels.NewChildS("", "parent_type")
-	instanceLabels.NewChildS("", "fan_number")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"id"},
+		[]string{"location", "status", "slot", "controller", "parent_type", "fan_number"},
+	))
 
 	h.data[fanMatrix] = mat
 }

@@ -115,7 +115,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 	// initialize cache
 	for i, rule := range a.rules {
-		matrices[i] = data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+		matrices[i] = data.CloneMetricTemplate()
 		if rule.object != "" {
 			matrices[i].Object = rule.object
 		} else {
@@ -164,8 +164,13 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 			switch {
 			case rule.allLabels:
-				values := slices.Collect(maps.Keys(instance.GetLabels()))
-				objKey = strings.Join(values, ".")
+				labelMap := instance.GetLabels()
+				sortedKeys := slices.Sorted(maps.Keys(labelMap))
+				parts := make([]string, 0, len(sortedKeys))
+				for _, k := range sortedKeys {
+					parts = append(parts, labelMap[k])
+				}
+				objKey = strings.Join(parts, ".")
 			case len(rule.includeLabels) != 0:
 				var ob strings.Builder
 				ob.WriteString(objName)

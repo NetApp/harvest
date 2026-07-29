@@ -1,0 +1,36 @@
+name: Interface
+query: storage-systems/{array_id}/live-statistics
+object: eseries_interface
+type: interface
+
+counters:
+  - ^^interfaceId                 => id
+  - ^channelNumber                => channel_number
+  - ^channelType                  => channel_type
+  - ^controllerId                 => controller_id
+  - channelErrorCount             => channel_error_count
+  - lastResetTimeInMS             => last_reset_time
+  - observedTimeInMS              => observed_time
+  - otherOps                      => other_ops
+  - otherTimeTotal                => other_latency
+  - queueDepthMax                 => queue_depth_max
+  - queueDepthTotal # queueDepthTotal is only used to compute queue_depth_average. It is not exported
+  - readBytes                     => read_data
+  - readOps                       => read_ops
+  - readTimeTotal                 => read_latency
+  - writeBytes                    => write_data
+  - writeOps                      => write_ops
+  - writeTimeTotal                => write_latency
+
+plugins:
+  - Controller
+  - Interface
+
+export_options:
+  instance_keys:
+    - channel_number
+    - channel_type
+    - controller
+    - controller_id
+    - id
+    - interface

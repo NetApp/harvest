@@ -369,6 +369,656 @@ counters:
         Template: conf/eseriesperf/11.80.0/volume.yaml
 
   # =============================================================================
+  # Pool Metrics (Eseries Collector - Configuration)
+  # =============================================================================
+  - Name: eseries_pool_labels
+    Description: This metric provides information about storage pools (volume groups and disk pools).
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_raid_level
+    Description: RAID level of the storage pool
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: raidLevel
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_status
+    Description: RAID status of the storage pool
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: raidStatus
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_drive_media_type
+    Description: Media type of the drives that make up the storage pool (e.g. ssd, hdd)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: driveMediaType
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_drive_physical_type
+    Description: Physical type of the drives that make up the storage pool (e.g. nvme4k)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: drivePhysicalType
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_block_sizes_supported
+    Description: Volume block sizes supported by the storage pool (e.g. 512,4096)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: blkSizeSupported
+        Template: conf/eseries/11.80.0/pool.yaml (Pool plugin)
+
+  - Name: eseries_pool_shelf_loss_protection
+    Description: Whether the storage pool is protected against the loss of an entire drive shelf/tray
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: trayLossProtection
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_security_type
+    Description: Security capability type of the storage pool (e.g. capable)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: securityType
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_security_level
+    Description: Security level of the storage pool (e.g. fde)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: securityLevel
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_da_capable
+    Description: Whether all drives in the storage pool are Data Assurance (T10 PI) capable
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: protectionInformationCapabilities.protectionInformationCapable
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_block_size
+    Description: Recommended block size of the storage pool in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: blkSizeRecommended
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  - Name: eseries_pool_free_capacity
+    Description: Free capacity of the storage pool in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: freeSpace
+        Template: conf/eseries/11.80.0/pool.yaml
+
+  # =============================================================================
+  # Pool Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_pool_pool
+    Description: Friendly storage pool name resolved from storage-pools, attached directly to every pool performance metric
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/storage-pools
+        ESeriesCounter: name
+        Template: conf/eseriesperf/11.80.0/pool.yaml (Pool plugin)
+
+  - Name: eseries_pool_read_ops
+    Description: Pool read I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readOps
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_write_ops
+    Description: Pool write I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeOps
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_read_data
+    Description: Pool read data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytes
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_write_data
+    Description: Pool write data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytes
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_read_latency
+    Description: Read response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readTimeTotal
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_write_latency
+    Description: Write response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeTimeTotal
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_read_hit_ops
+    Description: Number of read operations that hit cache
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readHitOps
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_write_hit_ops
+    Description: Pool write cache hit operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeHitOps
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_read_cache_hit_ratio
+    Description: Pool read cache hit ratio calculated from read hit operations and total read operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/pool.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_pool_write_cache_hit_ratio
+    Description: Pool write cache hit ratio calculated from write hit operations and total write operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/pool.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_pool_total_cache_hit_ratio
+    Description: Pool total cache hit ratio combining read and write cache hit operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/pool.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_pool_other_ops
+    Description: Pool other I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: otherOps
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_queue_depth_average
+    Description: Average queue depth per I/O operation
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_queue_depth_max
+    Description: Maximum queue depth seen over the observation window
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: queueDepthMax
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_read_utilization
+    Description: Percentage of the observation window the pool spent servicing read I/O
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_write_utilization
+    Description: Percentage of the observation window the pool spent servicing write I/O
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  - Name: eseries_pool_total_utilization
+    Description: Percentage of the observation window the pool spent servicing I/O (read + write)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/pool.yaml
+
+  # =============================================================================
+  # Application Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_application_read_ops
+    Description: Application read I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readOps
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_write_ops
+    Description: Application write I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeOps
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_read_data
+    Description: Application read data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytes
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_write_data
+    Description: Application write data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytes
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_read_latency
+    Description: Read response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readTimeTotal
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_write_latency
+    Description: Write response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeTimeTotal
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_read_hit_ops
+    Description: Number of read operations that hit cache
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readHitOps
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_write_hit_ops
+    Description: Application write cache hit operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeHitOps
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_read_cache_hit_ratio
+    Description: Application read cache hit ratio calculated from read hit operations and total read operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/application.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_application_write_cache_hit_ratio
+    Description: Application write cache hit ratio calculated from write hit operations and total write operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/application.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_application_total_cache_hit_ratio
+    Description: Application total cache hit ratio combining read and write cache hit operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/application.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_application_other_ops
+    Description: Application other I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: otherOps
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_queue_depth_average
+    Description: Average queue depth per I/O operation
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_queue_depth_max
+    Description: Maximum queue depth seen over the observation window
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: queueDepthMax
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_read_utilization
+    Description: Percentage of the observation window the application spent servicing read I/O
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_write_utilization
+    Description: Percentage of the observation window the application spent servicing write I/O
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  - Name: eseries_application_total_utilization
+    Description: Percentage of the observation window the application spent servicing I/O (read + write)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/application.yaml
+
+  # =============================================================================
+  # Workload Metrics (Eseries Collector - Configuration)
+  # =============================================================================
+  - Name: eseries_workload_labels
+    Description: This metric provides information about workloads.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/workloads
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/workload.yaml
+
+  - Name: eseries_workload_profile_id
+    Description: Workload profile identifier assigned to the workload (links to the corresponding Application object)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/workloads
+        ESeriesCounter: workloadAttributes.0.value
+        Template: conf/eseries/11.80.0/workload.yaml
+
+  # =============================================================================
+  # Workload Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_workload_workload
+    Description: Friendly workload name resolved from workloads, attached directly to every workload performance metric
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/workloads
+        ESeriesCounter: name
+        Template: conf/eseriesperf/11.80.0/workload.yaml (Workload plugin)
+
+  - Name: eseries_workload_read_ops
+    Description: Workload read I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readOps
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_write_ops
+    Description: Workload write I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeOps
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_read_data
+    Description: Workload read data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytes
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_write_data
+    Description: Workload write data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytes
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_read_latency
+    Description: Read response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readTimeTotal
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_write_latency
+    Description: Write response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeTimeTotal
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_read_hit_ops
+    Description: Number of read operations that hit cache
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readHitOps
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_write_hit_ops
+    Description: Workload write cache hit operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeHitOps
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_read_cache_hit_ratio
+    Description: Workload read cache hit ratio calculated from read hit operations and total read operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/workload.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_workload_write_cache_hit_ratio
+    Description: Workload write cache hit ratio calculated from write hit operations and total write operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/workload.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_workload_total_cache_hit_ratio
+    Description: Workload total cache hit ratio combining read and write cache hit operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/workload.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_workload_other_ops
+    Description: Workload other I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: otherOps
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_queue_depth_average
+    Description: Average queue depth per I/O operation
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_queue_depth_max
+    Description: Maximum queue depth seen over the observation window
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: queueDepthMax
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_read_utilization
+    Description: Percentage of the observation window the workload spent servicing read I/O
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_write_utilization
+    Description: Percentage of the observation window the workload spent servicing write I/O
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  - Name: eseries_workload_total_utilization
+    Description: Percentage of the observation window the workload spent servicing I/O (read + write)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/workload.yaml
+
+  # =============================================================================
+  # Interface Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_interface_interface
+    Description: Friendly interface/port name (physicalLocation.label) resolved from hardware-inventory
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: physicalLocation.label
+        Template: conf/eseriesperf/11.80.0/interface.yaml (Interface plugin)
+
+  - Name: eseries_interface_read_ops
+    Description: Interface read I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readOps
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_write_ops
+    Description: Interface write I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeOps
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_read_data
+    Description: Interface read data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytes
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_write_data
+    Description: Interface write data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytes
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_read_latency
+    Description: Read response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readTimeTotal
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_write_latency
+    Description: Write response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeTimeTotal
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_other_ops
+    Description: Interface other I/O operations per second (e.g. control/management commands)
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: otherOps
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_other_latency
+    Description: Other command response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: otherTimeTotal
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_queue_depth_average
+    Description: Average queue depth per I/O operation
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_queue_depth_max
+    Description: Maximum queue depth seen over the observation window
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: queueDepthMax
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  - Name: eseries_interface_channel_error_count
+    Description: Number of errors detected on the channel
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: channelErrorCount
+        Template: conf/eseriesperf/11.80.0/interface.yaml
+
+  # =============================================================================
   # Cache Backup Device Metrics (Hardware Plugin)
   # =============================================================================
   - Name: eseries_cache_backup_device_labels
@@ -384,7 +1034,7 @@ counters:
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/hardware-inventory
-        ESeriesCounter: cacheBackupDevices.capacityInMegabytes
+        ESeriesCounter: cacheBackupDevices.backupDeviceCapacity
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
   # =============================================================================
@@ -446,7 +1096,7 @@ counters:
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/hardware-inventory
-        ESeriesCounter: controllers.processorMemorySizeMiB
+        ESeriesCounter: controllers.processorMemorySize
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
   - Name: eseries_controller_total_cache_memory
@@ -454,7 +1104,7 @@ counters:
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/hardware-inventory
-        ESeriesCounter: controllers.cacheMemorySize
+        ESeriesCounter: controllers.physicalCacheMemorySize
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
   - Name: eseries_controller_used_cache_memory
@@ -462,7 +1112,7 @@ counters:
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/hardware-inventory
-        ESeriesCounter: controllers
+        ESeriesCounter: controllers.cacheMemorySize
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
   # =============================================================================
@@ -557,15 +1207,6 @@ counters:
       - API: REST
         Endpoint: storage-systems/{array_id}/live-statistics
         ESeriesCounter: writeTimeTotal
-        Template: conf/eseriesperf/11.80.0/drive.yaml
-
-  - Name: eseries_drive_idle_time
-    Description: Average drive idle time in microseconds; used internally to compute
-      utilization metrics and not exported
-    APIs:
-      - API: REST
-        Endpoint: storage-systems/{array_id}/live-statistics
-        ESeriesCounter: idleTime
         Template: conf/eseriesperf/11.80.0/drive.yaml
 
   - Name: eseries_drive_read_utilization

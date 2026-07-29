@@ -353,9 +353,10 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	// update metadata for collector logs
-	_ = e.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
-	_ = e.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
-	_ = e.Metadata.LazySetValueUint64("instances", "instance", uint64(bookendCacheSize)) //nolint:gosec
+	instanceInst := e.Metadata.MustGetInstance("instance")
+	e.Metadata.MustSetValueInt64("api_time", instanceInst, apiD.Microseconds())
+	e.Metadata.MustSetValueInt64("parse_time", instanceInst, time.Since(parseT).Microseconds())
+	e.Metadata.MustSetValueUint64("instances", instanceInst, uint64(bookendCacheSize)) //nolint:gosec
 
 	return nil, nil
 }
@@ -420,10 +421,11 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 
 	parseD = time.Since(startTime)
 
-	_ = e.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = e.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = e.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = e.Metadata.LazySetValueUint64("instances", "data", instanceCount)
+	dataInst := e.Metadata.MustGetInstance("data")
+	e.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	e.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	e.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	e.Metadata.MustSetValueUint64("instances", dataInst, instanceCount)
 
 	e.AddCollectCount(count)
 
@@ -530,11 +532,12 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 					}
 
 					// get all active instances by issuingems-bookendkey
-					if instances := mx.GetInstancesBySuffix(issuingEms + bookendKey); len(instances) != 0 {
-						for _, instance := range instances {
-							metr.SetValueFloat64(instance, 0)
-							instance.SetExportable(true)
+					for key, instance := range mx.GetInstances() {
+						if !strings.HasSuffix(key, issuingEms+bookendKey) {
+							continue
 						}
+						metr.SetValueFloat64(instance, 0)
+						instance.SetExportable(true)
 						emsResolved = true
 					}
 				}
@@ -722,7 +725,7 @@ func (e *Ems) updateMatrix(begin time.Time) {
 	// We want to ensure that the existing matrix is an empty clone so that it gets updated in the Prometheus cache.
 	// This prevents older instances from appearing in the previous poll.
 	for k, v := range e.Matrix {
-		e.Matrix[k] = v.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
+		e.Matrix[k] = v.CloneMetricTemplate()
 	}
 
 	for issuingEms, mx := range tempMap {
@@ -767,7 +770,7 @@ func (e *Ems) updateMatrix(begin time.Time) {
 		if instances := mx.GetInstances(); len(instances) == 0 {
 			// We want to ensure that the existing matrix is an empty clone so that it gets updated in the Prometheus cache.
 			// This prevents older instances from appearing in the previous poll.
-			e.Matrix[issuingEms] = mx.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
+			e.Matrix[issuingEms] = mx.CloneMetricTemplate()
 			continue
 		}
 		e.Matrix[issuingEms] = mx

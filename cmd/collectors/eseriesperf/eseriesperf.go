@@ -13,7 +13,10 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/cachehitratio"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/controller"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/drive"
+	interfacename "github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/interface"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/pool"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/ssdcachestats"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -30,6 +33,22 @@ type EseriesPerf struct {
 	pollDataCalls int
 	recordsToSave int
 	ssdCacheID    string
+	useSymbolPath bool // true when ssd_cache on SANtricity < 12.00 (SYMbol POST API)
+}
+
+func defaultFetch(ep *EseriesPerf, systemID string, headers map[string]string) ([]gjson.Result, error) {
+	if ep.Params.GetChildContentS("type") == "ssd_cache" {
+		if err := ep.discoverSsdCacheID(); err != nil {
+			return nil, err
+		}
+	}
+	query := rest.NewURLBuilder().
+		APIPath(ep.Prop.Query).
+		ArrayID(systemID).
+		SsdCacheID(ep.ssdCacheID).
+		Filter(ep.Prop.Filter).
+		Build()
+	return ep.Client.Fetch(ep.Client.APIPath+"/"+query, ep.Prop.CacheConfig, headers)
 }
 
 type counter struct {
@@ -96,6 +115,13 @@ func (ep *EseriesPerf) Init(a *collector.AbstractCollector) error {
 		slog.String("object", ep.Prop.Object),
 		slog.String("timeout", ep.Client.Timeout.String()),
 	)
+
+	if ep.Params.GetChildContentS("type") == "ssd_cache" {
+		ep.useSymbolPath = isLegacyFlashCache(ep)
+		ep.Logger.Info("ssd_cache fetch path selected",
+			slog.Bool("isLegacyFlashCache", ep.useSymbolPath),
+			slog.String("version", ep.Remote.Version))
+	}
 
 	return nil
 }
@@ -261,8 +287,14 @@ func (ep *EseriesPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.
 		return controller.New(p)
 	case "Drive":
 		return drive.New(p)
+	case "Interface":
+		return interfacename.New(p)
+	case "Pool":
+		return pool.New(p)
 	case "SsdCacheStats":
 		return ssdcachestats.New(p)
+	case "Workload":
+		return workload.New(p)
 	default:
 		ep.Logger.Info("No eseries plugin found", slog.String("kind", kind))
 	}
@@ -278,25 +310,27 @@ func (ep *EseriesPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 // Called every PollData cycle to handle SSD cache creation/removal.
 func (ep *EseriesPerf) discoverSsdCacheID() error {
 	systemID := ep.GetArray()
-	endpoint := fmt.Sprintf("%s/storage-systems/%s/ssd-caches", ep.Client.APIPath, systemID)
 
+	endpoint := fmt.Sprintf("%s/storage-systems/%s/ssd-caches", ep.Client.APIPath, systemID)
 	results, err := ep.Client.Fetch(endpoint, nil)
 	if err != nil {
 		ep.ssdCacheID = ""
-		return fmt.Errorf("failed to fetch ssd-caches: %w", err)
+		return err
 	}
-
 	if len(results) == 0 {
 		ep.ssdCacheID = ""
 		return errs.New(errs.ErrNoInstance, "no SSD cache found")
 	}
 
-	ep.ssdCacheID = results[0].Get("id").ClonedString()
-	if ep.ssdCacheID == "" {
-		return errs.New(errs.ErrNoInstance, "SSD cache missing id")
+	cacheID := results[0].Get("id").ClonedString()
+	cacheName := results[0].Get("name").ClonedString()
+
+	if cacheID == "" {
+		ep.ssdCacheID = ""
+		return errs.New(errs.ErrNoInstance, "SSD cache missing id/ref")
 	}
 
-	cacheName := results[0].Get("name").ClonedString()
+	ep.ssdCacheID = cacheID
 	ep.Logger.Debug("discovered SSD cache",
 		slog.String("ssdCacheID", ep.ssdCacheID),
 		slog.String("name", cacheName))
@@ -342,34 +376,22 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 		oldInstances.Add(key)
 	}
 
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	systemID := ep.GetArray()
 
-	objType := ep.Params.GetChildContentS("type")
-	if objType == "ssd_cache" {
-		if err := ep.discoverSsdCacheID(); err != nil {
-			return nil, err
-		}
-	}
-
-	// Build query - filters are intentionally disabled when using shared cache
-	// to prevent cache poisoning (subset of filtered data being cached for all consumers)
-	// See applyFilter() in template.go for the filter-disabling logic
-	filters := ep.Prop.Filter
-
-	query := rest.NewURLBuilder().
-		APIPath(ep.Prop.Query).
-		ArrayID(systemID).
-		SsdCacheID(ep.ssdCacheID).
-		Filter(filters).
-		Build()
-
 	var results []gjson.Result
 	apiStart := time.Now()
 
-	results, err = ep.Client.Fetch(ep.Client.APIPath+"/"+query, ep.Prop.CacheConfig, headers)
+	// useSymbolPath is only true for ssd_cache on SANtricity < 12.00 — see Init.
+	// All other object types (volume, drive, etc.) always use defaultFetch.
+	if ep.useSymbolPath {
+		results, err = symbolSsdCacheFetch(ep, systemID, headers)
+	} else {
+		results, err = defaultFetch(ep, systemID, headers)
+	}
+
 	apiTime = time.Since(apiStart)
 
 	if err != nil {
@@ -389,13 +411,14 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 		curMat.RemoveInstance(key)
 	}
 
-	_ = ep.Metadata.LazySetValueInt64("api_time", "data", apiTime.Microseconds())
-	_ = ep.Metadata.LazySetValueInt64("parse_time", "data", parseTime.Microseconds())
-	_ = ep.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = ep.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = ep.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
-	_ = ep.Metadata.LazySetValueUint64("bytesRx", "data", ep.Client.Metadata.BytesRx.Load())
-	_ = ep.Metadata.LazySetValueUint64("numCalls", "data", ep.Client.Metadata.NumCalls.Load())
+	dataInst := ep.Metadata.MustGetInstance("data")
+	ep.Metadata.MustSetValueInt64("api_time", dataInst, apiTime.Microseconds())
+	ep.Metadata.MustSetValueInt64("parse_time", dataInst, parseTime.Microseconds())
+	ep.Metadata.MustSetValueUint64("metrics", dataInst, count)
+	ep.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(curMat.GetInstances())))
+	ep.Metadata.MustSetValueUint64("numPartials", dataInst, numPartials)
+	ep.Metadata.MustSetValueUint64("bytesRx", dataInst, ep.Client.Metadata.BytesRx.Load())
+	ep.Metadata.MustSetValueUint64("numCalls", dataInst, ep.Client.Metadata.NumCalls.Load())
 
 	ep.AddCollectCount(count)
 
@@ -426,6 +449,12 @@ func (ep *EseriesPerf) pollData(curMat *matrix.Matrix, results []gjson.Result, o
 	}
 
 	prevMat := ep.Matrix[ep.Object]
+
+	var prevLastResetTimeMetric, prevObservedTimeMetric *matrix.Metric
+	if prevMat != nil {
+		prevLastResetTimeMetric = prevMat.GetMetric("lastResetTimeInMS")
+		prevObservedTimeMetric = prevMat.GetMetric("observedTimeInMS")
+	}
 
 	for _, instanceData := range dataArray {
 		if !instanceData.IsObject() {
@@ -475,33 +504,31 @@ func (ep *EseriesPerf) pollData(curMat *matrix.Matrix, results []gjson.Result, o
 				// Check if previous observedTimeInMS < current lastResetTimeInMS
 				// This indicates a counter reset occurred
 				// Note: Previous values are stored in seconds (converted), so we need to convert current values too
-				if lastResetTimeMetric := prevMat.GetMetric("lastResetTimeInMS"); lastResetTimeMetric != nil {
-					if observedTimeMetric := prevMat.GetMetric("observedTimeInMS"); observedTimeMetric != nil {
-						prevObservedTime, prevObsOk := observedTimeMetric.GetValueFloat64(prevInstance)
-						prevLastResetTime, prevResetOk := lastResetTimeMetric.GetValueFloat64(prevInstance)
+				if prevLastResetTimeMetric != nil && prevObservedTimeMetric != nil {
+					prevObservedTime, prevObsOk := prevObservedTimeMetric.GetValueFloat64(prevInstance)
+					prevLastResetTime, prevResetOk := prevLastResetTimeMetric.GetValueFloat64(prevInstance)
 
-						// Get current lastResetTime from instanceData and convert to seconds
-						lastResetCur := instanceData.Get("lastResetTimeInMS")
-						curLastResetTime := lastResetCur.Float() / 1000.0
-						if lastResetCur.Exists() && prevObsOk {
-							if prevObservedTime > 0 && prevObservedTime < curLastResetTime {
-								isPartial = true
-								ep.Logger.Debug("Partial detected: counter reset detected",
-									slog.String("instance", instKey),
-									slog.Float64("prevObservedTime", prevObservedTime),
-									slog.Float64("curLastResetTime", curLastResetTime))
-							}
+					// Get current lastResetTime from instanceData and convert to seconds
+					lastResetCur := instanceData.Get("lastResetTimeInMS")
+					curLastResetTime := lastResetCur.Float() / 1000.0
+					if lastResetCur.Exists() && prevObsOk {
+						if prevObservedTime > 0 && prevObservedTime < curLastResetTime {
+							isPartial = true
+							ep.Logger.Debug("Partial detected: counter reset detected",
+								slog.String("instance", instKey),
+								slog.Float64("prevObservedTime", prevObservedTime),
+								slog.Float64("curLastResetTime", curLastResetTime))
 						}
+					}
 
-						// Check if lastResetTimeInMS value changed between polls
-						if lastResetCur.Exists() && prevResetOk {
-							if prevLastResetTime > 0 && prevLastResetTime != curLastResetTime {
-								isPartial = true
-								ep.Logger.Debug("Partial detected: lastResetTimeInMS changed",
-									slog.String("instance", instKey),
-									slog.Float64("prev", prevLastResetTime),
-									slog.Float64("cur", curLastResetTime))
-							}
+					// Check if lastResetTimeInMS value changed between polls
+					if lastResetCur.Exists() && prevResetOk {
+						if prevLastResetTime > 0 && prevLastResetTime != curLastResetTime {
+							isPartial = true
+							ep.Logger.Debug("Partial detected: lastResetTimeInMS changed",
+								slog.String("instance", instKey),
+								slog.Float64("prev", prevLastResetTime),
+								slog.Float64("cur", curLastResetTime))
 						}
 					}
 				}
@@ -594,7 +621,7 @@ func (ep *EseriesPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matri
 
 	calcStart := time.Now()
 
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
+	cachedData := curMat.Clone()
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0)
 	orderedNonDenominatorKeys := make([]string, 0)
@@ -766,10 +793,11 @@ func (ep *EseriesPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matri
 	}
 
 	calcD := time.Since(calcStart)
-	_ = ep.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = ep.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
+	calcDataInst := ep.Metadata.MustGetInstance("data")
+	ep.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
+	ep.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
 	if totalSkips >= 0 {
-		_ = ep.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips))
+		ep.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips))
 	}
 
 	ep.Matrix[ep.Object] = cachedData

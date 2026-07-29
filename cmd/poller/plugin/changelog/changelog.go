@@ -101,15 +101,9 @@ func (c *ChangeLog) populateChangeLogConfig() error {
 func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
 	changeLogMap := make(map[string]*matrix.Matrix)
 	changeLogMap[c.matrixName] = matrix.New(c.Parent+c.matrixName, ObjectChangeLog, c.matrixName)
-	for _, changeLogMatrix := range changeLogMap {
-		changeLogMatrix.SetExportOptions(matrix.DefaultExportOptions())
-	}
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, changeLogMap[c.matrixName])
-		if err != nil {
-			c.SLogger.Warn("error while creating metric", slog.Any("err", err), slog.String("key", k))
-			return nil, err
-		}
+	if err := changeLogMap[c.matrixName].NewMetricsFloat64(metrics...); err != nil {
+		c.SLogger.Warn("error while creating metric", slog.Any("err", err))
+		return nil, err
 	}
 	return changeLogMap, nil
 }
@@ -301,11 +295,9 @@ func (c *ChangeLog) CompareMetrics(curMat *matrix.Matrix) map[string]map[string]
 			if prevInstance == nil {
 				continue
 			}
-			prevIndex := prevInstance.GetIndex()
-			currIndex := currInstance.GetIndex()
-			curVal := curMetric.GetValues()[currIndex]
-			prevVal := prevMetric.GetValues()[prevIndex]
-			if curVal != prevVal {
+			curVal, curRecorded := curMetric.GetValueFloat64(currInstance)
+			prevVal, prevRecorded := prevMetric.GetValueFloat64(prevInstance)
+			if curRecorded != prevRecorded || (curRecorded && curVal != prevVal) {
 				if _, ok := metricChanges[key]; !ok {
 					metricChanges[key] = make(map[string]struct{})
 				}
@@ -330,8 +322,7 @@ func (c *ChangeLog) copyPreviousData(cur *matrix.Matrix) {
 		}
 	}
 	labels = append(labels, "uuid")
-	withMetrics := len(met) > 0
-	c.previousData = cur.Clone(matrix.With{Data: true, Metrics: withMetrics, Instances: true, ExportInstances: false, Labels: labels, MetricsNames: met})
+	c.previousData = cur.CloneSelected(met, labels)
 }
 
 // createChangeLogInstance creates a new ChangeLog instance with the given change data

@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
@@ -19,6 +20,7 @@ type Controller struct {
 	client           *rest.Client
 	schedule         int
 	controllerLabels map[string]string // Maps controller_id -> label ("A", "B", etc.)
+	labelToUUID      map[string]string // Maps label -> controller_id UUID (reverse of controllerLabels)
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -76,24 +78,27 @@ func (c *Controller) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 func (c *Controller) refreshControllerLabels(arrayID string) {
 	c.controllerLabels = make(map[string]string)
+	c.labelToUUID = make(map[string]string)
 
-	controllerLabels, err := c.buildControllerLabelMap(arrayID)
+	controllerLabels, labelToUUID, err := c.buildControllerLabelMap(arrayID)
 	if err != nil {
 		c.SLogger.Warn("Failed to build controller label map", slogx.Err(err))
 		return
 	}
 
 	c.controllerLabels = controllerLabels
+	c.labelToUUID = labelToUUID
 	c.SLogger.Debug("Refreshed controller labels", slog.Int("count", len(c.controllerLabels)))
 }
 
-func (c *Controller) buildControllerLabelMap(arrayID string) (map[string]string, error) {
+func (c *Controller) buildControllerLabelMap(arrayID string) (map[string]string, map[string]string, error) {
 	controllerLabels := make(map[string]string)
+	labelToUUID := make(map[string]string)
 
 	apiPath := c.client.APIPath + "/storage-systems/" + arrayID + "/controllers"
 	controllers, err := c.client.Fetch(apiPath, nil)
 	if err != nil {
-		return controllerLabels, fmt.Errorf("failed to fetch controllers: %w", err)
+		return controllerLabels, labelToUUID, fmt.Errorf("failed to fetch controllers: %w", err)
 	}
 
 	for _, controller := range controllers {
@@ -106,11 +111,12 @@ func (c *Controller) buildControllerLabelMap(arrayID string) (map[string]string,
 
 		if controllerID != "" && label != "" {
 			controllerLabels[controllerID] = label
+			labelToUUID[label] = controllerID
 		}
 	}
 
 	c.SLogger.Debug("Built controller label map", slog.Int("count", len(controllerLabels)))
-	return controllerLabels, nil
+	return controllerLabels, labelToUUID, nil
 }
 
 func (c *Controller) applyControllerLabels(data *matrix.Matrix) {
@@ -120,6 +126,17 @@ func (c *Controller) applyControllerLabels(data *matrix.Matrix) {
 			controllerID = instance.GetLabel("id")
 		}
 		if controllerID == "" {
+			continue
+		}
+
+		// Handle synthetic SYMbol controller IDs ("a"/"b").
+		// Resolve them to the real UUID and label so exported metrics match the REST path.
+		if controllerID == "a" || controllerID == "b" {
+			label := strings.ToUpper(controllerID)
+			instance.SetLabel("controller", label)
+			if uuid, ok := c.labelToUUID[label]; ok {
+				instance.SetLabel("controller_id", uuid)
+			}
 			continue
 		}
 

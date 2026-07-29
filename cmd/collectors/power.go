@@ -409,11 +409,8 @@ func (s *Sensor) Init(remote conf.Remote) error {
 
 	// init environment metrics in plugin matrix
 	// create environment metric if not exists
-	for _, k := range eMetrics {
-		err := matrix.CreateMetric(k, s.data)
-		if err != nil {
-			s.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
-		}
+	if err := s.data.NewMetricsFloat64(eMetrics...); err != nil {
+		s.SLogger.Warn("error while creating metric", slogx.Err(err))
 	}
 	return nil
 }

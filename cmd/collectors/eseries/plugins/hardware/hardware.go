@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/iointerface"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -142,7 +143,7 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 
 	response := results[0]
 
-	portLabelMap := h.buildPortLabelMap(response)
+	portLabelMap := iointerface.BuildPortLabelMap(response)
 
 	controllerLabelMap := h.buildControllerLabelMap(response)
 
@@ -209,33 +210,6 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 	metadata.PluginInstances.Store(uint64(totalInstances))
 
 	return matrices, metadata, nil
-}
-
-// buildPortLabelMap creates a map of channel number to port label (e.g., "1" -> "1a")
-// from the channelPorts array in hardware-inventory
-func (h *Hardware) buildPortLabelMap(response gjson.Result) map[string]string {
-	portLabelMap := make(map[string]string)
-
-	channelPorts := response.Get("channelPorts")
-	if !channelPorts.Exists() || !channelPorts.IsArray() {
-		return portLabelMap
-	}
-
-	for _, cp := range channelPorts.Array() {
-		if cp.Get("channelType").ClonedString() != "hostside" {
-			continue
-		}
-
-		channel := cp.Get("channel").ClonedString()
-		label := cp.Get("physicalLocation.label").ClonedString()
-
-		if channel != "" && label != "" {
-			portLabelMap[channel] = label
-		}
-	}
-
-	h.SLogger.Debug("Built port label map", slog.Int("entries", len(portLabelMap)))
-	return portLabelMap
 }
 
 // buildControllerLabelMap creates a map of controllerRef to controller label (e.g., "070000..." -> "A")

@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -33,7 +32,7 @@ func newEseriesPerf(object string, path string) *EseriesPerf {
 	opts.HomePath = "testdata"
 	opts.IsTest = true
 
-	ac := collector.New("EseriesPerf", object, opts, params(object, path), nil, conf.Remote{})
+	ac := collector.New("EseriesPerf", object, opts, params(object, path), nil, conf.Remote{Version: "12.00.0"})
 	ep := &EseriesPerf{}
 	err = ep.Init(ac)
 	if err != nil {
@@ -244,8 +243,8 @@ func TestEseriesPerf_PollData(t *testing.T) {
 
 			// Second poll
 			pollData2 := jsonToPerfData(tt.pollDataPath2)
-			prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-			curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+			prevMat := mat.Clone()
+			curMat := prevMat.CloneForCollection()
 			curMat.Reset() // Reset data arrays to match current instances
 
 			count2, partial2 := ep.pollData(curMat, pollData2, set.New())
@@ -336,8 +335,8 @@ func TestEseriesPerf_PartialDetection_CounterReset(t *testing.T) {
 
 	// Second poll with counter reset
 	pollData2 := jsonToPerfData("testdata/perf-partial-reset.json")
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	_, partialCount := ep.pollData(curMat, pollData2, set.New())
@@ -382,8 +381,8 @@ func TestEseriesPerf_CookCounters_ThreePass(t *testing.T) {
 
 	// Second poll
 	pollData2 := jsonToPerfData("testdata/perf2.json")
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	ep.pollData(curMat, pollData2, set.New())
@@ -434,8 +433,8 @@ func TestEseriesPerf_UtilizationCalculation(t *testing.T) {
 
 	// Second poll
 	pollData2 := jsonToPerfData("testdata/perf2.json")
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	ep.pollData(curMat, pollData2, set.New())
@@ -596,8 +595,8 @@ func TestEseriesPerf_PollData_SsdCache(t *testing.T) {
 
 	// Second poll
 	pollData2 := jsonToArrayPerfData("testdata/ssd_cache2.json")
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	count2, partial2 := ep.pollData(curMat, pollData2, set.New())
@@ -719,8 +718,8 @@ func TestEseriesPerf_SsdCache_ZeroIO(t *testing.T) {
 	ep.pollData(mat, pollData1, set.New())
 	_, _ = ep.cookCounters(mat, mat)
 
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	pollData2 := jsonToArrayPerfData("testdata/ssd_cache_zero_io.json")
@@ -758,8 +757,8 @@ func TestEseriesPerf_SsdCache_NegativeDelta(t *testing.T) {
 	ep.pollData(mat, pollData2, set.New())
 	_, _ = ep.cookCounters(mat, mat)
 
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	// Now poll with lower values — simulates counter reset
@@ -803,8 +802,8 @@ func TestEseriesPerf_SsdCache_NegativeDelta_SkipOnCounterReset(t *testing.T) {
 	assert.Nil(t, got)
 	assert.False(t, ep.perfProp.isCacheEmpty)
 
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 
 	pollData2 := jsonToArrayPerfData("testdata/ssd_cache_zero_io.json")
@@ -955,8 +954,8 @@ func TestEseriesPerf_QueueDepthTotal_NotExported(t *testing.T) {
 
 	// Second poll
 	pollData2 := jsonToPerfData("testdata/perf2.json")
-	prevMat := mat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
-	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	prevMat := mat.Clone()
+	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
 	ep.pollData(curMat, pollData2, set.New())
 

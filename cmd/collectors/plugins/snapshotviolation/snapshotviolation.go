@@ -3,7 +3,6 @@ package snapshotviolation
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
 )
 
@@ -34,16 +33,9 @@ type Stats struct {
 func InitMatrix(parent string) (*matrix.Matrix, error) {
 	mat := matrix.New(parent+".SnapshotVolume", "snapshot_volume", "snapshot_volume")
 
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "svm")
-	instanceKeys.NewChildS("", "volume")
-	mat.SetExportOptions(exportOptions)
-	for _, k := range Metrics {
-		err := matrix.CreateMetric(k, mat)
-		if err != nil {
-			return mat, err
-		}
+	mat.SetExportOptions(matrix.NewExportOptions("svm", "volume"))
+	if err := mat.NewMetricsFloat64(Metrics...); err != nil {
+		return mat, err
 	}
 	return mat, nil
 }

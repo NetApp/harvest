@@ -13,7 +13,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
@@ -74,34 +73,20 @@ func (s *SsdCacheCapacity) Init(remote conf.Remote) error {
 
 func (s *SsdCacheCapacity) initVolumeMatrix() {
 	mat := matrix.New(s.Parent+"."+volumeMatrixName, volumeMatrixName, volumeMatrixName)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "ssd_cache")
-	instanceKeys.NewChildS("", "ssd_cache_id")
-	instanceKeys.NewChildS("", "volume")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "volume")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"ssd_cache", "ssd_cache_id", "volume"},
+		[]string{"volume"},
+	))
 
 	s.volumeMat = mat
 }
 
 func (s *SsdCacheCapacity) initDriveMatrix() {
 	mat := matrix.New(s.Parent+"."+driveMatrixName, driveMatrixName, driveMatrixName)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "ssd_cache")
-	instanceKeys.NewChildS("", "ssd_cache_id")
-	instanceKeys.NewChildS("", "drive")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "drive")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"ssd_cache", "ssd_cache_id", "drive"},
+		[]string{"drive"},
+	))
 	_, _ = mat.NewMetricFloat64("raw_capacity")
 
 	s.driveMat = mat
@@ -353,7 +338,10 @@ func (s *SsdCacheCapacity) populateCapacityMetrics(data *matrix.Matrix) {
 		}
 	}
 
-	usedCapMetric := data.GetMetric("usedCapacity")
+	// Look up the used-capacity metric by its exported (display) name so this works
+	// across templates that source it from different paths (ssd-caches "usedCapacity"
+	// on 12.00 vs flash-cache "fcDriveInfo.fcWithDrives.usedCapacity" on < 12.00).
+	usedCapMetric := data.DisplayMetric("current_capacity")
 
 	for _, instance := range data.GetInstances() {
 		maxCapMetric.SetValueFloat64(instance, s.maxFlashCacheSize)

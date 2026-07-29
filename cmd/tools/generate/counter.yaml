@@ -1979,7 +1979,7 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
   - Name: nic_rx_percent
-    Description: Bytes received percentage.
+    Description: Bytes received percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.
     APIs:
       - API: RestPerf
         Endpoint: NA
@@ -1991,7 +1991,7 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
   - Name: nic_tx_percent
-    Description: Bytes sent percentage.
+    Description: Bytes sent percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.
     APIs:
       - API: RestPerf
         Endpoint: NA
@@ -2003,7 +2003,7 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
   - Name: nic_util_percent
-    Description: Max of Bytes received percentage and Bytes sent percentage.
+    Description: Max of Bytes received percentage and Bytes sent percentage. Value is in the 0-1 range, multiply by 100 to display as a percentage.
     APIs:
       - API: RestPerf
         Endpoint: NA
@@ -2475,12 +2475,40 @@ counters:
         Template: NA
 
   - Name: fcp_util_percent
-    Description: Represent the FCP utilization percentage
+    Description: Represent the FCP utilization percentage (max of read/write percent). Value is in the 0-1 range, multiply by 100 to display as a percentage.
     APIs:
       - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/fcp.yaml
+      - API: ZapiPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.10.1/fcp.yaml
+
+  - Name: fcp_read_percent
+    Description: Percentage of FCP read bytes relative to port speed. Value is in the 0-1 range, multiply by 100 to display as a percentage.
+    APIs:
+      - API: RestPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/fcp.yaml
+      - API: ZapiPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.10.1/fcp.yaml
+
+  - Name: fcp_write_percent
+    Description: Percentage of FCP write bytes relative to port speed. Value is in the 0-1 range, multiply by 100 to display as a percentage.
+    APIs:
+      - API: RestPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/fcp.yaml
+      - API: ZapiPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.10.1/fcp.yaml
 
   - Name: nfs_diag_storePool_LockAlloc
     Description: Represent the current number of lock objects allocated

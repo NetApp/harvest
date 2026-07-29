@@ -414,11 +414,12 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	}
 
 	// update metadata for collector logs
-	_ = r.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
-	_ = r.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
-	_ = r.Metadata.LazySetValueUint64("metrics", "counter", uint64(len(r.perfProp.counterInfo)))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "counter", r.RequestMetadata.BytesRx.Load())
-	_ = r.Metadata.LazySetValueUint64("numCalls", "counter", r.RequestMetadata.NumCalls.Load())
+	counterInst := r.Metadata.MustGetInstance("counter")
+	r.Metadata.MustSetValueInt64("api_time", counterInst, apiD.Microseconds())
+	r.Metadata.MustSetValueInt64("parse_time", counterInst, time.Since(parseT).Microseconds())
+	r.Metadata.MustSetValueUint64("metrics", counterInst, uint64(len(r.perfProp.counterInfo)))
+	r.Metadata.MustSetValueUint64("bytesRx", counterInst, r.RequestMetadata.BytesRx.Load())
+	r.Metadata.MustSetValueUint64("numCalls", counterInst, r.RequestMetadata.NumCalls.Load())
 
 	return nil, nil
 }
@@ -731,7 +732,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// clone matrix without numeric data
-	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat = prevMat.CloneForCollection()
 	curMat.Reset()
 
 	dataQuery := path.Join(r.Prop.Query, "rows")
@@ -878,13 +879,14 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.RequestMetadata.BytesRx.Load())
-	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.RequestMetadata.NumCalls.Load())
-	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
+	dataInst := r.Metadata.MustGetInstance("data")
+	r.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	r.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	r.Metadata.MustSetValueUint64("metrics", dataInst, metricCount)
+	r.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(curMat.GetInstances())))
+	r.Metadata.MustSetValueUint64("bytesRx", dataInst, r.RequestMetadata.BytesRx.Load())
+	r.Metadata.MustSetValueUint64("numCalls", dataInst, r.RequestMetadata.NumCalls.Load())
+	r.Metadata.MustSetValueUint64("numPartials", dataInst, numPartials)
 	r.AddCollectCount(metricCount)
 
 	return r.cookCounters(curMat, prevMat)
@@ -901,6 +903,8 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 	)
 	instanceKeys = r.Prop.InstanceKeys
 	startTime := time.Now()
+
+	tsMetric := curMat.MustGetMetric(timestampMetricName)
 
 	// init current time
 	ts = float64(startTime.UnixNano()) / collector2.BILLION
@@ -1195,7 +1199,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 					r.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", name))
 				}
 			}
-			curMat.GetMetric(timestampMetricName).SetValueFloat64(instance, ts)
+			tsMetric.SetValueFloat64(instance, ts)
 
 			return true
 		})
@@ -1221,7 +1225,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	calcStart := time.Now()
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
+	cachedData := curMat.Clone()
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
@@ -1392,9 +1396,10 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	}
 
 	calcD := time.Since(calcStart)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = r.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
+	calcDataInst := r.Metadata.MustGetInstance("data")
+	r.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
+	r.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
+	r.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
@@ -1708,11 +1713,12 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 	r.Logger.Debug("instances", slog.Int("new", added), slog.Int("removed", removed), slog.Int("total", newSize))
 
 	// update metadata for collector logs
-	_ = r.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
-	_ = r.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
-	_ = r.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "instance", r.RequestMetadata.BytesRx.Load())
-	_ = r.Metadata.LazySetValueUint64("numCalls", "instance", r.RequestMetadata.NumCalls.Load())
+	instanceInst := r.Metadata.MustGetInstance("instance")
+	r.Metadata.MustSetValueInt64("api_time", instanceInst, apiD.Microseconds())
+	r.Metadata.MustSetValueInt64("parse_time", instanceInst, time.Since(parseT).Microseconds())
+	r.Metadata.MustSetValueUint64("instances", instanceInst, uint64(newSize))
+	r.Metadata.MustSetValueUint64("bytesRx", instanceInst, r.RequestMetadata.BytesRx.Load())
+	r.Metadata.MustSetValueUint64("numCalls", instanceInst, r.RequestMetadata.NumCalls.Load())
 
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")

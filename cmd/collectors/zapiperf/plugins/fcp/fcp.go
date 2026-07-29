@@ -43,29 +43,20 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		}
 	}
 
-	if rx = data.GetMetric("read_percent"); rx == nil {
-		if rx, err = data.NewMetricFloat64("read_percent"); err == nil {
-			rx.SetProperty("raw")
-		} else {
-			return nil, nil, err
-		}
+	if rx, err = data.GetOrCreateMetric("read_percent"); err != nil {
+		return nil, nil, err
+	}
+	rx.SetProperty("raw")
 
+	if tx, err = data.GetOrCreateMetric("write_percent"); err != nil {
+		return nil, nil, err
 	}
-	if tx = data.GetMetric("write_percent"); tx == nil {
-		if tx, err = data.NewMetricFloat64("write_percent"); err == nil {
-			tx.SetProperty("raw")
-		} else {
-			return nil, nil, err
-		}
-	}
+	tx.SetProperty("raw")
 
-	if utilPercent = data.GetMetric("util_percent"); utilPercent == nil {
-		if utilPercent, err = data.NewMetricFloat64("util_percent"); err == nil {
-			utilPercent.SetProperty("raw")
-		} else {
-			return nil, nil, err
-		}
+	if utilPercent, err = data.GetOrCreateMetric("util_percent"); err != nil {
+		return nil, nil, err
 	}
+	utilPercent.SetProperty("raw")
 
 	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {

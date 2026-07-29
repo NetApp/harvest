@@ -8,7 +8,8 @@ import (
 )
 
 func TestProtectedFields(t *testing.T) {
-	instance := matrix.NewInstance(0)
+	m := matrix.New("test", "test", "test")
+	instance, _ := m.NewInstance("test")
 
 	// Test cases for protectedBy and protectionSourceType
 	testWithoutGroupType(t, instance)

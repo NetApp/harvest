@@ -369,6 +369,7 @@ var volumeInputHandlers = map[*regexp.Regexp]VolumeHandler{
 
 func (a *AuditLog) parseVolumeRecords(response []gjson.Result) {
 	mat := a.data
+	logMetric := mat.MustGetMetric("log")
 	object := "volume"
 	for _, result := range response {
 		timestamp := result.Get("timestamp")
@@ -406,7 +407,7 @@ func (a *AuditLog) parseVolumeRecords(response []gjson.Result) {
 			}
 			instanceKey := application + location + user + svm + volume + uuid + handler.GetOperation() + object
 			if instance := mat.GetInstance(instanceKey); instance != nil {
-				a.setLogMetric(mat, instance, float64(auditTimeStamp))
+				logMetric.SetValueFloat64(instance, float64(auditTimeStamp))
 			} else {
 				instance, err = mat.NewInstance(instanceKey)
 				if err != nil {
@@ -423,7 +424,7 @@ func (a *AuditLog) parseVolumeRecords(response []gjson.Result) {
 				instance.SetLabel("object", object)
 				instance.SetLabel("volume", volume)
 				instance.SetLabel("svm", svm)
-				a.setLogMetric(mat, instance, float64(auditTimeStamp))
+				logMetric.SetValueFloat64(instance, float64(auditTimeStamp))
 			}
 		}
 	}

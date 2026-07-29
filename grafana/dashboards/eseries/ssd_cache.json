@@ -88,35 +88,6 @@
         "x": 0,
         "y": 0
       },
-      "id": 99,
-      "panels": [],
-      "title": "Important Information about SSD Cache dashboard",
-      "type": "row"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 1
-      },
-      "id": 100,
-      "options": {
-        "content": "This dashboard is only available from SANtricity OS 12.00+.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.1.8",
-      "type": "text"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 4
-      },
       "id": 1,
       "panels": [],
       "title": "Highlights",

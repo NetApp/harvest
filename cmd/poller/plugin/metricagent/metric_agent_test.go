@@ -5,12 +5,13 @@
 package metricagent
 
 import (
+	"testing"
+
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"testing"
 	// "github.com/netapp/harvest/v2/share/logger"
 )
 
@@ -155,6 +156,60 @@ func TestComputeMetricsRuleWithSingleMatrix(t *testing.T) {
 	metricTransmissionRateVal, ok := metricTransmissionRate.GetValueFloat64(instanceB)
 	assert.True(t, ok)
 	assert.Equal(t, metricTransmissionRateVal, expected)
+}
+
+func TestComputeMetricsRuleWithMissingOptionalOperand(t *testing.T) {
+
+	var (
+		instanceB, instanceC                  *matrix.Instance
+		metricDiskP, metricDiskS, metricDiskH *matrix.Metric
+		metricDiskTotal                       *matrix.Metric
+		expected                              float64
+		err                                   error
+	)
+
+	p := newAgent()
+	m := matrix.New("TestLabelAgent", "test", "test")
+
+	// instanceB has all three disk count operands set (e.g. an aggregate with a hybrid cache tier)
+	instanceB, err = m.NewInstance("B")
+	assert.Nil(t, err)
+
+	metricDiskP, err = m.NewMetricFloat64("primary.disk_count")
+	assert.Nil(t, err)
+	metricDiskP.SetValueFloat64(instanceB, 8)
+
+	metricDiskS, err = m.NewMetricFloat64("secondary.disk_count")
+	assert.Nil(t, err)
+	metricDiskS.SetValueFloat64(instanceB, 10)
+
+	metricDiskH, err = m.NewMetricFloat64("hybrid.disk_count")
+	assert.Nil(t, err)
+	metricDiskH.SetValueFloat64(instanceB, 4)
+
+	instanceC, err = m.NewInstance("C")
+	assert.Nil(t, err)
+	metricDiskP.SetValueFloat64(instanceC, 12)
+
+	dataMap := make(map[string]*matrix.Matrix)
+	dataMap[p.Object] = m
+	_, _, err = p.Run(dataMap)
+	assert.Nil(t, err)
+
+	metricDiskTotal = m.GetMetric("disk_count")
+	assert.NotNil(t, metricDiskTotal)
+
+	// instanceB: 8 + 10 + 4
+	expected = 22
+	metricDiskTotalValB, ok := metricDiskTotal.GetValueFloat64(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, metricDiskTotalValB, expected)
+
+	// instanceC: missing operands should be treated as 0, not skip the metric
+	expected = 12
+	metricDiskTotalValC, ok := metricDiskTotal.GetValueFloat64(instanceC)
+	assert.True(t, ok)
+	assert.Equal(t, metricDiskTotalValC, expected)
 }
 
 func TestComputeMetricsRuleWithMultiMatrix(t *testing.T) {

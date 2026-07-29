@@ -11,7 +11,6 @@ import (
 
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
@@ -38,37 +37,15 @@ func formatWWID(wwid string) string {
 // initDriveMatrix creates the matrix for drive data
 func (h *Hardware) initDriveMatrix() {
 	mat := matrix.New(h.Parent+"."+driveMatrix, driveMatrix, driveMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "id")
-	instanceKeys.NewChildS("", "location")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "mode")
-	instanceLabels.NewChildS("", "assigned_to")
-	instanceLabels.NewChildS("", "media_type")
-	instanceLabels.NewChildS("", "interface_type")
-	instanceLabels.NewChildS("", "pcie_generation")
-	instanceLabels.NewChildS("", "current_speed")
-	instanceLabels.NewChildS("", "max_speed")
-	instanceLabels.NewChildS("", "firmware_version")
-	instanceLabels.NewChildS("", "product_id")
-	instanceLabels.NewChildS("", "serial_number")
-	instanceLabels.NewChildS("", "manufacturer")
-	instanceLabels.NewChildS("", "wwid")
-	instanceLabels.NewChildS("", "tray_id")
-	instanceLabels.NewChildS("", "slot")
-	instanceLabels.NewChildS("", "secure_capable")
-	instanceLabels.NewChildS("", "secure_enabled")
-	instanceLabels.NewChildS("", "da_capable")
-	instanceLabels.NewChildS("", "dulbe_capable")
-	instanceLabels.NewChildS("", "fips_capable")
-	instanceLabels.NewChildS("", "rw_accessible")
-	instanceLabels.NewChildS("", "redundant_path")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"id", "location"},
+		[]string{
+			"status", "mode", "assigned_to", "media_type", "interface_type", "pcie_generation",
+			"current_speed", "max_speed", "firmware_version", "product_id", "serial_number",
+			"manufacturer", "wwid", "tray_id", "slot", "secure_capable", "secure_enabled",
+			"da_capable", "dulbe_capable", "fips_capable", "rw_accessible", "redundant_path",
+		},
+	))
 
 	// Define metrics
 	_, _ = mat.NewMetricFloat64("percent_endurance_used")
@@ -88,6 +65,11 @@ func (h *Hardware) processDrives(response gjson.Result, trayLabelMap, poolNames 
 		h.SLogger.Debug("No drives found in response")
 		return
 	}
+
+	enduranceMetric := mat.MustGetMetric("percent_endurance_used")
+	capacityMetric := mat.MustGetMetric("capacity")
+	blockSizeMetric := mat.MustGetMetric("block_size")
+	blockSizePhysicalMetric := mat.MustGetMetric("block_size_physical")
 
 	for _, drive := range drives.Array() {
 		id := drive.Get("id").ClonedString()
@@ -158,20 +140,20 @@ func (h *Hardware) processDrives(response gjson.Result, trayLabelMap, poolNames 
 		inst.SetLabelTrimmed("max_speed", speedToMB(drive.Get("maxSpeed").ClonedString()))
 
 		if endurance := drive.Get("ssdWearLife.percentEnduranceUsed"); endurance.Exists() {
-			h.setMetricValue(mat, inst, "percent_endurance_used", endurance.Float())
+			enduranceMetric.SetValueFloat64(inst, endurance.Float())
 		}
 
 		if capacityStr := drive.Get("usableCapacity").ClonedString(); capacityStr != "" {
 			if capacity, err := strconv.ParseFloat(capacityStr, 64); err == nil {
-				h.setMetricValue(mat, inst, "capacity", capacity)
+				capacityMetric.SetValueFloat64(inst, capacity)
 			}
 		}
 
 		if blkSize := drive.Get("blkSize"); blkSize.Exists() {
-			h.setMetricValue(mat, inst, "block_size", blkSize.Float())
+			blockSizeMetric.SetValueFloat64(inst, blkSize.Float())
 		}
 		if blkSizePhysical := drive.Get("blkSizePhysical"); blkSizePhysical.Exists() {
-			h.setMetricValue(mat, inst, "block_size_physical", blkSizePhysical.Float())
+			blockSizePhysicalMetric.SetValueFloat64(inst, blkSizePhysical.Float())
 		}
 
 		inst.SetLabelTrimmed("secure_capable", boolToString(drive.Get("fdeCapable").Bool()))
@@ -266,11 +248,4 @@ func (h *Hardware) buildPoolLabelMap(arrayID string) map[string]string {
 
 	h.SLogger.Debug("Built pool label map", slog.Int("entries", len(poolNames)))
 	return poolNames
-}
-
-// setMetricValue sets a float metric value
-func (h *Hardware) setMetricValue(mat *matrix.Matrix, inst *matrix.Instance, metricName string, value float64) {
-	if m := mat.GetMetric(metricName); m != nil {
-		m.SetValueFloat64(inst, value)
-	}
 }

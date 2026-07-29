@@ -76,7 +76,10 @@ func (i *Interface) Init(remote conf.Remote) error {
 	i.client = client
 	i.templateObject = i.ParentParams.GetChildContentS("object")
 
-	i.matrix = matrix.New(i.Parent+".Interface", i.templateObject, i.templateObject)
+	i.matrix = matrix.New(i.Parent+i.templateObject, i.templateObject, i.templateObject)
+	if err := i.matrix.NewMetricsFloat64(metrics...); err != nil {
+		return fmt.Errorf("error while initializing matrix: %w", err)
+	}
 
 	return nil
 }
@@ -85,13 +88,11 @@ func (i *Interface) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 	data := dataMap[i.Object]
 	i.client.Metadata.Reset()
 
-	interfaceMat, err := i.initMatrix("cisco_interface")
-	if err != nil {
-		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
-	}
+	i.matrix.PurgeInstances()
+	i.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	interfaceMat.SetGlobalLabels(data.GetGlobalLabels())
+	i.matrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -102,26 +103,13 @@ func (i *Interface) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	i.parseInterface(output, interfaceMat)
+	i.parseInterface(output, i.matrix)
 
 	i.client.Metadata.NumCalls.Store(1)
 	i.client.Metadata.BytesRx.Store(uint64(len(output.Raw)))
-	i.client.Metadata.PluginInstances.Store(uint64(len(interfaceMat.GetInstances())))
+	i.client.Metadata.PluginInstances.Store(uint64(len(i.matrix.GetInstances())))
 
-	return []*matrix.Matrix{interfaceMat}, i.client.Metadata, nil
-}
-
-func (i *Interface) initMatrix(name string) (*matrix.Matrix, error) {
-
-	mat := matrix.New(i.Parent+name, name, name)
-
-	for _, k := range metrics {
-		if err := matrix.CreateMetric(k, mat); err != nil {
-			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
-		}
-	}
-
-	return mat, nil
+	return []*matrix.Matrix{i.matrix}, i.client.Metadata, nil
 }
 
 func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
@@ -134,6 +122,20 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		i.SLogger.Warn("Unable to parse interfaces because rows are missing", slog.String("query", rowQuery))
 		return
 	}
+
+	crcErrorsMetric := envMat.MustGetMetric(crcErrors)
+	ethOutDiscardMetric := envMat.MustGetMetric(ethOutDiscard)
+	receiveBytesMetric := envMat.MustGetMetric(receiveBytes)
+	receiveErrorsMetric := envMat.MustGetMetric(receiveErrors)
+	transmitBytesMetric := envMat.MustGetMetric(transmitBytes)
+	transmitErrorsMetric := envMat.MustGetMetric(transmitErrors)
+	receiveMulticastMetric := envMat.MustGetMetric(receiveMulticast)
+	receiveBroadcastMetric := envMat.MustGetMetric(receiveBroadcast)
+	receiveDropsMetric := envMat.MustGetMetric(receiveDrops)
+	transmitDropsMetric := envMat.MustGetMetric(transmitDrops)
+	adminUpMetric := envMat.MustGetMetric(adminUp)
+	upMetric := envMat.MustGetMetric(up)
+	errorStatusMetric := envMat.MustGetMetric(errorStatus)
 
 	rows.ForEach(func(_, value gjson.Result) bool {
 		interfaceName := value.Get("interface").ClonedString()
@@ -177,33 +179,33 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		instance.SetLabel("description", desc)
 		instance.SetLabel("speed", ethSpeed)
 
-		envMat.GetMetric(crcErrors).SetValueFloat64(instance, ethCrcErrors)
-		envMat.GetMetric(ethOutDiscard).SetValueFloat64(instance, ethOutDiscards)
-		envMat.GetMetric(receiveBytes).SetValueFloat64(instance, ethInBytes)
-		envMat.GetMetric(receiveErrors).SetValueFloat64(instance, ethInErrors)
-		envMat.GetMetric(transmitBytes).SetValueFloat64(instance, ethOutBytes)
-		envMat.GetMetric(transmitErrors).SetValueFloat64(instance, ethOutErrors)
-		envMat.GetMetric(receiveMulticast).SetValueFloat64(instance, ethInMcast)
-		envMat.GetMetric(receiveBroadcast).SetValueFloat64(instance, ethInBcast)
-		envMat.GetMetric(receiveDrops).SetValueFloat64(instance, ethInDrops)
-		envMat.GetMetric(transmitDrops).SetValueFloat64(instance, ethOutDrops)
+		crcErrorsMetric.SetValueFloat64(instance, ethCrcErrors)
+		ethOutDiscardMetric.SetValueFloat64(instance, ethOutDiscards)
+		receiveBytesMetric.SetValueFloat64(instance, ethInBytes)
+		receiveErrorsMetric.SetValueFloat64(instance, ethInErrors)
+		transmitBytesMetric.SetValueFloat64(instance, ethOutBytes)
+		transmitErrorsMetric.SetValueFloat64(instance, ethOutErrors)
+		receiveMulticastMetric.SetValueFloat64(instance, ethInMcast)
+		receiveBroadcastMetric.SetValueFloat64(instance, ethInBcast)
+		receiveDropsMetric.SetValueFloat64(instance, ethInDrops)
+		transmitDropsMetric.SetValueFloat64(instance, ethOutDrops)
 
 		if adminState == "up" {
-			envMat.GetMetric(adminUp).SetValueFloat64(instance, 1)
+			adminUpMetric.SetValueFloat64(instance, 1)
 		} else {
-			envMat.GetMetric(adminUp).SetValueFloat64(instance, 0)
+			adminUpMetric.SetValueFloat64(instance, 0)
 		}
 
 		if state == "up" {
-			envMat.GetMetric(up).SetValueFloat64(instance, 1)
+			upMetric.SetValueFloat64(instance, 1)
 		} else {
-			envMat.GetMetric(up).SetValueFloat64(instance, 0)
+			upMetric.SetValueFloat64(instance, 0)
 		}
 
 		if adminState != state {
-			envMat.GetMetric(errorStatus).SetValueFloat64(instance, 1)
+			errorStatusMetric.SetValueFloat64(instance, 1)
 		} else {
-			envMat.GetMetric(errorStatus).SetValueFloat64(instance, 0)
+			errorStatusMetric.SetValueFloat64(instance, 0)
 		}
 
 		spuriousZero := ethClearCounters == "never" && (ethInBytes == 0 || ethOutBytes == 0)

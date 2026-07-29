@@ -99,6 +99,10 @@ func (s *SnapshotViolation) populateSnapshotViolation(dataMap map[string]*matrix
 	}
 
 	filteredSnapshotStats := s.getFilteredVolumeSnapshotStats(prefixMap)
+	oldestCreateTimeMetric := s.data.MustGetMetric(snapshotviolation.OldestCreateTime)
+	newestCreateTimeMetric := s.data.MustGetMetric(snapshotviolation.NewestCreateTime)
+	violationCountMetric := s.data.MustGetMetric(snapshotviolation.ViolationCount)
+	violationTotalSizeMetric := s.data.MustGetMetric(snapshotviolation.ViolationTotalSize)
 	for _, stats := range filteredSnapshotStats {
 		svm := stats.Svm
 		volume := stats.Volume
@@ -117,21 +121,13 @@ func (s *SnapshotViolation) populateSnapshotViolation(dataMap map[string]*matrix
 			instance.SetLabel("volume", volume)
 		}
 
-		if metric := s.data.GetMetric(snapshotviolation.ViolationCount); metric != nil {
-			metric.SetValueInt64(instance, int64(stats.Count))
-		}
+		violationCountMetric.SetValueInt64(instance, int64(stats.Count))
 
-		if metric := s.data.GetMetric(snapshotviolation.ViolationTotalSize); metric != nil {
-			metric.SetValueInt64(instance, stats.TotalSize)
-		}
+		violationTotalSizeMetric.SetValueInt64(instance, stats.TotalSize)
 
 		if stats.OldestCreateTime > 0 {
-			if metric := s.data.GetMetric(snapshotviolation.OldestCreateTime); metric != nil {
-				metric.SetValueFloat64(instance, float64(stats.OldestCreateTime))
-			}
-			if metric := s.data.GetMetric(snapshotviolation.NewestCreateTime); metric != nil {
-				metric.SetValueFloat64(instance, float64(stats.NewestCreateTime))
-			}
+			oldestCreateTimeMetric.SetValueFloat64(instance, float64(stats.OldestCreateTime))
+			newestCreateTimeMetric.SetValueFloat64(instance, float64(stats.NewestCreateTime))
 		}
 
 	}

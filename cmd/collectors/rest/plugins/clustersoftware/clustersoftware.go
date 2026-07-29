@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
@@ -77,14 +76,7 @@ func (c *ClusterSoftware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 
 func (c *ClusterSoftware) createUpdateMetrics() error {
 	mat := matrix.New(c.Parent+"."+updateMatrix, clusterSoftware, clusterSoftware)
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "phase")
-	instanceKeys.NewChildS("", "state")
-	instanceKeys.NewChildS("", "node")
-	instanceKeys.NewChildS("", "elapsed_duration")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptions("phase", "state", "node", "elapsed_duration"))
 
 	if _, err := mat.NewMetricFloat64(updateMatrix); err != nil {
 		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", updateMatrix))
@@ -97,15 +89,7 @@ func (c *ClusterSoftware) createUpdateMetrics() error {
 
 func (c *ClusterSoftware) createStatusMetrics() error {
 	mat := matrix.New(c.Parent+"."+statusMatrix, clusterSoftware, clusterSoftware)
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "state")
-	instanceKeys.NewChildS("", "node")
-	instanceKeys.NewChildS("", "name")
-	instanceKeys.NewChildS("", "startTime")
-	instanceKeys.NewChildS("", "endTime")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptions("state", "node", "name", "startTime", "endTime"))
 
 	if _, err := mat.NewMetricFloat64(statusMatrix); err != nil {
 		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", statusMatrix))
@@ -118,12 +102,7 @@ func (c *ClusterSoftware) createStatusMetrics() error {
 
 func (c *ClusterSoftware) createValidationMetrics() error {
 	mat := matrix.New(c.Parent+"."+validationMatrix, clusterSoftware, clusterSoftware)
-	exportOptions := node.NewS("export_options")
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "status")
-	instanceKeys.NewChildS("", "update_check")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptions("status", "update_check"))
 
 	if _, err := mat.NewMetricFloat64(validationMatrix); err != nil {
 		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", validationMatrix))

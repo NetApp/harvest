@@ -15,12 +15,14 @@ import (
 	"log/slog"
 	"maps"
 	"slices"
-	"strings"
 
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
+// Matrix and its Metrics/Instances are NOT safe for concurrent mutation. Each poll cycle is
+// expected to own and mutate exactly one Matrix from a single goroutine; share Matrices across
+// goroutines only after all mutation has finished (e.g. read-only access during export).
 type Matrix struct {
 	UUID           string
 	Object         string
@@ -33,39 +35,15 @@ type Matrix struct {
 	exportable     bool
 }
 
-type With struct {
-	Data             bool
-	Metrics          bool
-	Instances        bool
-	ExportInstances  bool
-	PartialInstances bool
-	Labels           []string
-	MetricsNames     []string
-}
-
 func New(uuid, object string, identifier string) *Matrix {
 	me := Matrix{UUID: uuid, Object: object, Identifier: identifier}
 	me.globalLabels = make(map[string]string)
 	me.instances = make(map[string]*Instance)
 	me.metrics = make(map[string]*Metric)
 	me.displayMetrics = make(map[string]string)
+	me.exportOptions = DefaultExportOptions()
 	me.exportable = true
 	return &me
-}
-
-// Print is only for debugging
-func (m *Matrix) Print() {
-	fmt.Println()
-	fmt.Printf(">>> Metrics = %d\n", len(m.metrics))
-	fmt.Printf(">>> Instances = %d\n", len(m.instances))
-	fmt.Println()
-
-	for key, metric := range m.GetMetrics() {
-		fmt.Printf("(%s) (type=%s) (exportable=%v) values= ", key, metric.GetType(), metric.IsExportable())
-		metric.Print()
-		fmt.Println()
-	}
-	fmt.Println()
 }
 
 // IsExportable indicates whether this matrix is meant to be exported or not
@@ -78,30 +56,78 @@ func (m *Matrix) SetExportable(b bool) {
 	m.exportable = b
 }
 
-func (m *Matrix) Clone(with With) *Matrix {
+type cloneOptions struct {
+	copyData                 bool
+	copyMetrics              bool
+	copyInstances            bool
+	preserveExportability    bool
+	preservePartialInstances bool
+	labelNames               []string
+	metricNames              []string
+}
+
+// CloneMetricTemplate copies the matrix metadata and metrics without instances or values.
+func (m *Matrix) CloneMetricTemplate() *Matrix {
+	return m.clone(cloneOptions{copyMetrics: true, preserveExportability: true})
+}
+
+// CloneForCollection copies the matrix metadata, metrics, and instances without metric values.
+func (m *Matrix) CloneForCollection() *Matrix {
+	return m.clone(cloneOptions{
+		copyMetrics:           true,
+		copyInstances:         true,
+		preserveExportability: true,
+	})
+}
+
+// Clone copies all matrix state, including metric values, exportability, and partial instances.
+func (m *Matrix) Clone() *Matrix {
+	return m.clone(cloneOptions{
+		copyData:                 true,
+		copyMetrics:              true,
+		copyInstances:            true,
+		preserveExportability:    true,
+		preservePartialInstances: true,
+	})
+}
+
+// CloneSelected copies selected metrics and labels for comparison. The clone includes metric
+// values and instances, but its instances are not exportable.
+func (m *Matrix) CloneSelected(metricNames, labelNames []string) *Matrix {
+	return m.clone(cloneOptions{
+		copyData:      true,
+		copyMetrics:   len(metricNames) > 0,
+		copyInstances: true,
+		labelNames:    labelNames,
+		metricNames:   metricNames,
+	})
+}
+
+// CloneEmpty copies matrix metadata without metrics or instances.
+func (m *Matrix) CloneEmpty() *Matrix {
+	return m.clone(cloneOptions{preserveExportability: true})
+}
+
+func (m *Matrix) clone(options cloneOptions) *Matrix {
 	clone := &Matrix{
 		UUID:           m.UUID,
 		Object:         m.Object,
 		Identifier:     m.Identifier,
-		globalLabels:   m.globalLabels,
-		exportOptions:  nil,
+		globalLabels:   maps.Clone(m.globalLabels),
+		exportOptions:  m.exportOptions.Copy(),
 		exportable:     m.exportable,
 		displayMetrics: make(map[string]string),
 	}
-	// Deep clone exportOptions if it is not nil
-	if m.exportOptions != nil {
-		clone.exportOptions = m.exportOptions.Copy()
-	}
 
-	if with.Instances {
+	if options.copyInstances {
 		clone.instances = make(map[string]*Instance, len(m.GetInstances()))
 		for key, instance := range m.GetInstances() {
-			if with.ExportInstances {
-				clone.instances[key] = instance.Clone(instance.IsExportable(), with.Labels...)
+			if options.preserveExportability {
+				clone.instances[key] = instance.clone(instance.IsExportable(), options.labelNames...)
 			} else {
-				clone.instances[key] = instance.Clone(false, with.Labels...)
+				clone.instances[key] = instance.clone(false, options.labelNames...)
 			}
-			if with.PartialInstances {
+			if options.preservePartialInstances {
 				clone.instances[key].SetPartial(instance.IsPartial())
 			}
 		}
@@ -109,13 +135,13 @@ func (m *Matrix) Clone(with With) *Matrix {
 		clone.instances = make(map[string]*Instance)
 	}
 
-	if with.Metrics {
-		if len(with.MetricsNames) > 0 {
-			clone.metrics = make(map[string]*Metric, len(with.MetricsNames))
-			for _, metricName := range with.MetricsNames {
+	if options.copyMetrics {
+		if len(options.metricNames) > 0 {
+			clone.metrics = make(map[string]*Metric, len(options.metricNames))
+			for _, metricName := range options.metricNames {
 				metric, ok := m.GetMetrics()[metricName]
 				if ok {
-					c := metric.Clone(with.Data)
+					c := metric.clone(options.copyData)
 					clone.metrics[metricName] = c
 					clone.displayMetrics[c.GetName()] = metricName
 				}
@@ -123,7 +149,7 @@ func (m *Matrix) Clone(with With) *Matrix {
 		} else {
 			clone.metrics = make(map[string]*Metric, len(m.GetMetrics()))
 			for key, metric := range m.GetMetrics() {
-				c := metric.Clone(with.Data)
+				c := metric.clone(options.copyData)
 				clone.metrics[key] = c
 				clone.displayMetrics[c.GetName()] = key
 			}
@@ -159,6 +185,53 @@ func (m *Matrix) GetMetric(key string) *Metric {
 		return metric
 	}
 	return nil
+}
+
+// MustGetMetric returns the metric identified by key, or panics if no such metric exists.
+// Use this only at a point where key is guaranteed to have been registered earlier (e.g. via
+// NewMetricsFloat64/NewMetricFloat64 with the same key) — a panic here means a missing or
+// typo'd key was introduced by a code change, not a runtime condition callers can recover
+// from, so it should fail loudly and immediately rather than be silently logged and ignored.
+func (m *Matrix) MustGetMetric(key string) *Metric {
+	metric := m.GetMetric(key)
+	if metric == nil {
+		panic(fmt.Sprintf("matrix %q: metric %q is not registered", m.Object, key))
+	}
+	return metric
+}
+
+// MustSetValueInt64 MustSetValueUint8, MustSetValueUint64, MustSetValueFloat64, and
+// MustAddValueInt64/MustAddValueUint64 are convenience wrappers around MustGetMetric for the
+// common case of setting/adding a single value on a single already-resolved Instance. Prefer
+// these at single-shot call sites (e.g. once-per-poll-cycle metadata updates). For per-instance
+// loops, resolve the *Metric once via MustGetMetric before the loop instead, so the key lookup
+// isn't repeated per instance.
+func (m *Matrix) MustSetValueInt64(key string, i *Instance, v int64) {
+	m.MustGetMetric(key).SetValueInt64(i, v)
+}
+
+func (m *Matrix) MustSetValueUint8(key string, i *Instance, v uint8) {
+	m.MustGetMetric(key).SetValueUint8(i, v)
+}
+
+func (m *Matrix) MustSetValueUint64(key string, i *Instance, v uint64) {
+	m.MustGetMetric(key).SetValueUint64(i, v)
+}
+
+func (m *Matrix) MustSetValueFloat64(key string, i *Instance, v float64) {
+	m.MustGetMetric(key).SetValueFloat64(i, v)
+}
+
+func (m *Matrix) MustAddValueInt64(key string, i *Instance, v int64) {
+	m.MustGetMetric(key).AddValueInt64(i, v)
+}
+
+func (m *Matrix) MustAddValueUint64(key string, i *Instance, v uint64) {
+	m.MustGetMetric(key).AddValueUint64(i, v)
+}
+
+func (m *Matrix) MustAddValueFloat64(key string, i *Instance, v float64) {
+	m.MustGetMetric(key).AddValueFloat64(i, v)
 }
 
 func (m *Matrix) GetMetrics() map[string]*Metric {
@@ -201,6 +274,30 @@ func (m *Matrix) NewMetricType(key string, dataType string, display ...string) (
 	}
 }
 
+// GetOrCreateMetric returns the existing metric for key if present, otherwise it creates a new one
+// with the given dataType (default "float64" when omitted) and returns it.
+func (m *Matrix) GetOrCreateMetric(key string, dataType ...string) (*Metric, error) {
+	if metric := m.GetMetric(key); metric != nil {
+		return metric, nil
+	}
+	dt := "float64"
+	if len(dataType) > 0 && dataType[0] != "" {
+		dt = dataType[0]
+	}
+	return m.NewMetricType(key, dt)
+}
+
+// NewMetricsFloat64 idempotently ensures a float64 metric exists for each key, creating any that
+// are missing. It returns the first error encountered, wrapped with the offending key.
+func (m *Matrix) NewMetricsFloat64(keys ...string) error {
+	for _, key := range keys {
+		if _, err := m.GetOrCreateMetric(key); err != nil {
+			return fmt.Errorf("error while creating metric %s: %w", key, err)
+		}
+	}
+	return nil
+}
+
 func newAbstract(key string, dataType string, display ...string) *Metric {
 	name := key
 	if len(display) > 0 && display[0] != "" {
@@ -221,11 +318,15 @@ func (m *Matrix) addMetric(key string, metric *Metric) error {
 }
 
 func (m *Matrix) RemoveMetric(key string) {
+	if metric, has := m.metrics[key]; has {
+		delete(m.displayMetrics, metric.GetName())
+	}
 	delete(m.metrics, key)
 }
 
 func (m *Matrix) PurgeMetrics() {
 	m.metrics = make(map[string]*Metric)
+	m.displayMetrics = make(map[string]string)
 }
 
 func (m *Matrix) RemoveExceptMetric(key string) {
@@ -245,16 +346,16 @@ func (m *Matrix) GetInstance(key string) *Instance {
 	return nil
 }
 
-func (m *Matrix) GetInstancesBySuffix(subKey string) []*Instance {
-	var instances []*Instance
-	if subKey != "" {
-		for key, instance := range m.instances {
-			if strings.HasSuffix(key, subKey) {
-				instances = append(instances, instance)
-			}
-		}
+// MustGetInstance returns the instance identified by key, or panics if no such instance exists.
+// Use this only at a point where key is guaranteed to have been registered earlier (e.g. a
+// collector's fixed schedule task names) — a panic here means the instance was never created,
+// which is a programming error, not a runtime condition callers can recover from.
+func (m *Matrix) MustGetInstance(key string) *Instance {
+	instance := m.GetInstance(key)
+	if instance == nil {
+		panic(fmt.Sprintf("matrix %q: instance %q is not registered", m.Object, key))
 	}
-	return instances
+	return instance
 }
 
 func (m *Matrix) GetInstances() map[string]*Instance {
@@ -277,7 +378,7 @@ func (m *Matrix) NewInstance(key string) (*Instance, error) {
 		return nil, errs.New(ErrDuplicateInstanceKey, key)
 	}
 
-	instance = NewInstance(len(m.instances)) // index is current count of instances
+	instance = newInstance(len(m.instances)) // index is current count of instances
 
 	for _, metric := range m.GetMetrics() {
 		metric.Append()
@@ -285,6 +386,23 @@ func (m *Matrix) NewInstance(key string) (*Instance, error) {
 
 	m.instances[key] = instance
 	return instance, nil
+}
+
+// GetOrCreateInstance returns the existing instance for key if present (created=false), otherwise
+// it creates a new instance and returns it with created=true. This lets callers run one-time
+// initialization only when the instance did not already exist:
+//
+//	instance, created := m.GetOrCreateInstance(key)
+//	if created {
+//	    instance.SetLabels(...)
+//	}
+func (m *Matrix) GetOrCreateInstance(key string) (*Instance, bool) {
+	if existing := m.GetInstance(key); existing != nil {
+		return existing, false
+	}
+	// NewInstance can only fail with ErrDuplicateInstanceKey, which GetInstance already ruled out.
+	newInstance, _ := m.NewInstance(key)
+	return newInstance, true
 }
 
 func (m *Matrix) ResetInstance(key string) {
@@ -335,31 +453,62 @@ func (m *Matrix) GetGlobalLabels() map[string]string {
 }
 
 func (m *Matrix) GetExportOptions() *node.Node {
-	if m.exportOptions != nil {
-		return m.exportOptions
-	}
-	return DefaultExportOptions()
+	return m.exportOptions
 }
 
 func (m *Matrix) SetExportOptions(e *node.Node) {
+	if e == nil {
+		m.exportOptions = DefaultExportOptions()
+		return
+	}
 	m.exportOptions = e
 }
 
+// DefaultExportOptions returns export options that mark every instance label as exportable
+// ("include_all_labels"). Use this when a matrix's own export options should not be inherited
+// from another matrix, e.g. after cloning a template matrix for a plugin-computed rollup.
 func DefaultExportOptions() *node.Node {
 	n := node.NewS("export_options")
 	n.NewChildS("include_all_labels", "true")
 	return n
 }
 
-func CreateMetric(key string, data *Matrix) error {
-	var err error
-	at := data.GetMetric(key)
-	if at == nil {
-		if _, err = data.NewMetricFloat64(key); err != nil {
-			return err
-		}
+// NewExportOptions builds the export_options node tree that marks the given labels as the
+// instance_keys to export, equivalent to the commonly hand-built:
+//
+//	exportOptions := node.NewS("export_options")
+//	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+//	for _, k := range keys {
+//	    instanceKeys.NewChildS("", k)
+//	}
+func NewExportOptions(keys ...string) *node.Node {
+	exportOptions := node.NewS("export_options")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+	for _, k := range keys {
+		instanceKeys.NewChildS("", k)
 	}
-	return nil
+	return exportOptions
+}
+
+// NewExportOptionsWithLabels is like NewExportOptions but also adds an instance_labels child
+// with one entry per label, equivalent to the commonly hand-built:
+//
+//	exportOptions := node.NewS("export_options")
+//	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+//	for _, k := range keys {
+//	    instanceKeys.NewChildS("", k)
+//	}
+//	instanceLabels := exportOptions.NewChildS("instance_labels", "")
+//	for _, l := range labels {
+//	    instanceLabels.NewChildS("", l)
+//	}
+func NewExportOptionsWithLabels(keys []string, labels []string) *node.Node {
+	exportOptions := NewExportOptions(keys...)
+	instanceLabels := exportOptions.NewChildS("instance_labels", "")
+	for _, l := range labels {
+		instanceLabels.NewChildS("", l)
+	}
+	return exportOptions
 }
 
 // Delta vector arithmetics
@@ -372,7 +521,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, al
 		return 0, errs.New(errs.ErrMissingMetric, metricKey)
 	}
 	prevRaw := prevMetric.values
-	prevRecord := prevMetric.GetRecords()
+	prevRecord := prevMetric.record
 	for key, currInstance := range m.GetInstances() {
 		// check if this instance key exists in previous matrix
 		prevInstance := prevMat.GetInstance(key)
@@ -443,7 +592,7 @@ func (m *Matrix) Divide(metricKey string, baseKey string) (int, error) {
 		return 0, errs.New(errs.ErrMissingMetric, baseKey)
 	}
 	sValues := base.values
-	sRecord := base.GetRecords()
+	sRecord := base.record
 	if len(metric.values) != len(sValues) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d", len(metric.values), len(sValues)))
 	}
@@ -497,7 +646,7 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 		tValues = time.values
 	}
 	sValues := base.values
-	sRecord := base.GetRecords()
+	sRecord := base.record
 	if len(metric.values) != len(sValues) || len(sValues) != len(tValues) {
 		return 0, errs.New(ErrUnequalVectors, fmt.Sprintf("numerator=%d, denominator=%d, time=%d", len(metric.values), len(sValues), len(tValues)))
 	}

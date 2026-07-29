@@ -9,28 +9,16 @@ import (
 
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
 // initPowerSupplyMatrix creates the matrix for power supply data
 func (h *Hardware) initPowerSupplyMatrix() {
 	mat := matrix.New(h.Parent+"."+powerSupplyMatrix, powerSupplyMatrix, powerSupplyMatrix)
-	exportOptions := node.NewS("export_options")
-
-	instanceKeys := exportOptions.NewChildS("instance_keys", "")
-	instanceKeys.NewChildS("", "id")
-
-	instanceLabels := exportOptions.NewChildS("instance_labels", "")
-	instanceLabels.NewChildS("", "firmware_version")
-	instanceLabels.NewChildS("", "fru_type")
-	instanceLabels.NewChildS("", "part_number")
-	instanceLabels.NewChildS("", "serial_number")
-	instanceLabels.NewChildS("", "status")
-	instanceLabels.NewChildS("", "vendor")
-	instanceLabels.NewChildS("", "slot")
-
-	mat.SetExportOptions(exportOptions)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"id"},
+		[]string{"firmware_version", "fru_type", "part_number", "serial_number", "status", "vendor", "slot"},
+	))
 
 	h.data[powerSupplyMatrix] = mat
 }

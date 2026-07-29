@@ -73,10 +73,8 @@ func (a *Aggregate) initMatrix(name string, data *matrix.Matrix) (*matrix.Matrix
 	instanceKeys.NewChildS("", "tier")
 	mat.SetExportOptions(exportOptions)
 
-	for _, k := range metrics {
-		if err := matrix.CreateMetric(k, mat); err != nil {
-			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
-		}
+	if err := mat.NewMetricsFloat64(metrics...); err != nil {
+		return nil, err
 	}
 
 	return mat, nil
@@ -121,6 +119,8 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		uuidLookup[aggr] = uuid
 	}
 
+	logicalUsedMetric := aggrSpaceMat.MustGetMetric("logical_used")
+	physicalUsedMetric := aggrSpaceMat.MustGetMetric("physical_used")
 	for _, record := range records {
 		aggrName := record.Get("aggregate_name").ClonedString()
 		uuid, has := uuidLookup[aggrName]
@@ -158,7 +158,7 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		instance.SetLabel("bin_num", binNum)
 
 		if logicalUsed != "" {
-			if err := aggrSpaceMat.GetMetric("logical_used").SetValueString(instance, logicalUsed); err != nil {
+			if err := logicalUsedMetric.SetValueString(instance, logicalUsed); err != nil {
 				a.SLogger.Error(
 					"Unable to set value on metric",
 					slogx.Err(err),
@@ -168,7 +168,7 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		}
 
 		if physicalUsed != "" {
-			if err := aggrSpaceMat.GetMetric("physical_used").SetValueString(instance, physicalUsed); err != nil {
+			if err := physicalUsedMetric.SetValueString(instance, physicalUsed); err != nil {
 				a.SLogger.Error(
 					"Unable to set value on metric",
 					slogx.Err(err),

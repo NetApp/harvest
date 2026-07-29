@@ -7,7 +7,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"log/slog"
 )
 
 var metrics = []string{
@@ -33,12 +32,9 @@ func (w *Workload) Init(conf.Remote) error {
 }
 
 func (w *Workload) createMetrics(data *matrix.Matrix) error {
-	for _, k := range metrics {
-		err := matrix.CreateMetric(k, data)
-		if err != nil {
-			w.SLogger.Warn("error while creating metric", slogx.Err(err), slog.String("key", k))
-			return err
-		}
+	if err := data.NewMetricsFloat64(metrics...); err != nil {
+		w.SLogger.Warn("error while creating metric", slogx.Err(err))
+		return err
 	}
 	return nil
 }

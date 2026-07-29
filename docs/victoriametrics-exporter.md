@@ -31,6 +31,7 @@ When using `url`, the `addr` and `port` field will be ignored.
 | `addr`           | string                       | address of the database, format: `HOST` (HTTP only)                                                |         |
 | `port`           | int, optional                | port of the database                                                                               | `8086`  |
 | `client_timeout` | int, optional                | client timeout in seconds                                                                          | `5`     |
+| `sort_labels`    | bool, optional               | sort metric labels before exporting. Required for VictoriaMetrics — without it, VictoriaMetrics will mark series stale if label order changes between polls. | `false` |
 
 ### Example
 
@@ -41,6 +42,7 @@ Exporters:
   my_victoriametrics:
     exporter: VictoriaMetrics
     addr: localhost
+    sort_labels: true
 ```
 
 snippet from `harvest.yml` using `url`: (supports both HTTP/HTTPS))
@@ -50,5 +52,6 @@ Exporters:
   victoriametrics2:
     exporter: VictoriaMetrics
     url: http://localhost:8428/api/v1/import/prometheus
+    sort_labels: true
 ```
 

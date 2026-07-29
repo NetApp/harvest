@@ -356,11 +356,12 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 	}
 
 	// update metadata for collector logs
-	_ = s.Metadata.LazySetValueInt64("api_time", "counter", apiD.Microseconds())
-	_ = s.Metadata.LazySetValueInt64("parse_time", "counter", time.Since(parseT).Microseconds())
-	_ = s.Metadata.LazySetValueUint64("metrics", "counter", uint64(len(s.perfProp.counterInfo)))
-	_ = s.Metadata.LazySetValueUint64("bytesRx", "counter", s.RequestMetadata.BytesRx.Load())
-	_ = s.Metadata.LazySetValueUint64("numCalls", "counter", s.RequestMetadata.NumCalls.Load())
+	counterInst := s.Metadata.MustGetInstance("counter")
+	s.Metadata.MustSetValueInt64("api_time", counterInst, apiD.Microseconds())
+	s.Metadata.MustSetValueInt64("parse_time", counterInst, time.Since(parseT).Microseconds())
+	s.Metadata.MustSetValueUint64("metrics", counterInst, uint64(len(s.perfProp.counterInfo)))
+	s.Metadata.MustSetValueUint64("bytesRx", counterInst, s.RequestMetadata.BytesRx.Load())
+	s.Metadata.MustSetValueUint64("numCalls", counterInst, s.RequestMetadata.NumCalls.Load())
 
 	return nil
 }
@@ -453,7 +454,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	prevMat = s.Matrix[s.Object]
 	// clone matrix without numeric data
-	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat = prevMat.CloneForCollection()
 	curMat.Reset()
 
 	processBatch := func(perfRecords []gjson.Result) {
@@ -523,13 +524,14 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 	apiD += time.Since(startTime)
 
-	_ = s.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = s.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = s.Metadata.LazySetValueUint64("metrics", "data", metricCount)
-	_ = s.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = s.Metadata.LazySetValueUint64("bytesRx", "data", s.RequestMetadata.BytesRx.Load())
-	_ = s.Metadata.LazySetValueUint64("numCalls", "data", s.RequestMetadata.NumCalls.Load())
-	_ = s.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
+	dataInst := s.Metadata.MustGetInstance("data")
+	s.Metadata.MustSetValueInt64("api_time", dataInst, apiD.Microseconds())
+	s.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
+	s.Metadata.MustSetValueUint64("metrics", dataInst, metricCount)
+	s.Metadata.MustSetValueUint64("instances", dataInst, uint64(len(curMat.GetInstances())))
+	s.Metadata.MustSetValueUint64("bytesRx", dataInst, s.RequestMetadata.BytesRx.Load())
+	s.Metadata.MustSetValueUint64("numCalls", dataInst, s.RequestMetadata.NumCalls.Load())
+	s.Metadata.MustSetValueUint64("numPartials", dataInst, numPartials)
 	s.AddCollectCount(metricCount)
 
 	return s.cookCounters(curMat, prevMat)
@@ -557,6 +559,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 		return 0, 0, 0
 	}
 
+	timestampMetric := curMat.MustGetMetric(timestampMetricName)
 	perfRecords.ForEach(func(_, data gjson.Result) bool {
 		var instanceKey string
 		var instanceKeyValues []string
@@ -739,7 +742,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 					s.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metricName))
 				}
 			}
-			if err = curMat.GetMetric(timestampMetricName).SetValueString(instance, ts); err != nil {
+			if err = timestampMetric.SetValueString(instance, ts); err != nil {
 				s.Logger.Error("Failed to set timestamp", slogx.Err(err))
 			}
 			return true
@@ -778,7 +781,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	calcStart := time.Now()
 
 	// cache raw data for next poll
-	cachedData := curMat.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true, PartialInstances: true})
+	cachedData := curMat.Clone()
 
 	orderedNonDenominatorMetrics := make([]*matrix.Metric, 0, len(curMat.GetMetrics()))
 	orderedNonDenominatorKeys := make([]string, 0, len(orderedNonDenominatorMetrics))
@@ -942,9 +945,10 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	}
 
 	calcD := time.Since(calcStart)
-	_ = s.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = s.Metadata.LazySetValueInt64("calc_time", "data", calcD.Microseconds())
-	_ = s.Metadata.LazySetValueUint64("skips", "data", uint64(totalSkips)) //nolint:gosec
+	calcDataInst := s.Metadata.MustGetInstance("data")
+	s.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
+	s.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
+	s.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
 
 	// store cache for next poll
 	s.Matrix[s.Object] = cachedData
@@ -1094,11 +1098,12 @@ func (s *StatPerf) pollInstance(mat *matrix.Matrix, records []gjson.Result, apiD
 	s.Logger.Debug("instances", slog.Int("new", added), slog.Int("removed", removed), slog.Int("total", newSize))
 
 	// update metadata for collector logs
-	_ = s.Metadata.LazySetValueInt64("api_time", "instance", apiD.Microseconds())
-	_ = s.Metadata.LazySetValueInt64("parse_time", "instance", time.Since(parseT).Microseconds())
-	_ = s.Metadata.LazySetValueUint64("instances", "instance", uint64(newSize))
-	_ = s.Metadata.LazySetValueUint64("bytesRx", "instance", s.RequestMetadata.BytesRx.Load())
-	_ = s.Metadata.LazySetValueUint64("numCalls", "instance", s.RequestMetadata.NumCalls.Load())
+	instanceInst := s.Metadata.MustGetInstance("instance")
+	s.Metadata.MustSetValueInt64("api_time", instanceInst, apiD.Microseconds())
+	s.Metadata.MustSetValueInt64("parse_time", instanceInst, time.Since(parseT).Microseconds())
+	s.Metadata.MustSetValueUint64("instances", instanceInst, uint64(newSize))
+	s.Metadata.MustSetValueUint64("bytesRx", instanceInst, s.RequestMetadata.BytesRx.Load())
+	s.Metadata.MustSetValueUint64("numCalls", instanceInst, s.RequestMetadata.NumCalls.Load())
 
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+s.Object+" instances on cluster")
