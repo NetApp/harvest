@@ -28,6 +28,7 @@ nav:
       - 'StorageGRID': 'prepare-storagegrid-clusters.md'
       - 'E-Series': 'prepare-eseries.md'
       - 'Cisco Switches': 'prepare-cisco-switch.md'
+      - 'Arista Switches': 'prepare-arista-switch.md'
   - Configure Harvest (basic): 'configure-harvest-basic.md'
   - Configure Exporters:
       - 'Prometheus': 'prometheus-exporter.md'
@@ -44,6 +45,7 @@ nav:
       - 'E-Series': 'configure-eseries.md'
       - 'Unix': 'configure-unix.md'
       - 'CiscoRest': 'configure-cisco-rest.md'
+      - 'AristaRest': 'configure-arista-rest.md'
   - Templates: 'configure-templates.md'
   - Dashboards: 'dashboards.md'
   - Manage Harvest Pollers: 'manage-harvest.md'
