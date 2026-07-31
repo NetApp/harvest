@@ -28,6 +28,9 @@ plugins:
         - type root_svm `data` `No`
         - type root_svm `node` `Yes`
         - type root_svm `admin` `Yes`
+      replace_regex:
+        - audit_protocol_enabled audit_protocol_enabled `^$` `false`      # audit_protocol_enabled is missing in ZAPI response when audit logs disabled
+        - cifs_protocol_enabled cifs_protocol_enabled `^$` `false`      # cifs_protocol_enabled is missing in ZAPI response when cifs service disabled
       value_to_num:
         - new_status state running running `0`
         - ldap_signed ldap_session_security sign sign `0`
