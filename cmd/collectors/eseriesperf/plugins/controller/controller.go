@@ -102,12 +102,12 @@ func (c *Controller) buildControllerLabelMap(arrayID string) (map[string]string,
 	}
 
 	for _, controller := range controllers {
-		controllerID := controller.Get("controllerRef").String()
+		controllerID := controller.Get("controllerRef").ClonedString()
 		if controllerID == "" {
-			controllerID = controller.Get("id").String()
+			controllerID = controller.Get("id").ClonedString()
 		}
 
-		label := controller.Get("physicalLocation.label").String()
+		label := controller.Get("physicalLocation.label").ClonedString()
 
 		if controllerID != "" && label != "" {
 			controllerLabels[controllerID] = label
