@@ -301,7 +301,7 @@ func (c *CmPerf) verifyChecksum(filePath, checksumURL string) error {
 	return nil
 }
 
-// isCompleteCollection reports true only for exactly {CompleteCollection} or {CompleteCollection, NoAdditionalStatus}, any order.
+// isCompleteCollection reports true when the only status codes present are CompleteCollection and optionally NoAdditionalStatus (any order; may repeat).
 func isCompleteCollection(statuses []cmmetrics.StatusCode) bool {
 	hasComplete := false
 	for _, sc := range statuses {
