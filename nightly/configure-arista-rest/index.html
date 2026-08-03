@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../log-collection/">
+        <link rel="prev" href="../configure-cisco-rest/">
       
       
-        <link rel="next" href="../../resources/ems-alert-runbook/">
+        <link rel="next" href="../configure-templates/">
       
       
-      <link rel="icon" href="../../assets/harvest.svg">
+      <link rel="icon" href="../assets/harvest.svg">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
-        <title>Config Collection - Harvest</title>
+        <title>AristaRest - Harvest</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,9 +46,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/extra.css">
+      <link rel="stylesheet" href="../assets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#harvest-config-collection-guide" class="md-skip">
+        <a href="#aristarest-collector" class="md-skip">
           Skip to content
         </a>
       
@@ -94,9 +94,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../../assets/harvest.svg" alt="logo">
+  <img src="../assets/harvest.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Config Collection
+              AristaRest
             
           </span>
         </div>
@@ -236,9 +236,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../../assets/harvest.svg" alt="logo">
+  <img src="../assets/harvest.svg" alt="logo">
 
     </a>
     Harvest
@@ -265,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -285,7 +285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/" class="md-nav__link">
+      <a href="../concepts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -305,7 +305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -362,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/overview/" class="md-nav__link">
+      <a href="../install/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -383,7 +383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/package-managers/" class="md-nav__link">
+      <a href="../install/package-managers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -441,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/containers/" class="md-nav__link">
+      <a href="../install/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -462,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/k8/" class="md-nav__link">
+      <a href="../install/k8/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -483,7 +483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/podman/" class="md-nav__link">
+      <a href="../install/podman/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -504,7 +504,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/quadlet/" class="md-nav__link">
+      <a href="../install/quadlet/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -525,7 +525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/containerd/" class="md-nav__link">
+      <a href="../install/containerd/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -554,7 +554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/native/" class="md-nav__link">
+      <a href="../install/native/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -582,7 +582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system-requirements/" class="md-nav__link">
+      <a href="../system-requirements/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -639,7 +639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -660,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../asar2/" class="md-nav__link">
+      <a href="../asar2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -681,7 +681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../gcnv-ontap-mode/" class="md-nav__link">
+      <a href="../gcnv-ontap-mode/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -702,7 +702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -723,7 +723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -744,7 +744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -765,7 +765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-eseries/" class="md-nav__link">
+      <a href="../prepare-eseries/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -786,7 +786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-cisco-switch/" class="md-nav__link">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -807,7 +807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-arista-switch/" class="md-nav__link">
+      <a href="../prepare-arista-switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -835,7 +835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-harvest-basic/" class="md-nav__link">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -892,7 +892,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prometheus-exporter/" class="md-nav__link">
+      <a href="../prometheus-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -913,7 +913,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../influxdb-exporter/" class="md-nav__link">
+      <a href="../influxdb-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -934,7 +934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../victoriametrics-exporter/" class="md-nav__link">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -962,7 +962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-grafana/" class="md-nav__link">
+      <a href="../configure-grafana/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -979,19 +979,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
         
           
           <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
@@ -1005,7 +1007,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             Configure Collectors
@@ -1019,7 +1021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-zapi/" class="md-nav__link">
+      <a href="../configure-zapi/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1040,7 +1042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-rest/" class="md-nav__link">
+      <a href="../configure-rest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1061,7 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-keyperf/" class="md-nav__link">
+      <a href="../configure-keyperf/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1082,7 +1084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-statperf/" class="md-nav__link">
+      <a href="../configure-statperf/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1103,7 +1105,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-ems/" class="md-nav__link">
+      <a href="../configure-ems/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1124,7 +1126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-storagegrid/" class="md-nav__link">
+      <a href="../configure-storagegrid/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1145,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-eseries/" class="md-nav__link">
+      <a href="../configure-eseries/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1166,7 +1168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-unix/" class="md-nav__link">
+      <a href="../configure-unix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1187,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-cisco-rest/" class="md-nav__link">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1205,10 +1207,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../configure-arista-rest/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    AristaRest
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1217,6 +1237,108 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#aristarest-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      AristaRest Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AristaRest Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#target-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Target System
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#harvest-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Harvest configuration file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aristarest-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      AristaRest configuration file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object configuration file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1236,7 +1358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-templates/" class="md-nav__link">
+      <a href="../configure-templates/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1256,7 +1378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dashboards/" class="md-nav__link">
+      <a href="../dashboards/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1276,7 +1398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../manage-harvest/" class="md-nav__link">
+      <a href="../manage-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1296,7 +1418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-harvest-advanced/" class="md-nav__link">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1316,7 +1438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../monitor-harvest/" class="md-nav__link">
+      <a href="../monitor-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1373,7 +1495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mcp/overview/" class="md-nav__link">
+      <a href="../mcp/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1394,7 +1516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mcp/installation/" class="md-nav__link">
+      <a href="../mcp/installation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1415,7 +1537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mcp/examples/" class="md-nav__link">
+      <a href="../mcp/examples/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1440,21 +1562,19 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
         
           
           <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
@@ -1468,7 +1588,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_17">
             <span class="md-nav__icon md-icon"></span>
             Help
@@ -1482,7 +1602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../troubleshooting/" class="md-nav__link">
+      <a href="../help/troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1503,7 +1623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../faq/" class="md-nav__link">
+      <a href="../help/faq/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1524,7 +1644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../log-collection/" class="md-nav__link">
+      <a href="../help/log-collection/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1542,30 +1662,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Config Collection
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../help/config-collection/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1574,62 +1674,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#rpm-deb-and-native-installations" class="md-nav__link">
-    <span class="md-ellipsis">
-      RPM, DEB, and Native Installations
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#docker-container" class="md-nav__link">
-    <span class="md-ellipsis">
-      Docker Container
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#nabox3" class="md-nav__link">
-    <span class="md-ellipsis">
-      NABox3
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#nabox4" class="md-nav__link">
-    <span class="md-ellipsis">
-      NABox4
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1686,7 +1730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/ems-alert-runbook/" class="md-nav__link">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1707,7 +1751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/matrix/" class="md-nav__link">
+      <a href="../resources/matrix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1728,7 +1772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ontap-metrics/" class="md-nav__link">
+      <a href="../ontap-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1749,7 +1793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../storagegrid-metrics/" class="md-nav__link">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1770,7 +1814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cisco-switch-metrics/" class="md-nav__link">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1791,7 +1835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../arista-switch-metrics/" class="md-nav__link">
+      <a href="../arista-switch-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1812,7 +1856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../eseries-metrics/" class="md-nav__link">
+      <a href="../eseries-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1833,7 +1877,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/power-algorithm/" class="md-nav__link">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1854,7 +1898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../plugins/" class="md-nav__link">
+      <a href="../plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1875,7 +1919,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/rest-perf-metrics/" class="md-nav__link">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1896,7 +1940,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/rest-strategy/" class="md-nav__link">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1917,7 +1961,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/templates-and-metrics/" class="md-nav__link">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1938,7 +1982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../create-storagegrid-dashboard/" class="md-nav__link">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1959,7 +2003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/zapi-and-rest-gap/" class="md-nav__link">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2024,7 +2068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../license/" class="md-nav__link">
+      <a href="../license/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2045,7 +2089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../release-notes/" class="md-nav__link">
+      <a href="../release-notes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2083,8 +2127,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -2093,38 +2135,86 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#rpm-deb-and-native-installations" class="md-nav__link">
+  <a href="#aristarest-collector" class="md-nav__link">
     <span class="md-ellipsis">
-      RPM, DEB, and Native Installations
+      AristaRest Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AristaRest Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#target-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Target System
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#docker-container" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
     <span class="md-ellipsis">
-      Docker Container
+      Requirements
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#nabox3" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
     <span class="md-ellipsis">
-      NABox3
+      Metrics
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#nabox4" class="md-nav__link">
+  <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
-      NABox4
+      Parameters
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#harvest-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Harvest configuration file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aristarest-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      AristaRest configuration file
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object configuration file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2143,37 +2233,151 @@
                   
 
 
-<h1 id="harvest-config-collection-guide">Harvest Config Collection Guide<a class="headerlink" href="#harvest-config-collection-guide" title="Permanent link">&para;</a></h1>
-<p>This guide is designed to help you validate your Harvest configuration (<code>harvest.yml</code>) on various platforms.
-The commands in this guide will generate redacted output that personally identifiable information (PII) removed.
-This makes it safe for you to share the output.
-Follow the instructions specific to your platform.
-If you wish to share it with the Harvest team,
-please email them at <a href="mailto:ng-harvest-files@netapp.com">ng-harvest-files@netapp.com</a>.</p>
-<h2 id="rpm-deb-and-native-installations">RPM, DEB, and Native Installations<a class="headerlink" href="#rpm-deb-and-native-installations" title="Permanent link">&para;</a></h2>
-<p>To print a redacted version of your Harvest configuration to the console, use the following command:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/opt/harvest
-<span class="nb">export</span><span class="w"> </span><span class="nv">CONFIG_FILE_NAME</span><span class="o">=</span>harvest.yml
-bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print<span class="w"> </span>--config<span class="w"> </span><span class="nv">$CONFIG_FILE_NAME</span>
+  <h1>AristaRest</h1>
+
+<h2 id="aristarest-collector">AristaRest Collector<a class="headerlink" href="#aristarest-collector" title="Permanent link">&para;</a></h2>
+<p>The AristaRest collector uses eAPI (JSON-RPC <code>runCmds</code>) calls to collect data from Arista switches.</p>
+<h3 id="target-system">Target System<a class="headerlink" href="#target-system" title="Permanent link">&para;</a></h3>
+<p>Harvest supports all Arista switches that include support for Arista EOS Command API (eAPI).</p>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
+<p>The eAPI feature must be enabled on the switch. No SDK or other requirements. It is recommended to create a read-only user for Harvest on the Arista switch (see
+<a href="../prepare-arista-switch/">prepare monitored clusters</a> for details)</p>
+<h3 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
+<p>The collector collects a dynamic set of metrics via Arista's eAPI. The switch returns JSON documents, and unlike other
+Harvest collectors, the AristaRest collector does not provide template customization.</p>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<p>The parameters of the collector are distributed across three files:</p>
+<ul>
+<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
+<li>AristaRest configuration file (default: <code>conf/aristarest/default.yaml</code>)</li>
+<li>Each object has its own configuration file (located in <code>conf/aristarest/eos/$version/</code>)</li>
+</ul>
+<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the AristaRest collector can be defined in any of these three files. Parameters defined in a lower-level file override those in higher-level files. This allows you to configure each object individually or use the same parameters for all objects.</p>
+<p>The full set of parameters are described <a href="#harvest-configuration-file">below</a>.</p>
+<h3 id="harvest-configuration-file">Harvest configuration file<a class="headerlink" href="#harvest-configuration-file" title="Permanent link">&para;</a></h3>
+<p>Parameters in the poller section should define the following required parameters.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Poller name (header)</td>
+<td>string, <strong>required</strong></td>
+<td>Poller name, user-defined value</td>
+<td></td>
+</tr>
+<tr>
+<td><code>addr</code></td>
+<td>string, <strong>required</strong></td>
+<td>IPv4, IPv6 or FQDN of the target system</td>
+<td></td>
+</tr>
+<tr>
+<td><code>datacenter</code></td>
+<td>string, <strong>required</strong></td>
+<td>Datacenter name, user-defined value</td>
+<td></td>
+</tr>
+<tr>
+<td><code>username</code>, <code>password</code></td>
+<td>string, <strong>required</strong></td>
+<td>Arista switch username and password with at least <code>network-operator</code> permissions</td>
+<td></td>
+</tr>
+<tr>
+<td><code>collectors</code></td>
+<td>list, <strong>required</strong></td>
+<td>Name of collector to run for this poller, use <code>AristaRest</code> for this collector</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="aristarest-configuration-file">AristaRest configuration file<a class="headerlink" href="#aristarest-configuration-file" title="Permanent link">&para;</a></h3>
+<p>This configuration file contains a list of objects that should be collected and the filenames of their templates (explained in the next section).</p>
+<p>Additionally, this file contains the parameters that are applied as defaults to all objects. As mentioned before, any
+of these parameters can be defined in the Harvest or object configuration files as well.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_timeout</code></td>
+<td>duration (Go-syntax)</td>
+<td>how long to wait for server responses</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>schedule</code></td>
+<td>list, <strong>required</strong></td>
+<td>how frequently to retrieve metrics from the switch</td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>data</code></td>
+<td>duration (Go-syntax)</td>
+<td>how frequently this collector/object should retrieve metrics from the switch</td>
+<td>3 minutes</td>
+</tr>
+</tbody>
+</table>
+<p>The template should define objects in the <code>objects</code> section. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Optic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">optic.yaml</span>
 </code></pre></div>
-<h2 id="docker-container">Docker Container<a class="headerlink" href="#docker-container" title="Permanent link">&para;</a></h2>
-<p>For Docker containers, use the following command to print a redacted version of your Harvest configuration to the console:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>to/where/your/harvest.yml/is
-<span class="nb">export</span><span class="w"> </span><span class="nv">CONFIG_FILE_NAME</span><span class="o">=</span>harvest.yml
-docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/</span><span class="nv">$CONFIG_FILE_NAME</span><span class="s2">:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span>ghcr.io/netapp/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
-</code></pre></div>
-<h2 id="nabox3">NABox3<a class="headerlink" href="#nabox3" title="Permanent link">&para;</a></h2>
-<p>If you're using NABox3, you'll need to <a href="https://nabox.org/documentation/configuration/">ssh</a> into your NABox instance.
-Then, use the following command to print a redacted version of your Harvest configuration to the console:</p>
-<div class="highlight"><pre><span></span><code>dc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-w<span class="w"> </span>/conf<span class="w"> </span>nabox-harvest2<span class="w"> </span>/netapp-harvest/bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
-</code></pre></div>
-<h2 id="nabox4">NABox4<a class="headerlink" href="#nabox4" title="Permanent link">&para;</a></h2>
-<p>If you're using NABox4, you'll need to <a href="https://nabox.org/documentation/configuration/">ssh</a> into your NABox instance.
-Then, use the following command to print a redacted version of your Harvest configuration to the console:</p>
-<div class="highlight"><pre><span></span><code>dc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-w<span class="w"> </span>/harvest<span class="w"> </span>-e<span class="w"> </span><span class="nv">HARVEST_CONF</span><span class="o">=</span>/harvest-conf<span class="w"> </span>harvest<span class="w"> </span>/harvest/bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
-</code></pre></div>
-<p>If your configuration file name is different from the default <code>harvest.yml</code>,
-remember to change the <code>CONFIG_FILE_NAME</code> environment variable to match your file name.</p>
+<p>For each object, we define the filename of the object configuration file. The object configuration files
+are located in subdirectories matching the AristaRest version that was used to create these files. It is possible to
+have multiple version-subdirectories for multiple AristaRest versions. At runtime, the collector will select the object
+configuration file that closest matches the version of the target AristaRest system.</p>
+<h3 id="object-configuration-file">Object configuration file<a class="headerlink" href="#object-configuration-file" title="Permanent link">&para;</a></h3>
+<p>The Object configuration file ("subtemplate") should contain the following parameters:</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string, <strong>required</strong></td>
+<td>display name of the collector that will collect this object</td>
+<td></td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>string, <strong>required</strong></td>
+<td>Arista switch CLI show command(s) used to issue an eAPI request, separate multiple commands with <code>;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>object</code></td>
+<td>string, <strong>required</strong></td>
+<td>short name of the object</td>
+<td></td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td>list</td>
+<td>plugins and their parameters to run on the collected data</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -2250,12 +2454,12 @@ remember to change the <code>CONFIG_FILE_NAME</code> environment variable to mat
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
-        <script src="../../javascripts/open-dashboards.js"></script>
+        <script src="../javascripts/open-dashboards.js"></script>
       
     
   </body>

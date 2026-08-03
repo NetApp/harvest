@@ -12,7 +12,7 @@
         <link rel="prev" href="../configure-unix/">
       
       
-        <link rel="next" href="../configure-templates/">
+        <link rel="next" href="../configure-arista-rest/">
       
       
       <link rel="icon" href="../assets/harvest.svg">
@@ -800,6 +800,27 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-arista-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arista Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1297,6 +1318,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-arista-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AristaRest
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -2279,20 +2321,14 @@ of these parameters can be defined in the Harvest or object configuration files 
 <tr>
 <td><code>schedule</code></td>
 <td>list, <strong>required</strong></td>
-<td>how frequently to retrieve metrics from StorageGRID</td>
+<td>how frequently to retrieve metrics from the switch</td>
 <td></td>
 </tr>
 <tr>
 <td>- <code>data</code></td>
 <td>duration (Go-syntax)</td>
-<td>how frequently this collector/object should retrieve metrics from StorageGRID</td>
+<td>how frequently this collector/object should retrieve metrics from the switch</td>
 <td>5 minutes</td>
-</tr>
-<tr>
-<td><code>only_cluster_instance</code></td>
-<td>bool, optional</td>
-<td>don't require instance key. assume the only instance is the cluster itself</td>
-<td></td>
 </tr>
 </tbody>
 </table>
