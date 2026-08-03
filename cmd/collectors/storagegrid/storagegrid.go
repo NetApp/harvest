@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/bucket"
+	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/grid"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/joinrest"
 	srest "github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -500,6 +501,8 @@ func (s *StorageGrid) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin
 		return NewTenant(abc, s)
 	case "JoinRest":
 		return joinrest.New(abc)
+	case "Grid":
+		return grid.New(abc)
 	default:
 		s.Logger.Warn("plugin not found", slog.String("kind", kind))
 	}

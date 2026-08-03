@@ -9,6 +9,7 @@
   "storagegrid_ilm_awaiting_total_objects": "Total number of objects on this node awaiting ILM evaluation",
   "storagegrid_ilm_objects_processed": "Objects processed by ILM that actually had work done",
   "storagegrid_ilm_scan_objects_per_second": "ILM scan rate (objects per second)",
+  "storagegrid_labels": "Represent the detail of the grid, including its version, systemId, and the poller-configured address",
   "storagegrid_metadata_queries_average_latency_milliseconds": "Average metadata query latency in milliseconds",
   "storagegrid_network_received_bytes": "Total amount of data received",
   "storagegrid_network_transmitted_bytes": "Total amount of data sent",
