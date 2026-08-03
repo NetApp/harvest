@@ -1,8 +1,9 @@
 {
+  "__elements": {},
   "__inputs": [
     {
       "description": "",
-      "label": "Prometheus",
+      "label": "prometheus",
       "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
       "pluginName": "Prometheus",
@@ -14,7 +15,7 @@
       "id": "grafana",
       "name": "Grafana",
       "type": "grafana",
-      "version": "8.1.8"
+      "version": "12.3.2"
     },
     {
       "id": "prometheus",
@@ -35,12 +36,6 @@
       "version": ""
     },
     {
-      "id": "text",
-      "name": "Text",
-      "type": "panel",
-      "version": ""
-    },
-    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -51,7 +46,9 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -66,12 +63,10 @@
       }
     ]
   },
-  "description": "",
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1771439614355,
   "links": [
     {
       "asDropdown": true,
@@ -91,7 +86,6 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,14 +98,23 @@
       "type": "row"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "Displays detail of the Switches.",
       "fieldConfig": {
         "defaults": {
           "custom": {
             "align": "left",
-            "displayMode": "auto",
-            "filterable": true
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
           },
           "decimals": 0,
           "mappings": [],
@@ -120,7 +123,7 @@
             "steps": [
               {
                 "color": "rgba(217, 91, 91, 0.74)",
-                "value": null
+                "value": 0
               },
               {
                 "color": "rgb(101, 201, 87)",
@@ -222,15 +225,8 @@
         "y": 1
       },
       "id": 5,
-      "interval": "",
       "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
+        "cellHeight": "sm",
         "showHeader": true,
         "sortBy": [
           {
@@ -239,10 +235,13 @@
           }
         ]
       },
-      "pluginVersion": "8.1.8",
+      "pluginVersion": "12.3.2",
       "targets": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "arista_switch_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
@@ -251,7 +250,10 @@
           "refId": "A"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "arista_switch_uptime{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
@@ -289,7 +291,16 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {},
+            "excludeByName": {
+              "architecture 2": true,
+              "hardwareRevision 2": true,
+              "hostname 2": true,
+              "model 2": true,
+              "osVersion 2": true,
+              "serial 2": true,
+              "systemMac 2": true
+            },
+            "includeByName": {},
             "indexByName": {
               "Value #E": 8,
               "architecture": 5,
@@ -304,13 +315,20 @@
             "renameByName": {
               "Value #E": "Uptime",
               "architecture": "Architecture",
+              "architecture 1": "Architecture",
               "hardwareRevision": "HW Revision",
+              "hardwareRevision 1": "Hardware Revision",
               "hostname": "Hostname",
+              "hostname 1": "Hostname",
               "model": "Model",
+              "model 1": "Model",
               "osVersion": "OS Version",
+              "osVersion 1": "OS Version",
               "serial": "Serial",
+              "serial 1": "Serial",
               "switch": "Switch",
-              "systemMac": "System MAC"
+              "systemMac": "System MAC",
+              "systemMac 1": "Mac Address"
             }
           }
         }
@@ -319,7 +337,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -329,7 +346,10 @@
       "id": 7,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "This panel displays total power of all switches.",
           "fieldConfig": {
             "defaults": {
@@ -343,7 +363,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -355,7 +375,7 @@
             "h": 10,
             "w": 7,
             "x": 0,
-            "y": 2
+            "y": 9
           },
           "id": 33,
           "options": {
@@ -363,6 +383,7 @@
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
+            "percentChangeColorMode": "standard",
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -370,13 +391,18 @@
               "fields": "",
               "values": false
             },
+            "showPercentChange": false,
             "text": {},
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum(arista_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "format": "time_series",
@@ -391,7 +417,10 @@
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "This panel displays PSU efficiency.",
           "fieldConfig": {
             "defaults": {
@@ -405,7 +434,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -417,7 +446,7 @@
             "h": 10,
             "w": 7,
             "x": 7,
-            "y": 2
+            "y": 9
           },
           "id": 9,
           "options": {
@@ -425,6 +454,7 @@
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
+            "percentChangeColorMode": "standard",
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -432,13 +462,18 @@
               "fields": "",
               "values": false
             },
+            "showPercentChange": false,
             "text": {},
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "expr": "sum(arista_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})\n/\n  sum(arista_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "hide": false,
               "legendFormat": "PSU efficiency",
@@ -449,7 +484,10 @@
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays power consumption detail.",
           "fieldConfig": {
             "defaults": {
@@ -457,9 +495,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -468,6 +510,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -475,6 +518,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -491,11 +535,10 @@
                 "steps": [
                   {
                     "color": "transparent",
-                    "value": null
+                    "value": 0
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -507,7 +550,7 @@
             "h": 10,
             "w": 10,
             "x": 14,
-            "y": 2
+            "y": 9
           },
           "id": 8,
           "options": {
@@ -519,7 +562,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -527,9 +571,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(arista_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
               "interval": "3m",
@@ -537,6 +585,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch) (arista_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "interval": "3m",
@@ -544,6 +596,10 @@
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(arista_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
               "interval": "3m",
@@ -551,6 +607,10 @@
               "refId": "C"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch) (arista_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "interval": "3m",
@@ -558,20 +618,27 @@
               "refId": "D"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Power Consumption",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays detail of the PSUs. `power_out / power_capacity` would be the usage % of that PSU.",
           "fieldConfig": {
             "defaults": {
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
-                "filterable": true
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
               },
               "decimals": 2,
               "mappings": [],
@@ -580,7 +647,7 @@
                 "steps": [
                   {
                     "color": "rgba(217, 91, 91, 0.74)",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "rgb(101, 201, 87)",
@@ -662,8 +729,11 @@
                     ]
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
                   }
                 ]
               },
@@ -685,18 +755,11 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 119
           },
           "id": 35,
-          "interval": "",
           "options": {
-            "footer": {
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
+            "cellHeight": "sm",
             "showHeader": true,
             "sortBy": [
               {
@@ -705,9 +768,13 @@
               }
             ]
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
@@ -718,6 +785,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\n/\n  arista_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
@@ -728,6 +799,10 @@
               "refId": "B"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_power_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
@@ -791,7 +866,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -801,7 +875,10 @@
       "id": 11,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays detail of the temperature.",
           "fieldConfig": {
             "defaults": {
@@ -809,9 +886,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -820,6 +901,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -827,6 +909,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -843,11 +926,10 @@
                 "steps": [
                   {
                     "color": "transparent",
-                    "value": null
+                    "value": 0
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -871,7 +953,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -879,9 +962,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      arista_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "3m",
@@ -889,20 +976,27 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Sensor Temperatures",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays detail of the Fans.",
           "fieldConfig": {
             "defaults": {
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
-                "filterable": true
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
               },
               "decimals": 2,
               "mappings": [],
@@ -911,7 +1005,7 @@
                 "steps": [
                   {
                     "color": "rgba(217, 91, 91, 0.74)",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "rgb(101, 201, 87)",
@@ -977,8 +1071,11 @@
                     ]
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
                   }
                 ]
               },
@@ -1004,24 +1101,21 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 101
           },
           "id": 18,
-          "interval": "",
           "options": {
-            "footer": {
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
+            "cellHeight": "sm",
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_fan_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
@@ -1032,6 +1126,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_environment_fan_speed{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
@@ -1092,7 +1190,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1102,7 +1199,10 @@
       "id": 22,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays power of Transceiver RX.",
           "fieldConfig": {
             "defaults": {
@@ -1110,9 +1210,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1121,6 +1225,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1128,6 +1233,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1144,11 +1250,10 @@
                 "steps": [
                   {
                     "color": "transparent",
-                    "value": null
+                    "value": 0
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -1171,7 +1276,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1179,9 +1285,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_optic_rx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      arista_optic_rx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "3m",
@@ -1189,13 +1299,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Transceiver RX Power",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays power of Transceiver TX.",
           "fieldConfig": {
             "defaults": {
@@ -1203,9 +1314,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1214,6 +1329,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1221,6 +1337,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1237,11 +1354,10 @@
                 "steps": [
                   {
                     "color": "transparent",
-                    "value": null
+                    "value": 0
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -1264,7 +1380,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1272,9 +1389,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_optic_tx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      arista_optic_tx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "3m",
@@ -1282,8 +1403,6 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Transceiver TX Power",
           "type": "timeseries"
         }
@@ -1293,7 +1412,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1303,7 +1421,10 @@
       "id": 30,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "This table tracks hardware switch traffic for all supported network interface cards.",
           "fieldConfig": {
             "defaults": {
@@ -1312,8 +1433,14 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
               },
               "mappings": [],
               "thresholds": {
@@ -1321,7 +1448,7 @@
                 "steps": [
                   {
                     "color": "text",
-                    "value": null
+                    "value": 0
                   }
                 ]
               }
@@ -1338,8 +1465,11 @@
                     "value": "Bps"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   },
                   {
                     "id": "color",
@@ -1360,8 +1490,11 @@
                     "value": "Bps"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   },
                   {
                     "id": "color",
@@ -1381,11 +1514,16 @@
           },
           "id": 48,
           "options": {
+            "cellHeight": "sm",
             "showHeader": true
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "rate(\n  arista_interface_transmit_bytes{datacenter=~\"$Datacenter\",description!=\"\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n)",
               "format": "table",
@@ -1395,6 +1533,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "rate(\n  arista_interface_receive_bytes{datacenter=~\"$Datacenter\",description!=\"\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n)",
               "format": "table",
@@ -1468,7 +1610,10 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays total send traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1476,9 +1621,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1487,6 +1636,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1494,6 +1644,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1510,11 +1661,10 @@
                 "steps": [
                   {
                     "color": "transparent",
-                    "value": null
+                    "value": 0
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -1526,7 +1676,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 58
           },
           "id": 28,
           "options": {
@@ -1538,7 +1688,8 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1546,9 +1697,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_transmit_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_transmit_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
@@ -1556,13 +1711,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Interface Send Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays total receive traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1570,9 +1726,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1581,6 +1741,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1588,6 +1749,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1604,11 +1766,10 @@
                 "steps": [
                   {
                     "color": "transparent",
-                    "value": null
+                    "value": 0
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -1620,7 +1781,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 58
           },
           "id": 29,
           "options": {
@@ -1632,7 +1793,8 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1640,9 +1802,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_receive_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_receive_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
@@ -1650,13 +1816,14 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Interface Receive Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays drop packets per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1697,12 +1864,10 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "transparent",
-                    "value": null
+                    "color": "transparent"
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -1714,7 +1879,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 66
           },
           "id": 31,
           "options": {
@@ -1726,7 +1891,8 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1737,6 +1903,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_receive_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_receive_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
@@ -1744,6 +1914,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_transmit_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_transmit_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
@@ -1751,13 +1925,14 @@
               "refId": "B"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Interface Drops",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays errors per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1798,12 +1973,10 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "transparent",
-                    "value": null
+                    "color": "transparent"
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -1815,7 +1988,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 66
           },
           "id": 32,
           "options": {
@@ -1827,7 +2000,8 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1838,6 +2012,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_transmit_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_transmit_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
@@ -1845,6 +2023,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_receive_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_receive_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
@@ -1852,13 +2034,14 @@
               "refId": "B"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Interface Errors",
           "type": "timeseries"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays CRC error per interface.",
           "fieldConfig": {
             "defaults": {
@@ -1899,12 +2082,10 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "transparent",
-                    "value": null
+                    "color": "transparent"
                   },
                   {
-                    "color": "red",
-                    "value": null
+                    "color": "red"
                   }
                 ]
               },
@@ -1916,7 +2097,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 40
+            "y": 74
           },
           "id": 34,
           "options": {
@@ -1928,7 +2109,8 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -1939,6 +2121,10 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      arista_interface_crc_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        arista_interface_crc_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "3m",
@@ -1946,8 +2132,6 @@
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Top $TopResources Interface CRC error",
           "type": "timeseries"
         }
@@ -1957,7 +2141,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1967,7 +2150,10 @@
       "id": 42,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Displays Link Layer Discovery Protocol (LLDP) neighbors.",
           "fieldConfig": {
             "defaults": {
@@ -1976,8 +2162,14 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
               },
               "mappings": [],
               "thresholds": {
@@ -1985,7 +2177,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -2004,11 +2196,16 @@
           },
           "id": 44,
           "options": {
+            "cellHeight": "sm",
             "showHeader": true
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "arista_lldp_neighbor_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
@@ -2075,7 +2272,6 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2085,7 +2281,10 @@
       "id": 25,
       "panels": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "Total interfaces count which are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2099,7 +2298,7 @@
                 "steps": [
                   {
                     "color": "dark-red",
-                    "value": null
+                    "value": 0
                   }
                 ]
               },
@@ -2135,6 +2334,7 @@
             "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
+            "percentChangeColorMode": "standard",
             "reduceOptions": {
               "calcs": [
                 "lastNotNull"
@@ -2142,12 +2342,18 @@
               "fields": "",
               "values": false
             },
+            "showPercentChange": false,
             "text": {},
-            "textMode": "auto"
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "count(\n      min_over_time(\n        arista_interface_admin_up{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[1d]\n      )\n    ==\n      0\n  )\nor\n  vector(0)",
               "instant": true,
@@ -2157,11 +2363,13 @@
             }
           ],
           "title": "Down (Last 24h)",
-          "transformations": [],
           "type": "stat"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "These interfaces are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2170,8 +2378,14 @@
               },
               "custom": {
                 "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
               },
               "decimals": 0,
               "mappings": [],
@@ -2181,7 +2395,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -2241,8 +2455,11 @@
                     ]
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background-solid"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
                   }
                 ]
               },
@@ -2273,8 +2490,11 @@
                     ]
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background-solid"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
                   }
                 ]
               }
@@ -2288,12 +2508,17 @@
           },
           "id": 39,
           "options": {
+            "cellHeight": "sm",
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "label_join(\n  min_over_time(\n    arista_interface_admin_up{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[1d]\n  ),\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"switch\",\n  \"interface\"\n)",
               "format": "table",
@@ -2303,6 +2528,10 @@
               "refId": "A"
             },
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "label_join(\n    min_over_time(\n      arista_interface_up{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[1d]\n    )\n  ==\n    0,\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"switch\",\n  \"interface\"\n)",
               "format": "table",
@@ -2378,7 +2607,10 @@
           "type": "table"
         },
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "description": "These interfaces are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2386,9 +2618,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 0,
                 "gradientMode": "none",
@@ -2397,6 +2633,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -2404,6 +2641,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -2421,7 +2659,7 @@
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -2448,7 +2686,8 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "hideZeros": false,
@@ -2456,9 +2695,13 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
               "exemplar": false,
               "expr": "min_over_time(\n    arista_interface_admin_up{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[1d]\n  )\n==\n  0",
               "format": "time_series",
@@ -2513,9 +2756,9 @@
       "type": "row"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 30,
-  "style": "dark",
+  "schemaVersion": 42,
   "tags": [
     "arista",
     "harvest"
@@ -2523,35 +2766,26 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "Prometheus",
-          "value": "Prometheus"
-        },
-        "description": null,
-        "error": null,
+        "current": {},
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
-        "multi": false,
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 2,
+        "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(arista_switch_labels{}, datacenter)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Datacenter",
         "options": [],
@@ -2561,23 +2795,18 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(arista_switch_labels{datacenter=~\"$Datacenter\"}, switch)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Switch",
         "options": [],
@@ -2587,23 +2816,18 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(arista_interface_admin_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}, interface)",
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "Interface",
         "options": [],
@@ -2613,26 +2837,15 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 7,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
-        "allValue": null,
         "current": {
-          "selected": true,
           "text": "5",
           "value": "5"
         },
-        "description": null,
-        "error": null,
-        "hide": 0,
         "includeAll": false,
-        "label": null,
-        "multi": false,
         "name": "TopResources",
         "options": [
           {
@@ -2707,8 +2920,6 @@
           }
         ],
         "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -2721,5 +2932,6 @@
   "timezone": "",
   "title": "Arista: Switch",
   "uid": "arista-switch",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }
