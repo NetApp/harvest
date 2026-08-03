@@ -157,7 +157,7 @@ The `storagegrid_ilm_scan_objects_per_second` metric is visualized in the follow
 
 ### storagegrid_labels
 
-Represent the detail of the grid, including its version, systemId, and the poller-configured address
+Represents details of the grid, including its version, systemId, and the poller-configured address
 
 
 | API    | Endpoint | Metric | Template |

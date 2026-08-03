@@ -297,7 +297,7 @@ counters:
         Template: conf/storagegrid/11.6.0/tenant.yaml
 
   - Name: storagegrid_labels
-    Description: Represent the detail of the grid, including its version, systemId, and the poller-configured address
+    Description: Represents details of the grid, including its version, systemId, and the poller-configured address
     APIs:
       - API: REST
         Endpoint: NA
