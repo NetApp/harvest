@@ -107,11 +107,11 @@ type IOCountersStat struct {
 	WriteCount uint64 `json:"writeCount"`
 	// ReadBytes is a number of all I/O read in bytes. This includes disk I/O on Linux and Windows.
 	ReadBytes uint64 `json:"readBytes"`
-	// WriteBytes is a number of all I/O write in bytes. This includes disk I/O on Linux and Windows.
+	// WriteBytes is a number of all I/O written in bytes. This includes disk I/O on Linux and Windows.
 	WriteBytes uint64 `json:"writeBytes"`
-	// DiskReadBytes is a number of disk I/O write in bytes. Currently only Linux has this value.
+	// DiskReadBytes is a number of disk I/O read in bytes. Currently only Linux has this value.
 	DiskReadBytes uint64 `json:"diskReadBytes"`
-	// DiskWriteBytes is a number of disk I/O read in bytes.  Currently only Linux has this value.
+	// DiskWriteBytes is a number of disk I/O written in bytes. Currently only Linux has this value.
 	DiskWriteBytes uint64 `json:"diskWriteBytes"`
 }
 
