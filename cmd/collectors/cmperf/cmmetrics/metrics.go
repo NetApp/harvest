@@ -10,6 +10,7 @@ import (
 	"iter"
 	"math"
 	"os"
+	"strings"
 
 	"github.com/VictoriaMetrics/easyproto"
 )
@@ -84,6 +85,33 @@ const (
 	NoAdditionalStatus     = 9
 )
 
+func (s StatusCodeEnum) String() string {
+	switch s {
+	case CompleteCollection:
+		return "CompleteCollection"
+	case PartialCollection:
+		return "PartialCollection"
+	case SecondaryMetricsFile:
+		return "SecondaryMetricsFile"
+	case MemoryError:
+		return "MemoryError"
+	case InternalError:
+		return "InternalError"
+	case ChildTimeoutError:
+		return "ChildTimeoutError"
+	case NetworkError:
+		return "NetworkError"
+	case MetaMismatchError:
+		return "MetaMismatchError"
+	case CollectionTimeoutError:
+		return "CollectionTimeoutError"
+	case NoAdditionalStatus:
+		return "NoAdditionalStatus"
+	default:
+		return fmt.Sprintf("Unknown(%d)", uint8(s))
+	}
+}
+
 type MetricsFileRecord struct {
 	Version *MetricsFileVersion
 	Schema  *ObjectSchema
@@ -102,6 +130,13 @@ type MetricsFileVersion struct {
 type StatusCode struct {
 	Code  StatusCodeEnum
 	Nodes []string
+}
+
+func (s StatusCode) String() string {
+	if len(s.Nodes) == 0 {
+		return s.Code.String()
+	}
+	return s.Code.String() + " (nodes: " + strings.Join(s.Nodes, ", ") + ")"
 }
 
 type CounterType struct {

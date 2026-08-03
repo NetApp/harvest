@@ -301,6 +301,22 @@ func (c *CmPerf) verifyChecksum(filePath, checksumURL string) error {
 	return nil
 }
 
+// isCompleteCollection reports true when the only status codes present are CompleteCollection and optionally NoAdditionalStatus (any order; may repeat).
+func isCompleteCollection(statuses []cmmetrics.StatusCode) bool {
+	hasComplete := false
+	for _, sc := range statuses {
+		switch sc.Code {
+		case cmmetrics.CompleteCollection:
+			hasComplete = true
+		case cmmetrics.NoAdditionalStatus:
+			// ONTAP always appends this alongside other codes
+		default:
+			return false
+		}
+	}
+	return hasComplete
+}
+
 func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint64, error) {
 	var (
 		fileSchema   *cmmetrics.ObjectSchema
@@ -336,21 +352,11 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint6
 		c.Logger.Warn("no collection status summary in CM2 file — treating as incomplete",
 			slog.String("file", filepath.Base(path)))
 	}
-	isComplete := false
-	if fileSummary != nil {
-		for _, sc := range fileSummary.Statuses {
-			switch sc.Code {
-			case cmmetrics.CompleteCollection:
-				isComplete = true
-			case cmmetrics.NoAdditionalStatus:
-				// ONTAP always appends this alongside other codes
-			default:
-				c.Logger.Warn("non-complete collection status",
-					slog.String("file", filepath.Base(path)),
-					slog.Uint64("status", uint64(sc.Code)),
-					slog.Any("nodes", sc.Nodes))
-			}
-		}
+	isComplete := fileSummary != nil && isCompleteCollection(fileSummary.Statuses)
+	if fileSummary != nil && !isComplete {
+		c.Logger.Debug("collection status is not complete",
+			slog.String("file", filepath.Base(path)),
+			slog.Any("statuses", fileSummary.Statuses))
 	}
 	if !isComplete {
 		if c.AllowPartialAggregation {
