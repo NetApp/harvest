@@ -7,3 +7,4 @@ schedule:
 objects:
   Tenant:          tenant.yaml
   Prometheus:      storagegrid_metrics.yaml
+  Grid:            grid.yaml

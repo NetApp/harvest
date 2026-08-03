@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Jul-28
+Creation Date : 2026-Aug-03
 StorageGrid Version: 11.6.0
 ```
 
@@ -153,6 +153,16 @@ The `storagegrid_ilm_scan_objects_per_second` metric is visualized in the follow
 | StorageGrid: S3 | ILM | timeseries | [Top $TopResources Nodes by ILM Scan Rate](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=11) |
 ///
 
+
+
+### storagegrid_labels
+
+Represents details of the grid, including its version, systemId, and the poller-configured address
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `` | conf/storagegrid/11.6.0/grid.yaml |
 
 
 ### storagegrid_metadata_queries_average_latency_milliseconds

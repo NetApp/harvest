@@ -1,0 +1,17 @@
+name: Grid
+query: grid/config/product-version
+object: storagegrid
+api: v3
+
+counters:
+  - ^^productVersion        => version
+
+plugins:
+  - Grid
+
+export_options:
+  instance_keys:
+    - version
+  instance_labels:
+    - addr # set by the Grid plugin
+    - system_id # set by the Grid plugin
