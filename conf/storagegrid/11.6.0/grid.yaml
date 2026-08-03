@@ -13,6 +13,5 @@ export_options:
   instance_keys:
     - version
   instance_labels:
-    - version
     - addr # set by the Grid plugin
     - system_id # set by the Grid plugin
