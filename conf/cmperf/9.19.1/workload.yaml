@@ -14,9 +14,9 @@ schedule:
 counters:
   - ^^aggregated_workload_uuid
   - ^aggregated_workload_name  => workload
+  - ^instance_name
+  - ^instance_uuid
   - concurrency
-  - instance_name
-  - instance_uuid
   - latency
   - ops
   - other_ops

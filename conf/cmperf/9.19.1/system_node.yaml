@@ -20,7 +20,7 @@ counters:
   - fcp_ops
   - hdd_data_read
   - hdd_data_written
-  - instance_name
+  - instance_name                     => node
   - iscsi_ops
   - memory
   - net_data_recv

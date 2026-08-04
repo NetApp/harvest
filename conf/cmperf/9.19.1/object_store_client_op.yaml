@@ -8,7 +8,7 @@ instance_key:             uuid
 counters:
   - average_latency
   - get_throughput_bytes
-  - instance_name
+  - instance_name          => fabricpool
   - instance_uuid
   - node_name              => node
   - put_throughput_bytes
