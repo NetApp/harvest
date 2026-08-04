@@ -973,12 +973,8 @@ type cmPerfManifestJSON struct {
 // then posts the newly built manifest. ONTAP does not support updating a manifest in place,
 // so it must be deleted (if present) before the new one can be posted.
 func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
-	poller, err := conf.PollerNamed(opts.Poller)
-	if err != nil {
-		return err
-	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	connection, err := rest.New(poller, timeout, p.auth)
+	connection, err := rest.New(p.params, timeout, p.auth)
 	if err != nil {
 		return err
 	}
@@ -1022,9 +1018,9 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 		}
 
 		// TODO remove after CM2 works with aggregated objects
-		// if strings.Contains(query, ":") {
-		// 	continue
-		// }
+		if strings.Contains(query, ":") {
+			continue
+		}
 
 		// At the moment, only the defaultDataPeriod is supported by ONTAP
 		dataPeriod := defaultDataPeriod
