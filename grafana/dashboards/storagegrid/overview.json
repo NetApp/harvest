@@ -2213,6 +2213,555 @@
       ],
       "title": "Traffic Classification",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 70,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Estimated duration of a single 10 MB upload, based on recent production traffic. Divides the target size by average per-request throughput: rate(rx_bytes) / rate(request_time).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 60,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "10485760\n/\n  (\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",method=~\"PUT|POST\",policy=~\"$Policy\"}[5m]\n        )\n      )\n    /\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",method=~\"PUT|POST\",policy=~\"$Policy\"}[5m]\n        )\n      )\n  )",
+              "interval": "",
+              "legendFormat": "{{cluster}} - Estimated upload time (10 MB)",
+              "refId": "A"
+            }
+          ],
+          "title": "Estimated upload time (10 MB)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Estimated duration of a single 10 MB download, based on recent production traffic. Divides the target size by average per-request throughput: rate(tx_bytes) / rate(request_time).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 61,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "10485760\n/\n  (\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",method=\"GET\",policy=~\"$Policy\"}[5m]\n        )\n      )\n    /\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",method=\"GET\",policy=~\"$Policy\"}[5m]\n        )\n      )\n  )",
+              "interval": "",
+              "legendFormat": "{{cluster}} - Estimated download time (10 MB)",
+              "refId": "A"
+            }
+          ],
+          "title": "Estimated download time (10 MB)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Estimated duration of a single 100 MB upload, based on recent production traffic. Divides the target size by average per-request throughput: rate(rx_bytes) / rate(request_time).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 9
+          },
+          "id": 62,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "104857600\n/\n  (\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",method=~\"PUT|POST\",policy=~\"$Policy\"}[5m]\n        )\n      )\n    /\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",method=~\"PUT|POST\",policy=~\"$Policy\"}[5m]\n        )\n      )\n  )",
+              "interval": "",
+              "legendFormat": "{{cluster}} - Estimated upload time (100 MB)",
+              "refId": "A"
+            }
+          ],
+          "title": "Estimated upload time (100 MB)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Estimated duration of a single 100 MB download, based on recent production traffic. Divides the target size by average per-request throughput: rate(tx_bytes) / rate(request_time).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 9
+          },
+          "id": 63,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "104857600\n/\n  (\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",method=\"GET\",policy=~\"$Policy\"}[5m]\n        )\n      )\n    /\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",method=\"GET\",policy=~\"$Policy\"}[5m]\n        )\n      )\n  )",
+              "interval": "",
+              "legendFormat": "{{cluster}} - Estimated download time (100 MB)",
+              "refId": "A"
+            }
+          ],
+          "title": "Estimated download time (100 MB)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Estimated duration of a single 1 GB upload, based on recent production traffic. Divides the target size by average per-request throughput: rate(rx_bytes) / rate(request_time).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 18
+          },
+          "id": 64,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "1073741824\n/\n  (\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",method=~\"PUT|POST\",policy=~\"$Policy\"}[5m]\n        )\n      )\n    /\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",method=~\"PUT|POST\",policy=~\"$Policy\"}[5m]\n        )\n      )\n  )",
+              "interval": "",
+              "legendFormat": "{{cluster}} - Estimated upload time (1 GB)",
+              "refId": "A"
+            }
+          ],
+          "title": "Estimated upload time (1 GB)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Estimated duration of a single 1 GB download, based on recent production traffic. Divides the target size by average per-request throughput: rate(tx_bytes) / rate(request_time).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 18
+          },
+          "id": 65,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "1073741824\n/\n  (\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",method=\"GET\",policy=~\"$Policy\"}[5m]\n        )\n      )\n    /\n      sum by (cluster) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",method=\"GET\",policy=~\"$Policy\"}[5m]\n        )\n      )\n  )",
+              "interval": "",
+              "legendFormat": "{{cluster}} - Estimated download time (1 GB)",
+              "refId": "A"
+            }
+          ],
+          "title": "Estimated download time (1 GB)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Estimated Transfer Time by Object Size",
+      "type": "row"
     }
   ],
   "refresh": "",
