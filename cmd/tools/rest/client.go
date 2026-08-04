@@ -189,16 +189,35 @@ func (c *Client) GetRest(metadata *collector.Metadata, request string, headers .
 // and returns the JSON response as a []byte.
 // If metadata is non-nil, BytesRx and NumCalls are incremented.
 func (c *Client) PostRest(metadata *collector.Metadata, endpoint string, body []byte, headers ...map[string]string) ([]byte, error) {
+	return c.sendRest(metadata, http.MethodPost, endpoint, body, headers...)
+}
+
+// DeleteRest makes a REST DELETE request to the cluster and returns the JSON response as a []byte.
+// If metadata is non-nil, BytesRx and NumCalls are incremented.
+func (c *Client) DeleteRest(metadata *collector.Metadata, endpoint string, headers ...map[string]string) ([]byte, error) {
+	return c.sendRest(metadata, http.MethodDelete, endpoint, nil, headers...)
+}
+
+// sendRest builds an authenticated request for method/endpoint/body, sends it via
+// invokeWithAuthRetry, and records request metadata. Shared by PostRest and DeleteRest.
+// If metadata is non-nil, BytesRx and NumCalls are incremented.
+func (c *Client) sendRest(metadata *collector.Metadata, method string, endpoint string, body []byte, headers ...map[string]string) ([]byte, error) {
 	endpoint = strings.TrimPrefix(endpoint, "/")
 	u := c.baseURL + endpoint
 
-	var err error
-	req, err := requests.New("POST", u, bytes.NewReader(body))
+	var reqBody io.Reader
+	if body != nil {
+		reqBody = bytes.NewReader(body)
+	}
+
+	req, err := requests.New(method, u, reqBody)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
 	req.Header.Set("Accept", "application/json")
 
 	for _, hs := range headers {
@@ -213,7 +232,7 @@ func (c *Client) PostRest(metadata *collector.Metadata, endpoint string, body []
 	}
 	if pollerAuth.AuthToken != "" {
 		req.Header.Set("Authorization", "Bearer "+pollerAuth.AuthToken)
-		c.Logger.Debug("Using authToken from credential script for POST")
+		c.Logger.Debug("Using authToken from credential script", slog.String("method", method))
 	} else if pollerAuth.Username != "" {
 		req.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 	}
@@ -258,7 +277,7 @@ func (c *Client) invokeWithAuthRetry(req *http.Request) ([]byte, error) {
 				Build()
 		}
 
-		if response.StatusCode != http.StatusOK {
+		if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
 
 			if response.StatusCode == http.StatusUnauthorized {
 				return nil, errs.NewRest().
