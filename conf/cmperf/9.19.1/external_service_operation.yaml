@@ -3,8 +3,6 @@ name:                     ExternalServiceOperation
 query:                    external_service_op
 object:                   external_service_op
 
-instance_key:             uuid
-
 counters:
   - instance_name
   - instance_uuid

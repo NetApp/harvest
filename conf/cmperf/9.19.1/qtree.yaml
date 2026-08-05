@@ -1,7 +1,7 @@
 name:                     Qtree
 query:                    qtree
 object:                   qtree
-instance_key:             uuid
+
 counters:
   - cifs_ops
   - instance_name         => qtreefull

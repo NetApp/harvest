@@ -3,8 +3,6 @@ name:                     Netstat
 query:                    netstat
 object:                   netstat
 
-instance_key:             uuid
-
 counters:
   - bytes_recvd
   - bytes_sent

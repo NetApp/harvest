@@ -3,8 +3,6 @@ name:                     SystemNode
 query:                    system:node
 object:                   node
 
-instance_key:             name
-
 allow_partial_aggregation: true
 
 counters:

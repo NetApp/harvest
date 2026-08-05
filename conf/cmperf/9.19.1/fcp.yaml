@@ -2,8 +2,6 @@ name:                     FcpPort
 query:                    fcp_port
 object:                   fcp
 
-instance_key:             uuid
-
 counters:
   - avg_other_latency
   - avg_read_latency

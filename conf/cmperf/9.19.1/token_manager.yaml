@@ -2,8 +2,6 @@ name:                     TokenManager
 query:                    token_manager
 object:                   token
 
-instance_key:             uuid
-
 counters:
   - ^^instance_name        => token
   - instance_uuid

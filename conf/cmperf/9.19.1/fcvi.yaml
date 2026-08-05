@@ -3,8 +3,6 @@ name:                     FCVI
 query:                    fcvi
 object:                   fcvi
 
-instance_key:             uuid
-
 counters:
   - fw_SyStatDiscardFrames  => firmware_systat_discard_frames
   - fw_invalid_crc          => firmware_invalid_crc_count

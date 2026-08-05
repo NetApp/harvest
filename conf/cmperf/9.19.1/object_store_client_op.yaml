@@ -3,8 +3,6 @@ name:                     ObjectStoreClient
 query:                    object_store_client_op
 object:                   fabricpool
 
-instance_key:             uuid
-
 counters:
   - ^^instance_name        => fabricpool
   - average_latency
