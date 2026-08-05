@@ -76,9 +76,15 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat *
 			ctrType = ov
 		}
 
+		// The CM2 protobuf schema has no counter description (unlike ZapiPerf/RestPerf), so a
+		// counter is treated as a histogram if its name matches the known heuristic, or the
+		// template's `histograms:` section lists it.
+		isHisto := len(cs.LabelsX) > 0 && (strings.Contains(strings.ToLower(name), "_hist") || c.perfProp.histogramCounters[name])
+
 		c.perfProp.counterInfo[name] = &counter{
 			counterType: ctrType,
 			denominator: denominator,
+			isHistogram: isHisto,
 		}
 
 		if propMetric, inTemplate := c.Prop.Metrics[name]; inTemplate {
@@ -574,8 +580,10 @@ func (c *CmPerf) populateArrayCounter(
 
 	// 1D path: LabelsX only.
 	labels := cs.LabelsX
-	// TODO check if this is correct way to identify histograms
-	isHisto := len(labels) > 0 && strings.Contains(strings.ToLower(cs.Name), "_hist")
+	isHisto := false
+	if co := c.perfProp.counterInfo[cs.Name]; co != nil {
+		isHisto = co.isHistogram
+	}
 
 	if isHisto {
 		bucketKey := cs.Name + ".bucket"
