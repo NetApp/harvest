@@ -130,6 +130,7 @@ histograms:
 		{name: "smb2_latency_by_size", labels: []string{"0-1ms", "1-2ms"}, values: []uint64{5, 6}, wantHistogram: true},             // template override only
 		{name: "read_ops_by_size", labels: []string{"small", "large"}, values: []uint64{1, 2}, wantHistogram: false},                // plain array, no marker
 		{name: "read_ops", wantHistogram: false}, // scalar, never a histogram
+		{name: "state_reference_history", labels: []string{"a", "b"}, values: []uint64{1, 2}, wantHistogram: false}, // "_hist" substring, not a real histogram suffix
 	}
 
 	c := newTestCmPerf(t)
@@ -158,11 +159,12 @@ histograms:
 			}
 
 			curMat := matrix.New("test", "test", "test")
+			prevMat := matrix.New("test", "test", "test")
 			inst, err := curMat.NewInstance("inst1")
 			assert.Nil(t, err)
 
 			cs := cmmetrics.CounterSchema{Name: tt.name, LabelsX: tt.labels}
-			count := c.populateArrayCounter(curMat, inst, cs, tt.values)
+			count := c.populateArrayCounter(curMat, prevMat, inst, cs, tt.values)
 			assert.Equal(t, count, uint64(len(tt.values)))
 
 			bucket := curMat.GetMetric(tt.name + ".bucket")
@@ -186,5 +188,42 @@ histograms:
 				assert.Equal(t, val, float64(tt.values[i]))
 			}
 		})
+	}
+}
+
+func TestPopulateArrayCounterCreatesInPrevMat(t *testing.T) {
+	c := newTestCmPerf(t)
+	name := "read_latency_hist"
+	labels := []string{"0-1ms", "1-2ms"}
+	values := []uint64{10, 20}
+
+	c.perfProp.counterInfo[name] = &counter{isHistogram: true}
+	c.Prop.Metrics[name] = &rest2.Metric{Label: name, Exportable: true}
+
+	curMat := matrix.New("test", "test", "test")
+	prevMat := matrix.New("test", "test", "test")
+	inst, err := curMat.NewInstance("inst1")
+	assert.Nil(t, err)
+
+	cs := cmmetrics.CounterSchema{Name: name, LabelsX: labels}
+	count := c.populateArrayCounter(curMat, prevMat, inst, cs, values)
+	assert.Equal(t, count, uint64(len(values)))
+
+	bucketKey := name + ".bucket"
+	if curMat.GetMetric(bucketKey) == nil {
+		t.Fatal("expected bucket metric in curMat")
+	}
+	if prevMat.GetMetric(bucketKey) == nil {
+		t.Fatal("expected bucket metric to also exist in prevMat")
+	}
+
+	for _, label := range labels {
+		key := name + arrayKeyToken + label
+		if curMat.GetMetric(key) == nil {
+			t.Fatalf("expected %s in curMat", key)
+		}
+		if prevMat.GetMetric(key) == nil {
+			t.Fatalf("expected %s to also exist in prevMat", key)
+		}
 	}
 }

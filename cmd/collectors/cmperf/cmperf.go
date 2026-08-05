@@ -291,7 +291,7 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 	var pollErr error
 	var pollPartials uint64
-	metricCount, pollPartials, pollErr = c.pollCM2Files(filePath, curMat)
+	metricCount, pollPartials, pollErr = c.pollCM2Files(filePath, curMat, prevMat)
 	numPartials += pollPartials
 	if pollErr != nil {
 		return nil, pollErr

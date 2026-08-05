@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -54,6 +55,13 @@ func counterTypeString(t cmmetrics.CounterTypeEnum) string {
 	}
 }
 
+func hasHistogramSuffix(name string) bool {
+	lower := strings.ToLower(name)
+	return strings.HasSuffix(lower, "_hist") ||
+		strings.HasSuffix(lower, "_histo") ||
+		strings.HasSuffix(lower, "_histogram")
+}
+
 // buildCountersFromSchema populates counterInfo from the embedded schema and registers denominator metrics.
 func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat *matrix.Matrix) {
 	mat := c.Matrix[c.Object]
@@ -79,7 +87,7 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat *
 		// The CM2 protobuf schema has no counter description (unlike ZapiPerf/RestPerf), so a
 		// counter is treated as a histogram if its name matches the known heuristic, or the
 		// template's `histograms:` section lists it.
-		isHisto := len(cs.LabelsX) > 0 && (strings.Contains(strings.ToLower(name), "_hist") || c.perfProp.histogramCounters[name])
+		isHisto := len(cs.LabelsX) > 0 && (hasHistogramSuffix(name) || c.perfProp.histogramCounters[name])
 
 		c.perfProp.counterInfo[name] = &counter{
 			counterType: ctrType,
@@ -323,7 +331,7 @@ func isCompleteCollection(statuses []cmmetrics.StatusCode) bool {
 	return hasComplete
 }
 
-func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint64, error) {
+func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix, prevMat *matrix.Matrix) (uint64, uint64, error) {
 	var (
 		fileSchema   *cmmetrics.ObjectSchema
 		fileSummary  *cmmetrics.CollectionStatus
@@ -347,7 +355,7 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint6
 				c.buildCountersFromSchema(*fileSchema, curMat)
 				schemaLoaded = true
 			}
-			metricCount += c.populateMatrix(rec.Batch, curMat)
+			metricCount += c.populateMatrix(rec.Batch, curMat, prevMat)
 		}
 		if rec.Summary != nil {
 			fileSummary = rec.Summary
@@ -393,7 +401,7 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix) (uint64, uint6
 	return metricCount, numPartials, readErr
 }
 
-func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.Matrix) uint64 {
+func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.Matrix, prevMat *matrix.Matrix) uint64 {
 	schemaMap := c.perfProp.schemaMap
 
 	ts := float64(oc.Timestamp) / 1000.0
@@ -466,7 +474,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 			counterName := cs.Name
 
 			if vals64, ok := ct.List64(); ok {
-				metricCount += c.populateArrayCounter(curMat, matInst, cs, vals64)
+				metricCount += c.populateArrayCounter(curMat, prevMat, matInst, cs, vals64)
 				continue
 			}
 			if vals32, ok := ct.List32(); ok {
@@ -474,7 +482,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 				for i, v := range vals32 {
 					u64[i] = uint64(v)
 				}
-				metricCount += c.populateArrayCounter(curMat, matInst, cs, u64)
+				metricCount += c.populateArrayCounter(curMat, prevMat, matInst, cs, u64)
 				continue
 			}
 
@@ -527,6 +535,7 @@ func (c *CmPerf) buildInstanceKey(inst cmmetrics.ObjectInstance, stringVals map[
 
 func (c *CmPerf) populateArrayCounter(
 	curMat *matrix.Matrix,
+	prevMat *matrix.Matrix,
 	inst *matrix.Instance,
 	cs cmmetrics.CounterSchema,
 	values []uint64,
@@ -559,11 +568,10 @@ func (c *CmPerf) populateArrayCounter(
 					return count
 				}
 				k := cs.Name + arrayKeyToken + labelX + arrayKeyToken + labelY
-				metr := curMat.GetMetric(k)
-				if metr == nil {
+				metr, ok := curMat.GetMetrics()[k]
+				if !ok {
 					var err error
-					metr, err = curMat.NewMetricFloat64(k, propMetric.Label)
-					if err != nil {
+					if metr, err = collectors.GetMetric(curMat, prevMat, k, propMetric.Label); err != nil {
 						continue
 					}
 					metr.SetArray(true)
@@ -588,7 +596,7 @@ func (c *CmPerf) populateArrayCounter(
 	if isHisto {
 		bucketKey := cs.Name + ".bucket"
 		if curMat.GetMetric(bucketKey) == nil {
-			bm, err := curMat.NewMetricFloat64(bucketKey, propMetric.Label)
+			bm, err := collectors.GetMetric(curMat, prevMat, bucketKey, propMetric.Label)
 			if err == nil {
 				bm.SetArray(true)
 				bm.SetHistogram(true)
@@ -604,11 +612,10 @@ func (c *CmPerf) populateArrayCounter(
 			break
 		}
 		k := cs.Name + arrayKeyToken + label
-		metr := curMat.GetMetric(k)
-		if metr == nil {
+		metr, ok := curMat.GetMetrics()[k]
+		if !ok {
 			var err error
-			metr, err = curMat.NewMetricFloat64(k, propMetric.Label)
-			if err != nil {
+			if metr, err = collectors.GetMetric(curMat, prevMat, k, propMetric.Label); err != nil {
 				continue
 			}
 			metr.SetArray(true)
