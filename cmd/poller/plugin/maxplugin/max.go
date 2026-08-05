@@ -12,7 +12,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
+	"maps"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -157,7 +159,10 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	)
 
 	metadata := &collector.Metadata{}
-	for _, instance := range data.GetInstances() {
+	instances := data.GetInstances()
+	// Iterate in key order so instances with equal values always resolve to the same winner
+	for _, instanceKey := range slices.Sorted(maps.Keys(instances)) {
+		instance := instances[instanceKey]
 
 		if !instance.IsExportable() {
 			continue
