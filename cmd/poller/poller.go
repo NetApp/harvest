@@ -122,6 +122,8 @@ var deprecatedCollectors = map[string]string{
 	"psutil": "Unix",
 }
 
+const cmPerfName = "CmPerf"
+
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
 type Poller struct {
@@ -912,10 +914,17 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	}
 
 	// Build CmPerf manifest from the already-initialized CmPerf collectors.
+	// Without a manifest ONTAP won't cache counters, so CmPerf can't collect anything.
+	// Drop the CmPerf collectors and let the remaining collectors run.
 	manifestName := p.getCmManifestName()
 	if manifest := buildCmPerfManifest(cols, manifestName); manifest != nil {
 		if err := p.deleteAndPostCmManifest(manifestName, manifest); err != nil {
-			return fmt.Errorf("CmPerf manifest: %w", err)
+			logger.Error(
+				"CmPerf manifest failed, disabling CmPerf collectors",
+				slogx.Err(err),
+				slog.String("manifest", manifestName),
+			)
+			cols = removeCmPerfCollectors(cols)
 		}
 	}
 
@@ -954,6 +963,13 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	}
 
 	return nil
+}
+
+// removeCmPerfCollectors returns cols without any CmPerf collectors.
+func removeCmPerfCollectors(cols []collector.Collector) []collector.Collector {
+	return slices.DeleteFunc(cols, func(c collector.Collector) bool {
+		return c != nil && c.GetName() == cmPerfName
+	})
 }
 
 // cmPerfPresetDetail holds the per-object section of a CmPerf manifest.
@@ -1007,7 +1023,7 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 
 	var details []cmPerfPresetDetail
 	for _, col := range cols {
-		if col.GetName() != "CmPerf" {
+		if col.GetName() != cmPerfName {
 			continue
 		}
 		params := col.GetParams()
