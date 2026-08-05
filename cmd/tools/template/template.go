@@ -377,6 +377,11 @@ func readLabelAgent(template *node.Node, model *Model) error {
 }
 
 var setRe = regexp.MustCompile(`[sS]etLabel\("?(\w+)"?,`)
+var importRe = regexp.MustCompile(`"(github\.com/netapp/harvest/v2/cmd/collectors/[^"]+)"`)
+
+// delegateRe matches thin-wrapper plugins that reuse another collector's plugin implementation,
+// e.g. `return fcvi.New(p)`, but not unrelated constructor calls like `rest.New(...)`.
+var delegateRe = regexp.MustCompile(`^return\s+(\w+)\.New\(`)
 
 func findCustomPlugins(path string, template *node.Node, model *Model) error {
 	plug := template.SearchChildren([]string{"plugins"})
@@ -463,20 +468,52 @@ func toPluginPath(path string, pluginName string) string {
 }
 
 func readPlugin(fileName string, model *Model) error {
+	return readPluginFile(fileName, model, map[string]bool{})
+}
+
+// readPluginFile scans a plugin's Go source for SetLabel calls that create export labels.
+// Some collectors (e.g. cmperf) reuse another collector's plugin implementation via a thin
+// wrapper like `return fcvi.New(p)`. When that pattern is detected, this function follows the
+// import and recurses into the delegate's source file so its SetLabel calls are also captured.
+func readPluginFile(fileName string, model *Model, visited map[string]bool) error {
+	if visited[fileName] {
+		return nil
+	}
+	visited[fileName] = true
+
 	file, err := os.Open(fileName)
 	if err != nil {
 		return err
 	}
+	defer file.Close()
+
+	imports := make(map[string]string) // package name (last path segment) => import path
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		text := scanner.Text()
 		trimmed := strings.TrimSpace(text)
+
 		matches := setRe.FindStringSubmatch(trimmed)
 		if len(matches) == 2 {
 			model.pluginLabels = append(model.pluginLabels, matches[1])
 		}
+
+		if im := importRe.FindStringSubmatch(trimmed); len(im) == 2 {
+			importPath := im[1]
+			segments := strings.Split(importPath, "/")
+			imports[segments[len(segments)-1]] = importPath
+		}
+
+		if dm := delegateRe.FindStringSubmatch(trimmed); len(dm) == 2 {
+			if importPath, ok := imports[dm[1]]; ok {
+				before, _, _ := strings.Cut(fileName, "cmd/collectors/")
+				delegatePath := before + strings.TrimPrefix(importPath, "github.com/netapp/harvest/v2/") + "/" + dm[1] + ".go"
+				if err := readPluginFile(delegatePath, model, visited); err != nil {
+					return err
+				}
+			}
+		}
 	}
-	_ = file.Close()
 	return nil
 }

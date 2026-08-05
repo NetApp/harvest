@@ -1,7 +1,6 @@
 name:                     Disk
 query:                    disk:constituent
 object:                   disk
-instance_key:             uuid
 
 counters:
   - cp_read_chain

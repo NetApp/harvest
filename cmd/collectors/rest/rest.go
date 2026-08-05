@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"os"
 	"regexp"
 	"slices"
 	"sort"
@@ -265,10 +264,10 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
 		r.Logger.Error("error creating new client", slogx.Err(err), slog.String("poller", opt.Poller))
-		os.Exit(1)
+		return nil, err
 	}
 
-	return client, err
+	return client, nil
 }
 
 func (r *Rest) InitEndPoints() error {

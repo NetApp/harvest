@@ -892,6 +892,64 @@ func TestBuildCmPerfManifest(t *testing.T) {
 	}
 }
 
+func TestRemoveCmPerfCollectors(t *testing.T) {
+	tests := []struct {
+		name string
+		cols []collectorPkg.Collector
+		want []string
+	}{
+		{
+			name: "nil slice",
+			cols: nil,
+			want: nil,
+		},
+		{
+			name: "mix of CmPerf and others keeps only others",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "nfsv3", "1m", []string{"ops"}),
+				makeCmPerfCollector("Rest", "volume", "", nil),
+				makeCmPerfCollector("CmPerf", "workload", "1m", []string{"ops"}),
+				makeCmPerfCollector("Zapi", "aggr", "", nil),
+			},
+			want: []string{"Rest", "Zapi"},
+		},
+		{
+			name: "all CmPerf leaves nothing",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "nfsv3", "1m", []string{"ops"}),
+				makeCmPerfCollector("CmPerf", "workload", "1m", []string{"ops"}),
+			},
+			want: nil,
+		},
+		{
+			name: "nil entry is retained and does not panic",
+			cols: []collectorPkg.Collector{
+				nil,
+				makeCmPerfCollector("CmPerf", "nfsv3", "1m", []string{"ops"}),
+				makeCmPerfCollector("Ems", "ems", "", nil),
+			},
+			want: []string{"", "Ems"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got []string
+			for _, col := range removeCmPerfCollectors(tt.cols) {
+				if col == nil {
+					got = append(got, "")
+					continue
+				}
+				got = append(got, col.GetName())
+			}
+
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("removeCmPerfCollectors() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestPoller_getCmManifestName(t *testing.T) {
 	tests := []struct {
 		name           string

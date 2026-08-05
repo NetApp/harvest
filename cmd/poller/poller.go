@@ -40,6 +40,7 @@ import (
 	"net"
 	"net/http"
 	_ "net/http/pprof" // #nosec since pprof is off by default
+	"net/url"
 	"os"
 	"os/signal"
 	"runtime"
@@ -120,6 +121,8 @@ var SIGNALS = []os.Signal{
 var deprecatedCollectors = map[string]string{
 	"psutil": "Unix",
 }
+
+const cmPerfName = "CmPerf"
 
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
@@ -911,8 +914,18 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	}
 
 	// Build CmPerf manifest from the already-initialized CmPerf collectors.
-	if manifest := buildCmPerfManifest(cols, p.getCmManifestName()); manifest != nil {
-		deleteAndPostCmManifest(manifest)
+	// Without a manifest ONTAP won't cache counters, so CmPerf can't collect anything.
+	// Drop the CmPerf collectors and let the remaining collectors run.
+	manifestName := p.getCmManifestName()
+	if manifest := buildCmPerfManifest(cols, manifestName); manifest != nil {
+		if err := p.deleteAndPostCmManifest(manifestName, manifest); err != nil {
+			logger.Error(
+				"CmPerf manifest failed, disabling CmPerf collectors",
+				slogx.Err(err),
+				slog.String("manifest", manifestName),
+			)
+			cols = removeCmPerfCollectors(cols)
+		}
 	}
 
 	p.collectors = append(p.collectors, cols...)
@@ -952,6 +965,13 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	return nil
 }
 
+// removeCmPerfCollectors returns cols without any CmPerf collectors.
+func removeCmPerfCollectors(cols []collector.Collector) []collector.Collector {
+	return slices.DeleteFunc(cols, func(c collector.Collector) bool {
+		return c != nil && c.GetName() == cmPerfName
+	})
+}
+
 // cmPerfPresetDetail holds the per-object section of a CmPerf manifest.
 type cmPerfPresetDetail struct {
 	Object       string   `json:"object"`
@@ -965,8 +985,33 @@ type cmPerfManifestJSON struct {
 	PresetDetails []cmPerfPresetDetail `json:"preset_details"`
 }
 
-func deleteAndPostCmManifest(_ []byte) {
-	// TODO implement
+// deleteAndPostCmManifest deletes any existing CmPerf counter-cache manifest for name,
+// then posts the newly built manifest. ONTAP does not support updating a manifest in place,
+// so it must be deleted (if present) before the new one can be posted.
+func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	connection, err := rest.New(p.params, timeout, p.auth)
+	if err != nil {
+		return err
+	}
+
+	deleteHref := "api/cluster/counter-cache/manifests/" + url.PathEscape(name)
+	if _, err := connection.DeleteRest(nil, deleteHref); err != nil {
+		// On first-time bootstrap, no manifest exists yet, so ONTAP returns 404.
+		// That's expected and not an error; anything else should still fail.
+		if restErr, ok := errors.AsType[*errs.RestError](err); !ok || restErr.StatusCode != http.StatusNotFound {
+			return fmt.Errorf("delete CmPerf manifest %s: %w", name, err)
+		}
+		logger.Debug("CmPerf manifest did not exist, nothing to delete", slog.String("name", name))
+	}
+
+	postHref := "api/cluster/counter-cache/manifests"
+	if _, err := connection.PostRest(nil, postHref, manifest); err != nil {
+		return fmt.Errorf("post CmPerf manifest %s: %w", name, err)
+	}
+
+	logger.Info("posted CmPerf manifest", slog.String("name", name))
+	return nil
 }
 
 // buildCmPerfManifest constructs a JSON manifest from the already-initialized CmPerf
@@ -978,13 +1023,18 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 
 	var details []cmPerfPresetDetail
 	for _, col := range cols {
-		if col.GetName() != "CmPerf" {
+		if col.GetName() != cmPerfName {
 			continue
 		}
 		params := col.GetParams()
 
 		query := params.GetChildContentS("query")
 		if query == "" {
+			continue
+		}
+
+		// TODO remove after CM2 works with aggregated objects
+		if strings.Contains(query, ":") {
 			continue
 		}
 

@@ -3,11 +3,10 @@ name:                     SystemNode
 query:                    system:node
 object:                   node
 
-instance_key:             name
-
 allow_partial_aggregation: true
 
 counters:
+  - ^^instance_name                   => node
   - avg_processor_busy
   - cifs_ops
   - cpu_busy
@@ -20,7 +19,6 @@ counters:
   - fcp_ops
   - hdd_data_read
   - hdd_data_written
-  - instance_name
   - iscsi_ops
   - memory
   - net_data_recv

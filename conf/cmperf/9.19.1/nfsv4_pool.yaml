@@ -2,8 +2,6 @@ name:                     NFSv4Pool
 query:                    nfsv4_diag
 object:                   nfs_diag
 
-instance_key:             uuid
-
 global_labels:
   - nfsv: v4
 

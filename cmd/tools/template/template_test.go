@@ -22,7 +22,18 @@ import (
 
 const toConf = "../../../conf"
 
-var allTemplatesButEms = []string{"rest", "restperf", "storagegrid", "eseries", "eseriesperf", "zapi", "zapiperf", "keyperf", "statperf"}
+var allTemplatesButEms = []string{
+	"cmperf",
+	"eseries",
+	"eseriesperf",
+	"keyperf",
+	"rest",
+	"restperf",
+	"statperf",
+	"storagegrid",
+	"zapi",
+	"zapiperf",
+}
 
 // validates each template file name:
 //   - ends with yaml
@@ -262,6 +273,8 @@ func TestExportLabelsExist(t *testing.T) {
 		"statperf/9.8.0/fcvi.yaml",
 		"statperf/9.8.0/resource_headroom_aggr.yaml",
 		"statperf/9.8.0/resource_headroom_aggr.yaml",
+		// object is disabled in cmperf/default.yaml and its ExternalServiceOperation plugin is not yet implemented
+		"cmperf/9.19.1/external_service_operation.yaml",
 	}
 
 	visitTemplates(t, func(path string, model Model) {
