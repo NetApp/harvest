@@ -558,6 +558,10 @@ func isWorkloadObject(query string) bool {
 // SetSamplePeriod records the sample period ONTAP was asked to collect for this object,
 // so PollData can filter counter-cache files to the matching cadence.
 func (c *CmPerf) SetSamplePeriod(period string) {
+	if period == "" {
+		period = "1m"
+		c.Logger.Warn("sample period not provided, using default", slog.String("default", period))
+	}
 	c.perfProp.samplePeriod = period
 }
 

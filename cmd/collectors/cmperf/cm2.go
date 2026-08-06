@@ -145,16 +145,12 @@ type cm2FileRecord struct {
 }
 
 func (c *CmPerf) pollONTAPFilesEndpoint(query string) ([]cm2FileRecord, error) {
-	samplePeriod := c.perfProp.samplePeriod
-	if samplePeriod == "" {
-		samplePeriod = "1m"
-		c.Logger.Debug("sample period not set by manifest, using default", slog.String("default", samplePeriod))
-	}
 	path := "api/cluster/counter-cache/files?fields=path,checksum_path,node,timestamp,object,sample_period&object=" +
-		url.QueryEscape(query) + "&sample_period=" + url.QueryEscape(samplePeriod) + "&order_by=timestamp+desc&max_records=1"
+		url.QueryEscape(query) + "&sample_period=" + url.QueryEscape(c.perfProp.samplePeriod) + "&order_by=timestamp+desc&max_records=1"
 	if !c.lastTimestamp.IsZero() {
 		path += "&timestamp=>" + url.QueryEscape(c.lastTimestamp.UTC().Format(time.RFC3339))
 	}
+	c.Logger.Debug("polling CM2 files endpoint", slog.String("path", path))
 
 	data, err := c.Client.GetRest(&c.RequestMetadata, path)
 	if err != nil {
