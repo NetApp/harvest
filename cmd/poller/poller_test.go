@@ -749,14 +749,14 @@ func TestBuildCmPerfManifest(t *testing.T) {
 		{
 			name: "single CmPerf collector",
 			cols: []collectorPkg.Collector{
-				makeCmPerfCollector("CmPerf", "nfsv3", "3m", []string{"ops", "read_ops"}),
+				makeCmPerfCollector("CmPerf", "nfsv3", "5m", []string{"ops", "read_ops"}),
 			},
 			wantJSON: `{
     "preset": "harvest_overview",
     "preset_details": [
         {
             "object": "nfsv3",
-            "sample-period": "1m",
+            "sample-period": "5m",
             "counters": [
                 "ops",
                 "read_ops"
@@ -801,7 +801,7 @@ func TestBuildCmPerfManifest(t *testing.T) {
     "preset_details": [
         {
             "object": "workload",
-            "sample-period": "1m",
+            "sample-period": "5m",
             "counters": [
                 "aa_counter",
                 "mm_counter",
@@ -830,28 +830,24 @@ func TestBuildCmPerfManifest(t *testing.T) {
 }`,
 		},
 		{
-			name: "default data period when schedule absent",
+			name: "missing schedule is skipped with a warning",
 			cols: []collectorPkg.Collector{
 				makeCmPerfCollector("CmPerf", "nfsv3", "", []string{"ops"}),
 			},
-			wantJSON: `{
-    "preset": "harvest_overview",
-    "preset_details": [
-        {
-            "object": "nfsv3",
-            "sample-period": "1m",
-            "counters": [
-                "ops"
-            ]
-        }
-    ]
-}`,
+			wantNil: true,
+		},
+		{
+			name: "unsupported sample period is skipped with a warning",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "nfsv3", "3m", []string{"ops"}),
+			},
+			wantNil: true,
 		},
 		{
 			name: "mixed collector names: only CmPerf included",
 			cols: []collectorPkg.Collector{
 				makeCmPerfCollector("RestPerf", "rest_obj", "1m", []string{"rest_ctr"}),
-				makeCmPerfCollector("CmPerf", "cm_obj", "2m", []string{"cm_ctr"}),
+				makeCmPerfCollector("CmPerf", "cm_obj", "10m", []string{"cm_ctr"}),
 				makeCmPerfCollector("ZapiPerf", "zapi_obj", "1m", []string{"zapi_ctr"}),
 			},
 			wantJSON: `{
@@ -859,7 +855,7 @@ func TestBuildCmPerfManifest(t *testing.T) {
     "preset_details": [
         {
             "object": "cm_obj",
-            "sample-period": "1m",
+            "sample-period": "10m",
             "counters": [
                 "cm_ctr"
             ]

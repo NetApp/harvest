@@ -145,7 +145,7 @@ type cm2FileRecord struct {
 }
 
 func (c *CmPerf) pollONTAPFilesEndpoint(query string) ([]cm2FileRecord, error) {
-	path := "api/cluster/counter-cache/files?fields=path,checksum_path,node,timestamp,object,sample_period&object=" +
+	path := "api/cluster/counter-cache/files?fields=path,checksum_path,node,timestamp,object&object=" +
 		url.QueryEscape(query) + "&sample_period=" + url.QueryEscape(c.perfProp.samplePeriod) + "&order_by=timestamp+desc&max_records=1"
 	if !c.lastTimestamp.IsZero() {
 		path += "&timestamp=>" + url.QueryEscape(c.lastTimestamp.UTC().Format(time.RFC3339))
@@ -391,7 +391,7 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix, prevMat *matri
 	}
 
 	if !schemaLoaded && readErr == nil {
-		c.Logger.Warn("no schema loaded from CM2 pb file — file may be empty or corrupt",
+		c.Logger.Debug("no schema loaded from CM2 pb file — file may be empty or corrupt",
 			slog.String("file", filepath.Base(path)))
 	}
 

@@ -105,6 +105,12 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 		}
 	}
 
+	if sched := c.Params.GetChildS("schedule"); sched != nil {
+		if d := sched.GetChildS("data"); d != nil && d.GetContentS() != "" {
+			c.perfProp.samplePeriod = d.GetContentS()
+		}
+	}
+
 	c.InitVars(a.Params)
 
 	if err := collector.Init(c); err != nil {
@@ -553,16 +559,6 @@ func (c *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plug
 
 func isWorkloadObject(query string) bool {
 	return query == "workload" || query == "workload_volume"
-}
-
-// SetSamplePeriod records the sample period ONTAP was asked to collect for this object,
-// so PollData can filter counter-cache files to the matching cadence.
-func (c *CmPerf) SetSamplePeriod(period string) {
-	if period == "" {
-		period = "1m"
-		c.Logger.Warn("sample period not provided, using default", slog.String("default", period))
-	}
-	c.perfProp.samplePeriod = period
 }
 
 // PollInstance fetches QoS workload metadata from ONTAP REST and populates

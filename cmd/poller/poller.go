@@ -979,10 +979,6 @@ type cmPerfPresetDetail struct {
 	Counters     []string `json:"counters"`
 }
 
-type samplePeriodSetter interface {
-	SetSamplePeriod(string)
-}
-
 // cmPerfManifestJSON is the top-level CmPerf manifest structure.
 type cmPerfManifestJSON struct {
 	Preset        string               `json:"preset"`
@@ -1018,13 +1014,16 @@ func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
 	return nil
 }
 
+// validCmPerfSamplePeriods are the only sample periods ONTAP's counter-cache manifest accepts.
+var validCmPerfSamplePeriods = map[string]bool{
+	"1m": true, "5m": true, "10m": true, "30m": true, "1h": true,
+}
+
 // buildCmPerfManifest constructs a JSON manifest from the already-initialized CmPerf
 // collectors. It reads query, counters, and schedule from the collector's merged params
 // (i.e. default.yaml + per-object sub-template).
 // preset_details are sorted by object; counters within each entry are sorted.
 func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte {
-	const defaultDataPeriod = "1m"
-
 	var details []cmPerfPresetDetail
 	for _, col := range cols {
 		if col.GetName() != cmPerfName {
@@ -1037,16 +1036,24 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 			continue
 		}
 
-		// At the moment, only the defaultDataPeriod is supported by ONTAP
-		dataPeriod := defaultDataPeriod
-		// Hand the resolved sample period back to the collector so PollData can filter
-		// counter-cache files by the same cadence the manifest requested.
-		if s, ok := col.(samplePeriodSetter); ok {
-			s.SetSamplePeriod(dataPeriod)
-		}
-
 		// TODO remove after CM2 works with aggregated objects
 		if strings.Contains(query, ":") {
+			continue
+		}
+
+		// Supported values are 1m, 5m, 10m, 30m, 1h
+		var dataPeriod string
+		if sched := params.GetChildS("schedule"); sched != nil {
+			if d := sched.GetChildS("data"); d != nil {
+				dataPeriod = d.GetContentS()
+			}
+		}
+		if !validCmPerfSamplePeriods[dataPeriod] {
+			logger.Warn(
+				"unsupported CmPerf sample period, skipping object from manifest",
+				slog.String("object", query),
+				slog.String("samplePeriod", dataPeriod),
+			)
 			continue
 		}
 
