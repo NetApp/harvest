@@ -281,7 +281,7 @@ func TestESeries_URLBuilder(t *testing.T) {
 			apiPath:  "storage-systems/{array_id}/volumes",
 			systemID: "test-sys",
 			filters:  []string{"type=volume", "status=optimal"},
-			expected: "storage-systems/test-sys/volumes",
+			expected: "storage-systems/test-sys/volumes?type=volume&status=optimal",
 		},
 	}
 
@@ -289,9 +289,8 @@ func TestESeries_URLBuilder(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			builder := rest.NewURLBuilder().
 				APIPath(tt.apiPath).
-				ArrayID(tt.systemID)
-
-			// Note: Filters method is not exported, skipping for now
+				ArrayID(tt.systemID).
+				Filter(tt.filters)
 
 			result := builder.Build()
 			assert.Equal(t, result, tt.expected)

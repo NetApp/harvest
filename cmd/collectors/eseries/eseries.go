@@ -243,6 +243,7 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 	query := rest.NewURLBuilder().
 		APIPath(e.Prop.Query).
 		ArrayID(e.arrayID).
+		Filter(e.Prop.Filter).
 		Build()
 
 	var results []gjson.Result
