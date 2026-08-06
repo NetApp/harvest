@@ -145,7 +145,13 @@ type cm2FileRecord struct {
 }
 
 func (c *CmPerf) pollONTAPFilesEndpoint(query string) ([]cm2FileRecord, error) {
-	path := "api/cluster/counter-cache/files?fields=path,checksum_path,node,timestamp,object&object=" + url.QueryEscape(query) + "&order_by=timestamp+desc&max_records=1"
+	samplePeriod := c.perfProp.samplePeriod
+	if samplePeriod == "" {
+		samplePeriod = "1m"
+		c.Logger.Debug("sample period not set by manifest, using default", slog.String("default", samplePeriod))
+	}
+	path := "api/cluster/counter-cache/files?fields=path,checksum_path,node,timestamp,object,sample_period&object=" +
+		url.QueryEscape(query) + "&sample_period=" + url.QueryEscape(samplePeriod) + "&order_by=timestamp+desc&max_records=1"
 	if !c.lastTimestamp.IsZero() {
 		path += "&timestamp=>" + url.QueryEscape(c.lastTimestamp.UTC().Format(time.RFC3339))
 	}

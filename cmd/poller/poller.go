@@ -979,6 +979,10 @@ type cmPerfPresetDetail struct {
 	Counters     []string `json:"counters"`
 }
 
+type samplePeriodSetter interface {
+	SetSamplePeriod(string)
+}
+
 // cmPerfManifestJSON is the top-level CmPerf manifest structure.
 type cmPerfManifestJSON struct {
 	Preset        string               `json:"preset"`
@@ -1040,6 +1044,11 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 
 		// At the moment, only the defaultDataPeriod is supported by ONTAP
 		dataPeriod := defaultDataPeriod
+		// Hand the resolved sample period back to the collector so PollData can filter
+		// counter-cache files by the same cadence the manifest requested.
+		if s, ok := col.(samplePeriodSetter); ok {
+			s.SetSamplePeriod(dataPeriod)
+		}
 
 		var counters []string
 		if countersNode := params.GetChildS("counters"); countersNode != nil {

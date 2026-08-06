@@ -63,6 +63,7 @@ type perfProp struct {
 	qosLabels           map[string]string
 	disableConstituents bool
 	histogramCounters   map[string]bool
+	samplePeriod        string
 }
 
 func init() {
@@ -552,6 +553,12 @@ func (c *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plug
 
 func isWorkloadObject(query string) bool {
 	return query == "workload" || query == "workload_volume"
+}
+
+// SetSamplePeriod records the sample period ONTAP was asked to collect for this object,
+// so PollData can filter counter-cache files to the matching cadence.
+func (c *CmPerf) SetSamplePeriod(period string) {
+	c.perfProp.samplePeriod = period
 }
 
 // PollInstance fetches QoS workload metadata from ONTAP REST and populates
