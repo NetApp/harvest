@@ -41,6 +41,11 @@ const (
 
 var constituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
+// ValidSamplePeriods are the only counter-cache sample periods ONTAP's CM2 manifest accepts.
+var ValidSamplePeriods = map[string]bool{
+	"1m": true, "5m": true, "10m": true, "30m": true, "1h": true,
+}
+
 type CmPerf struct {
 	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	perfProp        *perfProp
@@ -109,6 +114,9 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 		if d := sched.GetChildS("data"); d != nil && d.GetContentS() != "" {
 			c.perfProp.samplePeriod = d.GetContentS()
 		}
+	}
+	if !ValidSamplePeriods[c.perfProp.samplePeriod] {
+		return errs.New(errs.ErrInvalidParam, "unsupported schedule.data sample period: "+c.perfProp.samplePeriod)
 	}
 
 	c.InitVars(a.Params)

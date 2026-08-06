@@ -58,7 +58,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/arista"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/cisco"
-	_ "github.com/netapp/harvest/v2/cmd/collectors/cmperf"
+	"github.com/netapp/harvest/v2/cmd/collectors/cmperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseries"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseriesperf"
@@ -1014,11 +1014,6 @@ func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
 	return nil
 }
 
-// validCmPerfSamplePeriods are the only sample periods ONTAP's counter-cache manifest accepts.
-var validCmPerfSamplePeriods = map[string]bool{
-	"1m": true, "5m": true, "10m": true, "30m": true, "1h": true,
-}
-
 // buildCmPerfManifest constructs a JSON manifest from the already-initialized CmPerf
 // collectors. It reads query, counters, and schedule from the collector's merged params
 // (i.e. default.yaml + per-object sub-template).
@@ -1048,7 +1043,7 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 				dataPeriod = d.GetContentS()
 			}
 		}
-		if !validCmPerfSamplePeriods[dataPeriod] {
+		if !cmperf.ValidSamplePeriods[dataPeriod] {
 			logger.Warn(
 				"unsupported CmPerf sample period, skipping object from manifest",
 				slog.String("object", query),
