@@ -52,6 +52,7 @@ type CmPerf struct {
 type counter struct {
 	counterType string
 	denominator string
+	isHistogram bool
 }
 
 type perfProp struct {
@@ -61,6 +62,7 @@ type perfProp struct {
 	latencyIoReqd       int
 	qosLabels           map[string]string
 	disableConstituents bool
+	histogramCounters   map[string]bool
 }
 
 func init() {
@@ -85,6 +87,7 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 	c.InitProp()
 
 	c.perfProp.counterInfo = make(map[string]*counter)
+	c.perfProp.histogramCounters = make(map[string]bool)
 	c.archivedMetrics = make(map[string]*rest2.Metric)
 
 	if err := c.InitClient(); err != nil {
@@ -93,6 +96,12 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 
 	if c.Prop.TemplatePath, err = c.LoadTemplate(); err != nil {
 		return err
+	}
+
+	if h := c.Params.GetChildS("histograms"); h != nil {
+		for _, name := range h.GetAllChildContentS() {
+			c.perfProp.histogramCounters[name] = true
+		}
 	}
 
 	c.InitVars(a.Params)
@@ -282,7 +291,7 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 	var pollErr error
 	var pollPartials uint64
-	metricCount, pollPartials, pollErr = c.pollCM2Files(filePath, curMat)
+	metricCount, pollPartials, pollErr = c.pollCM2Files(filePath, curMat, prevMat)
 	numPartials += pollPartials
 	if pollErr != nil {
 		return nil, pollErr
