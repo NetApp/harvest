@@ -111,6 +111,9 @@ plugins:
         - svm_root root_volume `false` `No`
         - node_root root_volume `true` `Yes`
         - svm_root root_volume `true` `Yes`
+      exclude_equals:
+        - type `tmp`
+        - node_root `true`
 #  - ChangeLog
 
 export_options:

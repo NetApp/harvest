@@ -149,12 +149,6 @@ func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap 
 			continue
 		}
 
-		// ZAPI includes node root and temp volumes, while REST does not. To make ZAPI and REST consistent, Harvest will exclude the node root and temp volumes by not exporting them.
-		if volume.GetLabel("node_root") == "true" || volume.GetLabel("type") == "tmp" {
-			volume.SetExportable(false)
-			continue
-		}
-
 		// SVM names ending with "-mc" are MetroCluster SVMs.
 		// Only export volume metrics from MetroCluster SVMs if the volume is online.
 		if strings.HasSuffix(svm, "-mc") {
