@@ -58,7 +58,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/arista"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/cisco"
-	_ "github.com/netapp/harvest/v2/cmd/collectors/cmperf"
+	"github.com/netapp/harvest/v2/cmd/collectors/cmperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseries"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseriesperf"
@@ -1019,8 +1019,6 @@ func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
 // (i.e. default.yaml + per-object sub-template).
 // preset_details are sorted by object; counters within each entry are sorted.
 func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte {
-	const defaultDataPeriod = "1m"
-
 	var details []cmPerfPresetDetail
 	for _, col := range cols {
 		if col.GetName() != cmPerfName {
@@ -1038,8 +1036,22 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 			continue
 		}
 
-		// At the moment, only the defaultDataPeriod is supported by ONTAP
-		dataPeriod := defaultDataPeriod
+		var dataPeriod string
+		if sched := params.GetChildS("schedule"); sched != nil {
+			if d := sched.GetChildS("data"); d != nil {
+				dataPeriod = d.GetContentS()
+			}
+		}
+		canonicalPeriod, err := cmperf.CanonicalSamplePeriod(dataPeriod)
+		if err != nil {
+			logger.Warn(
+				"invalid CmPerf sample period, skipping object from manifest",
+				slog.String("object", query),
+				slog.String("samplePeriod", dataPeriod),
+				slogx.Err(err),
+			)
+			continue
+		}
 
 		var counters []string
 		if countersNode := params.GetChildS("counters"); countersNode != nil {
@@ -1055,7 +1067,7 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 
 		details = append(details, cmPerfPresetDetail{
 			Object:       query,
-			SamplePeriod: dataPeriod,
+			SamplePeriod: canonicalPeriod,
 			Counters:     counters,
 		})
 	}
