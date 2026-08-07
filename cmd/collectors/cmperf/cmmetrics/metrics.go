@@ -310,7 +310,7 @@ func readProto(data []byte) (*MetricsFileRecord, error) {
 func clonedString(fc *easyproto.FieldContext) (string, bool) {
 	s, ok := fc.String()
 	if !ok {
-		return s, false
+		return "", false
 	}
 	return strings.Clone(s), true
 }
