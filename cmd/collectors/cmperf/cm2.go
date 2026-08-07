@@ -16,10 +16,86 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
+
+const cmperfRetainFilesEnv = "HARVEST_CMPERF_RETAIN_FILES"
+
+// retainCmperfFiles returns how many CM2 pb files to keep for debug. Unset, empty,
+// invalid, or negative values mean 0 (delete after parse / wipe before download).
+func retainCmperfFiles() int {
+	raw := os.Getenv(cmperfRetainFilesEnv)
+	if raw == "" {
+		return 0
+	}
+	n, err := strconv.Atoi(raw)
+	if err != nil || n < 0 {
+		return 0
+	}
+	return n
+}
+
+// pruneCmperfTempDir removes non-directory entries from dir. When retain <= 0 all
+// files are removed. When retain > 0 the newest retain files are kept (sorted by
+// {unixMilli}_ filename prefix, falling back to ModTime).
+func pruneCmperfTempDir(dir string, retain int, logger *slog.Logger) error {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+
+	type tempFile struct {
+		path    string
+		sortKey int64
+	}
+	files := make([]tempFile, 0, len(entries))
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		files = append(files, tempFile{
+			path:    filepath.Clean(filepath.Join(dir, name)),
+			sortKey: cmperfTempFileSortKey(name, entry),
+		})
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].sortKey > files[j].sortKey
+	})
+
+	start := 0
+	if retain > 0 {
+		if retain >= len(files) {
+			return nil
+		}
+		start = retain
+	}
+	for _, f := range files[start:] {
+		if removeErr := os.Remove(f.path); removeErr != nil && logger != nil {
+			logger.Warn("failed to remove CM2 pb file",
+				slog.String("file", filepath.Base(f.path)), slogx.Err(removeErr))
+		}
+	}
+	return nil
+}
+
+func cmperfTempFileSortKey(name string, entry os.DirEntry) int64 {
+	prefix, _, ok := strings.Cut(name, "_")
+	if ok {
+		if ms, err := strconv.ParseInt(prefix, 10, 64); err == nil {
+			return ms
+		}
+	}
+	info, err := entry.Info()
+	if err != nil {
+		return 0
+	}
+	return info.ModTime().UnixMilli()
+}
 
 func (c *CmPerf) buildCounters() {
 	mat := c.Matrix[c.Object]
@@ -242,15 +318,8 @@ func (c *CmPerf) downloadCM2Files(dir string) (string, time.Time, error) {
 }
 
 func (c *CmPerf) downloadSPIFile(rec cm2FileRecord, dir string) (string, error) {
-	entries, rdErr := os.ReadDir(dir)
-	if rdErr != nil {
-		c.Logger.Debug("could not read CM2 temp dir for cleanup", slog.String("dir", dir), slogx.Err(rdErr))
-	} else {
-		for _, entry := range entries {
-			if !entry.IsDir() {
-				_ = os.Remove(filepath.Clean(filepath.Join(dir, entry.Name())))
-			}
-		}
+	if pruneErr := pruneCmperfTempDir(dir, retainCmperfFiles(), c.Logger); pruneErr != nil {
+		c.Logger.Debug("could not read CM2 temp dir for cleanup", slog.String("dir", dir), slogx.Err(pruneErr))
 	}
 	fname := fmt.Sprintf("%d_%s.pb", time.Now().UnixMilli(), c.Prop.Query)
 	path := filepath.Join(dir, fname)
@@ -395,7 +464,12 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix, prevMat *matri
 			slog.String("file", filepath.Base(path)))
 	}
 
-	if removeErr := os.Remove(filepath.Clean(path)); removeErr != nil {
+	if retain := retainCmperfFiles(); retain > 0 {
+		if pruneErr := pruneCmperfTempDir(filepath.Dir(path), retain, c.Logger); pruneErr != nil {
+			c.Logger.Debug("could not prune CM2 temp dir",
+				slog.String("dir", filepath.Dir(path)), slogx.Err(pruneErr))
+		}
+	} else if removeErr := os.Remove(filepath.Clean(path)); removeErr != nil {
 		c.Logger.Warn("failed to remove CM2 pb file",
 			slog.String("file", filepath.Base(path)), slogx.Err(removeErr))
 	}
