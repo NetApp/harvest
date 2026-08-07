@@ -183,6 +183,12 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 
 	c.recordsToSave = collector.RecordKeepLast(c.Params, c.Logger)
 
+	if retain := retainCmperfFiles(); retain > 0 {
+		c.Logger.Info("CM2 pb file retention enabled",
+			slog.Int("retain", retain),
+			slog.String("dir", c.cmperfTempDir()))
+	}
+
 	c.Logger.Debug(
 		"initialized cache",
 		slog.Int("numMetrics", len(c.Prop.Metrics)),
@@ -190,6 +196,18 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 	)
 
 	return nil
+}
+
+func (c *CmPerf) cmperfTempDir() string {
+	baseDir := os.TempDir()
+	if envDir := os.Getenv("HARVEST_CMPERF_TMPDIR"); envDir != "" {
+		baseDir = envDir
+	}
+	return filepath.Clean(filepath.Join(
+		baseDir,
+		fmt.Sprintf("cmperf-%s-%d", c.Options.Poller, os.Getuid()),
+		c.Object,
+	))
 }
 
 func (c *CmPerf) InitQOS() error {
@@ -326,15 +344,7 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	apiD += time.Since(startTime)
 
-	baseDir := os.TempDir()
-	if envDir := os.Getenv("HARVEST_CMPERF_TMPDIR"); envDir != "" {
-		baseDir = envDir
-	}
-	tmpDir := filepath.Clean(filepath.Join(
-		baseDir,
-		fmt.Sprintf("cmperf-%s-%d", c.Options.Poller, os.Getuid()),
-		c.Object,
-	))
+	tmpDir := c.cmperfTempDir()
 	if mkErr := os.MkdirAll(tmpDir, 0750); mkErr != nil {
 		return nil, fmt.Errorf("create CM2 temp dir %s: %w", tmpDir, mkErr)
 	}
