@@ -305,12 +305,12 @@ func readProto(data []byte) (*MetricsFileRecord, error) {
 	return handleMetricsFileRecord(data)
 }
 
-// clonedString clones fc's zero-copy string so it outlives the parse buffer,
+// cloneString clones fc's zero-copy string so it outlives the parse buffer,
 // which lets every struct this package returns be safely retained by callers.
-func clonedString(fc *easyproto.FieldContext) (string, bool) {
+func cloneString(fc *easyproto.FieldContext) (string, bool) {
 	s, ok := fc.String()
 	if !ok {
-		return s, false
+		return "", false
 	}
 	return strings.Clone(s), true
 }
@@ -424,7 +424,7 @@ func handleStatusCode(value []byte) (StatusCode, error) {
 			}
 			statusCode.Code = StatusCodeEnum(value)
 		case 2:
-			val, ok := clonedString(&fc)
+			val, ok := cloneString(&fc)
 			if !ok {
 				return statusCode, errors.New("failed to read statusCode nodes value")
 			}
@@ -486,7 +486,7 @@ func handleObjectCollection(data []byte) (*ObjectCollection, error) {
 			}
 			cm.Period = period
 		case 3:
-			nodeName, ok := clonedString(&fc)
+			nodeName, ok := cloneString(&fc)
 			if !ok {
 				return nil, errors.New("failed to read node name")
 			}
@@ -518,7 +518,7 @@ func handleObjectSchema(data []byte) (ObjectSchema, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			name, ok := clonedString(&fc)
+			name, ok := cloneString(&fc)
 			if !ok {
 				return objectSchema, errors.New("failed to read object schema name")
 			}
@@ -552,7 +552,7 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			val, ok := clonedString(&fc)
+			val, ok := cloneString(&fc)
 			if !ok {
 				return counterSchema, errors.New("failed to read counter schema name")
 			}
@@ -573,13 +573,13 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 			}
 			counterSchema.Type = CounterTypeEnum(val)
 		case 6:
-			val, ok := clonedString(&fc)
+			val, ok := cloneString(&fc)
 			if !ok {
 				return counterSchema, errors.New("failed to read counter schema counter_x_labels")
 			}
 			counterSchema.LabelsX = append(counterSchema.LabelsX, val)
 		case 7:
-			val, ok := clonedString(&fc)
+			val, ok := cloneString(&fc)
 			if !ok {
 				return counterSchema, errors.New("failed to read counter schema counter_y_labels")
 			}
@@ -608,7 +608,7 @@ func handleObjectData(data []byte) (ObjectData, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			key, ok := clonedString(&fc)
+			key, ok := cloneString(&fc)
 			if !ok {
 				return objectData, errors.New("failed to read object name")
 			}
@@ -641,13 +641,13 @@ func handleObjectInstance(value []byte) (ObjectInstance, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			val, ok := clonedString(&fc)
+			val, ok := cloneString(&fc)
 			if !ok {
 				return objectInstance, errors.New("failed to read instance_name value")
 			}
 			objectInstance.Name = val
 		case 2:
-			val, ok := clonedString(&fc)
+			val, ok := cloneString(&fc)
 			if !ok {
 				return objectInstance, errors.New("failed to read instance_uuid value")
 			}
@@ -686,7 +686,7 @@ func handleCounterType(data []byte) (CounterType, error) {
 			}
 			counterType.Index = val
 		case 2:
-			val, ok := clonedString(&fc)
+			val, ok := cloneString(&fc)
 			if !ok {
 				return counterType, errors.New("failed to read string_value")
 			}
@@ -753,7 +753,7 @@ func handleArrayCounterString(val []byte) ([]string, error) {
 			continue
 		}
 
-		s, ok := clonedString(&fc)
+		s, ok := cloneString(&fc)
 		if !ok {
 			return nil, errors.New("cannot read sample array string value")
 		}
