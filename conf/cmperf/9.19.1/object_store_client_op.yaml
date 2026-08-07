@@ -5,10 +5,10 @@ object:                   fabricpool
 
 counters:
   - ^^instance_name        => fabricpool
+  - ^instance_uuid
+  - ^node_name             => node
   - average_latency
   - get_throughput_bytes
-  - instance_uuid
-  - node_name              => node
   - put_throughput_bytes
   - stats
   - throughput_ops

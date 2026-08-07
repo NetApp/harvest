@@ -3,21 +3,21 @@ query:                    disk:constituent
 object:                   disk
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name         => partition
+  - ^node_name             => node
+  - ^physical_disk_name    => disk
+  - ^physical_disk_uuid    => disk_uuid
+  - ^raid_group
+  - ^raid_type
   - cp_read_chain
   - cp_read_latency
   - cp_reads
   - disk_busy
   - disk_capacity
   - disk_speed
-  - instance_name         => partition
-  - instance_uuid
   - io_pending
   - io_queued
-  - node_name             => node
-  - physical_disk_name    => disk
-  - physical_disk_uuid    => disk_uuid
-  - raid_group
-  - raid_type
   - total_data
   - total_transfers
   - user_read_blocks

@@ -9,6 +9,7 @@ object:                   node_vol
 allow_partial_aggregation: true
 
 counters:
+  - ^^instance_name           => node
   - cifs_other_latency
   - cifs_other_ops
   - cifs_read_data
@@ -25,7 +26,6 @@ counters:
   - fcp_write_data
   - fcp_write_latency
   - fcp_write_ops
-  - instance_name           => node
   - iscsi_other_latency
   - iscsi_other_ops
   - iscsi_read_data

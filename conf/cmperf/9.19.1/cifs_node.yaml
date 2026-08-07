@@ -6,6 +6,7 @@ object:                   node_cifs
 allow_partial_aggregation: true
 
 counters:
+  - ^^instance_name          => node
   - cifs_latency             => latency
   - cifs_op_count            => op_count
   - cifs_ops                 => total_ops     # "cifs_ops" already used in system_node.yaml
@@ -15,7 +16,6 @@ counters:
   - cifs_write_ops           => write_ops
   - connections
   - established_sessions
-  - instance_name            => node
   - open_files
 
 export_options:

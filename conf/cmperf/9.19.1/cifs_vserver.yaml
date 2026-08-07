@@ -4,6 +4,8 @@ query:                    cifs:vserver
 object:                   svm_cifs
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name          => svm
   - cifs_latency            => latency
   - cifs_op_count           => op_count
   - cifs_ops                => ops
@@ -13,8 +15,6 @@ counters:
   - cifs_write_ops          => write_ops
   - connections
   - established_sessions
-  - instance_name           => svm
-  - instance_uuid
   - open_files
   - signed_sessions
 
