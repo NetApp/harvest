@@ -271,7 +271,7 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 	if envDir := os.Getenv("HARVEST_CMPERF_TMPDIR"); envDir != "" {
 		baseDir = envDir
 	}
-	tmpDir := filepath.Clean(filepath.Join(baseDir, c.Options.Poller+"-cmperf", "harvest-cmperf-"+c.Prop.Object))
+	tmpDir := filepath.Clean(filepath.Join(baseDir, c.Options.Poller+"-cmperf", "harvest-cmperf-"+c.Object))
 	if mkErr := os.MkdirAll(tmpDir, 0750); mkErr != nil {
 		return nil, fmt.Errorf("create CM2 temp dir %s: %w", tmpDir, mkErr)
 	}
