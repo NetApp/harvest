@@ -25,6 +25,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -41,9 +42,50 @@ const (
 
 var constituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
-// ValidSamplePeriods are the only counter-cache sample periods ONTAP's CM2 manifest accepts.
-var ValidSamplePeriods = map[string]bool{
-	"1m": true, "5m": true, "10m": true, "30m": true, "1h": true,
+// allowedSamplePeriods maps durations to the exact labels ONTAP's CM2 manifest accepts.
+var allowedSamplePeriods = map[time.Duration]string{
+	time.Minute:      "1m",
+	5 * time.Minute:  "5m",
+	10 * time.Minute: "10m",
+	30 * time.Minute: "30m",
+	time.Hour:        "1h",
+}
+
+// allowedSamplePeriodList is derived from allowedSamplePeriods so the human-readable
+// allowlist cannot drift from the map.
+var allowedSamplePeriodList = sortedSamplePeriodList()
+
+func sortedSamplePeriodList() string {
+	durs := make([]time.Duration, 0, len(allowedSamplePeriods))
+	for d := range allowedSamplePeriods {
+		durs = append(durs, d)
+	}
+	slices.Sort(durs)
+	labels := make([]string, len(durs))
+	for i, d := range durs {
+		labels[i] = allowedSamplePeriods[d]
+	}
+	return strings.Join(labels, ", ")
+}
+
+// CanonicalSamplePeriod parses schedule.data and returns the ONTAP-canonical sample-period
+// label. Equivalent Go durations (e.g. "60s", "1m0s") normalize to the matching label.
+// Non-matching durations are rejected (no snapping).
+func CanonicalSamplePeriod(raw string) (string, error) {
+	if raw == "" {
+		return "", errs.New(errs.ErrMissingParam, "schedule.data")
+	}
+	d, err := time.ParseDuration(raw)
+	if err != nil {
+		return "", errs.New(errs.ErrInvalidParam,
+			fmt.Sprintf("schedule.data %q: %v; must be one of: %s", raw, err, allowedSamplePeriodList))
+	}
+	label, ok := allowedSamplePeriods[d]
+	if !ok {
+		return "", errs.New(errs.ErrInvalidParam,
+			fmt.Sprintf("unsupported schedule.data sample period %q; must be one of: %s", raw, allowedSamplePeriodList))
+	}
+	return label, nil
 }
 
 type CmPerf struct {
@@ -110,13 +152,15 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 		}
 	}
 
+	var rawPeriod string
 	if sched := c.Params.GetChildS("schedule"); sched != nil {
-		if d := sched.GetChildS("data"); d != nil && d.GetContentS() != "" {
-			c.perfProp.samplePeriod = d.GetContentS()
+		if d := sched.GetChildS("data"); d != nil {
+			rawPeriod = d.GetContentS()
 		}
 	}
-	if !ValidSamplePeriods[c.perfProp.samplePeriod] {
-		return errs.New(errs.ErrInvalidParam, "unsupported schedule.data sample period: "+c.perfProp.samplePeriod)
+	c.perfProp.samplePeriod, err = CanonicalSamplePeriod(rawPeriod)
+	if err != nil {
+		return err
 	}
 
 	c.InitVars(a.Params)

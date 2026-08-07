@@ -1036,18 +1036,19 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 			continue
 		}
 
-		// Supported values are 1m, 5m, 10m, 30m, 1h
 		var dataPeriod string
 		if sched := params.GetChildS("schedule"); sched != nil {
 			if d := sched.GetChildS("data"); d != nil {
 				dataPeriod = d.GetContentS()
 			}
 		}
-		if !cmperf.ValidSamplePeriods[dataPeriod] {
+		canonicalPeriod, err := cmperf.CanonicalSamplePeriod(dataPeriod)
+		if err != nil {
 			logger.Warn(
-				"unsupported CmPerf sample period, skipping object from manifest",
+				"invalid CmPerf sample period, skipping object from manifest",
 				slog.String("object", query),
 				slog.String("samplePeriod", dataPeriod),
+				slogx.Err(err),
 			)
 			continue
 		}
@@ -1066,7 +1067,7 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 
 		details = append(details, cmPerfPresetDetail{
 			Object:       query,
-			SamplePeriod: dataPeriod,
+			SamplePeriod: canonicalPeriod,
 			Counters:     counters,
 		})
 	}
