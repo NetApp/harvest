@@ -837,11 +837,29 @@ func TestBuildCmPerfManifest(t *testing.T) {
 			wantNil: true,
 		},
 		{
-			name: "unsupported sample period is skipped with a warning",
+			name: "invalid sample period is skipped with a warning",
 			cols: []collectorPkg.Collector{
 				makeCmPerfCollector("CmPerf", "nfsv3", "3m", []string{"ops"}),
 			},
 			wantNil: true,
+		},
+		{
+			name: "equivalent duration normalizes to canonical sample period",
+			cols: []collectorPkg.Collector{
+				makeCmPerfCollector("CmPerf", "nfsv3", "60s", []string{"ops"}),
+			},
+			wantJSON: `{
+    "preset": "harvest_overview",
+    "preset_details": [
+        {
+            "object": "nfsv3",
+            "sample-period": "1m",
+            "counters": [
+                "ops"
+            ]
+        }
+    ]
+}`,
 		},
 		{
 			name: "mixed collector names: only CmPerf included",
