@@ -4,8 +4,8 @@ object:                   token
 
 counters:
   - ^^instance_uuid
-  - ^^node_name    => node
   - ^instance_name => token
+  - ^node_name     => node
   - token_copy_bytes
   - token_copy_failure
   - token_copy_success
