@@ -9,7 +9,8 @@ object:                   node_vol
 allow_partial_aggregation: true
 
 counters:
-  - ^^instance_name           => node
+  - ^^instance_uuid
+  - ^instance_name           => node
   - cifs_other_latency
   - cifs_other_ops
   - cifs_read_data

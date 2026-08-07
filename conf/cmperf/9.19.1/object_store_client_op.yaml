@@ -4,9 +4,9 @@ query:                    object_store_client_op
 object:                   fabricpool
 
 counters:
-  - ^^instance_name        => fabricpool
-  - ^instance_uuid
-  - ^node_name             => node
+  - ^^instance_uuid
+  - ^^node_name    => node
+  - ^instance_name => fabricpool
   - average_latency
   - get_throughput_bytes
   - put_throughput_bytes

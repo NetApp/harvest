@@ -4,7 +4,8 @@ query:                    lun
 object:                   lun
 
 counters:
-  - ^^instance_name     => lun
+  - ^^instance_uuid
+  - ^instance_name      => lun
   - ^vserver_name       => svm
   - avg_read_latency
   - avg_write_latency
