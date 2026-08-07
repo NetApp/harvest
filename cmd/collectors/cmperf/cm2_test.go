@@ -2,6 +2,8 @@ package cmperf
 
 import (
 	"log/slog"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/netapp/harvest/v2/assert"
@@ -226,4 +228,67 @@ func TestPopulateArrayCounterCreatesInPrevMat(t *testing.T) {
 			t.Fatalf("expected %s to also exist in prevMat", key)
 		}
 	}
+}
+
+func TestRetainCmperfFiles(t *testing.T) {
+	tests := []struct {
+		name string
+		env  string
+		want int
+	}{
+		{name: "empty", env: "", want: 0},
+		{name: "zero", env: "0", want: 0},
+		{name: "positive", env: "3", want: 3},
+		{name: "invalid", env: "abc", want: 0},
+		{name: "negative", env: "-1", want: 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv(cmperfRetainFilesEnv, tt.env)
+			assert.Equal(t, retainCmperfFiles(), tt.want)
+		})
+	}
+}
+
+func TestPruneCmperfTempDir(t *testing.T) {
+	names := []string{
+		"1000_volume.pb",
+		"2000_volume.pb",
+		"3000_volume.pb",
+		"4000_volume.pb",
+	}
+
+	t.Run("retain 0 deletes all", func(t *testing.T) {
+		sub := t.TempDir()
+		for _, name := range names {
+			if err := os.WriteFile(filepath.Join(sub, name), []byte("x"), 0600); err != nil {
+				t.Fatal(err)
+			}
+		}
+		assert.Nil(t, pruneCmperfTempDir(sub, 0, nil))
+		entries, err := os.ReadDir(sub)
+		assert.Nil(t, err)
+		assert.Equal(t, len(entries), 0)
+	})
+
+	t.Run("retain 2 keeps newest", func(t *testing.T) {
+		sub := t.TempDir()
+		for _, name := range names {
+			if err := os.WriteFile(filepath.Join(sub, name), []byte("x"), 0600); err != nil {
+				t.Fatal(err)
+			}
+		}
+		assert.Nil(t, pruneCmperfTempDir(sub, 2, nil))
+		entries, err := os.ReadDir(sub)
+		assert.Nil(t, err)
+		assert.Equal(t, len(entries), 2)
+		kept := map[string]bool{}
+		for _, e := range entries {
+			kept[e.Name()] = true
+		}
+		assert.True(t, kept["4000_volume.pb"])
+		assert.True(t, kept["3000_volume.pb"])
+		assert.False(t, kept["2000_volume.pb"])
+		assert.False(t, kept["1000_volume.pb"])
+	})
 }
