@@ -422,6 +422,10 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 			stringVals["instance_uuid"] = inst.UUID
 		}
 
+		if oc.Node != "" {
+			stringVals["node_name"] = oc.Node
+		}
+
 		for _, ct := range inst.Counters {
 			cs, csOK := schemaMap[ct.Index]
 			if !csOK {

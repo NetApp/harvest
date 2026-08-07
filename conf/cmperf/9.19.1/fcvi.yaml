@@ -4,6 +4,9 @@ query:                    fcvi
 object:                   fcvi
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name          => fcvi
+  - ^node_name              => node
   - fw_SyStatDiscardFrames  => firmware_systat_discard_frames
   - fw_invalid_crc          => firmware_invalid_crc_count
   - fw_invalid_xmit_words   => firmware_invalid_transmit_word_count
@@ -11,9 +14,6 @@ counters:
   - fw_loss_of_signal       => firmware_loss_of_signal_count
   - fw_loss_of_sync         => firmware_loss_of_sync_count
   - hard_reset_cnt          => hard_reset_count
-  - instance_name           => fcvi
-  - instance_uuid
-  - node_name               => node
   - rdma_write_avg_latency
   - rdma_write_ops
   - rdma_write_throughput

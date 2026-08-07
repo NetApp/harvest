@@ -6,8 +6,8 @@ global_labels:
   - nfsv: v4
 
 counters:
-  - instance_uuid
-  - node_name       => node
+  - ^^instance_uuid
+  - ^node_name       => node
   - storePool_ByteLockAlloc
   - storePool_ByteLockMax
   - storePool_ClientAlloc

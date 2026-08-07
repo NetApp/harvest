@@ -4,16 +4,16 @@ query:                    netstat
 object:                   netstat
 
 counters:
+  - ^^instance_uuid
+  - ^faddr
+  - ^fport_hbo                => fport
+  - ^laddr
+  - ^lport_hbo                => lport
+  - ^node_name                => node
   - bytes_recvd
   - bytes_sent
   - cong_win
   - cong_win_th
-  - faddr
-  - fport_hbo                => fport
-  - instance_uuid
-  - laddr
-  - lport_hbo                => lport
-  - node_name                => node
   - ooorcv_pkts
   - recv_window
   - rexmit_pkts

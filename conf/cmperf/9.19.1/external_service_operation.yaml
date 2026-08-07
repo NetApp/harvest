@@ -4,23 +4,23 @@ query:                    external_service_op
 object:                   external_service_op
 
 counters:
-  - instance_name
-  - instance_uuid
-  - node_name              => node
+  - ^^instance_uuid
+  - ^instance_name
+  - ^node_name              => node
+  - ^operation
+  - ^process_name
+  - ^server_ip_address
+  - ^server_name
+  - ^service_name
+  - ^vserver_name           => svm
   - num_not_found_responses
   - num_request_failures
   - num_requests_sent
   - num_responses_received
   - num_successful_responses
   - num_timeouts
-  - operation
-  - process_name
   - request_latency
   - request_latency_hist
-  - server_ip_address
-  - server_name
-  - service_name
-  - vserver_name           => svm
 
 plugins:
 #  - ExternalServiceOperation #TODO implement

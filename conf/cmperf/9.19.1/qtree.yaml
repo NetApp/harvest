@@ -3,15 +3,15 @@ query:                    qtree
 object:                   qtree
 
 counters:
+  - ^^instance_uuid
+  - ^instance_name         => qtreefull
+  - ^node_name             => node
+  - ^parent_vol            => volume
+  - ^vserver_name          => svm
   - cifs_ops
-  - instance_name         => qtreefull
-  - instance_uuid
   - internal_ops
   - nfs_ops
-  - node_name             => node
-  - parent_vol            => volume
   - total_ops
-  - vserver_name          => svm
 
 plugins:
   - LabelAgent:
