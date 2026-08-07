@@ -2,7 +2,6 @@ package cmmetrics
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -287,8 +286,9 @@ func Messages(path string) iter.Seq2[*MetricsFileRecord, error] {
 				return
 			}
 
-			msgCopy := bytes.Clone(buf)
-			cm, err := readProto(msgCopy)
+			// buf is reused across messages, which is safe because the
+			// every string it keeps and never stores a slice of buf.
+			cm, err := readProto(buf)
 			if err != nil {
 				yield(nil, err)
 				return
@@ -303,6 +303,16 @@ func Messages(path string) iter.Seq2[*MetricsFileRecord, error] {
 
 func readProto(data []byte) (*MetricsFileRecord, error) {
 	return handleMetricsFileRecord(data)
+}
+
+// clonedString clones fc's zero-copy string so it outlives the parse buffer,
+// which lets every struct this package returns be safely retained by callers.
+func clonedString(fc *easyproto.FieldContext) (string, bool) {
+	s, ok := fc.String()
+	if !ok {
+		return "", false
+	}
+	return strings.Clone(s), true
 }
 
 func handleMetricsFileRecord(data []byte) (*MetricsFileRecord, error) {
@@ -414,7 +424,7 @@ func handleStatusCode(value []byte) (StatusCode, error) {
 			}
 			statusCode.Code = StatusCodeEnum(value)
 		case 2:
-			val, ok := fc.String()
+			val, ok := clonedString(&fc)
 			if !ok {
 				return statusCode, errors.New("failed to read statusCode nodes value")
 			}
@@ -476,7 +486,7 @@ func handleObjectCollection(data []byte) (*ObjectCollection, error) {
 			}
 			cm.Period = period
 		case 3:
-			nodeName, ok := fc.String()
+			nodeName, ok := clonedString(&fc)
 			if !ok {
 				return nil, errors.New("failed to read node name")
 			}
@@ -508,7 +518,7 @@ func handleObjectSchema(data []byte) (ObjectSchema, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			name, ok := fc.String()
+			name, ok := clonedString(&fc)
 			if !ok {
 				return objectSchema, errors.New("failed to read object schema name")
 			}
@@ -542,7 +552,7 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			val, ok := fc.String()
+			val, ok := clonedString(&fc)
 			if !ok {
 				return counterSchema, errors.New("failed to read counter schema name")
 			}
@@ -563,13 +573,13 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 			}
 			counterSchema.Type = CounterTypeEnum(val)
 		case 6:
-			val, ok := fc.String()
+			val, ok := clonedString(&fc)
 			if !ok {
 				return counterSchema, errors.New("failed to read counter schema counter_x_labels")
 			}
 			counterSchema.LabelsX = append(counterSchema.LabelsX, val)
 		case 7:
-			val, ok := fc.String()
+			val, ok := clonedString(&fc)
 			if !ok {
 				return counterSchema, errors.New("failed to read counter schema counter_y_labels")
 			}
@@ -598,7 +608,7 @@ func handleObjectData(data []byte) (ObjectData, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			key, ok := fc.String()
+			key, ok := clonedString(&fc)
 			if !ok {
 				return objectData, errors.New("failed to read object name")
 			}
@@ -631,13 +641,13 @@ func handleObjectInstance(value []byte) (ObjectInstance, error) {
 		}
 		switch fc.FieldNum {
 		case 1:
-			val, ok := fc.String()
+			val, ok := clonedString(&fc)
 			if !ok {
 				return objectInstance, errors.New("failed to read instance_name value")
 			}
 			objectInstance.Name = val
 		case 2:
-			val, ok := fc.String()
+			val, ok := clonedString(&fc)
 			if !ok {
 				return objectInstance, errors.New("failed to read instance_uuid value")
 			}
@@ -676,7 +686,7 @@ func handleCounterType(data []byte) (CounterType, error) {
 			}
 			counterType.Index = val
 		case 2:
-			val, ok := fc.String()
+			val, ok := clonedString(&fc)
 			if !ok {
 				return counterType, errors.New("failed to read string_value")
 			}
@@ -743,7 +753,7 @@ func handleArrayCounterString(val []byte) ([]string, error) {
 			continue
 		}
 
-		s, ok := fc.String()
+		s, ok := clonedString(&fc)
 		if !ok {
 			return nil, errors.New("cannot read sample array string value")
 		}
