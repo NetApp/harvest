@@ -2,7 +2,6 @@ package cmmetrics
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -287,8 +286,9 @@ func Messages(path string) iter.Seq2[*MetricsFileRecord, error] {
 				return
 			}
 
-			msgCopy := bytes.Clone(buf)
-			cm, err := readProto(msgCopy)
+			// buf is reused across messages, which is safe because the
+			// every string it keeps and never stores a slice of buf.
+			cm, err := readProto(buf)
 			if err != nil {
 				yield(nil, err)
 				return
