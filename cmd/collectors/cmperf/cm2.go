@@ -413,30 +413,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 	tsMetric := curMat.MustGetMetric(timestampMetricName)
 
 	for _, inst := range oc.Data.Instances {
-		stringVals := make(map[string]string)
-
-		if inst.Name != "" {
-			stringVals["instance_name"] = inst.Name
-		}
-		if inst.UUID != "" {
-			stringVals["instance_uuid"] = inst.UUID
-		}
-
-		if oc.Node != "" {
-			stringVals["node_name"] = oc.Node
-		}
-
-		for _, ct := range inst.Counters {
-			cs, csOK := schemaMap[ct.Index]
-			if !csOK {
-				continue
-			}
-			if sv, strOK := ct.StringValue(); strOK {
-				stringVals[cs.Name] = sv
-			}
-		}
-
-		instanceKey := c.buildInstanceKey(inst, stringVals)
+		instanceKey := c.buildInstanceKey(oc, inst)
 		if instanceKey == "" {
 			c.Logger.Debug("skip instance, key is empty",
 				slog.String("name", inst.Name),
@@ -464,8 +441,8 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 
 		tsMetric.SetValueFloat64(matInst, ts)
 
-		for name, sv := range stringVals {
-			display, ok := c.Prop.InstanceLabels[name]
+		for name, display := range c.Prop.InstanceLabels {
+			sv, ok := c.resolveStringField(oc, inst, name)
 			if !ok {
 				continue
 			}
@@ -510,12 +487,31 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 	return metricCount
 }
 
-func (c *CmPerf) buildInstanceKey(inst cmmetrics.ObjectInstance, stringVals map[string]string) string {
+func (c *CmPerf) resolveStringField(oc *cmmetrics.ObjectCollection, inst cmmetrics.ObjectInstance, name string) (string, bool) {
+	switch name {
+	case "instance_name":
+		return inst.Name, inst.Name != ""
+	case "instance_uuid":
+		return inst.UUID, inst.UUID != ""
+	case "node_name":
+		return oc.Node, oc.Node != ""
+	}
+	for _, ct := range inst.Counters {
+		cs, ok := c.perfProp.schemaMap[ct.Index]
+		if !ok || cs.Name != name {
+			continue
+		}
+		return ct.StringValue()
+	}
+	return "", false
+}
+
+func (c *CmPerf) buildInstanceKey(oc *cmmetrics.ObjectCollection, inst cmmetrics.ObjectInstance) string {
 	if len(c.Prop.InstanceKeys) > 0 {
 		var b strings.Builder
 		var anyNonEmpty bool
 		for i, k := range c.Prop.InstanceKeys {
-			v := stringVals[k]
+			v, _ := c.resolveStringField(oc, inst, k)
 			if v == "" {
 				c.Logger.Debug("instance key counter has no value",
 					slog.String("counter", k),
