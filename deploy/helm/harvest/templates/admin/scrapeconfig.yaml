@@ -12,6 +12,6 @@ metadata:
     {{- end }}
 spec:
   httpSDConfigs:
-    - url: "http://{{ include "harvest.fullname" $ }}-admin-sd.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.admin.service.ports.httpsd }}/api/v1/sd"
+    - url: "http://{{ include "harvest.fullname" $ }}-admin-sd.{{ .Release.Namespace }}.svc:{{ .Values.admin.service.ports.httpsd }}/api/v1/sd"
 
 {{ end }}
