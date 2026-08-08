@@ -31,12 +31,16 @@ harvestConfig:
               name: ontap-cluster-a
               key: password
       collectorsExtensions:
+        # Extend Rest with jitter and schedule overwrites, without extra objects
         Rest:
           jitter: 1m
-          objects:
-            NFSClients: nfs_clients.yaml
+          schedule:
+            - data: 80s
+        # Extend RestPerf with jitter and schedule overwrites, adding extra objects
         RestPerf:
           jitter: 1m
+          schedule:
+            - data: 180s
           objects:
             OntapS3SVM: ontap_s3_svm.yaml
             Qtree: qtree.yaml
