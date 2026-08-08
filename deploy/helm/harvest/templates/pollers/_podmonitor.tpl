@@ -31,7 +31,14 @@ Values:
 {{- $name := .pollerName -}}
 {{- $p := .poller -}}
 {{- $pm := (get $p "podMonitor") | default dict -}}
-{{- $enabled := (coalesce (get $pm "enabled") ($root.Values.monitoring.scrape.podMonitor.enabled | default true)) -}}
+{{- $globalEnabled := true -}}
+{{- if hasKey $root.Values.monitoring.scrape.podMonitor "enabled" -}}
+{{- $globalEnabled = $root.Values.monitoring.scrape.podMonitor.enabled -}}
+{{- end -}}
+{{- $enabled := $globalEnabled -}}
+{{- if hasKey $pm "enabled" -}}
+{{- $enabled = (get $pm "enabled") -}}
+{{- end -}}
 {{- if $enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
