@@ -4,6 +4,7 @@
 {{- range $pollerName, $poller := .Values.harvestConfig.Pollers }}
 {{- $exts := ($poller.collectorsExtensions | default dict) }}
 {{- range $collectorType, $ext := $exts }}
+{{- if $ext }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,5 +16,6 @@ data:
   custom.yaml: |
     {{- toYaml $ext | nindent 4 }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
