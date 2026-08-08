@@ -1,0 +1,21 @@
+{{- /* One custom.yaml ConfigMap per (poller, collectorType) from
+       harvestConfig.Pollers.<name>.collectorsExtensions. */ -}}
+{{- $root := . -}}
+{{- range $pollerName, $poller := .Values.harvestConfig.Pollers }}
+{{- $exts := ($poller.collectorsExtensions | default dict) }}
+{{- range $collectorType, $ext := $exts }}
+{{- if $ext }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "harvest.fullname" $root }}-poller-{{ $pollerName }}-{{ lower $collectorType }}-custom
+  labels:
+    {{- include "harvest.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: poller-{{ $pollerName }}
+data:
+  custom.yaml: |
+    {{- toYaml $ext | nindent 4 }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
