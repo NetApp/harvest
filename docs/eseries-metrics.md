@@ -960,12 +960,12 @@ The `eseries_drive_block_size_physical` metric is visualized in the following Gr
 
 ### eseries_drive_capacity
 
-Raw capacity of the drive in bytes
+Usable capacity of the drive in bytes, after accounting for space reserved by the array controller for overhead
 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/hardware-inventory` | `drives.rawCapacity` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+| REST | `storage-systems/{array_id}/hardware-inventory` | `drives.usableCapacity` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
 
 The `eseries_drive_capacity` metric is visualized in the following Grafana dashboards:
 
@@ -1008,6 +1008,26 @@ Percentage of SSD endurance used for solid state drives
 | REST | `storage-systems/{array_id}/hardware-inventory` | `drives.ssdWearLife.percentEnduranceUsed` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
 
 The `eseries_drive_percent_endurance_used` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Drive | Drive Details | table | [Drives](/d/eseries-drive/e-series3a-drive?orgId=1&viewPanel=29) |
+| E-Series: Hardware | Drives | table | [Drives](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=112) |
+///
+
+
+
+### eseries_drive_raw_capacity
+
+Raw physical capacity of the drive in bytes, before array controller overhead is reserved
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/hardware-inventory` | `drives.rawCapacity` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+
+The `eseries_drive_raw_capacity` metric is visualized in the following Grafana dashboards:
 
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |

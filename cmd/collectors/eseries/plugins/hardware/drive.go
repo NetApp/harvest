@@ -50,6 +50,7 @@ func (h *Hardware) initDriveMatrix() {
 	// Define metrics
 	_, _ = mat.NewMetricFloat64("percent_endurance_used")
 	_, _ = mat.NewMetricFloat64("capacity")
+	_, _ = mat.NewMetricFloat64("raw_capacity")
 	_, _ = mat.NewMetricFloat64("block_size")
 	_, _ = mat.NewMetricFloat64("block_size_physical")
 
@@ -68,6 +69,7 @@ func (h *Hardware) processDrives(response gjson.Result, trayLabelMap, poolNames 
 
 	enduranceMetric := mat.MustGetMetric("percent_endurance_used")
 	capacityMetric := mat.MustGetMetric("capacity")
+	rawCapacityMetric := mat.MustGetMetric("raw_capacity")
 	blockSizeMetric := mat.MustGetMetric("block_size")
 	blockSizePhysicalMetric := mat.MustGetMetric("block_size_physical")
 
@@ -146,6 +148,12 @@ func (h *Hardware) processDrives(response gjson.Result, trayLabelMap, poolNames 
 		if capacityStr := drive.Get("usableCapacity").ClonedString(); capacityStr != "" {
 			if capacity, err := strconv.ParseFloat(capacityStr, 64); err == nil {
 				capacityMetric.SetValueFloat64(inst, capacity)
+			}
+		}
+
+		if rawCapacityStr := drive.Get("rawCapacity").ClonedString(); rawCapacityStr != "" {
+			if rawCapacity, err := strconv.ParseFloat(rawCapacityStr, 64); err == nil {
+				rawCapacityMetric.SetValueFloat64(inst, rawCapacity)
 			}
 		}
 
