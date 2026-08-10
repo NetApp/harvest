@@ -1127,7 +1127,15 @@ counters:
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
   - Name: eseries_drive_capacity
-    Description: Raw capacity of the drive in bytes
+    Description: Usable capacity of the drive in bytes, after accounting for space reserved by the array controller for overhead
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: drives.usableCapacity
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_drive_raw_capacity
+    Description: Raw physical capacity of the drive in bytes, before array controller overhead is reserved
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/hardware-inventory
