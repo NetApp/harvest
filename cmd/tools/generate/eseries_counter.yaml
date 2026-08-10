@@ -230,7 +230,7 @@ counters:
         Template: conf/eseries/11.80.0/volume.yaml
 
   - Name: eseries_volume_reported_capacity
-    Description: The capacity in bytes of the volume
+    Description: The capacity in bytes of the volume. Reports the same value as eseries_volume_allocated_capacity
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/volumes
@@ -238,7 +238,7 @@ counters:
         Template: conf/eseries/11.80.0/volume.yaml
 
   - Name: eseries_volume_allocated_capacity
-    Description: Allocated capacity of the volume in bytes
+    Description: Allocated capacity of the volume in bytes. Reports the same value as eseries_volume_reported_capacity
     APIs:
       - API: REST
         Endpoint: storage-systems/{array_id}/volumes
