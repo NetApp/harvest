@@ -2274,6 +2274,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#eseries_drive_raw_capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_drive_raw_capacity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#eseries_drive_read_data" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_drive_read_data
@@ -4176,6 +4185,15 @@
   <a href="#eseries_drive_percent_endurance_used" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_drive_percent_endurance_used
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eseries_drive_raw_capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_drive_raw_capacity
     </span>
   </a>
   
@@ -7408,7 +7426,7 @@ E-Series Version: 11.80.0
 </table>
 </div>
 <h3 id="eseries_drive_capacity">eseries_drive_capacity<a class="headerlink" href="#eseries_drive_capacity" title="Permanent link">&para;</a></h3>
-<p>Raw capacity of the drive in bytes</p>
+<p>Usable capacity of the drive in bytes, after accounting for space reserved by the array controller for overhead</p>
 <table>
 <thead>
 <tr>
@@ -7422,7 +7440,7 @@ E-Series Version: 11.80.0
 <tr>
 <td>REST</td>
 <td><code>storage-systems/{array_id}/hardware-inventory</code></td>
-<td><code>drives.rawCapacity</code></td>
+<td><code>drives.usableCapacity</code></td>
 <td>conf/eseries/11.80.0/hardware.yaml (Hardware plugin)</td>
 </tr>
 </tbody>
@@ -7522,6 +7540,53 @@ E-Series Version: 11.80.0
 </tbody>
 </table>
 <p>The <code>eseries_drive_percent_endurance_used</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-Series: Drive</td>
+<td>Drive Details</td>
+<td>table</td>
+<td><a href="/d/eseries-drive/e-series3a-drive?orgId=1&amp;viewPanel=29">Drives</a></td>
+</tr>
+<tr>
+<td>E-Series: Hardware</td>
+<td>Drives</td>
+<td>table</td>
+<td><a href="/d/eseries-hardware/e-series3a-hardware?orgId=1&amp;viewPanel=112">Drives</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="eseries_drive_raw_capacity">eseries_drive_raw_capacity<a class="headerlink" href="#eseries_drive_raw_capacity" title="Permanent link">&para;</a></h3>
+<p>Raw physical capacity of the drive in bytes, before array controller overhead is reserved</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>storage-systems/{array_id}/hardware-inventory</code></td>
+<td><code>drives.rawCapacity</code></td>
+<td>conf/eseries/11.80.0/hardware.yaml (Hardware plugin)</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>eseries_drive_raw_capacity</code> metric is visualized in the following Grafana dashboards:</p>
 <div class="grafana-table">
 <table>
 <thead>
@@ -10926,7 +10991,7 @@ E-Series Version: 11.80.0
 </table>
 </div>
 <h3 id="eseries_volume_allocated_capacity">eseries_volume_allocated_capacity<a class="headerlink" href="#eseries_volume_allocated_capacity" title="Permanent link">&para;</a></h3>
-<p>Allocated capacity of the volume in bytes</p>
+<p>Allocated capacity of the volume in bytes. Reports the same value as eseries_volume_reported_capacity</p>
 <table>
 <thead>
 <tr>
@@ -10945,27 +11010,6 @@ E-Series Version: 11.80.0
 </tr>
 </tbody>
 </table>
-<p>The <code>eseries_volume_allocated_capacity</code> metric is visualized in the following Grafana dashboards:</p>
-<div class="grafana-table">
-<table>
-<thead>
-<tr>
-<th>Dashboard</th>
-<th>Row</th>
-<th>Type</th>
-<th>Panel</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>E-Series: Volume</td>
-<td>Volume Table</td>
-<td>table</td>
-<td><a href="/d/eseries-volume/e-series3a-volume?orgId=1&amp;viewPanel=18">Volumes</a></td>
-</tr>
-</tbody>
-</table>
-</div>
 <h3 id="eseries_volume_block_size">eseries_volume_block_size<a class="headerlink" href="#eseries_volume_block_size" title="Permanent link">&para;</a></h3>
 <p>Block size of the volume in bytes</p>
 <table>
@@ -11356,7 +11400,7 @@ E-Series Version: 11.80.0
 </table>
 </div>
 <h3 id="eseries_volume_reported_capacity">eseries_volume_reported_capacity<a class="headerlink" href="#eseries_volume_reported_capacity" title="Permanent link">&para;</a></h3>
-<p>The capacity in bytes of the volume</p>
+<p>The capacity in bytes of the volume. Reports the same value as eseries_volume_allocated_capacity</p>
 <table>
 <thead>
 <tr>
