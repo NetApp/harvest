@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Aug-03
+Creation Date : 2026-Aug-10
 E-Series Version: 11.80.0
 ```
 
@@ -2582,21 +2582,12 @@ The `eseries_thermal_sensor_labels` metric is visualized in the following Grafan
 
 ### eseries_volume_allocated_capacity
 
-Allocated capacity of the volume in bytes
+Allocated capacity of the volume in bytes. Reports the same value as eseries_volume_reported_capacity
 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `storage-systems/{array_id}/volumes` | `totalSizeInBytes` | conf/eseries/11.80.0/volume.yaml |
-
-The `eseries_volume_allocated_capacity` metric is visualized in the following Grafana dashboards:
-
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| E-Series: Volume | Volume Table | table | [Volumes](/d/eseries-volume/e-series3a-volume?orgId=1&viewPanel=18) |
-///
-
 
 
 ### eseries_volume_block_size
@@ -2782,7 +2773,7 @@ The `eseries_volume_read_ops` metric is visualized in the following Grafana dash
 
 ### eseries_volume_reported_capacity
 
-The capacity in bytes of the volume
+The capacity in bytes of the volume. Reports the same value as eseries_volume_allocated_capacity
 
 
 | API    | Endpoint | Metric | Template |

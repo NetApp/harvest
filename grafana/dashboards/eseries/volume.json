@@ -902,18 +902,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Allocated capacity"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "bytes"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "Value #D"
                 },
                 "properties": [
@@ -958,21 +946,6 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "B"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "exemplar": false,
-              "expr": "label_join(\n  eseries_volume_allocated_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
-              "format": "table",
-              "hide": false,
-              "instant": true,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "",
-              "refId": "A"
             },
             {
               "datasource": {
@@ -1036,7 +1009,6 @@
                     "volume",
                     "workload",
                     "wwid",
-                    "Value #A",
                     "Value #C",
                     "Value #D"
                   ]
@@ -1059,7 +1031,6 @@
                   "volume 4": true
                 },
                 "indexByName": {
-                  "Value #A": 12,
                   "Value #C": 11,
                   "Value #D": 10,
                   "array": 1,
@@ -1084,7 +1055,6 @@
                   "wwid": 13
                 },
                 "renameByName": {
-                  "Value #A": "Allocated capacity",
                   "Value #C": "Reported capacity",
                   "Value #D": "Block size",
                   "array": "Array",

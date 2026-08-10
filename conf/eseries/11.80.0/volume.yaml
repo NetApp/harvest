@@ -12,6 +12,7 @@ counters:
   - ^volumeGroupRef                       => volume_group_ref
   - ^wwn                                  => wwid
   - blkSize                               => block_size
+  # capacity and totalSizeInBytes report the same value
   - capacity                              => reported_capacity
   - totalSizeInBytes                      => allocated_capacity
 
