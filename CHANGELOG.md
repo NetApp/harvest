@@ -42,10 +42,10 @@
   - New snapshot newest and oldest metrics
   - WAFL write cleaning handling
   - `node_root` and `type` are now configurable in ZAPI
-  - Continued improvements to the `cmperf` collector: workload support, histogram handling, sample-period filtering, and partial collection handling
+  - MetricAgent plugin support for StorageGrid collector
 
 - :closed_book: Documentation additions
-  - Arista collector setup and configuration
+  - [Arista collector setup](https://netapp.github.io/harvest/nightly/prepare-arista-switch/) and [configuration](https://netapp.github.io/harvest/nightly/configure-arista-rest/)
 
 ## Breaking Changes & Deprecations
 
@@ -65,7 +65,7 @@
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
 this release:
 
-@AvijitBhattacharjee, @Falcon667, @Klocke208
+@ahiregoudar, @AvijitBhattacharjee, @anoob09, @BrendonA667, @crenduchinta88, @ebarron, @Falcon667,@heinowalther, @Klocke208, @lukasz-borek, @NetAppFredPeiffer, @sachin-netapp1, @sachinsharmastg, @troysmullerna
 
 :seedling: This release includes 31 features, 16 bug fixes, 6 documentation, 1 styling, 4 refactoring, 17 miscellaneous, and 11 ci pull requests.
 
