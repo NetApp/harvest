@@ -36,7 +36,6 @@
   - Cluster filter added to the `list_alert_rules` tool
   - Enhanced `InfrastructureHealth` tool
   - Arista metrics context added to the MCP server
-  - The MCP server is now bounded to Harvest-only data
 
 - Other notable additions:
   - New snapshot newest and oldest metrics
@@ -46,11 +45,12 @@
 
 - :closed_book: Documentation additions
   - [Arista collector setup](https://netapp.github.io/harvest/nightly/prepare-arista-switch/) and [configuration](https://netapp.github.io/harvest/nightly/configure-arista-rest/)
+  - [Harvest MCP queries can be scoped to only Harvest metrics](https://netapp.github.io/harvest/nightly/mcp/installation/#scoping-to-harvest-metrics-multi-source-tsdb), 
+  restricting the scope of data returned
 
 ## Breaking Changes & Deprecations
 
 - No breaking changes or deprecations in this release.
-- :warning: Behavior change: the Harvest MCP server is now bounded to Harvest-only data, restricting the scope of data it can return.
 
 ## Announcements
 
