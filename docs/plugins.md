@@ -567,6 +567,10 @@ plugins:
 
 **Note:** Metric names used to create new metrics can come from the left or right side of the rename operator (`=>`)
 **Note:** The metric agent currently does not work for histogram or array metrics.
+**Note:** Rules are applied in order, so a rule can use a metric created by an earlier rule.
+**Note:** With collectors that return one matrix per metric, such as the StorageGRID Prometheus collector, operands are
+matched across matrices by instance labels. When an operand has no instance with the same labels, the metric is not
+computed for that instance.
 
 ## compute_metric
 
