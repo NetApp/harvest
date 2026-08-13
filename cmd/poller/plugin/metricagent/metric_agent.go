@@ -157,9 +157,9 @@ func (a *MetricAgent) computeRuleAcrossMatrices(r computeMetricRule, dataMap map
 			// different set of instances, so computing with zero would be misleading.
 			v, ok := o.value(instance)
 			if !ok {
-				if o.sibling != nil {
-					a.SLogger.Debug("computeMetrics: no instance with matching labels",
-						slog.String("target", r.metric),
+				if o.sibling != nil && instanceWithLabels(o.sibling, instance.GetLabels()) == nil {
+					a.SLogger.Error("computeMetrics: skip compute metric since instance labels do not match",
+						slog.String("metric", r.metric),
 						slog.String("operand", o.name),
 						slog.Any("labels", instance.GetLabels()))
 				}
