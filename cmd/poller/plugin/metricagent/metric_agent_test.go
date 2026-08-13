@@ -212,6 +212,36 @@ func TestComputeMetricsRuleWithMissingOptionalOperand(t *testing.T) {
 	assert.Equal(t, metricDiskTotalValC, expected)
 }
 
+// TestComputeMetricsSkipsWhenOperandMetricMissing ensures a typo'd/absent metric name does
+// not compute the target as if the missing operand were zero.
+func TestComputeMetricsSkipsWhenOperandMetricMissing(t *testing.T) {
+
+	params := node.NewS("MetricAgent")
+	params.NewChildS("compute_metric", "").NewChildS("", "space_total ADD space_available space_used_typo")
+	abc := plugin.New("Test", nil, params, nil, "test", nil)
+	p := &MetricAgent{AbstractPlugin: abc}
+	if err := p.Init(conf.Remote{}); err != nil {
+		panic(err)
+	}
+
+	m := matrix.New("Test", "test", "test")
+	instance, err := m.NewInstance("A")
+	assert.Nil(t, err)
+
+	metricAvail, err := m.NewMetricFloat64("space_available")
+	assert.Nil(t, err)
+	metricAvail.SetValueFloat64(instance, 100)
+
+	dataMap := map[string]*matrix.Matrix{p.Object: m}
+	_, _, err = p.Run(dataMap)
+	assert.Nil(t, err)
+
+	metricTotal := m.GetMetric("space_total")
+	assert.NotNil(t, metricTotal)
+	_, ok := metricTotal.GetValueFloat64(instance)
+	assert.False(t, ok)
+}
+
 func TestComputeMetricsRuleWithMultiMatrix(t *testing.T) {
 
 	var (
@@ -334,5 +364,87 @@ func TestComputeMetricsRuleWithMultiMatrix(t *testing.T) {
 	_, ok = metricStorage.GetValueFloat64(instanceF)
 	assert.False(t, ok)
 	_, ok = metricStorage.GetValueFloat64(instanceG)
+	assert.False(t, ok)
+}
+
+// TestChainedComputeMetricsRuleWithMultiMatrix checks that a metric created by one rule can
+// be used by a later rule when each metric is returned in its own matrix, as the StorageGrid
+// Prometheus collector does.
+func TestChainedComputeMetricsRuleWithMultiMatrix(t *testing.T) {
+
+	var (
+		instanceA, instanceB, instanceC, instanceD *matrix.Instance
+		metricDataBytes, metricUsableSpaceBytes    *matrix.Metric
+		metricUsableSizeBytes, metricUsedPerc      *matrix.Metric
+		err                                        error
+	)
+
+	params := node.NewS("MetricAgent")
+	computeMetric := params.NewChildS("compute_metric", "")
+	computeMetric.NewChildS("", "storagegrid_storage_utilization_usable_size_bytes ADD storagegrid_storage_utilization_data_bytes storagegrid_storage_utilization_usable_space_bytes")
+	computeMetric.NewChildS("", "storagegrid_storage_utilization_used_percent PERCENT storagegrid_storage_utilization_data_bytes storagegrid_storage_utilization_usable_size_bytes")
+	abc := plugin.New("Test", nil, params, nil, "", nil)
+	p := &MetricAgent{AbstractPlugin: abc}
+	if err := p.Init(conf.Remote{}); err != nil {
+		panic(err)
+	}
+
+	m1 := matrix.New("Matrix1", "Prometheus", "Prometheus")
+	m2 := matrix.New("Matrix2", "Prometheus", "Prometheus")
+
+	instanceA, err = m1.NewInstance("storagegrid_storage_utilization_data_bytes-0")
+	assert.Nil(t, err)
+	instanceA.SetLabel("node", "node1")
+	instanceA.SetLabel("site", "siteA")
+	instanceB, err = m1.NewInstance("storagegrid_storage_utilization_data_bytes-1")
+	assert.Nil(t, err)
+	instanceB.SetLabel("node", "node2")
+	instanceB.SetLabel("site", "siteB")
+
+	instanceC, err = m2.NewInstance("storagegrid_storage_utilization_usable_space_bytes-0")
+	assert.Nil(t, err)
+	instanceC.SetLabel("node", "node1")
+	instanceC.SetLabel("site", "siteA")
+	// node3 has no counterpart in m1
+	instanceD, err = m2.NewInstance("storagegrid_storage_utilization_usable_space_bytes-1")
+	assert.Nil(t, err)
+	instanceD.SetLabel("node", "node3")
+	instanceD.SetLabel("site", "siteB")
+
+	metricDataBytes, err = m1.NewMetricFloat64("storagegrid_storage_utilization_data_bytes")
+	assert.Nil(t, err)
+	metricDataBytes.SetValueFloat64(instanceA, 9000000)
+	metricDataBytes.SetValueFloat64(instanceB, 50000000)
+
+	metricUsableSpaceBytes, err = m2.NewMetricFloat64("storagegrid_storage_utilization_usable_space_bytes")
+	assert.Nil(t, err)
+	metricUsableSpaceBytes.SetValueFloat64(instanceC, 27000000)
+	metricUsableSpaceBytes.SetValueFloat64(instanceD, 30000000)
+
+	dataMap := make(map[string]*matrix.Matrix)
+	dataMap["storagegrid_storage_utilization_data_bytes"] = m1
+	dataMap["storagegrid_storage_utilization_usable_space_bytes"] = m2
+	_, _, err = p.Run(dataMap)
+	assert.Nil(t, err)
+
+	// the computed metrics are added to the matrix of the rule's first operand
+	metricUsableSizeBytes = m1.GetMetric("storagegrid_storage_utilization_usable_size_bytes")
+	assert.NotNil(t, metricUsableSizeBytes)
+	metricUsedPerc = m1.GetMetric("storagegrid_storage_utilization_used_percent")
+	assert.NotNil(t, metricUsedPerc)
+
+	// instanceA: 9000000 + 27000000, then 9000000 of 36000000
+	usableSizeValA, ok := metricUsableSizeBytes.GetValueFloat64(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, usableSizeValA, float64(36000000))
+
+	usedPercValA, ok := metricUsedPerc.GetValueFloat64(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, usedPercValA, float64(25))
+
+	// instanceB has no instance with matching labels in m2, so neither metric is computed
+	_, ok = metricUsableSizeBytes.GetValueFloat64(instanceB)
+	assert.False(t, ok)
+	_, ok = metricUsedPerc.GetValueFloat64(instanceB)
 	assert.False(t, ok)
 }
