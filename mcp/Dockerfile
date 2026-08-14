@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.25.1
+ARG GO_VERSION
 FROM golang:${GO_VERSION} AS builder
 
 SHELL ["/bin/bash", "-c"]
