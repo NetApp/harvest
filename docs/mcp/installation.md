@@ -111,7 +111,8 @@ Alternatively, build directly with Docker:
 
 ```bash
 # From the harvest repository root
-docker build -f mcp/Dockerfile -t harvest-mcp:local .
+source .harvest.env
+docker build -f mcp/Dockerfile --build-arg GO_VERSION=${GO_VERSION} -t harvest-mcp:local .
 ```
 
 ### Running the Built Docker Image
