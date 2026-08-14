@@ -240,6 +240,8 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 
 	mat := e.Matrix[e.Object]
 
+	e.Client.Metadata.Reset()
+
 	query := rest.NewURLBuilder().
 		APIPath(e.Prop.Query).
 		ArrayID(e.arrayID).
