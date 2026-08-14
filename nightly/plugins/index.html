@@ -3257,7 +3257,11 @@ could add to the yaml file of a collector:</p>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">raid_disk_count ADD block_storage.primary.disk_count block_storage.hybrid_cache.disk_count</span>
 </code></pre></div>
 <p><strong>Note:</strong> Metric names used to create new metrics can come from the left or right side of the rename operator (<code>=&gt;</code>)
-<strong>Note:</strong> The metric agent currently does not work for histogram or array metrics.</p>
+<strong>Note:</strong> The metric agent currently does not work for histogram or array metrics.
+<strong>Note:</strong> Rules are applied in order, so a rule can use a metric created by an earlier rule.
+<strong>Note:</strong> With collectors that return one matrix per metric, such as the StorageGRID Prometheus collector, operands are
+matched across matrices by instance labels. When an operand has no instance with the same labels, the metric is not
+computed for that instance.</p>
 <h2 id="compute_metric">compute_metric<a class="headerlink" href="#compute_metric" title="Permanent link">&para;</a></h2>
 <p>This rule creates a new metric (of type float64) using the provided scalar or an existing metric value combined with a
 mathematical operation.</p>

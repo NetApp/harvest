@@ -2502,7 +2502,8 @@ make<span class="w"> </span>docker-build<span class="w"> </span><span class="nv"
 </code></pre></div>
 <p>Alternatively, build directly with Docker:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># From the harvest repository root</span>
-docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>mcp/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest-mcp:local<span class="w"> </span>.
+<span class="nb">source</span><span class="w"> </span>.harvest.env
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>mcp/Dockerfile<span class="w"> </span>--build-arg<span class="w"> </span><span class="nv">GO_VERSION</span><span class="o">=</span><span class="si">${</span><span class="nv">GO_VERSION</span><span class="si">}</span><span class="w"> </span>-t<span class="w"> </span>harvest-mcp:local<span class="w"> </span>.
 </code></pre></div>
 <h3 id="running-the-built-docker-image">Running the Built Docker Image<a class="headerlink" href="#running-the-built-docker-image" title="Permanent link">&para;</a></h3>
 <p>After building, use your local image in your MCP client configuration. See <a href="#mcp-client-integration">MCP Client Integration</a> above for configuration examples - just replace <code>ghcr.io/netapp/harvest-mcp:latest</code> with your local image tag (e.g., <code>harvest-mcp:local</code>).</p>
