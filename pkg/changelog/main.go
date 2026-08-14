@@ -235,6 +235,7 @@ func (c *cli) printChangelog(highlightBytes []byte) {
 	highlights = strings.TrimSpace(highlights)
 	fmt.Println(highlights)
 	c.printPrSummary()
+	c.printDetailsToggle()
 	caser := cases.Title(language.Und)
 
 	for _, kind := range c.prOrder {
@@ -255,6 +256,7 @@ func (c *cli) printChangelog(highlightBytes []byte) {
 			c.openIssue(pr)
 		}
 	}
+	fmt.Printf("\n</details>\n")
 	fmt.Printf("\n---\n")
 }
 
@@ -358,4 +360,9 @@ func (c *cli) Root() *cobra.Command {
 
 func (c *cli) addPrType(ct prType) {
 	c.prTypes[ct.id] = ct
+}
+
+func (c *cli) printDetailsToggle() {
+	fmt.Println("\n<details>")
+	fmt.Println("\n<summary>Expand for full list of pull requests</summary>")
 }
