@@ -63,6 +63,7 @@
   "eseries_drive_write_ops": "Drive write I/O operations per second",
   "eseries_drive_write_utilization": "Percentage of time the drive was busy servicing write I/O requests",
   "eseries_fan_labels": "This metric provides information about fans.",
+  "eseries_firmware_version_labels": "This metric provides information about the array-wide firmware and software code versions (raid, management, iom, bundle, etc.).",
   "eseries_host_board_labels": "This metric provides information about IO modules (host interface cards) installed in the controllers.",
   "eseries_host_labels": "This metric provides information about hosts connected to the storage array.",
   "eseries_interface_channel_error_count": "Number of errors detected on the channel",
