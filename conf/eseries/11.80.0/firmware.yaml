@@ -1,0 +1,13 @@
+name: Firmware
+query: storage-systems/{array_id}
+object: eseries_firmware
+
+counters:
+  - ^^id                                => array_id
+
+plugins:
+  - Firmware
+
+export_options:
+  instance_keys:
+    - array_id

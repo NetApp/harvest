@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/firmware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/hardware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/host"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/pool"
@@ -402,6 +403,8 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 
 func (e *ESeries) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "Firmware":
+		return firmware.New(abc)
 	case "Hardware":
 		return hardware.New(abc)
 	case "Host":

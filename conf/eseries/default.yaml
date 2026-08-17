@@ -12,3 +12,4 @@ objects:
   SsdCache:          ssd_cache.yaml
   Pool:              pool.yaml
   Workload:          workload.yaml
+  Firmware:          firmware.yaml

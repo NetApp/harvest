@@ -59,6 +59,18 @@ counters:
         Template: conf/eseries/11.80.0/array.yaml
 
   # =============================================================================
+  # Firmware Metrics (Firmware Plugin)
+  # =============================================================================
+
+  - Name: eseries_firmware_version_labels
+    Description: This metric provides information about the array-wide firmware and software code versions (raid, management, iom, bundle, etc.).
+    APIs:
+      - API: REST
+        Endpoint: firmware/embedded-firmware/{array_id}/versions
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/firmware.yaml (Firmware plugin)
+
+  # =============================================================================
   # Array Performance Metrics (EseriesPerf Collector)
   # =============================================================================
   - Name: eseries_array_read_ops
