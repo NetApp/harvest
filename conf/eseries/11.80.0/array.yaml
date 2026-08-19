@@ -6,8 +6,8 @@ counters:
   - ^^wwn                                 => wwn
   - ^bootVersion                          => boot_version
   - ^chassisSerialNumber                  => chassis_serial
-  - ^fwVersion                            => firmware_version
   - ^controllers.#.ipAddresses|@flatten   => management_ips
+  - ^fwVersion                            => firmware_version
   - ^ip1                                  => management_ip1
   - ^ip2                                  => management_ip2
   - ^model                                => model
