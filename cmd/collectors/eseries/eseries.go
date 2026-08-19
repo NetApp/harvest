@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 
@@ -365,7 +366,17 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 		for label, display := range e.Prop.InstanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
-				instance.SetLabel(display, value.ClonedString())
+				if value.IsArray() {
+					arr := value.Array()
+					labelArray := make([]string, 0, len(arr))
+					for _, r := range arr {
+						labelArray = append(labelArray, r.ClonedString())
+					}
+					sort.Strings(labelArray)
+					instance.SetLabel(display, strings.Join(labelArray, ","))
+				} else {
+					instance.SetLabel(display, value.ClonedString())
+				}
 			}
 		}
 

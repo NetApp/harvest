@@ -7,6 +7,7 @@ counters:
   - ^bootVersion                          => boot_version
   - ^chassisSerialNumber                  => chassis_serial
   - ^fwVersion                            => firmware_version
+  - ^controllers.#.ipAddresses|@flatten   => management_ips
   - ^ip1                                  => management_ip1
   - ^ip2                                  => management_ip2
   - ^model                                => model
@@ -32,6 +33,7 @@ export_options:
     - model
     - management_ip1
     - management_ip2
+    - management_ips
     - name
     - nvsram_version
     - password_status
