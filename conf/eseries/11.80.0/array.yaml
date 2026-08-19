@@ -6,6 +6,7 @@ counters:
   - ^^wwn                                 => wwn
   - ^bootVersion                          => boot_version
   - ^chassisSerialNumber                  => chassis_serial
+  - ^controllers.#.ipAddresses|@flatten   => ip_addresses
   - ^fwVersion                            => firmware_version
   - ^ip1                                  => management_ip1
   - ^ip2                                  => management_ip2
@@ -29,6 +30,7 @@ export_options:
     - boot_version
     - chassis_serial
     - firmware_version
+    - ip_addresses
     - model
     - management_ip1
     - management_ip2
