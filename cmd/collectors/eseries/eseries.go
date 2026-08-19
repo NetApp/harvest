@@ -366,8 +366,9 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 			value := instanceData.Get(label)
 			if value.Exists() {
 				if value.IsArray() {
-					labelArray := make([]string, 0, len(value.Array()))
-					for _, r := range value.Array() {
+					arr := value.Array()
+					labelArray := make([]string, 0, len(arr))
+					for _, r := range arr {
 						labelArray = append(labelArray, r.ClonedString())
 					}
 					sort.Strings(labelArray)
