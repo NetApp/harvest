@@ -4,9 +4,11 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/firmware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/hardware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/host"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/pool"
@@ -364,7 +366,17 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 		for label, display := range e.Prop.InstanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
-				instance.SetLabel(display, value.ClonedString())
+				if value.IsArray() {
+					arr := value.Array()
+					labelArray := make([]string, 0, len(arr))
+					for _, r := range arr {
+						labelArray = append(labelArray, r.ClonedString())
+					}
+					sort.Strings(labelArray)
+					instance.SetLabel(display, strings.Join(labelArray, ","))
+				} else {
+					instance.SetLabel(display, value.ClonedString())
+				}
 			}
 		}
 
@@ -402,6 +414,8 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 
 func (e *ESeries) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "Firmware":
+		return firmware.New(abc)
 	case "Hardware":
 		return hardware.New(abc)
 	case "Host":

@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Aug-10
+Creation Date : 2026-Aug-17
 E-Series Version: 11.80.0
 ```
 
@@ -1224,6 +1224,25 @@ The `eseries_fan_labels` metric is visualized in the following Grafana dashboard
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | E-Series: Hardware | Fan | table | [Fan](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=103) |
+///
+
+
+
+### eseries_firmware_version_labels
+
+This metric provides information about the array-wide firmware and software code versions (raid, management, iom, bundle, etc.).
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `firmware/embedded-firmware/{array_id}/versions` | `Harvest generated` | conf/eseries/11.80.0/firmware.yaml (Firmware plugin) |
+
+The `eseries_firmware_version_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Array | Firmware Versions | table | [Firmware Versions](/d/eseries-array/e-series3a-array?orgId=1&viewPanel=18) |
 ///
 
 

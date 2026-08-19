@@ -1,6 +1,184 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 26.08.0 / 2026-08-10 Release
+:pushpin: Highlights of this major release include:
+## :star: New Features
+
+- :medal_sports: **Harvest now monitors Arista switches** — a new BETA `AristaRest` collector gathers environment, interface, LLDP, optic, and version metrics from Arista EOS switches, along with a new **Arista: Switch** dashboard and setup documentation.
+
+- :medal_sports: **Expanded E-Series support** — new pool, interface, workload, and application object collection; SSD cache support for older E-Series (SANtricity) versions; a new `rawCapacity` drive counter; collector-level filtering; firmware version support; and controller IP addresses collection.
+
+- :medal_sports: **Five new dashboards:**
+  - Arista: Switch
+  - E-Series: Pool
+  - E-Series: Interface
+  - E-Series: Workload
+  - E-Series: Application
+
+- :medal_sports: **ARM container support** — Harvest now publishes ARM container images.
+
+- :gem: **Dashboard enhancements** — several existing dashboards include new panels:
+  - **ONTAP:Aggregate**: Top Aggregates by Space Used % panel
+  - **ONTAP:Disk**: pool and path count
+  - **ONTAP:Network / Node**: port health status
+  - **ONTAP:Workload**: `.*` support in the Workload variable
+  - **E-Series:Drive**: raw capacity
+
+- :ear_of_rice: **New templates to collect:**
+  - Arista EOS: environment, interface, LLDP, optic, and version
+  - E-Series: pool, SSD cache, and workload, plus performance templates for application, interface, SSD cache, and workload
+  - ONTAP: volume efficiency
+  - StorageGRID: new `storagegrid_labels` metric
+
+- **MCP enhancements:**
+  - Cluster filter added to the infrastructure health and get-alerts tools
+  - Cluster filter added to the `list_alert_rules` tool
+  - Enhanced `InfrastructureHealth` tool
+  - Arista metrics context added to the MCP server
+
+- Other notable additions:
+  - New snapshot newest and oldest metrics
+  - WAFL write cleaning handling
+  - `node_root` and `type` are now configurable in ZAPI
+  - MetricAgent plugin support for StorageGrid collector
+
+- :closed_book: Documentation additions
+  - [Arista collector setup](https://netapp.github.io/harvest/nightly/prepare-arista-switch/) and [configuration](https://netapp.github.io/harvest/nightly/configure-arista-rest/)
+  - [Harvest MCP queries can be scoped to only Harvest metrics](https://netapp.github.io/harvest/nightly/mcp/installation/#scoping-to-harvest-metrics-multi-source-tsdb), 
+  restricting the scope of data returned
+
+## Breaking Changes & Deprecations
+
+- No breaking changes or deprecations in this release.
+
+## Announcements
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+:bulb: Arista collector and dashboards are beta as we collect more feedback.
+
+## Known Issues
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
+this release:
+
+@ahiregoudar, @AvijitBhattacharjee, @anoob09, @BrendonA667, @crenduchinta88, @ebarron, @Falcon667,@heinowalther, @Klocke208, @lukasz-borek, @NetAppFredPeiffer, @sachin-netapp1, @sachinsharmastg, @troysmullerna
+
+:seedling: This release includes 33 features, 16 bug fixes, 6 documentation, 1 styling, 4 refactoring, 17 miscellaneous, and 11 ci pull requests.
+
+<details>
+
+<summary>Expand for full list of pull requests</summary>
+
+### :rocket: Features
+- Harvest Should Include A Top Aggregates By Space Used % Panel ([#4265](https://github.com/NetApp/harvest/pull/4265))
+- Add .* In Workload Var ([#4270](https://github.com/NetApp/harvest/pull/4270))
+- Cmperf Should Parse Counter Cook Type ([#4281](https://github.com/NetApp/harvest/pull/4281))
+- Add Arm Container Support For Harvest ([#4289](https://github.com/NetApp/harvest/pull/4289))
+- Add Health Status To Ports ([#4297](https://github.com/NetApp/harvest/pull/4297))
+- Add Cluster Filter To Health And Get Alerts Tool ([#4299](https://github.com/NetApp/harvest/pull/4299))
+- Handle Wafl Write Cleaning ([#4301](https://github.com/NetApp/harvest/pull/4301))
+- Add Cluster Filter To List_alert_rules Mcp Tool (#4288) ([#4302](https://github.com/NetApp/harvest/pull/4302))
+- Add Health_status In Zapi For Netport ([#4304](https://github.com/NetApp/harvest/pull/4304))
+- Cmperf Collector ([#4305](https://github.com/NetApp/harvest/pull/4305))
+- Add Snapshot Newest And Oldest Metrics ([#4312](https://github.com/NetApp/harvest/pull/4312))
+- Harvest Should Monitor Arista Switches ([#4313](https://github.com/NetApp/harvest/pull/4313))
+- Enhance Infrastructurehealth Tool ([#4315](https://github.com/NetApp/harvest/pull/4315))
+- Add Volume Efficiency Template ([#4316](https://github.com/NetApp/harvest/pull/4316))
+- Bound The Mcp Server To Harvest Only Data ([#4319](https://github.com/NetApp/harvest/pull/4319))
+- Add Arista Metrics Context To Mcp ([#4323](https://github.com/NetApp/harvest/pull/4323))
+- Add Pool And Path Count For Disk ([#4333](https://github.com/NetApp/harvest/pull/4333))
+- Add Workload Support For Cmperf ([#4336](https://github.com/NetApp/harvest/pull/4336))
+- Add Ssd Cache Support For Older Eseries Versions ([#4348](https://github.com/NetApp/harvest/pull/4348))
+- Eseries Pool,Interface,Workload,Application Object Support ([#4360](https://github.com/NetApp/harvest/pull/4360))
+- Partial Collection Handling For Cmperf ([#4373](https://github.com/NetApp/harvest/pull/4373))
+- Add Storagegrid_labels Metric For Storagegrid ([#4377](https://github.com/NetApp/harvest/pull/4377))
+- Cm2 Should Delete And Post New Manifest On Startup ([#4381](https://github.com/NetApp/harvest/pull/4381))
+- Add Histogram Handling For Cmperf ([#4383](https://github.com/NetApp/harvest/pull/4383))
+- Add Sample-Period Filtering For Cmperf ([#4385](https://github.com/NetApp/harvest/pull/4385))
+- Make Node_root, Type Configurable In Zapi ([#4386](https://github.com/NetApp/harvest/pull/4386))
+- Add Filter To Eseries Collector ([#4387](https://github.com/NetApp/harvest/pull/4387))
+- Add Node Handling For Cm2 ([#4390](https://github.com/NetApp/harvest/pull/4390))
+- Allow Retaining Cmperf Cm2 Temp Files For Debug ([#4392](https://github.com/NetApp/harvest/pull/4392))
+- Add Clone String To Handle Memory In Cm2 ([#4395](https://github.com/NetApp/harvest/pull/4395))
+- Add Rawcapacity Counter To Drive Eseries ([#4397](https://github.com/NetApp/harvest/pull/4397))
+- Eseries firmware version support - ([#4410](https://github.com/NetApp/harvest/pull/4410))
+- Add Eseries management ips - ([#4413](https://github.com/NetApp/harvest/pull/4413))
+
+### :bug: Bug Fixes
+- Grafana Customize Should Trim Directory Path ([#4273](https://github.com/NetApp/harvest/pull/4273))
+- Handled Non-Matched Ems Events ([#4283](https://github.com/NetApp/harvest/pull/4283))
+- Improve Concurrency By Making Rest Client Stateless And Moving M… ([#4284](https://github.com/NetApp/harvest/pull/4284))
+- Handle Fc Host In Eseries ([#4294](https://github.com/NetApp/harvest/pull/4294))
+- Grafana Wrong Unit Path_*_Data ([#4322](https://github.com/NetApp/harvest/pull/4322))
+- Handled Metricagent Plugin For Multi Matrix ([#4338](https://github.com/NetApp/harvest/pull/4338))
+- Ci Issue ([#4357](https://github.com/NetApp/harvest/pull/4357))
+- Compliance Query Should Follow Operator Precedence ([#4359](https://github.com/NetApp/harvest/pull/4359))
+- Aggregator Plugin Should Use Label Values ([#4361](https://github.com/NetApp/harvest/pull/4361))
+- Fix Cluster Compliance Query For Security Account And Banner Checks ([#4366](https://github.com/NetApp/harvest/pull/4366))
+- Handled Audit Log Change ([#4368](https://github.com/NetApp/harvest/pull/4368))
+- Use Clonedstring For Eseries Controller Plugin ([#4370](https://github.com/NetApp/harvest/pull/4370))
+- Remove Duplicate Columns In Arista Table ([#4378](https://github.com/NetApp/harvest/pull/4378))
+- Max Plugin Should Resolve Ties Deterministically ([#4384](https://github.com/NetApp/harvest/pull/4384))
+- Cmperf Object Folder Should Be Unique ([#4388](https://github.com/NetApp/harvest/pull/4388))
+- Update Capacity Volume Metric Docs Eseries ([#4398](https://github.com/NetApp/harvest/pull/4398))
+
+### :closed_book: Documentation
+- Changelog 26.05.0 ([#4269](https://github.com/NetApp/harvest/pull/4269))
+- Update Metric Doc ([#4276](https://github.com/NetApp/harvest/pull/4276))
+- Add Sort_labels For Victoriametrics-Exporter ([#4351](https://github.com/NetApp/harvest/pull/4351))
+- Update Nic/Fcp Percent Metric Docs ([#4364](https://github.com/NetApp/harvest/pull/4364))
+- Document Arista Collector And Setup ([#4371](https://github.com/NetApp/harvest/pull/4371))
+- Include Plugin Location For Changelog ([#4389](https://github.com/NetApp/harvest/pull/4389))
+
+### Styling
+- Update Debug Logs For Latency ([#4331](https://github.com/NetApp/harvest/pull/4331))
+
+### Refactoring
+- Update Cm Proto Parser ([#4293](https://github.com/NetApp/harvest/pull/4293))
+- Remove Schema From Cm Objectcollection ([#4307](https://github.com/NetApp/harvest/pull/4307))
+- Remove Unused Fields In Cm Proto Parser ([#4320](https://github.com/NetApp/harvest/pull/4320))
+- Simplify Matrix Api And Drop Lazy* Naming ([#4355](https://github.com/NetApp/harvest/pull/4355))
+
+### Miscellaneous
+- Merge 26.05.0 To Main ([#4278](https://github.com/NetApp/harvest/pull/4278))
+- Update All Dependencies ([#4291](https://github.com/NetApp/harvest/pull/4291))
+- Update All Dependencies ([#4303](https://github.com/NetApp/harvest/pull/4303))
+- Track Upstream Tklauser/Ps Changes ([#4306](https://github.com/NetApp/harvest/pull/4306))
+- Update All Dependencies ([#4308](https://github.com/NetApp/harvest/pull/4308))
+- Track Upstream Shirou/Gopsutil V4.26.5 Changes ([#4310](https://github.com/NetApp/harvest/pull/4310))
+- Update All Dependencies ([#4317](https://github.com/NetApp/harvest/pull/4317))
+- Update All Dependencies ([#4326](https://github.com/NetApp/harvest/pull/4326))
+- Update Actions/Checkout Action To V7 ([#4334](https://github.com/NetApp/harvest/pull/4334))
+- Track Upstream Shirou/Gopsutil V4.26.6 Changes ([#4339](https://github.com/NetApp/harvest/pull/4339))
+- Bump Golang.org/X/Net From 0.50.0 To 0.55.0 In /Integration ([#4340](https://github.com/NetApp/harvest/pull/4340))
+- Update All Dependencies ([#4341](https://github.com/NetApp/harvest/pull/4341))
+- Update All Dependencies ([#4345](https://github.com/NetApp/harvest/pull/4345))
+- Update All Dependencies ([#4362](https://github.com/NetApp/harvest/pull/4362))
+- Update All Dependencies ([#4376](https://github.com/NetApp/harvest/pull/4376))
+- Track Upstream Shirou/Gopsutil V4.26.7 Changes ([#4379](https://github.com/NetApp/harvest/pull/4379))
+- Update All Dependencies ([#4396](https://github.com/NetApp/harvest/pull/4396))
+
+### :hammer: CI
+- Bump Go (#4266) ([#4267](https://github.com/NetApp/harvest/pull/4267))
+- Bump Modelcontextprotocol/Go-Sdk ([#4268](https://github.com/NetApp/harvest/pull/4268))
+- Fix Build ([#4277](https://github.com/NetApp/harvest/pull/4277))
+- Avijitbhattacharjee Has Signed Ccla ([#4309](https://github.com/NetApp/harvest/pull/4309))
+- Bump Go ([#4311](https://github.com/NetApp/harvest/pull/4311))
+- Klocke208 Has Signed Ccla ([#4327](https://github.com/NetApp/harvest/pull/4327))
+- Bump Go ([#4343](https://github.com/NetApp/harvest/pull/4343))
+- Renovate Should Update Integration Dependencies ([#4344](https://github.com/NetApp/harvest/pull/4344))
+- Fix Build ([#4349](https://github.com/NetApp/harvest/pull/4349))
+- Fix Ci Build ([#4354](https://github.com/NetApp/harvest/pull/4354))
+- Emil-Lohmann Has Signed The Ccla ([#4372](https://github.com/NetApp/harvest/pull/4372))
+
+</details>
+
+---
+
 ## 26.05.0 / 2026-05-11 Release
 
 :pushpin: Highlights of this major release include:
