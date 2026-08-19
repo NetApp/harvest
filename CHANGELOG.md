@@ -7,7 +7,7 @@
 
 - :medal_sports: **Harvest now monitors Arista switches** — a new BETA `AristaRest` collector gathers environment, interface, LLDP, optic, and version metrics from Arista EOS switches, along with a new **Arista: Switch** dashboard and setup documentation.
 
-- :medal_sports: **Expanded E-Series support** — new pool, interface, workload, and application object collection; SSD cache support for older E-Series (SANtricity) versions; a new `rawCapacity` drive counter; collector-level filtering; and firmware version support
+- :medal_sports: **Expanded E-Series support** — new pool, interface, workload, and application object collection; SSD cache support for older E-Series (SANtricity) versions; a new `rawCapacity` drive counter; collector-level filtering; firmware version support; and managementip collection.
 
 - :medal_sports: **Five new dashboards:**
   - Arista: Switch
@@ -67,7 +67,7 @@ this release:
 
 @ahiregoudar, @AvijitBhattacharjee, @anoob09, @BrendonA667, @crenduchinta88, @ebarron, @Falcon667,@heinowalther, @Klocke208, @lukasz-borek, @NetAppFredPeiffer, @sachin-netapp1, @sachinsharmastg, @troysmullerna
 
-:seedling: This release includes 32 features, 16 bug fixes, 6 documentation, 1 styling, 4 refactoring, 17 miscellaneous, and 11 ci pull requests.
+:seedling: This release includes 33 features, 16 bug fixes, 6 documentation, 1 styling, 4 refactoring, 17 miscellaneous, and 11 ci pull requests.
 
 <details>
 
@@ -106,6 +106,7 @@ this release:
 - Add Clone String To Handle Memory In Cm2 ([#4395](https://github.com/NetApp/harvest/pull/4395))
 - Add Rawcapacity Counter To Drive Eseries ([#4397](https://github.com/NetApp/harvest/pull/4397))
 - Eseries firmware version support - ([#4410](https://github.com/NetApp/harvest/pull/4410))
+- add eseries management ips - ([#4413](https://github.com/NetApp/harvest/pull/4413))
 
 ### :bug: Bug Fixes
 - Grafana Customize Should Trim Directory Path ([#4273](https://github.com/NetApp/harvest/pull/4273))
