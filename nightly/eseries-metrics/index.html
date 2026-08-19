@@ -2373,6 +2373,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#eseries_firmware_version_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_firmware_version_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#eseries_host_board_labels" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_host_board_labels
@@ -4284,6 +4293,15 @@
   <a href="#eseries_fan_labels" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_fan_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eseries_firmware_version_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_firmware_version_labels
     </span>
   </a>
   
@@ -8019,6 +8037,47 @@ E-Series Version: 11.80.0
 <td>Fan</td>
 <td>table</td>
 <td><a href="/d/eseries-hardware/e-series3a-hardware?orgId=1&amp;viewPanel=103">Fan</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="eseries_firmware_version_labels">eseries_firmware_version_labels<a class="headerlink" href="#eseries_firmware_version_labels" title="Permanent link">&para;</a></h3>
+<p>This metric provides information about the array-wide firmware and software code versions (raid, management, iom, bundle, etc.).</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>firmware/embedded-firmware/{array_id}/versions</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/eseries/11.80.0/firmware.yaml (Firmware plugin)</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>eseries_firmware_version_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-Series: Array</td>
+<td>Firmware Versions</td>
+<td>table</td>
+<td><a href="/d/eseries-array/e-series3a-array?orgId=1&amp;viewPanel=18">Firmware Versions</a></td>
 </tr>
 </tbody>
 </table>
