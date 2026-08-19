@@ -106,7 +106,7 @@ this release:
 - Add Clone String To Handle Memory In Cm2 ([#4395](https://github.com/NetApp/harvest/pull/4395))
 - Add Rawcapacity Counter To Drive Eseries ([#4397](https://github.com/NetApp/harvest/pull/4397))
 - Eseries firmware version support - ([#4410](https://github.com/NetApp/harvest/pull/4410))
-- add eseries management ips - ([#4413](https://github.com/NetApp/harvest/pull/4413))
+- Add Eseries management ips - ([#4413](https://github.com/NetApp/harvest/pull/4413))
 
 ### :bug: Bug Fixes
 - Grafana Customize Should Trim Directory Path ([#4273](https://github.com/NetApp/harvest/pull/4273))
