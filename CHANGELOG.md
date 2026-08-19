@@ -7,7 +7,7 @@
 
 - :medal_sports: **Harvest now monitors Arista switches** — a new BETA `AristaRest` collector gathers environment, interface, LLDP, optic, and version metrics from Arista EOS switches, along with a new **Arista: Switch** dashboard and setup documentation.
 
-- :medal_sports: **Expanded E-Series support** — new pool, interface, workload, and application object collection; SSD cache support for older E-Series (SANtricity) versions; a new `rawCapacity` drive counter; collector-level filtering; firmware version support; and managementip collection.
+- :medal_sports: **Expanded E-Series support** — new pool, interface, workload, and application object collection; SSD cache support for older E-Series (SANtricity) versions; a new `rawCapacity` drive counter; collector-level filtering; firmware version support; and controller IP addresses collection.
 
 - :medal_sports: **Five new dashboards:**
   - Arista: Switch
