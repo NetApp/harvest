@@ -365,7 +365,7 @@ func (c *CmPerf) verifyChecksum(filePath, checksumURL string) error {
 	}
 
 	line := strings.TrimSpace(string(data))
-	hexStr := strings.SplitN(line, " ", 2)[0]
+	hexStr, _, _ := strings.Cut(line, " ")
 	if len(hexStr) != 32 {
 		return fmt.Errorf("verifyChecksum: unexpected format %q", line)
 	}

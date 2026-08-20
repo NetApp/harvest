@@ -927,7 +927,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 					for metricKey, m := range data1.GetMetrics() {
 
-						if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+						if value, _, _ := strings.Cut(obj.GetChildContentS(metricKey), " "); value != "" {
 							if err := m.SetValueString(instance, value); err != nil {
 								if value != "-" {
 									d.SLogger.Debug(
