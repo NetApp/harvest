@@ -1,6 +1,6 @@
 module github.com/netapp/harvest/v2
 
-go 1.26.1
+go 1.27
 
 require (
 	github.com/VictoriaMetrics/easyproto v1.2.0
