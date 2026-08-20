@@ -64,7 +64,7 @@ func checkMetrics(t *testing.T, port int) {
 		}
 
 		if strings.Contains(line, "label names should be written in 'snake_case' not 'camelCase'") {
-			metricName := strings.Split(line, " ")[0]
+			metricName, _, _ := strings.Cut(line, " ")
 			if !slices.Contains(allowedList, metricName) {
 				t.Errorf("ERR %s", line)
 			}
