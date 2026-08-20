@@ -1,6 +1,6 @@
-name: Volume
-query: api/storage/volumes
-object: volume
+name:                   Volume
+query:                  api/storage/volumes
+object:                 volume
 
 counters:
   - ^^name                                    => volume
@@ -25,7 +25,7 @@ counters:
       - statistics
   - filter:
       - statistics.timestamp=!"-"
-      - style=!flexgroup # collected via endpoints
+      - style=!flexgroup     # collected via endpoints
 
 endpoints:
   - query: api/storage/volumes
