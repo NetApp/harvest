@@ -182,7 +182,7 @@ func Init(c Collector) error {
 		methodName := "Poll" + caser.String(task.GetNameS())
 
 		if m := reflect.ValueOf(c).MethodByName(methodName); m.IsValid() {
-			if foo, ok := m.Interface().(func() (map[string]*matrix.Matrix, error)); ok {
+			if foo, ok := reflect.TypeAssert[func() (map[string]*matrix.Matrix, error)](m); ok {
 				logger.Debug(
 					"",
 					slog.String("task", task.GetNameS()),

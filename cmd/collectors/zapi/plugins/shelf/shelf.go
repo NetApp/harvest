@@ -301,7 +301,7 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 
 			// populate numeric data
 			for metricKey, m := range data.GetMetrics() {
-				if value := strings.Split(shelf.GetChildContentS(metricKey), " ")[0]; value != "" {
+				if value, _, _ := strings.Cut(shelf.GetChildContentS(metricKey), " "); value != "" {
 					if err := m.SetValueString(newShelfInstance, value); err != nil {
 						s.SLogger.Debug("failed to parse", slog.String("metricKey", metricKey), slog.String("value", value), slogx.Err(err))
 					} else {
@@ -370,7 +370,7 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 
 						// populate numeric data
 						for metricKey, m := range data1.GetMetrics() {
-							if value := strings.Split(obj.GetChildContentS(metricKey), " ")[0]; value != "" {
+							if value, _, _ := strings.Cut(obj.GetChildContentS(metricKey), " "); value != "" {
 								if err := m.SetValueString(instance, value); err != nil {
 									s.SLogger.Debug(
 										"failed to parse",
