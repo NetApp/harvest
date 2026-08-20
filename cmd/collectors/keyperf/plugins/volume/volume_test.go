@@ -270,7 +270,8 @@ func TestKeyPerfVolumePlugin(t *testing.T) {
 }
 
 // TestKeyPerfMCCVolumes verifies that volumes surfaced under a MetroCluster
-// "-mc" partner SVM are only exported when their state is online.
+// "-mc" partner SVM are only exported when their state is online, for both
+// plain flexvol instances and FlexGroups reconstructed from constituents.
 func TestKeyPerfMCCVolumes(t *testing.T) {
 	params := node.NewS("Volume")
 	params.NewChildS("include_constituents", "false")
@@ -308,6 +309,31 @@ func TestKeyPerfMCCVolumes(t *testing.T) {
 	other.SetLabel("state", "offline")
 	other.SetLabel("style", "flexvol")
 
+	// FlexGroup constituents under an offline MetroCluster partner SVM: the reconstructed
+	// "flexgroup" instance inherits svm/state labels and must not be exported either.
+	mc1, _ := data.NewInstance("vol_mc__0001")
+	mc1.SetLabel("volume", "vol_mc__0001")
+	mc1.SetLabel("svm", "svm-mc")
+	mc1.SetLabel("state", "offline")
+	mc1.SetLabel("style", "flexgroup_constituent")
+
+	mc2, _ := data.NewInstance("vol_mc__0002")
+	mc2.SetLabel("volume", "vol_mc__0002")
+	mc2.SetLabel("svm", "svm-mc")
+	mc2.SetLabel("state", "offline")
+	mc2.SetLabel("style", "flexgroup_constituent")
+
+	// FlexGroup constituents under a regular SVM should still be reconstructed and exported
+	ok1, _ := data.NewInstance("vol_ok__0001")
+	ok1.SetLabel("volume", "vol_ok__0001")
+	ok1.SetLabel("svm", "svm-test")
+	ok1.SetLabel("style", "flexgroup_constituent")
+
+	ok2, _ := data.NewInstance("vol_ok__0002")
+	ok2.SetLabel("volume", "vol_ok__0002")
+	ok2.SetLabel("svm", "svm-test")
+	ok2.SetLabel("style", "flexgroup_constituent")
+
 	dataMap := map[string]*matrix.Matrix{"volume": data}
 	_, _, err := kpv.Run(dataMap)
 	assert.Nil(t, err)
@@ -316,4 +342,17 @@ func TestKeyPerfMCCVolumes(t *testing.T) {
 	assert.False(t, offline.IsExportable())
 	assert.False(t, missingState.IsExportable())
 	assert.True(t, other.IsExportable())
+
+	// reconstructed FlexGroup instance exists (built from constituent labels) but must not be exported
+	fgMC := data.GetInstance("svm-mc.vol_mc")
+	if fgMC == nil {
+		t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_mc' to exist")
+	}
+	assert.False(t, fgMC.IsExportable())
+
+	fg := data.GetInstance("svm-test.vol_ok")
+	if fg == nil {
+		t.Fatal("expected reconstructed FlexGroup instance 'svm-test.vol_ok' to be created")
+	}
+	assert.True(t, fg.IsExportable())
 }

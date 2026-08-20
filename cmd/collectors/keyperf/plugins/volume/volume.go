@@ -38,8 +38,12 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	style := "style"
 	opsKeyPrefix := "temp_"
 	v.volumesMap = v.getVolumeMap(data)
+	matrices, metadata, err := collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap, false)
+	if err != nil {
+		return matrices, metadata, err
+	}
 	v.updateExportable(data)
-	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap, false)
+	return matrices, metadata, err
 }
 
 func (v *Volume) updateExportable(data *matrix.Matrix) {

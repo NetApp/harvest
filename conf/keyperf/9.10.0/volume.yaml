@@ -1,6 +1,6 @@
-name:                     Volume
-query:                    api/storage/volumes
-object:                   volume
+name: Volume
+query: api/storage/volumes
+object: volume
 
 counters:
   - ^^name                                    => volume
@@ -25,7 +25,7 @@ counters:
       - statistics
   - filter:
       - statistics.timestamp=!"-"
-      - style=!flexgroup     # collected via endpoints
+      - style=!flexgroup # collected via endpoints
 
 endpoints:
   - query: api/storage/volumes
@@ -65,13 +65,13 @@ endpoints:
           - is_constituent=*
 
 plugins:
+  - Volume:
+      include_constituents: false
   - Aggregator:
       # plugin will create summary/average for each object
       # any names after the object names will be treated as label names that will be added to instances
       - node
       - svm<>svm_vol
-  - Volume:
-      include_constituents: false
 
   - LabelAgent:
       # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
