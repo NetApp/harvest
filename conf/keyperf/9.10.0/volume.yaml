@@ -1,6 +1,6 @@
-name:                   Volume
-query:                  api/storage/volumes
-object:                 volume
+name:                     Volume
+query:                    api/storage/volumes
+object:                   volume
 
 counters:
   - ^^name                                    => volume
