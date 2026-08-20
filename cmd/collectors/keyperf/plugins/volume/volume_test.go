@@ -268,3 +268,52 @@ func TestKeyPerfVolumePlugin(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, actualOps, 200.0) // 50+150
 }
+
+// TestKeyPerfMCCVolumes verifies that volumes surfaced under a MetroCluster
+// "-mc" partner SVM are only exported when their state is online.
+func TestKeyPerfMCCVolumes(t *testing.T) {
+	params := node.NewS("Volume")
+	params.NewChildS("include_constituents", "false")
+
+	opts := options.New()
+	opts.IsTest = true
+	kpv := keyperfVolume.New(plugin.New("volume", opts, params, nil, "volume", nil))
+	if err := kpv.Init(conf.Remote{}); err != nil {
+		t.Fatalf("failed to initialize KeyPerf volume plugin: %v", err)
+	}
+
+	data := matrix.New("volume", "volume", "volume")
+
+	online, _ := data.NewInstance("vol_online")
+	online.SetLabel("volume", "vol_online")
+	online.SetLabel("svm", "svm-mc")
+	online.SetLabel("state", "online")
+	online.SetLabel("style", "flexvol")
+
+	offline, _ := data.NewInstance("vol_offline")
+	offline.SetLabel("volume", "vol_offline")
+	offline.SetLabel("svm", "svm-mc")
+	offline.SetLabel("state", "offline")
+	offline.SetLabel("style", "flexvol")
+
+	// ONTAP omits "state" entirely for the mirrored/remote volume records under "-mc" SVMs
+	missingState, _ := data.NewInstance("vol_missing_state")
+	missingState.SetLabel("volume", "vol_missing_state")
+	missingState.SetLabel("svm", "svm-mc")
+	missingState.SetLabel("style", "flexvol")
+
+	other, _ := data.NewInstance("vol_other")
+	other.SetLabel("volume", "vol_other")
+	other.SetLabel("svm", "svm-test")
+	other.SetLabel("state", "offline")
+	other.SetLabel("style", "flexvol")
+
+	dataMap := map[string]*matrix.Matrix{"volume": data}
+	_, _, err := kpv.Run(dataMap)
+	assert.Nil(t, err)
+
+	assert.True(t, online.IsExportable())
+	assert.False(t, offline.IsExportable())
+	assert.False(t, missingState.IsExportable())
+	assert.True(t, other.IsExportable())
+}

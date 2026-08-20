@@ -5,6 +5,7 @@ object:                 volume
 counters:
   - ^^name                                             => volume
   - ^^svm.name                                         => svm
+  - ^state                                             => state
   - ^statistics.status                                 => status
   - ^style                                             => style
   - statistics.iops_raw.other                          => other_ops
@@ -44,6 +45,7 @@ endpoints:
     counters:
       - ^^name                                         => volume
       - ^^svm.name                                     => svm
+      - ^state                                         => state
       - ^statistics.status                             => status
       - ^style                                         => style
       - statistics.iops_raw.other                      => other_ops

@@ -1,6 +1,8 @@
 package volume
 
 import (
+	"strings"
+
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/collector"
@@ -36,7 +38,21 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	style := "style"
 	opsKeyPrefix := "temp_"
 	v.volumesMap = v.getVolumeMap(data)
+	v.updateExportable(data)
 	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap, false)
+}
+
+func (v *Volume) updateExportable(data *matrix.Matrix) {
+	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
+		// SVM names ending with "-mc" are MetroCluster SVMs.
+		// Only export volume metrics from MetroCluster SVMs if the volume is online.
+		if strings.HasSuffix(instance.GetLabel("svm"), "-mc") {
+			instance.SetExportable(instance.GetLabel("state") == "online")
+		}
+	}
 }
 
 func (v *Volume) getVolumeMap(data *matrix.Matrix) map[string]string {
