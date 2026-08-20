@@ -1,6 +1,6 @@
 module mcp-server
 
-go 1.26.1
+go 1.27
 
 replace github.com/netapp/harvest/v2 => ../
 

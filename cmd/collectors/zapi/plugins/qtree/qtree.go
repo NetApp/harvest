@@ -352,7 +352,7 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				}
 
 				// populate numeric data
-				if value := strings.Split(attrValue, " ")[0]; value != "" {
+				if value, _, _ := strings.Cut(attrValue, " "); value != "" {
 					// Few quota metrics would have value '-' which means unlimited (ex: disk-limit)
 					if value == "-" {
 						// In 22.05, populate metrics value with 0
