@@ -40,13 +40,7 @@ plugins:
   - MetricAgent:
       compute_metric:
         - total_data ADD read_data write_data
-  - Aggregator:
-      # plugin will create summary/average for each object
-      # any names after the object names will be treated as label names that will be added to instances
-      - node
-      - svm<>svm_vol
-  - Volume:
-      include_constituents: false
+
   - LabelAgent:
       # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
       exclude_regex:
@@ -57,6 +51,15 @@ plugins:
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
         - volume `cohesity_.+`
+
+  - Aggregator:
+      # plugin will create summary/average for each object
+      # any names after the object names will be treated as label names that will be added to instances
+      - node
+      - svm<>svm_vol
+
+  - Volume:
+      include_constituents: false
 
 export_options:
   instance_keys:
