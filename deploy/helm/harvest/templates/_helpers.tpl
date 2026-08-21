@@ -11,17 +11,6 @@ Returns the full name of the release, truncated to 63 chars.
 {{- end -}}
 
 {{/*
-harvest.validateDNS1123Label
-Fail if the value is not a valid Kubernetes DNS-1123 label: 63 chars or fewer,
-lowercase alphanumeric and '-', starting and ending alphanumeric.
-*/}}
-{{- define "harvest.validateDNS1123Label" -}}
-{{- if or (gt (len .) 63) (not (regexMatch "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$" .)) -}}
-{{- fail (printf "invalid Kubernetes name %q: use 63 or fewer chars of lowercase a-z, 0-9 and '-', starting and ending alphanumeric" .) -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 harvest.chart
 Returns the chart name and version label value.
 */}}
