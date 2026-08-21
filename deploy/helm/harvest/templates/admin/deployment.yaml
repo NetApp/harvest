@@ -1,4 +1,5 @@
 {{- if .Values.monitoring.scrape.adminSD.enabled | default false -}}
+{{- include "harvest.validations.scrapeMode" $ -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
