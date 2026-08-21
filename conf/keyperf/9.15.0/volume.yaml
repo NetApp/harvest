@@ -100,6 +100,7 @@ plugins:
       - svm<>svm_vol
   - Volume:
       include_constituents: false
+  - MetroClusterVolume
   - LabelAgent:
       # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
       exclude_regex:

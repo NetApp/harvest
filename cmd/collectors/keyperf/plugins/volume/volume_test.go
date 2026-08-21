@@ -2,6 +2,7 @@ package volume_test
 
 import (
 	"log/slog"
+	"strconv"
 	"testing"
 
 	"github.com/netapp/harvest/v2/assert"
@@ -269,78 +270,49 @@ func TestKeyPerfVolumePlugin(t *testing.T) {
 	assert.Equal(t, actualOps, 200.0) // 50+150
 }
 
-func TestKeyPerfMCCFlexGroupMixedState(t *testing.T) {
-	params := node.NewS("Volume")
-	params.NewChildS("include_constituents", "false")
-
-	opts := options.New()
-	opts.IsTest = true
-	kpv := keyperfVolume.New(plugin.New("volume", opts, params, nil, "volume", nil))
-	if err := kpv.Init(conf.Remote{}); err != nil {
-		t.Fatalf("failed to initialize KeyPerf volume plugin: %v", err)
+// TestKeyPerfFlexGroupStateMerge verifies the reconstructed FlexGroup's "state" label
+// is "mixed" when constituents disagree, otherwise the agreed value.
+func TestKeyPerfFlexGroupStateMerge(t *testing.T) {
+	tests := []struct {
+		name          string
+		states        []string
+		expectedState string
+	}{
+		{"all online", []string{"online", "online"}, "online"},
+		{"mixed", []string{"online", "offline"}, "mixed"},
 	}
 
-	data := matrix.New("volume", "volume", "volume")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			params := node.NewS("Volume")
+			params.NewChildS("include_constituents", "false")
 
-	mixed1, _ := data.NewInstance("vol_mixed__0001")
-	mixed1.SetLabel("volume", "vol_mixed__0001")
-	mixed1.SetLabel("svm", "svm-mc")
-	mixed1.SetLabel("state", "online")
-	mixed1.SetLabel("style", "flexgroup_constituent")
+			opts := options.New()
+			opts.IsTest = true
+			kpv := keyperfVolume.New(plugin.New("volume", opts, params, nil, "volume", nil))
+			if err := kpv.Init(conf.Remote{}); err != nil {
+				t.Fatalf("failed to initialize KeyPerf volume plugin: %v", err)
+			}
 
-	// state disagrees with mixed1, but this constituent is still exportable (e.g. not
-	// excluded by MetroClusterVolume) - state-merge determinism is independent of exportability
-	mixed2, _ := data.NewInstance("vol_mixed__0002")
-	mixed2.SetLabel("volume", "vol_mixed__0002")
-	mixed2.SetLabel("svm", "svm-mc")
-	mixed2.SetLabel("state", "offline")
-	mixed2.SetLabel("style", "flexgroup_constituent")
+			data := matrix.New("volume", "volume", "volume")
+			for i, state := range tt.states {
+				key := "vol_fg__000" + strconv.Itoa(i+1)
+				instance, _ := data.NewInstance(key)
+				instance.SetLabel("volume", key)
+				instance.SetLabel("svm", "svm-mc")
+				instance.SetLabel("state", state)
+				instance.SetLabel("style", "flexgroup_constituent")
+			}
 
-	dataMap := map[string]*matrix.Matrix{"volume": data}
-	_, _, err := kpv.Run(dataMap)
-	assert.Nil(t, err)
+			dataMap := map[string]*matrix.Matrix{"volume": data}
+			_, _, err := kpv.Run(dataMap)
+			assert.Nil(t, err)
 
-	fg := data.GetInstance("svm-mc.vol_mixed")
-	if fg == nil {
-		t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_mixed' to exist")
+			fg := data.GetInstance("svm-mc.vol_fg")
+			if fg == nil {
+				t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_fg' to exist")
+			}
+			assert.Equal(t, fg.GetLabel("state"), tt.expectedState)
+		})
 	}
-	assert.Equal(t, fg.GetLabel("state"), "mixed")
-	assert.True(t, fg.IsExportable()) // both constituents are exportable, only state differs
-}
-
-func TestKeyPerfMCCFlexGroupAllOnline(t *testing.T) {
-	params := node.NewS("Volume")
-	params.NewChildS("include_constituents", "false")
-
-	opts := options.New()
-	opts.IsTest = true
-	kpv := keyperfVolume.New(plugin.New("volume", opts, params, nil, "volume", nil))
-	if err := kpv.Init(conf.Remote{}); err != nil {
-		t.Fatalf("failed to initialize KeyPerf volume plugin: %v", err)
-	}
-
-	data := matrix.New("volume", "volume", "volume")
-
-	on1, _ := data.NewInstance("vol_online_fg__0001")
-	on1.SetLabel("volume", "vol_online_fg__0001")
-	on1.SetLabel("svm", "svm-mc")
-	on1.SetLabel("state", "online")
-	on1.SetLabel("style", "flexgroup_constituent")
-
-	on2, _ := data.NewInstance("vol_online_fg__0002")
-	on2.SetLabel("volume", "vol_online_fg__0002")
-	on2.SetLabel("svm", "svm-mc")
-	on2.SetLabel("state", "online")
-	on2.SetLabel("style", "flexgroup_constituent")
-
-	dataMap := map[string]*matrix.Matrix{"volume": data}
-	_, _, err := kpv.Run(dataMap)
-	assert.Nil(t, err)
-
-	fg := data.GetInstance("svm-mc.vol_online_fg")
-	if fg == nil {
-		t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_online_fg' to exist")
-	}
-	assert.Equal(t, fg.GetLabel("state"), "online")
-	assert.True(t, fg.IsExportable())
 }

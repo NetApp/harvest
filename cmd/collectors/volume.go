@@ -54,9 +54,6 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	cache := data.CloneMetricTemplate()
 	cache.UUID += ".Volume"
 
-	// fgExportableMap decides the reconstructed FlexGroup's exportability
-	fgExportableMap := make(map[string]bool)
-
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
 		svmName := i.GetLabel("svm")
@@ -64,12 +61,6 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		case "flexgroup_constituent":
 			match := flexgroupRegex.FindStringSubmatch(volName)
 			key := svmName + "." + match[1]
-
-			if existing, seen := fgExportableMap[key]; seen {
-				fgExportableMap[key] = existing && i.IsExportable()
-			} else {
-				fgExportableMap[key] = i.IsExportable()
-			}
 
 			if fg, created := cache.GetOrCreateInstance(key); created {
 				fg.SetLabels(maps.Clone(i.GetLabels()))
@@ -125,7 +116,6 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			aggrs := flexgroupAggrsMap[key].Values()
 			sort.Strings(aggrs)
 			flexgroupInstance.SetLabel("aggr", strings.Join(aggrs, ","))
-			flexgroupInstance.SetExportable(fgExportableMap[key])
 		}
 
 		fg := cache.GetInstance(key)
@@ -137,7 +127,6 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		aggrs := fgAggrMap[key].Values()
 		sort.Strings(aggrs)
 		fg.SetLabel("aggr", strings.Join(aggrs, ","))
-		fg.SetExportable(fgExportableMap[key])
 
 		if s := i.GetLabel("state"); s != "" {
 			if existing := fgStateMap[key]; existing == "" {
