@@ -1,4 +1,5 @@
 {{- range $name, $poller := .Values.harvestConfig.Pollers }}
+{{- include "harvest.validations.scrapeMode" $ -}}
 {{- $fullDeploymentName := printf "%s-poller-%s" (include "harvest.fullname" $) $name -}}
 {{- include "harvest.validations.DNS1123" $fullDeploymentName -}}
 {{- $ctx := dict "root" $ "pollerName" $name "poller" $poller -}}
