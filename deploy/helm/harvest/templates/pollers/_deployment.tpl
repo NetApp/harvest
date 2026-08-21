@@ -16,11 +16,13 @@ Notes:
   - collectorsExtensions.<CollectorType> mounts a per-collector custom.yaml
     at /opt/harvest/conf/<collectortype-lower>/custom.yaml.
   - the config checksum annotation triggers rollout when config changes.
+  - fail fast with validations helper
 */}}
 {{- define "harvest.poller.deployment" -}}
 {{- $root := .root -}}
 {{- $name := .pollerName -}}
 {{- $p := .poller -}}
+{{ include "harvest.validations.pollerPort.empty" (dict "pollerName" $name "poller" $p ) }}
 {{- $exts := ($p.collectorsExtensions | default dict) -}}
 
 apiVersion: apps/v1
