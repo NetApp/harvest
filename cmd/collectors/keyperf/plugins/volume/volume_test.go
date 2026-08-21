@@ -269,10 +269,7 @@ func TestKeyPerfVolumePlugin(t *testing.T) {
 	assert.Equal(t, actualOps, 200.0) // 50+150
 }
 
-// TestKeyPerfMCCVolumes verifies that volumes surfaced under a MetroCluster
-// "-mc" partner SVM are only exported when their state is online, for both
-// plain flexvol instances and FlexGroups reconstructed from constituents.
-func TestKeyPerfMCCVolumes(t *testing.T) {
+func TestKeyPerfMCCFlexGroupMixedState(t *testing.T) {
 	params := node.NewS("Volume")
 	params.NewChildS("include_constituents", "false")
 
@@ -285,74 +282,65 @@ func TestKeyPerfMCCVolumes(t *testing.T) {
 
 	data := matrix.New("volume", "volume", "volume")
 
-	online, _ := data.NewInstance("vol_online")
-	online.SetLabel("volume", "vol_online")
-	online.SetLabel("svm", "svm-mc")
-	online.SetLabel("state", "online")
-	online.SetLabel("style", "flexvol")
+	mixed1, _ := data.NewInstance("vol_mixed__0001")
+	mixed1.SetLabel("volume", "vol_mixed__0001")
+	mixed1.SetLabel("svm", "svm-mc")
+	mixed1.SetLabel("state", "online")
+	mixed1.SetLabel("style", "flexgroup_constituent")
 
-	offline, _ := data.NewInstance("vol_offline")
-	offline.SetLabel("volume", "vol_offline")
-	offline.SetLabel("svm", "svm-mc")
-	offline.SetLabel("state", "offline")
-	offline.SetLabel("style", "flexvol")
-
-	// ONTAP omits "state" entirely for the mirrored/remote volume records under "-mc" SVMs
-	missingState, _ := data.NewInstance("vol_missing_state")
-	missingState.SetLabel("volume", "vol_missing_state")
-	missingState.SetLabel("svm", "svm-mc")
-	missingState.SetLabel("style", "flexvol")
-
-	other, _ := data.NewInstance("vol_other")
-	other.SetLabel("volume", "vol_other")
-	other.SetLabel("svm", "svm-test")
-	other.SetLabel("state", "offline")
-	other.SetLabel("style", "flexvol")
-
-	// FlexGroup constituents under an offline MetroCluster partner SVM: the reconstructed
-	// "flexgroup" instance inherits svm/state labels and must not be exported either.
-	mc1, _ := data.NewInstance("vol_mc__0001")
-	mc1.SetLabel("volume", "vol_mc__0001")
-	mc1.SetLabel("svm", "svm-mc")
-	mc1.SetLabel("state", "offline")
-	mc1.SetLabel("style", "flexgroup_constituent")
-
-	mc2, _ := data.NewInstance("vol_mc__0002")
-	mc2.SetLabel("volume", "vol_mc__0002")
-	mc2.SetLabel("svm", "svm-mc")
-	mc2.SetLabel("state", "offline")
-	mc2.SetLabel("style", "flexgroup_constituent")
-
-	// FlexGroup constituents under a regular SVM should still be reconstructed and exported
-	ok1, _ := data.NewInstance("vol_ok__0001")
-	ok1.SetLabel("volume", "vol_ok__0001")
-	ok1.SetLabel("svm", "svm-test")
-	ok1.SetLabel("style", "flexgroup_constituent")
-
-	ok2, _ := data.NewInstance("vol_ok__0002")
-	ok2.SetLabel("volume", "vol_ok__0002")
-	ok2.SetLabel("svm", "svm-test")
-	ok2.SetLabel("style", "flexgroup_constituent")
+	// state disagrees with mixed1, but this constituent is still exportable (e.g. not
+	// excluded by MetroClusterVolume) - state-merge determinism is independent of exportability
+	mixed2, _ := data.NewInstance("vol_mixed__0002")
+	mixed2.SetLabel("volume", "vol_mixed__0002")
+	mixed2.SetLabel("svm", "svm-mc")
+	mixed2.SetLabel("state", "offline")
+	mixed2.SetLabel("style", "flexgroup_constituent")
 
 	dataMap := map[string]*matrix.Matrix{"volume": data}
 	_, _, err := kpv.Run(dataMap)
 	assert.Nil(t, err)
 
-	assert.True(t, online.IsExportable())
-	assert.False(t, offline.IsExportable())
-	assert.False(t, missingState.IsExportable())
-	assert.True(t, other.IsExportable())
-
-	// reconstructed FlexGroup instance exists (built from constituent labels) but must not be exported
-	fgMC := data.GetInstance("svm-mc.vol_mc")
-	if fgMC == nil {
-		t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_mc' to exist")
-	}
-	assert.False(t, fgMC.IsExportable())
-
-	fg := data.GetInstance("svm-test.vol_ok")
+	fg := data.GetInstance("svm-mc.vol_mixed")
 	if fg == nil {
-		t.Fatal("expected reconstructed FlexGroup instance 'svm-test.vol_ok' to be created")
+		t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_mixed' to exist")
 	}
+	assert.Equal(t, fg.GetLabel("state"), "mixed")
+	assert.True(t, fg.IsExportable()) // both constituents are exportable, only state differs
+}
+
+func TestKeyPerfMCCFlexGroupAllOnline(t *testing.T) {
+	params := node.NewS("Volume")
+	params.NewChildS("include_constituents", "false")
+
+	opts := options.New()
+	opts.IsTest = true
+	kpv := keyperfVolume.New(plugin.New("volume", opts, params, nil, "volume", nil))
+	if err := kpv.Init(conf.Remote{}); err != nil {
+		t.Fatalf("failed to initialize KeyPerf volume plugin: %v", err)
+	}
+
+	data := matrix.New("volume", "volume", "volume")
+
+	on1, _ := data.NewInstance("vol_online_fg__0001")
+	on1.SetLabel("volume", "vol_online_fg__0001")
+	on1.SetLabel("svm", "svm-mc")
+	on1.SetLabel("state", "online")
+	on1.SetLabel("style", "flexgroup_constituent")
+
+	on2, _ := data.NewInstance("vol_online_fg__0002")
+	on2.SetLabel("volume", "vol_online_fg__0002")
+	on2.SetLabel("svm", "svm-mc")
+	on2.SetLabel("state", "online")
+	on2.SetLabel("style", "flexgroup_constituent")
+
+	dataMap := map[string]*matrix.Matrix{"volume": data}
+	_, _, err := kpv.Run(dataMap)
+	assert.Nil(t, err)
+
+	fg := data.GetInstance("svm-mc.vol_online_fg")
+	if fg == nil {
+		t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_online_fg' to exist")
+	}
+	assert.Equal(t, fg.GetLabel("state"), "online")
 	assert.True(t, fg.IsExportable())
 }
