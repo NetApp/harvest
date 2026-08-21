@@ -145,7 +145,7 @@ poller:
   # See: https://www.aquasec.com/cloud-native-academy/kubernetes-in-production/kubernetes-security-context/#section-5
   containerSecurityContext:
     # -- If true, mount filesystem read-only; may need writable paths for Harvest cache. (bool)
-    readOnlyRootFilesystem: true
+    readOnlyRootFilesystem: false
     capabilities:
       # -- Drop all
       drop: ["ALL"]
@@ -191,6 +191,9 @@ poller:
 
   # -- PriorityClass for poller pods. (string)
   priorityClassName: ""
+
+  # -- Graceful termination window to allow cleanup.
+  terminationGracePeriodSeconds: 20
 
 # -- Deployment settings for the admin service-discovery pod (single instance), created when
 # monitoring.scrape.adminSD.enabled is true.
