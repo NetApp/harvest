@@ -91,11 +91,6 @@ endpoints:
 plugins:
   - Volume:
       include_constituents: false
-  - Aggregator:
-      # plugin will create summary/average for each object
-      # any names after the object names will be treated as label names that will be added to instances
-      - node
-      - svm<>svm_vol
 
   - LabelAgent:
       # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
@@ -107,6 +102,12 @@ plugins:
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
         - volume `cohesity_.+`
+
+  - Aggregator:
+      # plugin will create summary/average for each object
+      # any names after the object names will be treated as label names that will be added to instances
+      - node
+      - svm<>svm_vol
 
 #  - VolumeTopClients:
 #      # `max_volumes` is the maximum number of volumes to consider for top client metrics. This value is capped at 50, even if a higher number is specified.
