@@ -68,6 +68,7 @@ counters:
   - virtual_used_percent                          => space_physical_used_percent # See https://github.com/NetApp/harvest/issues/3030
   - filter:
       - is_constituent=*
+      - state=!null
 
 endpoints:
   - query: api/private/cli/volume/efficiency/stat

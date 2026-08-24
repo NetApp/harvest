@@ -5,6 +5,7 @@ object:                 volume
 counters:
   - ^^name                                             => volume
   - ^^svm.name                                         => svm
+  - ^state                                             => state
   - ^statistics.status                                 => status
   - ^style                                             => style
   - statistics.iops_raw.other                          => other_ops
@@ -37,6 +38,7 @@ counters:
   - filter:
       - statistics.timestamp=!"-"
       - style=!flexgroup # collected via endpoints
+      - state=!null
 
 endpoints:
   - query: api/storage/volumes
@@ -44,6 +46,7 @@ endpoints:
     counters:
       - ^^name                                         => volume
       - ^^svm.name                                     => svm
+      - ^state                                         => state
       - ^statistics.status                             => status
       - ^style                                         => style
       - statistics.iops_raw.other                      => other_ops
@@ -76,6 +79,7 @@ endpoints:
       - filter:
           - statistics.timestamp=!"-"
           - is_constituent=true
+          - state=!null
 
   - query: api/private/cli/volume
     counters:
@@ -85,8 +89,10 @@ endpoints:
       - ^nodes                                         => node
       - filter:
           - is_constituent=*
+          - state=!null
 
 plugins:
+  - MetroClusterVolume # exclude offline -mc partner-SVM volumes before Aggregator sums node/svm rollups
   - Aggregator:
       # plugin will create summary/average for each object
       # any names after the object names will be treated as label names that will be added to instances
@@ -94,7 +100,7 @@ plugins:
       - svm<>svm_vol
   - Volume:
       include_constituents: false
-
+  - MetroClusterVolume # re-check the reconstructed FlexGroup's merged state (mixed/offline -mc volumes excluded)
   - LabelAgent:
       # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
       exclude_regex:

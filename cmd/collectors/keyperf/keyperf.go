@@ -3,6 +3,7 @@ package keyperf
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/collectors/keyperf/plugins/metroclustervolume"
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetopmetrics"
@@ -154,6 +155,8 @@ func (kp *KeyPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 	switch kind {
 	case "Volume":
 		return volume.New(p)
+	case "MetroClusterVolume":
+		return metroclustervolume.New(p)
 	case "VolumeTopClients":
 		return volumetopmetrics.New(p)
 	// These plugins are for ASAr2
