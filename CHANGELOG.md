@@ -42,6 +42,7 @@
   - WAFL write cleaning handling
   - `node_root` and `type` are now configurable in ZAPI
   - MetricAgent plugin support for StorageGrid collector
+  - Do not export performance metrics for offline MCC partner volumes.
 
 - :closed_book: Documentation additions
   - [Arista collector setup](https://netapp.github.io/harvest/nightly/prepare-arista-switch/) and [configuration](https://netapp.github.io/harvest/nightly/configure-arista-rest/)
@@ -67,7 +68,7 @@ this release:
 
 @ahiregoudar, @AvijitBhattacharjee, @anoob09, @BrendonA667, @crenduchinta88, @ebarron, @Falcon667,@heinowalther, @Klocke208, @lukasz-borek, @NetAppFredPeiffer, @sachin-netapp1, @sachinsharmastg, @troysmullerna
 
-:seedling: This release includes 33 features, 16 bug fixes, 6 documentation, 1 styling, 4 refactoring, 17 miscellaneous, and 11 ci pull requests.
+:seedling: This release includes 33 features, 17 bug fixes, 6 documentation, 1 styling, 4 refactoring, 17 miscellaneous, and 11 ci pull requests.
 
 <details>
 
@@ -125,6 +126,7 @@ this release:
 - Max Plugin Should Resolve Ties Deterministically ([#4384](https://github.com/NetApp/harvest/pull/4384))
 - Cmperf Object Folder Should Be Unique ([#4388](https://github.com/NetApp/harvest/pull/4388))
 - Update Capacity Volume Metric Docs Eseries ([#4398](https://github.com/NetApp/harvest/pull/4398))
+- KeyPerf Collector should not export partner volumes ([#4419](https://github.com/NetApp/harvest/pull/4419))
 
 ### :closed_book: Documentation
 - Changelog 26.05.0 ([#4269](https://github.com/NetApp/harvest/pull/4269))
