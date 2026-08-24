@@ -61,6 +61,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		case "flexgroup_constituent":
 			match := flexgroupRegex.FindStringSubmatch(volName)
 			key := svmName + "." + match[1]
+
 			if fg, created := cache.GetOrCreateInstance(key); created {
 				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
@@ -98,6 +99,9 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	logger.Debug("", slog.Int("flexgroup volume count", len(cache.GetInstances())))
 
 	recordFGFalse := make(map[string]*set.Set)
+	// fgStateMap resolves each FlexGroup's "state" deterministically across its constituents:
+	// "mixed" if they disagree, otherwise the agreed value
+	fgStateMap := make(map[string]string)
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
 		svmName := i.GetLabel("svm")
@@ -123,6 +127,18 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		aggrs := fgAggrMap[key].Values()
 		sort.Strings(aggrs)
 		fg.SetLabel("aggr", strings.Join(aggrs, ","))
+
+		if s := i.GetLabel("state"); s != "" {
+			if existing := fgStateMap[key]; existing == "" {
+				fgStateMap[key] = s
+			} else if existing != s {
+				fgStateMap[key] = "mixed"
+			}
+			fg.SetLabel("state", fgStateMap[key])
+			if flexgroupInstance != nil {
+				flexgroupInstance.SetLabel("state", fgStateMap[key])
+			}
+		}
 
 		for mkey, m := range data.GetMetrics() {
 			if !m.IsExportable() && m.GetType() != "float64" {
