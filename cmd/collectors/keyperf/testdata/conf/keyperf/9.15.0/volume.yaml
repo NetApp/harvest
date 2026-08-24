@@ -5,6 +5,7 @@ object:                   volume
 counters:
   - ^^name                                => volume
   - ^^svm.name                            => svm
+  - ^state                                => state
   - ^style                                => style
   - ^statistics.status                    => status
   - statistics.timestamp(timestamp)       => timestamp

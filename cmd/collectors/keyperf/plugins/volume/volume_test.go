@@ -2,6 +2,7 @@ package volume_test
 
 import (
 	"log/slog"
+	"strconv"
 	"testing"
 
 	"github.com/netapp/harvest/v2/assert"
@@ -267,4 +268,51 @@ func TestKeyPerfVolumePlugin(t *testing.T) {
 	actualOps, ok := data.GetMetric("statistics.iops_raw.read").GetValueFloat64(fg)
 	assert.True(t, ok)
 	assert.Equal(t, actualOps, 200.0) // 50+150
+}
+
+// TestKeyPerfFlexGroupStateMerge verifies the reconstructed FlexGroup's "state" label
+// is "mixed" when constituents disagree, otherwise the agreed value.
+func TestKeyPerfFlexGroupStateMerge(t *testing.T) {
+	tests := []struct {
+		name          string
+		states        []string
+		expectedState string
+	}{
+		{"all online", []string{"online", "online"}, "online"},
+		{"mixed", []string{"online", "offline"}, "mixed"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			params := node.NewS("Volume")
+			params.NewChildS("include_constituents", "false")
+
+			opts := options.New()
+			opts.IsTest = true
+			kpv := keyperfVolume.New(plugin.New("volume", opts, params, nil, "volume", nil))
+			if err := kpv.Init(conf.Remote{}); err != nil {
+				t.Fatalf("failed to initialize KeyPerf volume plugin: %v", err)
+			}
+
+			data := matrix.New("volume", "volume", "volume")
+			for i, state := range tt.states {
+				key := "vol_fg__000" + strconv.Itoa(i+1)
+				instance, _ := data.NewInstance(key)
+				instance.SetLabel("volume", key)
+				instance.SetLabel("svm", "svm-mc")
+				instance.SetLabel("state", state)
+				instance.SetLabel("style", "flexgroup_constituent")
+			}
+
+			dataMap := map[string]*matrix.Matrix{"volume": data}
+			_, _, err := kpv.Run(dataMap)
+			assert.Nil(t, err)
+
+			fg := data.GetInstance("svm-mc.vol_fg")
+			if fg == nil {
+				t.Fatal("expected reconstructed FlexGroup instance 'svm-mc.vol_fg' to exist")
+			}
+			assert.Equal(t, fg.GetLabel("state"), tt.expectedState)
+		})
+	}
 }
