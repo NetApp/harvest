@@ -68,7 +68,7 @@ endpoints:
           - state=!null
 
 plugins:
-  - MetroClusterVolume
+  - MetroClusterVolume # exclude offline -mc partner-SVM volumes before Aggregator sums node/svm rollups
   - Aggregator:
       # plugin will create summary/average for each object
       # any names after the object names will be treated as label names that will be added to instances
@@ -76,7 +76,7 @@ plugins:
       - svm<>svm_vol
   - Volume:
       include_constituents: false
-  - MetroClusterVolume
+  - MetroClusterVolume # re-check the reconstructed FlexGroup's merged state (mixed/offline -mc volumes excluded)
   - LabelAgent:
       # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
       exclude_regex:
