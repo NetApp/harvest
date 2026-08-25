@@ -108,8 +108,9 @@ func newTestCmPerf(t *testing.T) *CmPerf {
 	c.Params = node.NewS("root")
 	c.Matrix = map[string]*matrix.Matrix{c.Object: matrix.New("test", "test", "test")}
 	c.perfProp = &perfProp{
-		counterInfo:       make(map[string]*counter),
-		histogramCounters: make(map[string]bool),
+		counterInfo:          make(map[string]*counter),
+		histogramCounters:    make(map[string]bool),
+		arrayShapeMismatches: make(map[string]int),
 	}
 	return c
 }
@@ -146,7 +147,7 @@ histograms:
 		schema.CounterSchema = append(schema.CounterSchema, cmmetrics.CounterSchema{Index: uint32(i + 1), Name: tt.name, LabelsX: tt.labels}) //nolint:gosec
 		c.Prop.Metrics[tt.name] = &rest2.Metric{Label: tt.name, Exportable: true}
 	}
-	c.buildCountersFromSchema(schema, nil)
+	c.buildCountersFromSchema(schema, matrix.New("test", "test", "test"), matrix.New("test", "test", "test"))
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -193,6 +194,52 @@ histograms:
 	}
 }
 
+func TestBuildCountersFromSchema_CreatesOnCurMat(t *testing.T) {
+	c := newTestCmPerf(t)
+	c.Prop.Metrics["rx_bytes"] = &rest2.Metric{Label: "rx_bytes", Exportable: true}
+	c.Prop.Metrics["read_io_type"] = &rest2.Metric{Label: "read_io_type", Exportable: true}
+
+	schema := cmmetrics.ObjectSchema{CounterSchema: []cmmetrics.CounterSchema{
+		{Index: 1, Name: "rx_bytes"}, // plain scalar, no denominator
+		{Index: 2, Name: "read_io_type", BaseIndex: 3, HasBaseIndex: true, LabelsX: []string{"cache", "pmem"}}, // array numerator with denominator
+		{Index: 3, Name: "read_io_type_base"}, // scalar denominator
+	}}
+
+	curMat := matrix.New("test", "test", "test")
+	prevMat := matrix.New("test", "test", "test")
+	c.buildCountersFromSchema(schema, curMat, prevMat)
+
+	if curMat.GetMetric("rx_bytes") == nil {
+		t.Fatal("expected scalar counter rx_bytes to be created on curMat")
+	}
+	if curMat.GetMetric("read_io_type") != nil {
+		t.Fatal("did not expect a bare placeholder for array-shaped read_io_type")
+	}
+	if curMat.GetMetric("read_io_type_base") == nil {
+		t.Fatal("expected denominator read_io_type_base to be created on curMat even though its numerator is array-shaped")
+	}
+}
+
+func TestBuildCountersFromSchema_NoBaseIndexNotConfusedWithZero(t *testing.T) {
+	c := newTestCmPerf(t)
+	c.Prop.Metrics["tx_total_errors"] = &rest2.Metric{Label: "tx_total_errors", Exportable: true}
+
+	schema := cmmetrics.ObjectSchema{CounterSchema: []cmmetrics.CounterSchema{
+		{Index: 0, Name: "instance_name", Type: cmmetrics.CookString}, // occupies index 0
+		{Index: 43, Name: "tx_total_errors"},                          // no base counter at all (HasBaseIndex left false)
+	}}
+
+	c.buildCountersFromSchema(schema, matrix.New("test", "test", "test"), matrix.New("test", "test", "test"))
+
+	co := c.perfProp.counterInfo["tx_total_errors"]
+	if co == nil {
+		t.Fatal("expected counterInfo for tx_total_errors")
+	}
+	if co.denominator != "" {
+		t.Fatalf("expected no denominator, got %q", co.denominator)
+	}
+}
+
 func TestPopulateArrayCounterCreatesInPrevMat(t *testing.T) {
 	c := newTestCmPerf(t)
 	name := "read_latency_hist"
@@ -227,6 +274,88 @@ func TestPopulateArrayCounterCreatesInPrevMat(t *testing.T) {
 		if prevMat.GetMetric(key) == nil {
 			t.Fatalf("expected %s to also exist in prevMat", key)
 		}
+	}
+}
+
+func TestPopulateArrayCounter2D(t *testing.T) {
+	c := newTestCmPerf(t)
+	name := "rss_matrix"
+	labelsX := []string{"queue_0", "queue_1"}
+	labelsY := []string{"rx_bytes", "tx_bytes"}
+	values := []uint64{100, 200, 300, 400} // row-major: q0/rx, q0/tx, q1/rx, q1/tx
+
+	c.Prop.Metrics[name] = &rest2.Metric{Label: name, Exportable: true}
+
+	curMat := matrix.New("test", "test", "test")
+	prevMat := matrix.New("test", "test", "test")
+	inst, err := curMat.NewInstance("inst1")
+	assert.Nil(t, err)
+
+	cs := cmmetrics.CounterSchema{Name: name, LabelsX: labelsX, LabelsY: labelsY}
+	count := c.populateArrayCounter(curMat, prevMat, inst, cs, values)
+	assert.Equal(t, count, uint64(len(values)))
+
+	want := map[string]float64{
+		"queue_0#rx_bytes": 100,
+		"queue_0#tx_bytes": 200,
+		"queue_1#rx_bytes": 300,
+		"queue_1#tx_bytes": 400,
+	}
+	for suffix, wantVal := range want {
+		key := name + arrayKeyToken + suffix
+		m := curMat.GetMetric(key)
+		if m == nil {
+			t.Fatalf("expected %s in curMat", key)
+		}
+		val, ok := m.GetValueFloat64(inst)
+		assert.True(t, ok)
+		assert.Equal(t, val, wantVal)
+
+		if prevMat.GetMetric(key) == nil {
+			t.Fatalf("expected %s to also exist in prevMat", key)
+		}
+	}
+}
+
+func TestPopulateArrayCounter_ShapeMismatchesAreSkippedAndCounted(t *testing.T) {
+	curMat := matrix.New("test", "test", "test")
+	prevMat := matrix.New("test", "test", "test")
+
+	tests := []struct {
+		name   string
+		cs     cmmetrics.CounterSchema
+		values []uint64
+	}{
+		{
+			name:   "2D empty LabelsX",
+			cs:     cmmetrics.CounterSchema{Name: "a", LabelsX: nil, LabelsY: []string{"rx_bytes", "tx_bytes"}},
+			values: []uint64{1, 2},
+		},
+		{
+			name:   "2D value count mismatch",
+			cs:     cmmetrics.CounterSchema{Name: "b", LabelsX: []string{"queue_0", "queue_1"}, LabelsY: []string{"rx_bytes", "tx_bytes"}},
+			values: []uint64{1, 2, 3}, // expected 4
+		},
+		{
+			name:   "1D value count mismatch",
+			cs:     cmmetrics.CounterSchema{Name: "c", LabelsX: []string{"cache", "pmem"}},
+			values: []uint64{1},
+		},
+	}
+
+	c := newTestCmPerf(t)
+	inst, err := curMat.NewInstance("inst1")
+	assert.Nil(t, err)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c.Prop.Metrics[tt.cs.Name] = &rest2.Metric{Label: tt.cs.Name, Exportable: true}
+			count := c.populateArrayCounter(curMat, prevMat, inst, tt.cs, tt.values)
+			assert.Equal(t, count, uint64(0))
+			if c.perfProp.arrayShapeMismatches[tt.cs.Name] != 1 {
+				t.Fatalf("expected arrayShapeMismatches[%s] == 1, got %d", tt.cs.Name, c.perfProp.arrayShapeMismatches[tt.cs.Name])
+			}
+		})
 	}
 }
 

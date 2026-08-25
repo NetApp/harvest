@@ -30,9 +30,12 @@ type CounterSchema struct {
 	Name      string
 	Index     uint32
 	BaseIndex uint32
-	Type      CounterTypeEnum
-	LabelsX   []string
-	LabelsY   []string
+	// HasBaseIndex is true only when base_counter_index was actually present on the wire —
+	// BaseIndex alone can't distinguish "no base counter" from "base index is legitimately 0".
+	HasBaseIndex bool
+	Type         CounterTypeEnum
+	LabelsX      []string
+	LabelsY      []string
 }
 
 type ObjectData struct {
@@ -590,6 +593,7 @@ func handleCounterSchema(value []byte) (CounterSchema, error) {
 				return counterSchema, errors.New("failed to read counter schema base_counter_index")
 			}
 			counterSchema.BaseIndex = val
+			counterSchema.HasBaseIndex = true
 		}
 	}
 

@@ -89,11 +89,10 @@ func CanonicalSamplePeriod(raw string) (string, error) {
 }
 
 type CmPerf struct {
-	*rest2.Rest     // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	perfProp        *perfProp
-	archivedMetrics map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
-	recordsToSave   int                      // Number of records to save when using the recorder
-	lastTimestamp   time.Time                // tracks last downloaded file timestamp (aggregated: 1 file per object)
+	*rest2.Rest   // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	perfProp      *perfProp
+	recordsToSave int       // Number of records to save when using the recorder
+	lastTimestamp time.Time // tracks last downloaded file timestamp (aggregated: 1 file per object)
 }
 
 type counter struct {
@@ -103,14 +102,15 @@ type counter struct {
 }
 
 type perfProp struct {
-	isCacheEmpty        bool
-	counterInfo         map[string]*counter
-	schemaMap           map[uint32]cmmetrics.CounterSchema
-	latencyIoReqd       int
-	qosLabels           map[string]string
-	disableConstituents bool
-	histogramCounters   map[string]bool
-	samplePeriod        string
+	isCacheEmpty         bool
+	counterInfo          map[string]*counter
+	schemaMap            map[uint32]cmmetrics.CounterSchema
+	latencyIoReqd        int
+	qosLabels            map[string]string
+	disableConstituents  bool
+	histogramCounters    map[string]bool
+	samplePeriod         string
+	arrayShapeMismatches map[string]int // counter name -> occurrences this poll, surfaced as one Warn
 }
 
 func init() {
@@ -136,7 +136,7 @@ func (c *CmPerf) Init(a *collector.AbstractCollector) error {
 
 	c.perfProp.counterInfo = make(map[string]*counter)
 	c.perfProp.histogramCounters = make(map[string]bool)
-	c.archivedMetrics = make(map[string]*rest2.Metric)
+	c.perfProp.arrayShapeMismatches = make(map[string]int)
 
 	if err := c.InitClient(); err != nil {
 		return err
@@ -300,8 +300,6 @@ func (c *CmPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			m.SetExportable(false)
 		}
 	}
-
-	c.buildCounters()
 
 	return nil, nil
 }
