@@ -19,6 +19,7 @@ export default {
                 'matrix',
                 'poller',
                 'prometheus',
+                'deploy',
             ]
         ],
         'type-enum': [

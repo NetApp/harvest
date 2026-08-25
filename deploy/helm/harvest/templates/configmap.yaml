@@ -1,0 +1,24 @@
+{{- /* Render harvest.yml into a ConfigMap (skipped when config.existingConfigMap is set).
+       Poller entries carry chart-only keys (extraEnvVars, collectorsExtensions, podMonitor)
+       that are stripped here so they never reach Harvest. When admin SD is enabled, inject
+       Admin.httpsd.listen unless the user set their own Admin section — `harvest admin start`
+       exits if listen is empty (cmd/admin/admin.go). */ -}}
+{{- if not .Values.config.existingConfigMap -}}
+{{- $cfg := deepCopy .Values.harvestConfig -}}
+{{- if and .Values.monitoring.scrape.adminSD.enabled (not (hasKey $cfg "Admin")) -}}
+{{- $_ := set $cfg "Admin" (dict "httpsd" (dict "listen" (printf ":%v" .Values.admin.containerPorts.httpsd))) -}}
+{{- $sdURL := printf "http://%s-admin-sd.%s.svc:%v/api/v1/sd" (include "harvest.fullname" .) .Release.Namespace .Values.admin.service.ports.httpsd -}}
+{{- $_ := set $cfg.Exporters.prometheus "heart_beat_url" $sdURL -}}
+{{- end -}}
+{{- range $name, $p := ($cfg.Pollers | default dict) -}}
+{{- $_ := set $cfg.Pollers $name (omit $p "extraEnvVars" "collectorsExtensions" "podMonitor") -}}
+{{- end -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "harvest.configMapName" . }}
+  labels: {{- include "harvest.labels" $ | nindent 4 }}
+data:
+  harvest.yml: |
+  {{- toYaml $cfg | nindent 4 }}
+{{- end }}

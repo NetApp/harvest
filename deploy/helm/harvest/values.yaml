@@ -1,0 +1,329 @@
+# -- Override the full release name. Leave empty to use the chart's computed fullname.
+fullnameOverride: ""
+
+config:
+  # -- Mount an existing ConfigMap (with a `harvest.yml` key) instead of generating one.
+  # `harvestConfig` is then only used to enumerate pollers, not rendered. (string)
+  existingConfigMap: ""
+
+image:
+  # -- Container registry hosting the image.
+  registry: ghcr.io
+  # -- Repository (image name) within the registry.
+  repository: netapp/harvest
+  # -- Image tag to deploy. Pin to an explicit version to overwrite chart appVersion.
+  tag: "26.02.0-1"
+  # -- Image pull policy. One of: Always|IfNotPresent|Never.
+  pullPolicy: IfNotPresent
+  # -- List of imagePullSecrets to use for private registries.
+  # Example: ["my-regcred"]
+  pullSecrets: []
+
+# -- Harvest configuration rendered into harvest.yml: Exporters, Defaults, and per-cluster Pollers.
+# @default -- see the harvestConfig.* keys below
+harvestConfig:
+  # -- Exporter definitions for Harvest. Keys under `Exporters` name the exporters.
+  Exporters:
+    prometheus:
+      # -- Exporter implementation name. Must match a Harvest exporter.
+      exporter: Prometheus
+      # -- If true, add ONTAP/cluster metadata as Prometheus labels
+      add_meta_tags: true
+      # -- If true, sort labels for deterministic output. (bool)
+      sort_labels: true
+  # -- Defaults applied to pollers unless overridden.
+  Defaults:
+    # -- Exporters enabled by default for all pollers. (string[])
+    exporters:
+      - prometheus
+  # Example (see the chart README "Adding a poller" for the full key reference):
+  # Pollers:
+  #   cluster-a:
+  #     addr: cluster-a.example.com
+  #     username: harvest
+  #     password: ${CLUSTER_A_PW}        # from a Secret, not inline
+  #     prom_port: 13000
+  #     collectors: [Rest, RestPerf]
+  #     extraEnvVars:                     # chart-only: this poller's pod
+  #       - name: CLUSTER_A_PW
+  #         valueFrom:
+  #           secretKeyRef: {name: ontap-cluster-a, key: password}
+  # -- (object) Map of poller name to config: native Harvest fields (written to harvest.yml)
+  # plus chart-only keys (extraEnvVars, collectorsExtensions, podMonitor). See the README
+  # "Adding a poller" section for the entry schema.
+  Pollers: {}
+
+monitoring:
+  scrape:
+    # -- Admin service-discovery endpoint scrape settings.
+    adminSD:
+      # -- If true, enable scraping the admin SD endpoint (Prometheus target discovery). (bool)
+      enabled: false
+      # -- Labels for the ScrapeConfig, used by the Prometheus Operator's scrapeConfigSelector to discover it. (map[string]string)
+      labels:
+        release: prometheus-operator
+    # -- Prometheus Operator PodMonitor configuration for pollers/admin.
+    podMonitor:
+      # -- If true, create PodMonitor resources. Requires kube-prometheus-stack or prometheus-operator. (bool)
+      enabled: true
+      # -- Default scrape interval for PodMonitors. (duration)
+      defaultInterval: 30s
+      # -- Default scrape timeout for PodMonitors. Must be < interval. (duration)
+      defaultScrapeTimeout: 20s
+      # -- Extra labels to attach to PodMonitors for selector-based discovery. (map[string]string)
+      labels:
+        release: prometheus-operator
+
+# -- Deployment settings shared by every poller pod. Per-cluster Harvest config (addr,
+# credentials, collectors) lives under harvestConfig.Pollers, not here.
+# @default -- see the poller.* keys below
+poller:
+  # -- Number of poller replicas. Typically 1 per ONTAP cluster to avoid duplicate scraping. (int)
+  replicaCount: 1
+  # -- Mount the ServiceAccount token. Harvest never calls the Kubernetes API, so it is off
+  # by default (least privilege). Set true only for a sidecar that needs API access. (bool)
+  automountServiceAccountToken: false
+  # -- Extra annotations for poller pods. (map[string]string)
+  podAnnotations: {}
+  # Example:
+  # extraEnvVars:
+  #   - name: HTTP_PROXY
+  #     value: http://proxy:8080
+  # -- Environment variables injected into every poller container. For per-poller secrets,
+  # use extraEnvVars on the poller entry under harvestConfig.Pollers. (corev1.EnvVar[])
+  extraEnvVars: []
+
+  # -- Liveness probe toggles. Disable if startup is slow and causes restarts. (bool)
+  livenessProbe:
+    enabled: false
+  # -- Startup probe checks readiness before liveness begins. Tune thresholds for large clusters.
+  startupProbe:
+    enabled: true
+    httpGet:
+      # -- Metrics endpoint path exposed by the exporter. (string)
+      path: /metrics
+      # -- Name of the container port that serves metrics (must match container port name). (string|int)
+      port: http
+    # -- Delay before probing starts. (int seconds)
+    initialDelaySeconds: 5
+    # -- Probe period. (int seconds)
+    periodSeconds: 5
+    # -- Consecutive failures before marking container unhealthy during startup. (int)
+    failureThreshold: 12
+  # -- Readiness probe to gate traffic until ready.
+  readinessProbe:
+    enabled: true
+    tcpSocket:
+      # -- Port (name or number) to check open. Should match the metrics or HTTP port name. (string|int)
+      port: http               # just check the port is open
+    # -- Frequency of readiness checks. (int seconds)
+    periodSeconds: 10
+    # -- Single probe timeout. (int seconds)
+    timeoutSeconds: 2
+    # -- Failures required to mark NotReady. (int)
+    failureThreshold: 3
+
+  # -- Container lifecycle hooks (postStart/preStop). (corev1.Lifecycle)
+  lifecycleHooks: {}
+
+  # Example:
+  # resources:
+  #   requests:
+  #     cpu: 200m
+  #     memory: 256Mi
+  #   limits:
+  #     cpu: 1
+  #     memory: 1Gi
+  # -- Container resource requests and limits. Empty sets none — set these for production. (corev1.ResourceRequirements)
+  resources: {}
+
+  # -- Pod-level security context. Leave empty ({}) to omit. Some exporters require root;
+  # Known bug: poller status exporter may fail if not root.
+  podSecurityContext: {}
+  # -- Container-level security context. Tighten when possible. Leave empty ({}) to omit.
+  # See: https://kubesec.io/basics/securitycontext-capabilities/
+  # See: https://www.aquasec.com/cloud-native-academy/kubernetes-in-production/kubernetes-security-context/#section-5
+  containerSecurityContext:
+    # -- If true, mount filesystem read-only; may need writable paths for Harvest cache. (bool)
+    readOnlyRootFilesystem: false
+    capabilities:
+      # -- Drop all
+      drop: ["ALL"]
+      # -- We need to allow ICMP for harvest poller status metric.
+      add: ["NET_RAW"]
+    # -- Prevent privilege escalation via setuid binaries. (bool)
+    allowPrivilegeEscalation: false
+    # -- Seccomp profile to use; RuntimeDefault is recommended. (seccompProfile)
+    seccompProfile:
+      type: RuntimeDefault
+
+  # Example — spread pollers across nodes (soft anti-affinity):
+  # affinity:
+  #   podAntiAffinity:
+  #     preferredDuringSchedulingIgnoredDuringExecution:
+  #       - weight: 1
+  #         podAffinityTerm:
+  #           labelSelector:
+  #             matchLabels:
+  #               app.kubernetes.io/name: harvest
+  #           topologyKey: kubernetes.io/hostname
+  # Example — pin to nodes with a specific label (node affinity):
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #         - matchExpressions:
+  #             - key: storage/netapp
+  #               operator: In
+  #               values: ["true"]
+  # -- Affinity rules for pod scheduling. (corev1.Affinity)
+  affinity: {}
+  # -- Node selector for scheduling. (map[string]string)
+  nodeSelector: {}
+  # -- Tolerations for tainted nodes. (corev1.Toleration[])
+  tolerations: []
+  # -- Topology spread constraints to distribute poller pods. (corev1.TopologySpreadConstraint[])
+  topologySpreadConstraints: []
+
+  # -- Update strategy for the poller Deployment. Recreate avoids dual-scrape. (object)
+  updateStrategy:
+    type: Recreate
+
+  # -- PriorityClass for poller pods. (string)
+  priorityClassName: ""
+
+  # -- Graceful termination window to allow cleanup.
+  terminationGracePeriodSeconds: 20
+
+# -- Deployment settings for the admin service-discovery pod (single instance), created when
+# monitoring.scrape.adminSD.enabled is true.
+# @default -- see the admin.* keys below
+admin:
+  # -- Number of admin (harvest admin SD) replicas.
+  replicaCount: 1
+  # -- Mount the ServiceAccount token. The admin node never calls the Kubernetes API, so it is
+  # off by default (least privilege). (bool)
+  automountServiceAccountToken: false
+  # Example:
+  # extraEnvVars:
+  #   - name: HTTP_PROXY
+  #     value: http://proxy:8080
+  # -- Extra environment variables injected into the admin container. (corev1.EnvVar[])
+  extraEnvVars: []
+  # -- Container ports exposed by the admin pod. Names must match probes and Service.
+  containerPorts:
+    httpsd: 8887
+
+  # -- Liveness probe for admin API. Disable if startup is slow.
+  livenessProbe:
+    enabled: false
+
+  startupProbe:
+    enabled: true
+    httpGet:
+      # -- Admin API health/SD endpoint.
+      path: /api/v1/sd
+      # -- Port name/number to hit. Must exist in containerPorts.
+      port: httpsd
+      # -- Optional headers for the probe request.
+      httpHeaders:
+        - name: Accept
+          value: application/json
+    # -- Delay before probing starts.
+    initialDelaySeconds: 3
+    # -- Probe period.
+    periodSeconds: 5
+    # -- Failures required to mark startup as failed.
+    failureThreshold: 24
+
+  # -- Readiness probe to mark admin pod ready for traffic.
+  readinessProbe:
+    enabled: true
+    httpGet:
+      path: /api/v1/sd
+      port: httpsd
+      httpHeaders:
+        - name: Accept
+          value: application/json
+    # -- Delay before first readiness check.
+    initialDelaySeconds: 5
+    # -- Probe period.
+    periodSeconds: 5
+    # -- Single probe timeout.
+    timeoutSeconds: 2
+    # -- Failures required to mark NotReady.
+    failureThreshold: 6
+
+  # -- Graceful termination window to allow cleanup.
+  terminationGracePeriodSeconds: 20
+
+  # Example:
+  # resources:
+  #   requests:
+  #     cpu: 200m
+  #     memory: 256Mi
+  #   limits:
+  #     cpu: 1
+  #     memory: 1Gi
+  # -- Container resource requests and limits. Empty sets none — set these for production. (corev1.ResourceRequirements)
+  resources: {}
+
+  # -- Pod-level security context for admin. Leave empty ({}) to omit.
+  podSecurityContext: {}
+  # -- Container-level security posture for admin. Leave empty ({}) to omit.
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop: ["ALL"]
+      # -- Admin may need networking and port binding, keep minimal caps.
+      add: ["NET_RAW", "NET_BIND_SERVICE"]
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+
+  # -- Admin entrypoint command. Leave as default unless customizing. (string[])
+  command:
+    - "/opt/harvest/bin/harvest"
+    - "admin"
+    - "start"
+    - "--config"
+    - "/opt/harvest/harvest.yml"
+
+  # -- Additional args appended to the admin command. (string[])
+  args: []
+
+  # Example — spread across nodes (soft anti-affinity):
+  # affinity:
+  #   podAntiAffinity:
+  #     preferredDuringSchedulingIgnoredDuringExecution:
+  #       - weight: 1
+  #         podAffinityTerm:
+  #           labelSelector:
+  #             matchLabels:
+  #               app.kubernetes.io/name: harvest
+  #           topologyKey: kubernetes.io/hostname
+  # -- Affinity rules for pod scheduling. (corev1.Affinity)
+  affinity: {}
+  # -- Node selector for admin pods. (map[string]string)
+  nodeSelector: {}
+  # -- Tolerations for admin pods. (corev1.Toleration[])
+  tolerations: []
+
+  # -- Update strategy for the admin workload. Recreate ensures single active instance. (object)
+  updateStrategy:
+    type: Recreate
+
+  # -- PriorityClass for admin pods. (string)
+  priorityClassName: ""
+
+  # -- Topology spread constraints to evenly distribute admin pods. (corev1.TopologySpreadConstraint[])
+  topologySpreadConstraints: []
+
+  service:
+    # -- Service type for admin. ClusterIP recommended.
+    type: ClusterIP
+    # -- Set to 'None' for a headless service.
+    clusterIP: None
+    # -- Service ports exposed. Names must match containerPorts.
+    ports:
+      httpsd: 8887

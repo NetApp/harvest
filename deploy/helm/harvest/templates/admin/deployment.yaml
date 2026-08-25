@@ -1,0 +1,99 @@
+{{- if .Values.monitoring.scrape.adminSD.enabled | default false -}}
+{{- include "harvest.validations.scrapeMode" $ -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "harvest.fullname" $ }}-admin
+  labels: {{- include "harvest.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: admin
+spec:
+  replicas: {{ .Values.admin.replicaCount }}
+  {{- if .Values.admin.updateStrategy }}
+  strategy: {{- toYaml .Values.admin.updateStrategy | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "harvest.selectorLabels" $ | nindent 6 }}
+      app.kubernetes.io/component: admin
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.admin.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        checksum/config: {{ include "harvest.configChecksum" $ }}
+      labels: {{- include "harvest.labels" $ | nindent 8 }}
+        app.kubernetes.io/component: admin
+    spec:
+      automountServiceAccountToken: {{ .Values.admin.automountServiceAccountToken }}
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.admin.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.admin.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.admin.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.admin.priorityClassName }}
+      priorityClassName: {{ .Values.admin.priorityClassName | quote }}
+      {{- end }}
+      {{- with .Values.admin.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.admin.podSecurityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.admin.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.admin.terminationGracePeriodSeconds }}
+      {{- end }}
+      containers:
+        - name: admin
+          image: {{ include "harvest.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.admin.containerSecurityContext }}
+          securityContext: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.admin.command }}
+          command: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.admin.args }}
+          args: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.admin.extraEnvVars }}
+          env:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.admin.resources }}
+          resources: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: httpsd
+              containerPort: {{ .Values.admin.containerPorts.httpsd }}
+              protocol: TCP
+          {{- if .Values.admin.livenessProbe.enabled }}
+          livenessProbe: {{- toYaml (omit .Values.admin.livenessProbe "enabled") | nindent 12 }}
+          {{- end }}
+          {{- if .Values.admin.readinessProbe.enabled }}
+          readinessProbe: {{- toYaml (omit .Values.admin.readinessProbe "enabled") | nindent 12 }}
+          {{- end }}
+          {{- if .Values.admin.startupProbe.enabled }}
+          startupProbe: {{- toYaml (omit .Values.admin.startupProbe "enabled") | nindent 12 }}
+          {{- end }}
+          {{- with .Values.admin.lifecycleHooks }}
+          lifecycle: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: harvest-config
+              mountPath: /opt/harvest/harvest.yml
+              subPath: harvest.yml
+      volumes:
+        - name: harvest-config
+          configMap:
+            name: {{ include "harvest.configMapName" . }}
+{{ end }}

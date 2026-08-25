@@ -1,0 +1,39 @@
+# CI test: admin SD enabled — exercises admin Deployment, Service, and ScrapeConfig.
+harvestConfig:
+  Exporters:
+    prometheus:
+      exporter: Prometheus
+      add_meta_tags: true
+      sort_labels: true
+  Defaults:
+    exporters:
+      - prometheus
+  Pollers:
+    cluster-a:
+      prom_port: 12990
+      addr: 192.168.0.1
+    cluster-b:
+      prom_port: 12991
+      addr: 192.168.0.2
+
+monitoring:
+  scrape:
+    adminSD:
+      enabled: true
+    podMonitor:
+      enabled: false
+
+admin:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  service:
+    type: ClusterIP
+    clusterIP: None
+    ports:
+      httpsd: 8887
