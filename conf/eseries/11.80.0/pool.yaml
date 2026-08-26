@@ -17,9 +17,6 @@ counters:
   - blkSizeRecommended                                                => block_size
   - freeSpace                                                         => free_capacity
 
-plugins:
-  - Pool
-
 export_options:
   instance_keys:
     - id
