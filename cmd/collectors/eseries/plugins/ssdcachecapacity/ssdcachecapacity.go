@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
@@ -13,7 +14,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
 const (
@@ -255,13 +255,11 @@ func (s *SsdCacheCapacity) populateMappings(data *matrix.Matrix) {
 			cacheName = cacheID
 		}
 
-		volumeIDsJSON := cacheInstance.GetLabel("cached_volume_ids")
-		if volumeIDsJSON != "" && volumeIDsJSON != "[]" {
-			parsed := gjson.Parse(volumeIDsJSON)
-			parsed.ForEach(func(_, vol gjson.Result) bool {
-				volID := vol.ClonedString()
+		volumeIDs := cacheInstance.GetLabel("cached_volume_ids")
+		if volumeIDs != "" {
+			for volID := range strings.SplitSeq(volumeIDs, ",") {
 				if volID == "" {
-					return true
+					continue
 				}
 				volName := volID
 				if n, ok := s.volumeNames[volID]; ok {
@@ -271,22 +269,19 @@ func (s *SsdCacheCapacity) populateMappings(data *matrix.Matrix) {
 				inst, err := s.volumeMat.NewInstance(instKey)
 				if err != nil {
 					s.SLogger.Error("Failed to create volume instance", slogx.Err(err), slog.String("key", instKey))
-					return true
+					continue
 				}
 				inst.SetLabelTrimmed("ssd_cache", cacheName)
 				inst.SetLabelTrimmed("ssd_cache_id", cacheID)
 				inst.SetLabelTrimmed("volume", volName)
-				return true
-			})
+			}
 		}
 
-		driveIDsJSON := cacheInstance.GetLabel("drive_ids")
-		if driveIDsJSON != "" && driveIDsJSON != "[]" {
-			parsed := gjson.Parse(driveIDsJSON)
-			parsed.ForEach(func(_, drv gjson.Result) bool {
-				driveID := drv.ClonedString()
+		driveIDs := cacheInstance.GetLabel("drive_ids")
+		if driveIDs != "" {
+			for driveID := range strings.SplitSeq(driveIDs, ",") {
 				if driveID == "" {
-					return true
+					continue
 				}
 				location := driveID
 				var rawCap float64
@@ -298,7 +293,7 @@ func (s *SsdCacheCapacity) populateMappings(data *matrix.Matrix) {
 				inst, err := s.driveMat.NewInstance(instKey)
 				if err != nil {
 					s.SLogger.Error("Failed to create drive instance", slogx.Err(err), slog.String("key", instKey))
-					return true
+					continue
 				}
 				inst.SetLabelTrimmed("ssd_cache", cacheName)
 				inst.SetLabelTrimmed("ssd_cache_id", cacheID)
@@ -306,8 +301,7 @@ func (s *SsdCacheCapacity) populateMappings(data *matrix.Matrix) {
 				if driveCapMetric != nil {
 					driveCapMetric.SetValueFloat64(inst, rawCap)
 				}
-				return true
-			})
+			}
 		}
 	}
 }
