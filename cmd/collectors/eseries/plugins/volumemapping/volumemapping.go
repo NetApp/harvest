@@ -223,6 +223,9 @@ func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hos
 	// eseries.go serializes array-type labels as comma-joined object blobs, not a JSON array; rewrap to parse.
 	mappings := gjson.Parse("[" + listOfMappingsJSON + "]")
 	if !mappings.IsArray() {
+		v.SLogger.Warn("Failed to parse list_of_mappings label",
+			slog.String("volume", volumeInstance.GetLabel("volume")),
+			slog.String("list_of_mappings", listOfMappingsJSON))
 		return
 	}
 
@@ -299,6 +302,9 @@ func (v *VolumeMapping) addWorkloadLabel(volumeInstance *matrix.Instance, worklo
 	// eseries.go serializes array-type labels as comma-joined object blobs, not a JSON array; rewrap to parse.
 	metadata := gjson.Parse("[" + metadataJSON + "]")
 	if !metadata.IsArray() {
+		v.SLogger.Warn("Failed to parse metadata label",
+			slog.String("volume", volumeInstance.GetLabel("volume")),
+			slog.String("metadata", metadataJSON))
 		return
 	}
 

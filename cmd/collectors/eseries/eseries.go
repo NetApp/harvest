@@ -366,6 +366,9 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 		for label, display := range e.Prop.InstanceLabels {
 			value := instanceData.Get(label)
 			if value.Exists() {
+				// Array values are flattened to a sorted, comma-joined string of each element's raw text
+				// (not a JSON array). Consumers must parse accordingly: string arrays -> strings.Split(label, ",");
+				// object arrays -> gjson.Parse("[" + label + "]") to reconstruct valid JSON.
 				if value.IsArray() {
 					arr := value.Array()
 					labelArray := make([]string, 0, len(arr))
