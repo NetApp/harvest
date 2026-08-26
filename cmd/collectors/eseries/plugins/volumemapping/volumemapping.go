@@ -221,17 +221,11 @@ func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hos
 	}
 
 	// eseries.go serializes array-type labels as comma-joined object blobs, not a JSON array; rewrap to parse.
-	mappings := gjson.Parse("[" + listOfMappingsJSON + "]")
-	if !mappings.IsArray() {
-		v.SLogger.Warn("Failed to parse list_of_mappings label",
-			slog.String("volume", volumeInstance.GetLabel("volume")),
-			slog.String("list_of_mappings", listOfMappingsJSON))
-		return
-	}
+	mappings := gjson.Result{Type: gjson.JSON, Raw: "[" + listOfMappingsJSON + "]"}.Array()
 
 	var luns, hosts, types []string
 
-	for _, mapping := range mappings.Array() {
+	for _, mapping := range mappings {
 		lun := mapping.Get("lun").ClonedString()
 		mapRef := mapping.Get("mapRef").ClonedString()
 		mapType := mapping.Get("type").ClonedString()
@@ -300,16 +294,10 @@ func (v *VolumeMapping) addWorkloadLabel(volumeInstance *matrix.Instance, worklo
 	}
 
 	// eseries.go serializes array-type labels as comma-joined object blobs, not a JSON array; rewrap to parse.
-	metadata := gjson.Parse("[" + metadataJSON + "]")
-	if !metadata.IsArray() {
-		v.SLogger.Warn("Failed to parse metadata label",
-			slog.String("volume", volumeInstance.GetLabel("volume")),
-			slog.String("metadata", metadataJSON))
-		return
-	}
+	metadata := gjson.Result{Type: gjson.JSON, Raw: "[" + metadataJSON + "]"}.Array()
 
 	var workloadID string
-	for _, item := range metadata.Array() {
+	for _, item := range metadata {
 		if item.Get("key").ClonedString() == "workloadId" {
 			workloadID = item.Get("value").ClonedString()
 			break
