@@ -216,11 +216,12 @@ func (v *VolumeMapping) buildWorkloadLookup(systemID string) (map[string]string,
 
 func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hostNames, hostClusterNames map[string]string) {
 	listOfMappingsJSON := volumeInstance.GetLabel("list_of_mappings")
-	if listOfMappingsJSON == "" || listOfMappingsJSON == "[]" {
+	if listOfMappingsJSON == "" {
 		return
 	}
 
-	mappings := gjson.Parse(listOfMappingsJSON)
+	// eseries.go serializes array-type labels as comma-joined object blobs, not a JSON array; rewrap to parse.
+	mappings := gjson.Parse("[" + listOfMappingsJSON + "]")
 	if !mappings.IsArray() {
 		return
 	}
@@ -291,11 +292,12 @@ func (v *VolumeMapping) addPoolLabel(volumeInstance *matrix.Instance, poolNames 
 
 func (v *VolumeMapping) addWorkloadLabel(volumeInstance *matrix.Instance, workloadNames map[string]string) {
 	metadataJSON := volumeInstance.GetLabel("metadata")
-	if metadataJSON == "" || metadataJSON == "[]" {
+	if metadataJSON == "" {
 		return
 	}
 
-	metadata := gjson.Parse(metadataJSON)
+	// eseries.go serializes array-type labels as comma-joined object blobs, not a JSON array; rewrap to parse.
+	metadata := gjson.Parse("[" + metadataJSON + "]")
 	if !metadata.IsArray() {
 		return
 	}

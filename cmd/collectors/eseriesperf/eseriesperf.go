@@ -376,9 +376,6 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 		oldInstances.Add(key)
 	}
 
-	curMat := prevMat.CloneForCollection()
-	curMat.Reset()
-
 	systemID := ep.GetArray()
 
 	var results []gjson.Result
@@ -402,6 +399,10 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 		ep.Logger.Debug("no performance instances")
 		return nil, errs.New(errs.ErrNoInstance, "no instances found")
 	}
+
+	// clone after the fetch so global labels set during discovery (e.g. ssd_cache) are captured
+	curMat := prevMat.CloneForCollection()
+	curMat.Reset()
 
 	parseStart := time.Now()
 	count, numPartials = ep.pollData(curMat, results, oldInstances)
