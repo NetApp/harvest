@@ -167,6 +167,14 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, 
 		}
 		if baseIsArrayShaped {
 			// Per-label division isn't possible regardless of what the template overrides to.
+			if inTemplate {
+				if ov := c.GetOverride(name); ov != "" && ov != "raw" {
+					c.Logger.Warn("template override discarded, base counter is array-shaped",
+						slog.String("counter", name),
+						slog.String("override", ov),
+					)
+				}
+			}
 			ctrType = "raw"
 		}
 
@@ -658,20 +666,24 @@ func (c *CmPerf) populateArrayCounter(
 	// 2D path: cross-product of LabelsX × LabelsY.
 	if len(cs.LabelsY) > 0 {
 		labelsX, labelsY := cs.LabelsX, cs.LabelsY
-		if len(labelsX) == 0 || len(labelsY) == 0 {
+		if len(labelsX) == 0 {
+			if c.perfProp.arrayShapeMismatches[cs.Name] == 0 {
+				c.Logger.Warn("2D array counter has empty LabelsX, skipping",
+					slog.String("counter", cs.Name),
+				)
+			}
 			c.perfProp.arrayShapeMismatches[cs.Name]++
-			c.Logger.Debug("2D array counter has empty LabelsX or LabelsY, skipping",
-				slog.String("counter", cs.Name),
-			)
 			return 0
 		}
 		if expected := len(labelsX) * len(labelsY); len(values) != expected {
+			if c.perfProp.arrayShapeMismatches[cs.Name] == 0 {
+				c.Logger.Warn("2D array counter: value count mismatch, skipping",
+					slog.String("counter", cs.Name),
+					slog.Int("expected", expected),
+					slog.Int("got", len(values)),
+				)
+			}
 			c.perfProp.arrayShapeMismatches[cs.Name]++
-			c.Logger.Debug("2D array counter: value count mismatch, skipping",
-				slog.String("counter", cs.Name),
-				slog.Int("expected", expected),
-				slog.Int("got", len(values)),
-			)
 			return 0
 		}
 		var count uint64
@@ -700,12 +712,14 @@ func (c *CmPerf) populateArrayCounter(
 	// 1D path: LabelsX only.
 	labels := cs.LabelsX
 	if len(values) != len(labels) {
+		if c.perfProp.arrayShapeMismatches[cs.Name] == 0 {
+			c.Logger.Warn("1D array counter: value count mismatch, skipping",
+				slog.String("counter", cs.Name),
+				slog.Int("expected", len(labels)),
+				slog.Int("got", len(values)),
+			)
+		}
 		c.perfProp.arrayShapeMismatches[cs.Name]++
-		c.Logger.Debug("1D array counter: value count mismatch, skipping",
-			slog.String("counter", cs.Name),
-			slog.Int("expected", len(labels)),
-			slog.Int("got", len(values)),
-		)
 		return 0
 	}
 	isHisto := false

@@ -218,6 +218,123 @@ func TestBuildCountersFromSchema_CreatesOnCurMat(t *testing.T) {
 	if curMat.GetMetric("read_io_type_base") == nil {
 		t.Fatal("expected denominator read_io_type_base to be created on curMat even though its numerator is array-shaped")
 	}
+	if co := c.perfProp.counterInfo["read_io_type"]; co == nil || co.denominator != "read_io_type_base" {
+		t.Fatalf("expected read_io_type.denominator == read_io_type_base, got %+v", co)
+	}
+	if m := curMat.GetMetric("read_io_type_base"); m.IsExportable() {
+		t.Fatal("expected synthesized denominator read_io_type_base to be non-exportable")
+	}
+}
+
+func TestCookCounters_ArrayShapedBaseShipsRaw(t *testing.T) {
+	c := newTestCmPerf(t)
+	c.Metadata = matrix.New("test", "metadata", "metadata")
+	if _, err := c.Metadata.NewInstance("data"); err != nil {
+		t.Fatal(err)
+	}
+	_, _ = c.Metadata.NewMetricUint64("skips")
+	_, _ = c.Metadata.NewMetricUint64("numPartials")
+	_, _ = c.Metadata.NewMetricUint64("instances")
+	_, _ = c.Metadata.NewMetricInt64("calc_time")
+
+	c.Prop.Metrics["service_time"] = &rest2.Metric{Label: "service_time", Exportable: true}
+
+	schema := cmmetrics.ObjectSchema{CounterSchema: []cmmetrics.CounterSchema{
+		// scalar numerator, average type, base is array-shaped -> must be forced to raw
+		{Index: 1, Name: "service_time", Type: cmmetrics.CookAverage, BaseIndex: 2, HasBaseIndex: true},
+		{Index: 2, Name: "visits", LabelsX: []string{"cpu0", "cpu1"}},
+	}}
+
+	curMat := matrix.New("test", "test", "test")
+	prevMat := matrix.New("test", "test", "test")
+	c.buildCountersFromSchema(schema, curMat, prevMat)
+
+	if co := c.perfProp.counterInfo["service_time"]; co == nil || co.counterType != "raw" || co.denominator != "" {
+		t.Fatalf("expected service_time forced to raw with no denominator, got %+v", co)
+	}
+
+	inst, err := curMat.NewInstance("inst1")
+	assert.Nil(t, err)
+	curMat.MustGetMetric("service_time").SetValueFloat64(inst, 100)
+	tsMetric, err := curMat.NewMetricFloat64(timestampMetricName)
+	assert.Nil(t, err)
+	tsMetric.SetProperty("raw")
+	tsMetric.SetValueFloat64(inst, 2)
+
+	prevInst, err := prevMat.NewInstance("inst1")
+	assert.Nil(t, err)
+	prevMat.MustGetMetric("service_time").SetValueFloat64(prevInst, 40)
+	prevTs, err := prevMat.NewMetricFloat64(timestampMetricName)
+	assert.Nil(t, err)
+	prevTs.SetValueFloat64(prevInst, 1)
+
+	newData, err := c.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+
+	got, ok := newData[c.Object].GetMetric("service_time").GetValueFloat64(inst)
+	assert.True(t, ok)
+	// raw ships the value untouched (no delta, no divide) - NOT (100-40)=60 and NOT divided.
+	assert.Equal(t, got, float64(100))
+}
+
+func TestCookCounters_ArrayNumeratorWithScalarBaseDivides(t *testing.T) {
+	c := newTestCmPerf(t)
+	c.Metadata = matrix.New("test", "metadata", "metadata")
+	if _, err := c.Metadata.NewInstance("data"); err != nil {
+		t.Fatal(err)
+	}
+	_, _ = c.Metadata.NewMetricUint64("skips")
+	_, _ = c.Metadata.NewMetricUint64("numPartials")
+	_, _ = c.Metadata.NewMetricUint64("instances")
+	_, _ = c.Metadata.NewMetricInt64("calc_time")
+
+	c.Prop.Metrics["read_io_type"] = &rest2.Metric{Label: "read_io_type", Exportable: true}
+
+	schema := cmmetrics.ObjectSchema{CounterSchema: []cmmetrics.CounterSchema{
+		{Index: 1, Name: "read_io_type", Type: cmmetrics.CookPercent, BaseIndex: 2, HasBaseIndex: true, LabelsX: []string{"cache", "pmem"}},
+		{Index: 2, Name: "read_io_type_base", Type: cmmetrics.CookDelta}, // base's own delta must run before the numerator's divide
+	}}
+
+	curMat := matrix.New("test", "test", "test")
+	prevMat := matrix.New("test", "test", "test")
+	c.buildCountersFromSchema(schema, curMat, prevMat)
+
+	if co := c.perfProp.counterInfo["read_io_type"]; co == nil || co.counterType != "percent" || co.denominator != "read_io_type_base" {
+		t.Fatalf("expected read_io_type to be percent with denominator read_io_type_base, got %+v", co)
+	}
+
+	inst, err := curMat.NewInstance("inst1")
+	assert.Nil(t, err)
+	prevInst, err := prevMat.NewInstance("inst1")
+	assert.Nil(t, err)
+
+	arrCs := cmmetrics.CounterSchema{Name: "read_io_type", LabelsX: []string{"cache", "pmem"}}
+	count := c.populateArrayCounter(curMat, prevMat, inst, arrCs, []uint64{30, 5})
+	assert.Equal(t, count, uint64(2))
+	prevMat.MustGetMetric("read_io_type#cache").SetValueFloat64(prevInst, 10)
+	prevMat.MustGetMetric("read_io_type#pmem").SetValueFloat64(prevInst, 2)
+
+	curMat.MustGetMetric("read_io_type_base").SetValueFloat64(inst, 100)
+	prevMat.MustGetMetric("read_io_type_base").SetValueFloat64(prevInst, 50)
+
+	tsMetric, err := curMat.NewMetricFloat64(timestampMetricName)
+	assert.Nil(t, err)
+	tsMetric.SetProperty("raw")
+	tsMetric.SetValueFloat64(inst, 2)
+	prevTs, err := prevMat.NewMetricFloat64(timestampMetricName)
+	assert.Nil(t, err)
+	prevTs.SetValueFloat64(prevInst, 1)
+
+	newData, err := c.cookCounters(curMat, prevMat)
+	assert.Nil(t, err)
+
+	// (30-10)/(100-50)*100 = 40, (5-2)/(100-50)*100 = 6
+	cache, ok := newData[c.Object].GetMetric("read_io_type#cache").GetValueFloat64(inst)
+	assert.True(t, ok)
+	assert.Equal(t, cache, float64(40))
+	pmem, ok := newData[c.Object].GetMetric("read_io_type#pmem").GetValueFloat64(inst)
+	assert.True(t, ok)
+	assert.Equal(t, pmem, float64(6))
 }
 
 func TestBuildCountersFromSchema_NoBaseIndexNotConfusedWithZero(t *testing.T) {
