@@ -429,7 +429,7 @@ counters:
       - API: REST
         Endpoint: storage-systems/{array_id}/storage-pools
         ESeriesCounter: blkSizeSupported
-        Template: conf/eseries/11.80.0/pool.yaml (Pool plugin)
+        Template: conf/eseries/11.80.0/pool.yaml
 
   - Name: eseries_pool_shelf_loss_protection
     Description: Whether the storage pool is protected against the loss of an entire drive shelf/tray
@@ -482,14 +482,6 @@ counters:
   # =============================================================================
   # Pool Performance Metrics (EseriesPerf Collector)
   # =============================================================================
-  - Name: eseries_pool_pool
-    Description: Friendly storage pool name resolved from storage-pools, attached directly to every pool performance metric
-    APIs:
-      - API: REST
-        Endpoint: storage-systems/{array_id}/storage-pools
-        ESeriesCounter: name
-        Template: conf/eseriesperf/11.80.0/pool.yaml (Pool plugin)
-
   - Name: eseries_pool_read_ops
     Description: Pool read I/O operations per second
     APIs:
@@ -787,14 +779,6 @@ counters:
   # =============================================================================
   # Workload Performance Metrics (EseriesPerf Collector)
   # =============================================================================
-  - Name: eseries_workload_workload
-    Description: Friendly workload name resolved from workloads, attached directly to every workload performance metric
-    APIs:
-      - API: REST
-        Endpoint: storage-systems/{array_id}/workloads
-        ESeriesCounter: name
-        Template: conf/eseriesperf/11.80.0/workload.yaml (Workload plugin)
-
   - Name: eseries_workload_read_ops
     Description: Workload read I/O operations per second
     APIs:
@@ -934,14 +918,6 @@ counters:
   # =============================================================================
   # Interface Performance Metrics (EseriesPerf Collector)
   # =============================================================================
-  - Name: eseries_interface_interface
-    Description: Friendly interface/port name (physicalLocation.label) resolved from hardware-inventory
-    APIs:
-      - API: REST
-        Endpoint: storage-systems/{array_id}/hardware-inventory
-        ESeriesCounter: physicalLocation.label
-        Template: conf/eseriesperf/11.80.0/interface.yaml (Interface plugin)
-
   - Name: eseries_interface_read_ops
     Description: Interface read I/O operations per second
     APIs:
