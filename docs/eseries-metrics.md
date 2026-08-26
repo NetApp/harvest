@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Aug-24
+Creation Date : 2026-Aug-26
 E-Series Version: 11.80.0
 ```
 
@@ -1304,16 +1304,6 @@ The `eseries_interface_channel_error_count` metric is visualized in the followin
 
 
 
-### eseries_interface_interface
-
-Friendly interface/port name (physicalLocation.label) resolved from hardware-inventory
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/hardware-inventory` | `physicalLocation.label` | conf/eseriesperf/11.80.0/interface.yaml (Interface plugin) |
-
-
 ### eseries_interface_other_latency
 
 Other command response time average in microseconds
@@ -1531,7 +1521,7 @@ Volume block sizes supported by the storage pool (e.g. 512,4096)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/storage-pools` | `blkSizeSupported` | conf/eseries/11.80.0/pool.yaml (Pool plugin) |
+| REST | `storage-systems/{array_id}/storage-pools` | `blkSizeSupported` | conf/eseries/11.80.0/pool.yaml |
 
 
 ### eseries_pool_da_capable
@@ -1619,16 +1609,6 @@ The `eseries_pool_other_ops` metric is visualized in the following Grafana dashb
 | E-Series: Pool | Highlights | timeseries | [Top $TopResources Pools by Other IOPs](/d/eseries-pool/e-series3a-pool?orgId=1&viewPanel=8) |
 ///
 
-
-
-### eseries_pool_pool
-
-Friendly storage pool name resolved from storage-pools, attached directly to every pool performance metric
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/storage-pools` | `name` | conf/eseriesperf/11.80.0/pool.yaml (Pool plugin) |
 
 
 ### eseries_pool_queue_depth_average
@@ -3161,16 +3141,6 @@ The `eseries_workload_total_utilization` metric is visualized in the following G
 | E-Series: Workload | Utilization | timeseries | [Top $TopResources Workloads by Total Utilization](/d/eseries-workload/e-series3a-workload?orgId=1&viewPanel=19) |
 ///
 
-
-
-### eseries_workload_workload
-
-Friendly workload name resolved from workloads, attached directly to every workload performance metric
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `storage-systems/{array_id}/workloads` | `name` | conf/eseriesperf/11.80.0/workload.yaml (Workload plugin) |
 
 
 ### eseries_workload_write_cache_hit_ratio
