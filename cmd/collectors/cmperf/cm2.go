@@ -494,7 +494,11 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 		}
 		switch inst.UUID {
 		case "", "<none>":
-			// Clear placeholder UUID so any fallback keying uses instance_name instead.
+			// ONTAP sometimes emits instance_uuid as empty or the placeholder "<none>".
+			// Do not use those values as an instance key: they collide or look unique when
+			// they are not. Omit them from stringVals; templates that
+			// still key only on instance_uuid will skip the instance. Clearing inst.UUID
+			// keeps buildInstanceKey's no-InstanceKeys fallback from using "<none>".
 			if _, ok := c.Prop.InstanceLabels["instance_uuid"]; ok {
 				c.Logger.Warn("instance_uuid is unusable, excluding from instance key",
 					slog.String("name", inst.Name),
