@@ -162,18 +162,21 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, 
 			}
 		}
 
-		if ov := c.GetOverride(name); ov != "" {
+		ov := c.GetOverride(name)
+		if ov != "" {
 			ctrType = ov
 		}
 		if baseIsArrayShaped {
 			// Per-label division isn't possible regardless of what the template overrides to.
 			if inTemplate {
-				if ov := c.GetOverride(name); ov != "" && ov != "raw" {
+				if ov != "" && ov != "raw" {
 					c.Logger.Warn("template override discarded, base counter is array-shaped",
 						slog.String("counter", name),
 						slog.String("override", ov),
 					)
 				}
+				// Don't publish a raw cumulative ONTAP value under a cooked-looking display name.
+				propMetric.Exportable = false
 			}
 			ctrType = "raw"
 		}
@@ -688,9 +691,10 @@ func (c *CmPerf) populateArrayCounter(
 		}
 		var count uint64
 		for i, labelX := range labelsX {
+			prefix := cs.Name + arrayKeyToken + labelX
 			for j, labelY := range labelsY {
 				idx := i*len(labelsY) + j
-				k := cs.Name + arrayKeyToken + labelX + arrayKeyToken + labelY
+				k := prefix + arrayKeyToken + labelY
 				metr, ok := curMat.GetMetrics()[k]
 				if !ok {
 					var err error

@@ -252,6 +252,9 @@ func TestCookCounters_ArrayShapedBaseShipsRaw(t *testing.T) {
 	if co := c.perfProp.counterInfo["service_time"]; co == nil || co.counterType != "raw" || co.denominator != "" {
 		t.Fatalf("expected service_time forced to raw with no denominator, got %+v", co)
 	}
+	if c.Prop.Metrics["service_time"].Exportable {
+		t.Fatal("expected service_time to be forced non-exportable since its base is array-shaped")
+	}
 
 	inst, err := curMat.NewInstance("inst1")
 	assert.Nil(t, err)
