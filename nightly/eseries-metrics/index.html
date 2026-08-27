@@ -2409,15 +2409,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#eseries_interface_interface" class="md-nav__link">
-    <span class="md-ellipsis">
-      eseries_interface_interface
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#eseries_interface_other_latency" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_interface_other_latency
@@ -2574,15 +2565,6 @@
   <a href="#eseries_pool_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_pool_other_ops
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#eseries_pool_pool" class="md-nav__link">
-    <span class="md-ellipsis">
-      eseries_pool_pool
     </span>
   </a>
   
@@ -3357,15 +3339,6 @@
   <a href="#eseries_workload_total_utilization" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_workload_total_utilization
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#eseries_workload_workload" class="md-nav__link">
-    <span class="md-ellipsis">
-      eseries_workload_workload
     </span>
   </a>
   
@@ -4335,15 +4308,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#eseries_interface_interface" class="md-nav__link">
-    <span class="md-ellipsis">
-      eseries_interface_interface
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#eseries_interface_other_latency" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_interface_other_latency
@@ -4500,15 +4464,6 @@
   <a href="#eseries_pool_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_pool_other_ops
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#eseries_pool_pool" class="md-nav__link">
-    <span class="md-ellipsis">
-      eseries_pool_pool
     </span>
   </a>
   
@@ -5289,15 +5244,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#eseries_workload_workload" class="md-nav__link">
-    <span class="md-ellipsis">
-      eseries_workload_workload
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#eseries_workload_write_cache_hit_ratio" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_workload_write_cache_hit_ratio
@@ -5379,7 +5325,7 @@
 These can be generated on demand by running <code>bin/harvest grafana metrics</code>. See
 <a href="https://github.com/NetApp/harvest/issues/1577#issue-1471478260">#1577</a> for details.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2026-Aug-26
+<div class="highlight"><pre><span></span><code>Creation Date : 2026-Aug-27
 E-Series Version: 11.80.0
 </code></pre></div>
 <details>
@@ -8205,26 +8151,6 @@ E-Series Version: 11.80.0
 </tbody>
 </table>
 </div>
-<h3 id="eseries_interface_interface">eseries_interface_interface<a class="headerlink" href="#eseries_interface_interface" title="Permanent link">&para;</a></h3>
-<p>Friendly interface/port name (physicalLocation.label) resolved from hardware-inventory</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>storage-systems/{array_id}/hardware-inventory</code></td>
-<td><code>physicalLocation.label</code></td>
-<td>conf/eseriesperf/11.80.0/interface.yaml (Interface plugin)</td>
-</tr>
-</tbody>
-</table>
 <h3 id="eseries_interface_other_latency">eseries_interface_other_latency<a class="headerlink" href="#eseries_interface_other_latency" title="Permanent link">&para;</a></h3>
 <p>Other command response time average in microseconds</p>
 <table>
@@ -8698,7 +8624,7 @@ E-Series Version: 11.80.0
 <td>REST</td>
 <td><code>storage-systems/{array_id}/storage-pools</code></td>
 <td><code>blkSizeSupported</code></td>
-<td>conf/eseries/11.80.0/pool.yaml (Pool plugin)</td>
+<td>conf/eseries/11.80.0/pool.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -8885,26 +8811,6 @@ E-Series Version: 11.80.0
 </tbody>
 </table>
 </div>
-<h3 id="eseries_pool_pool">eseries_pool_pool<a class="headerlink" href="#eseries_pool_pool" title="Permanent link">&para;</a></h3>
-<p>Friendly storage pool name resolved from storage-pools, attached directly to every pool performance metric</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>storage-systems/{array_id}/storage-pools</code></td>
-<td><code>name</code></td>
-<td>conf/eseriesperf/11.80.0/pool.yaml (Pool plugin)</td>
-</tr>
-</tbody>
-</table>
 <h3 id="eseries_pool_queue_depth_average">eseries_pool_queue_depth_average<a class="headerlink" href="#eseries_pool_queue_depth_average" title="Permanent link">&para;</a></h3>
 <p>Average queue depth per I/O operation</p>
 <table>
@@ -12215,26 +12121,6 @@ E-Series Version: 11.80.0
 </tbody>
 </table>
 </div>
-<h3 id="eseries_workload_workload">eseries_workload_workload<a class="headerlink" href="#eseries_workload_workload" title="Permanent link">&para;</a></h3>
-<p>Friendly workload name resolved from workloads, attached directly to every workload performance metric</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>storage-systems/{array_id}/workloads</code></td>
-<td><code>name</code></td>
-<td>conf/eseriesperf/11.80.0/workload.yaml (Workload plugin)</td>
-</tr>
-</tbody>
-</table>
 <h3 id="eseries_workload_write_cache_hit_ratio">eseries_workload_write_cache_hit_ratio<a class="headerlink" href="#eseries_workload_write_cache_hit_ratio" title="Permanent link">&para;</a></h3>
 <p>Workload write cache hit ratio calculated from write hit operations and total write operations</p>
 <table>
