@@ -494,9 +494,13 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 		}
 		switch inst.UUID {
 		case "", "<none>":
-			c.Logger.Warn("instance_uuid is unusable, excluding from instance key",
-				slog.String("name", inst.Name),
-				slog.String("uuid", inst.UUID))
+			// Clear placeholder UUID so any fallback keying uses instance_name instead.
+			if _, ok := c.Prop.InstanceLabels["instance_uuid"]; ok {
+				c.Logger.Warn("instance_uuid is unusable, excluding from instance key",
+					slog.String("name", inst.Name),
+					slog.String("uuid", inst.UUID))
+			}
+			inst.UUID = ""
 		default:
 			stringVals["instance_uuid"] = inst.UUID
 		}
