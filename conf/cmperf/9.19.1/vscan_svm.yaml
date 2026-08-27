@@ -4,8 +4,7 @@ query: offbox_vscan
 object: svm_vscan
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name                  => svm
+  - ^^instance_name                  => svm
   - connections_active
   - dispatch_latency
   - scan_latency
