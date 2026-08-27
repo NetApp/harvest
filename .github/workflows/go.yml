@@ -34,7 +34,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           # The root module is vendored, but cmd/tools/grafana/promqlfmt is a
-          # separate module whose Prometheus dependency TestFormatedPromQL builds.
+          # separate module whose Prometheus dependency TestFormattedPromQL builds.
           # Cache the module and build caches so that is not re-downloaded and
           # re-compiled on every run.
           cache: true

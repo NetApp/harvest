@@ -22,7 +22,7 @@
       ]
     },
     {
-      "description": "TestFormatedPromQL asserts every dashboard expression matches this parser's pretty-printer, so a bump reformats ~1800 expressions at once. Keep it out of the grouped PR so the reformat is reviewable on its own.",
+      "description": "TestFormattedPromQL asserts every dashboard expression matches this parser's pretty-printer, so a bump reformats ~1800 expressions at once. Keep it out of the grouped PR so the reformat is reviewable on its own.",
       "matchPackageNames": [
         "github.com/prometheus/prometheus"
       ],

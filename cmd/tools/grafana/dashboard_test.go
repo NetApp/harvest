@@ -1943,7 +1943,7 @@ type promQLResult struct {
 	Err       string `json:"err,omitempty"`
 }
 
-func TestFormatedPromQL(t *testing.T) {
+func TestFormattedPromQL(t *testing.T) {
 	// The "time to full" dashboard uses a VictoriaMetrics function that the
 	// Prometheus parser does not understand.
 	excludeList := map[string]bool{
