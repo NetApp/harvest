@@ -445,7 +445,10 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix, prevMat *matri
 			}
 			if !schemaLoaded {
 				// Drop rather than risk mapping values via a stale schemaMap left over from a previous poll.
-				batchBeforeSchema = true
+				// An empty batch (no configured instances) never carries a schema either, so it's not a real drop.
+				if len(rec.Batch.Data.Instances) > 0 {
+					batchBeforeSchema = true
+				}
 				continue
 			}
 			metricCount += c.populateMatrix(rec.Batch, curMat, prevMat)
