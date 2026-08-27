@@ -6,6 +6,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
+	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
 	"net/url"
@@ -15,12 +20,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/netapp/harvest/v2/cmd/collectors"
-	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
-	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
-	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 )
 
 const cmperfRetainFilesEnv = "HARVEST_CMPERF_RETAIN_FILES"
