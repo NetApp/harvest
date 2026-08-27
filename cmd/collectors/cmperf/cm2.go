@@ -492,7 +492,12 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 		if inst.Name != "" {
 			stringVals["instance_name"] = inst.Name
 		}
-		if inst.UUID != "" {
+		switch inst.UUID {
+		case "":
+		case "<none>":
+			c.Logger.Warn("instance_uuid is the ONTAP placeholder value, treating as unusable",
+				slog.String("name", inst.Name))
+		default:
 			stringVals["instance_uuid"] = inst.UUID
 		}
 
