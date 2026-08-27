@@ -532,7 +532,20 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 		if inst.Name != "" {
 			stringVals["instance_name"] = inst.Name
 		}
-		if inst.UUID != "" {
+		switch inst.UUID {
+		case "", "<none>":
+			// ONTAP sometimes emits instance_uuid as empty or the placeholder "<none>".
+			// Do not use those values as an instance key: they collide or look unique when
+			// they are not. Omit them from stringVals; templates that
+			// still key only on instance_uuid will skip the instance. Clearing inst.UUID
+			// keeps buildInstanceKey's no-InstanceKeys fallback from using "<none>".
+			if _, ok := c.Prop.InstanceLabels["instance_uuid"]; ok {
+				c.Logger.Warn("instance_uuid is unusable, excluding from instance key",
+					slog.String("name", inst.Name),
+					slog.String("uuid", inst.UUID))
+			}
+			inst.UUID = ""
+		default:
 			stringVals["instance_uuid"] = inst.UUID
 		}
 

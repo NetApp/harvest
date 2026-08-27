@@ -3,8 +3,7 @@ query:                    rw_ctx
 object:                   rw_ctx
 
 counters:
-  - ^^instance_uuid
-  - ^node_name          => node
+  - ^^node_name          => node
   - cifs_giveups
   - cifs_rewinds
   - nfs_giveups

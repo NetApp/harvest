@@ -3,8 +3,7 @@ query:                    copy_manager
 object:                   copy_manager
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name           => svm
+  - ^^instance_name          => svm
   - KB_copied                => kb_copied
   - bce_copy_count_curr
   - ocs_copy_count_curr
