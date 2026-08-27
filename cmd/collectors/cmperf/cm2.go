@@ -6,11 +6,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/netapp/harvest/v2/cmd/collectors"
-	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
-	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
-	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
 	"net/url"
@@ -20,6 +15,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
+	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 )
 
 const cmperfRetainFilesEnv = "HARVEST_CMPERF_RETAIN_FILES"
@@ -493,10 +494,10 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 			stringVals["instance_name"] = inst.Name
 		}
 		switch inst.UUID {
-		case "":
-		case "<none>":
-			c.Logger.Warn("instance_uuid is the ONTAP placeholder value, treating as unusable",
-				slog.String("name", inst.Name))
+		case "", "<none>":
+			c.Logger.Warn("instance_uuid is unusable, excluding from instance key",
+				slog.String("name", inst.Name),
+				slog.String("uuid", inst.UUID))
 		default:
 			stringVals["instance_uuid"] = inst.UUID
 		}
