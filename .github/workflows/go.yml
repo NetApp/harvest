@@ -33,7 +33,12 @@ jobs:
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache: false
+          # The root module is vendored, but cmd/tools/grafana/promqlfmt is a
+          # separate module whose Prometheus dependency TestFormatedPromQL builds.
+          # Cache the module and build caches so that is not re-downloaded and
+          # re-compiled on every run.
+          cache: true
+          cache-dependency-path: cmd/tools/grafana/promqlfmt/go.sum
 
       - name: Makefile ci
         run: |
