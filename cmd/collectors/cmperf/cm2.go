@@ -97,20 +97,6 @@ func cmperfTempFileSortKey(name string, entry os.DirEntry) int64 {
 	return info.ModTime().UnixMilli()
 }
 
-func (c *CmPerf) buildCounters() {
-	mat := c.Matrix[c.Object]
-	for name, propMetric := range c.Prop.Metrics {
-		if mat.GetMetric(name) == nil {
-			m, mErr := mat.NewMetricFloat64(name, propMetric.Label)
-			if mErr != nil {
-				c.Logger.Error("add metric", slogx.Err(mErr), slog.String("name", name))
-				continue
-			}
-			m.SetExportable(propMetric.Exportable)
-		}
-	}
-}
-
 // counterTypeString maps a CounterTypeEnum to its cook-pipeline string name.
 func counterTypeString(t cmmetrics.CounterTypeEnum) string {
 	switch t {
@@ -139,14 +125,10 @@ func hasHistogramSuffix(name string) bool {
 }
 
 // buildCountersFromSchema populates counterInfo from the embedded schema and registers denominator metrics.
-func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat *matrix.Matrix) {
-	mat := c.Matrix[c.Object]
-
-	indexToName := make(map[uint32]string, len(schema.CounterSchema))
+func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, prevMat *matrix.Matrix) {
 	schemaMap := make(map[uint32]cmmetrics.CounterSchema, len(schema.CounterSchema))
 	// TODO cache it?
 	for _, cs := range schema.CounterSchema {
-		indexToName[cs.Index] = cs.Name
 		schemaMap[cs.Index] = cs
 	}
 	c.perfProp.schemaMap = schemaMap
@@ -154,16 +136,55 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat *
 	for _, cs := range schema.CounterSchema {
 		name := cs.Name
 		ctrType := counterTypeString(cs.Type)
-		denominator := indexToName[cs.BaseIndex]
+		propMetric, inTemplate := c.Prop.Metrics[name]
+		var denominator string
+		baseIsArrayShaped := false
+		if cs.HasBaseIndex {
+			if target, ok := schemaMap[cs.BaseIndex]; ok && target.Type != cmmetrics.CookString {
+				// No known counter has an array-shaped denominator today in Harvest
+				if len(target.LabelsX) > 0 {
+					baseIsArrayShaped = true
+					if inTemplate {
+						c.Logger.Warn("base counter is array-shaped, per-label division not supported, treating as raw",
+							slog.String("counter", name),
+							slog.String("base", target.Name),
+						)
+					}
+				} else {
+					denominator = target.Name
+				}
+			} else if inTemplate {
+				c.Logger.Warn("base_counter_index does not resolve to a usable numeric counter",
+					slog.String("counter", name),
+					slog.Uint64("baseIndex", uint64(cs.BaseIndex)),
+					slog.Bool("foundInSchema", ok),
+				)
+			}
+		}
 
-		if ov := c.GetOverride(name); ov != "" {
+		ov := c.GetOverride(name)
+		if ov != "" {
 			ctrType = ov
+		}
+		if baseIsArrayShaped {
+			// Per-label division isn't possible regardless of what the template overrides to.
+			if inTemplate {
+				if ov != "" && ov != "raw" {
+					c.Logger.Warn("template override discarded, base counter is array-shaped",
+						slog.String("counter", name),
+						slog.String("override", ov),
+					)
+				}
+				// Don't publish a raw cumulative ONTAP value under a cooked-looking display name.
+				propMetric.Exportable = false
+			}
+			ctrType = "raw"
 		}
 
 		// The CM2 protobuf schema has no counter description (unlike ZapiPerf/RestPerf), so a
 		// counter is treated as a histogram if its name matches the known heuristic, or the
 		// template's `histograms:` section lists it.
-		isHisto := len(cs.LabelsX) > 0 && (hasHistogramSuffix(name) || c.perfProp.histogramCounters[name])
+		isHisto := len(cs.LabelsX) > 0 && len(cs.LabelsY) == 0 && (hasHistogramSuffix(name) || c.perfProp.histogramCounters[name])
 
 		c.perfProp.counterInfo[name] = &counter{
 			counterType: ctrType,
@@ -171,10 +192,9 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat *
 			isHistogram: isHisto,
 		}
 
-		if propMetric, inTemplate := c.Prop.Metrics[name]; inTemplate {
-			if mat.GetMetric(name) == nil {
-				m, mErr := mat.NewMetricFloat64(name, propMetric.Label)
-				if mErr != nil {
+		if len(cs.LabelsX) == 0 {
+			if inTemplate {
+				if m, mErr := collectors.GetMetric(curMat, prevMat, name, propMetric.Label); mErr != nil {
 					c.Logger.Error("add metric from schema", slogx.Err(mErr), slog.String("name", name))
 				} else {
 					m.SetExportable(propMetric.Exportable)
@@ -183,29 +203,20 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat *
 		}
 
 		if denominator != "" {
-			if _, inTemplate := c.Prop.Metrics[name]; inTemplate {
-				if _, exists := c.Prop.Metrics[denominator]; !exists {
-					c.Prop.Metrics[denominator] = &rest2.Metric{
+			if inTemplate {
+				denomMetric, exists := c.Prop.Metrics[denominator]
+				if !exists {
+					denomMetric = &rest2.Metric{
 						Label:      denominator,
 						Name:       denominator,
 						Exportable: false,
 					}
+					c.Prop.Metrics[denominator] = denomMetric
 				}
-				if mat.GetMetric(denominator) == nil {
-					m, mErr := mat.NewMetricFloat64(denominator, denominator)
-					if mErr != nil {
-						c.Logger.Error("add denominator metric from schema", slogx.Err(mErr), slog.String("name", denominator))
-					} else {
-						m.SetExportable(false)
-					}
-				}
-				if curMat != nil && curMat.GetMetric(denominator) == nil {
-					m, mErr := curMat.NewMetricFloat64(denominator, denominator)
-					if mErr != nil {
-						c.Logger.Error("add denominator metric to curMat from schema", slogx.Err(mErr), slog.String("name", denominator))
-					} else {
-						m.SetExportable(false)
-					}
+				if m, mErr := collectors.GetMetric(curMat, prevMat, denominator, denomMetric.Label); mErr != nil {
+					c.Logger.Error("add denominator metric from schema", slogx.Err(mErr), slog.String("name", denominator))
+				} else {
+					m.SetExportable(denomMetric.Exportable)
 				}
 			}
 		}
@@ -404,13 +415,15 @@ func isCompleteCollection(statuses []cmmetrics.StatusCode) bool {
 
 func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix, prevMat *matrix.Matrix) (uint64, uint64, error) {
 	var (
-		fileSchema   *cmmetrics.ObjectSchema
-		fileSummary  *cmmetrics.CollectionStatus
-		readErr      error
-		schemaLoaded bool
-		metricCount  uint64
-		numPartials  uint64
+		fileSchema        *cmmetrics.ObjectSchema
+		fileSummary       *cmmetrics.CollectionStatus
+		readErr           error
+		schemaLoaded      bool
+		batchBeforeSchema bool
+		metricCount       uint64
+		numPartials       uint64
 	)
+	c.perfProp.arrayShapeMismatches = make(map[string]int)
 	for rec, msgErr := range cmmetrics.Messages(path) {
 		if msgErr != nil {
 			c.Logger.Error("error reading CM2 pb file",
@@ -421,16 +434,43 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix, prevMat *matri
 		if rec.Schema != nil {
 			fileSchema = rec.Schema
 		}
-		if rec.Batch != nil {
-			if !schemaLoaded && fileSchema != nil && len(fileSchema.CounterSchema) > 0 {
-				c.buildCountersFromSchema(*fileSchema, curMat)
-				schemaLoaded = true
-			}
-			metricCount += c.populateMatrix(rec.Batch, curMat, prevMat)
-		}
 		if rec.Summary != nil {
 			fileSummary = rec.Summary
 		}
+		if rec.Batch != nil {
+			// CM2 files always stream Schema before any Batch record, so fileSchema is guaranteed set here.
+			if !schemaLoaded && fileSchema != nil && len(fileSchema.CounterSchema) > 0 {
+				c.buildCountersFromSchema(*fileSchema, curMat, prevMat)
+				schemaLoaded = true
+			}
+			if !schemaLoaded {
+				// Drop rather than risk mapping values via a stale schemaMap left over from a previous poll.
+				// An empty batch (no configured instances) never carries a schema either, so it's not a real drop.
+				if len(rec.Batch.Data.Instances) > 0 {
+					batchBeforeSchema = true
+				}
+				continue
+			}
+			metricCount += c.populateMatrix(rec.Batch, curMat, prevMat)
+		}
+	}
+
+	if batchBeforeSchema {
+		c.Logger.Warn("batch record(s) arrived before schema was loaded, dropped to avoid stale schema mapping",
+			slog.String("file", filepath.Base(path)))
+	}
+	if len(c.perfProp.arrayShapeMismatches) > 0 {
+		names := make([]string, 0, len(c.perfProp.arrayShapeMismatches))
+		occurrences := 0
+		for name, n := range c.perfProp.arrayShapeMismatches {
+			names = append(names, name)
+			occurrences += n
+		}
+		sort.Strings(names)
+		c.Logger.Warn("array counter shape/length mismatches this poll",
+			slog.String("file", filepath.Base(path)),
+			slog.Int("occurrences", occurrences),
+			slog.Any("counters", names))
 	}
 
 	if fileSummary == nil {
@@ -459,7 +499,7 @@ func (c *CmPerf) pollCM2Files(path string, curMat *matrix.Matrix, prevMat *matri
 		}
 	}
 
-	if !schemaLoaded && readErr == nil {
+	if !schemaLoaded && readErr == nil && !batchBeforeSchema {
 		c.Logger.Debug("no schema loaded from CM2 pb file — file may be empty or corrupt",
 			slog.String("file", filepath.Base(path)))
 	}
@@ -523,7 +563,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 			if isWorkloadObject(c.Prop.Query) {
 				// Workload instances are created exclusively by PollInstance. Skipping here mirrors RestPerf behavior and prevents
 				// exporting new volumes with empty svm/volume labels before PollInstance runs.
-				c.Logger.Debug("skip unknown workload instance in PollData, defer to PollInstance",
+				c.Logger.Debug("skip workload instance in PollData, defer to PollInstance",
 					slog.String("key", instanceKey))
 				continue
 			}
@@ -568,6 +608,10 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 
 			metric := curMat.GetMetric(counterName)
 			if metric == nil {
+				if len(cs.LabelsX) > 0 {
+					c.Logger.Debug("array counter arrived as scalar value, dropping",
+						slog.String("counter", counterName))
+				}
 				continue
 			}
 
@@ -626,28 +670,34 @@ func (c *CmPerf) populateArrayCounter(
 	}
 
 	// 2D path: cross-product of LabelsX × LabelsY.
-	// TODO validate against data. wafl_hya_sizer has this kind of data but vsim has it as zero
 	if len(cs.LabelsY) > 0 {
 		labelsX, labelsY := cs.LabelsX, cs.LabelsY
-		if len(labelsX) == 0 || len(labelsY) == 0 {
-			c.Logger.Warn("2D array counter has empty LabelsX or LabelsY, skipping",
-				slog.String("counter", cs.Name),
-			)
+		if len(labelsX) == 0 {
+			if c.perfProp.arrayShapeMismatches[cs.Name] == 0 {
+				c.Logger.Warn("2D array counter has empty LabelsX, skipping",
+					slog.String("counter", cs.Name),
+				)
+			}
+			c.perfProp.arrayShapeMismatches[cs.Name]++
+			return 0
+		}
+		if expected := len(labelsX) * len(labelsY); len(values) != expected {
+			if c.perfProp.arrayShapeMismatches[cs.Name] == 0 {
+				c.Logger.Warn("2D array counter: value count mismatch, skipping",
+					slog.String("counter", cs.Name),
+					slog.Int("expected", expected),
+					slog.Int("got", len(values)),
+				)
+			}
+			c.perfProp.arrayShapeMismatches[cs.Name]++
 			return 0
 		}
 		var count uint64
 		for i, labelX := range labelsX {
+			prefix := cs.Name + arrayKeyToken + labelX
 			for j, labelY := range labelsY {
 				idx := i*len(labelsY) + j
-				if idx >= len(values) {
-					c.Logger.Warn("2D array counter: values exhausted before labels",
-						slog.String("counter", cs.Name),
-						slog.Int("expected", len(labelsX)*len(labelsY)),
-						slog.Int("got", len(values)),
-					)
-					return count
-				}
-				k := cs.Name + arrayKeyToken + labelX + arrayKeyToken + labelY
+				k := prefix + arrayKeyToken + labelY
 				metr, ok := curMat.GetMetrics()[k]
 				if !ok {
 					var err error
@@ -668,6 +718,17 @@ func (c *CmPerf) populateArrayCounter(
 
 	// 1D path: LabelsX only.
 	labels := cs.LabelsX
+	if len(values) != len(labels) {
+		if c.perfProp.arrayShapeMismatches[cs.Name] == 0 {
+			c.Logger.Warn("1D array counter: value count mismatch, skipping",
+				slog.String("counter", cs.Name),
+				slog.Int("expected", len(labels)),
+				slog.Int("got", len(values)),
+			)
+		}
+		c.perfProp.arrayShapeMismatches[cs.Name]++
+		return 0
+	}
 	isHisto := false
 	if co := c.perfProp.counterInfo[cs.Name]; co != nil {
 		isHisto = co.isHistogram
@@ -688,9 +749,6 @@ func (c *CmPerf) populateArrayCounter(
 
 	var count uint64
 	for i, label := range labels {
-		if i >= len(values) {
-			break
-		}
 		k := cs.Name + arrayKeyToken + label
 		metr, ok := curMat.GetMetrics()[k]
 		if !ok {
