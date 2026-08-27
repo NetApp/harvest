@@ -26,7 +26,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -243,7 +242,7 @@ func (c *CmPerf) InitQOS() error {
 func (c *CmPerf) InitMatrix() error {
 	mat := c.Matrix[c.Object]
 	// init perf properties
-	c.perfProp.latencyIoReqd = c.loadParamInt("latency_io_reqd", latencyIoReqd)
+	c.perfProp.latencyIoReqd = c.LoadParam("latency_io_reqd", latencyIoReqd)
 	c.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
 	mat.Object = c.Prop.Object
@@ -258,30 +257,6 @@ func (c *CmPerf) InitMatrix() error {
 	_, _ = c.Metadata.NewMetricUint64("skips")
 	_, _ = c.Metadata.NewMetricUint64("numPartials")
 	return nil
-}
-
-// load an int parameter or use defaultValue
-func (c *CmPerf) loadParamInt(name string, defaultValue int) int {
-
-	var (
-		x string
-		n int
-		e error
-	)
-
-	if x = c.Params.GetChildContentS(name); x != "" {
-		if n, e = strconv.Atoi(x); e == nil {
-			c.Logger.Debug("using",
-				slog.String("name", name),
-				slog.Int("value", n),
-			)
-			return n
-		}
-		c.Logger.Warn("invalid parameter (expected integer)", slog.String("name", name), slog.String("value", x))
-	}
-
-	c.Logger.Debug("using", slog.String("name", name), slog.Int("defaultValue", defaultValue))
-	return defaultValue
 }
 
 func (c *CmPerf) PollCounter() (map[string]*matrix.Matrix, error) {

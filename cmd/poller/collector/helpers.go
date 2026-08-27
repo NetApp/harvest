@@ -28,7 +28,6 @@ import (
 	"regexp"
 	"slices"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -274,21 +273,17 @@ func RecordKeepLast(n *node.Node, logger *slog.Logger) int {
 		return DefaultRecordsToSave
 	}
 
-	kl := r.GetChildContentS("keep_last")
-	if kl != "" {
-		keep, err := strconv.Atoi(kl)
-		if err != nil {
-			logger.Error(
-				"invalid keep_last value. Using default.",
-				slog.Int("default", DefaultRecordsToSave),
-				slog.String("value", kl),
-			)
-			return DefaultRecordsToSave
-		}
-		return keep
+	keep, err := r.GetParam("keep_last", DefaultRecordsToSave)
+	if err != nil {
+		logger.Error(
+			"invalid keep_last value. Using default.",
+			slog.Int("default", DefaultRecordsToSave),
+			slog.String("value", r.GetChildContentS("keep_last")),
+		)
+		return DefaultRecordsToSave
 	}
 
-	return DefaultRecordsToSave
+	return keep
 }
 
 // ParseTemplateRef parses template references like "KeyPerf:volume.yaml"

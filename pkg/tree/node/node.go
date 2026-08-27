@@ -8,11 +8,14 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"log/slog"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/goccy/go-yaml/ast"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 )
 
 type Node struct {
@@ -63,10 +66,6 @@ func (n *Node) GetNameS() string {
 	return string(n.name)
 }
 
-func (n *Node) SetName(name []byte) {
-	n.name = name
-}
-
 func (n *Node) SetNameS(name string) {
 	n.name = []byte(name)
 }
@@ -107,15 +106,6 @@ func (n *Node) GetChildren() []*Node {
 	return n.Children
 }
 
-func (n *Node) GetChild(name []byte) *Node {
-	for _, child := range n.Children {
-		if bytes.Equal(child.GetName(), name) {
-			return child
-		}
-	}
-	return nil
-}
-
 func (n *Node) GetChildS(name string) *Node {
 	for _, child := range n.Children {
 		if child.GetNameS() == name {
@@ -125,17 +115,13 @@ func (n *Node) GetChildS(name string) *Node {
 	return nil
 }
 
-func (n *Node) HasChild(name []byte) bool {
-	return n.GetChild(name) != nil
-}
-
 func (n *Node) HasChildS(name string) bool {
 	return n.GetChildS(name) != nil
 }
 
-func (n *Node) PopChild(name []byte) *Node {
+func (n *Node) PopChildS(name string) *Node {
 	for i, child := range n.Children {
-		if bytes.Equal(child.GetName(), name) {
+		if child.GetNameS() == name {
 			n.Children[i] = n.Children[len(n.Children)-1]
 			n.Children = n.Children[:len(n.Children)-1]
 			return child
@@ -144,25 +130,17 @@ func (n *Node) PopChild(name []byte) *Node {
 	return nil
 }
 
-func (n *Node) PopChildS(name string) *Node {
-	return n.PopChild([]byte(name))
-}
-
-func (n *Node) NewChild(name, content []byte) *Node {
+func (n *Node) NewChildS(name, content string) *Node {
 	var child *Node
 	if n.GetXMLNameS() != "" {
-		child = NewXML(name)
+		child = NewXMLS(name)
 	} else {
-		child = New(name)
+		child = NewS(name)
 	}
 	child.parent = n
-	child.Content = content
+	child.Content = []byte(content)
 	n.AddChild(child)
 	return child
-}
-
-func (n *Node) NewChildS(name, content string) *Node {
-	return n.NewChild([]byte(name), []byte(content))
 }
 
 func (n *Node) AddChild(child *Node) {
@@ -191,13 +169,6 @@ func (n *Node) GetContentIfHas() []byte {
 func (n *Node) GetContentIfHasS() string {
     return string(GetContentIfHas())
 }*/
-
-func (n *Node) GetChildContent(name []byte) []byte {
-	if child := n.GetChild(name); child != nil {
-		return child.GetContent()
-	}
-	return []byte("")
-}
 
 func (n *Node) GetChildContentS(name string) string {
 	if child := n.GetChildS(name); child != nil {
@@ -268,10 +239,10 @@ func (n *Node) Union(source *Node) {
 	}
 	for _, child := range source.Children {
 		switch {
-		case !n.HasChild(child.GetName()):
+		case !n.HasChildS(child.GetNameS()):
 			n.AddChild(child)
 		case child.GetChildren() != nil:
-			n.GetChild(child.GetName()).Union(child)
+			n.GetChildS(child.GetNameS()).Union(child)
 		default:
 			n.SetChildContentS(child.GetNameS(), child.GetContentS())
 		}
@@ -295,7 +266,7 @@ func (n *Node) searchAncestor(ancestor string) *Node {
 
 func (n *Node) PreprocessTemplate() {
 	for _, child := range n.Children {
-		mine := n.GetChild(child.GetName())
+		mine := n.GetChildS(child.GetNameS())
 		if mine != nil && len(child.GetName()) > 0 {
 			if mine.searchAncestor("LabelAgent") != nil {
 				if mine.GetContentS() != "" {
@@ -318,7 +289,7 @@ func (n *Node) Merge(subtemplate *Node, skipOverwrite []string) {
 		n.Content = subtemplate.Content
 	}
 	for _, child := range subtemplate.Children {
-		mine := n.GetChild(child.GetName())
+		mine := n.GetChildS(child.GetNameS())
 		switch {
 		case len(child.GetName()) == 0:
 			if mine != nil && mine.GetParent() != nil && mine.GetParent().GetChildByContent(child.GetContentS()) == nil {
@@ -525,4 +496,87 @@ func AllSame(elements [][]string, k int) bool {
 		}
 	}
 	return true
+}
+
+// ParamType is the set of types GetParam can parse a child's content into.
+type ParamType interface {
+	bool | int | int64 | float64 | string
+}
+
+// GetParam returns the content of the child named key, parsed as T. It is the
+// preferred way to read a typed template parameter. Collectors and plugins should
+// generally reach for their own LoadParam wrapper instead, which adds logging on top.
+//
+// When the child is missing or its content is empty, def is returned with a nil
+// error -- an absent parameter is not an error, it means "use the default".
+// When the content is present but cannot be parsed as T, def is returned along
+// with the parse error.
+//
+// GetParam deliberately cannot distinguish "absent" from "present and equal to
+// def". Call sites that must tell those apart (for example ones that set a
+// pointer field only when the key is present) should keep using GetChildContentS.
+func (n *Node) GetParam[T ParamType](key string, def T) (T, error) {
+	x := n.GetChildContentS(key)
+	if x == "" {
+		return def, nil
+	}
+
+	var (
+		parsed any
+		err    error
+	)
+
+	switch any(def).(type) {
+	case bool:
+		parsed, err = strconv.ParseBool(x)
+	case int:
+		parsed, err = strconv.Atoi(x)
+	case int64:
+		parsed, err = strconv.ParseInt(x, 10, 64)
+	case float64:
+		parsed, err = strconv.ParseFloat(x, 64)
+	case string:
+		parsed = x
+	}
+
+	if err != nil {
+		return def, err
+	}
+
+	// parsed always holds a T: the switch above is exhaustive over ParamType
+	// and every branch produces T's underlying type. The guard is belt-and-braces
+	// so a future addition to ParamType without a matching case cannot panic.
+	v, ok := parsed.(T)
+	if !ok {
+		return def, fmt.Errorf("cannot parse %q as %T", x, def)
+	}
+
+	return v, nil
+}
+
+// LoadParam reads the parameter name from n and parses it as T, falling back to
+// def when the parameter is absent or malformed. A malformed value is reported at
+// Warn on logger and does not fail the caller -- the default is used instead.
+func LoadParam[T ParamType](n *Node, logger *slog.Logger, name string, def T) T {
+	v, err := n.GetParam(name, def)
+	if err != nil {
+		logger.Warn(
+			"invalid parameter, using default",
+			slog.String("name", name),
+			slog.Any("default", def),
+			slogx.Err(err),
+		)
+
+		return def
+	}
+
+	logger.Debug(
+		"using",
+		slog.String("name", name),
+		slog.Any("value", v),
+		// so operators can tell a template override from a built-in default
+		slog.Bool("isDefault", n.GetChildContentS(name) == ""),
+	)
+
+	return v
 }

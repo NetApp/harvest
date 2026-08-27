@@ -183,14 +183,11 @@ func (z *ZapiPerf) InitCache() error {
 	z.instanceLabels = make(map[string]string)
 	z.instanceKeys = z.loadParamArray("instance_key", instanceKey)
 	z.filter = z.loadFilter()
-	z.batchSize = z.loadParamInt("batch_size", batchSize)
-	z.latencyIoReqd = z.loadParamInt("latency_io_reqd", latencyIoReqd)
+	z.batchSize = z.LoadParam("batch_size", batchSize)
+	z.latencyIoReqd = z.LoadParam("latency_io_reqd", latencyIoReqd)
 	z.isCacheEmpty = true
-	z.object = z.loadParamStr("object", "")
-	allowPartialAggregation := z.loadParamStr("allow_partial_aggregation", "false")
-	if allowPartialAggregation == "true" {
-		z.allowPartialAggregation = true
-	}
+	z.object = z.LoadParam("object", "")
+	z.allowPartialAggregation = z.LoadParam("allow_partial_aggregation", false)
 	z.keyName, z.keyNameIndex = z.initKeyName()
 	// hack to override from AbstractCollector
 	// @TODO need cleaner solution
@@ -224,19 +221,6 @@ func (z *ZapiPerf) initKeyName() (string, int) {
 		}
 	}
 	return keyName, keyNameIndex
-}
-
-// load a string parameter or use defaultValue
-func (z *ZapiPerf) loadParamStr(name, defaultValue string) string {
-
-	var x string
-
-	if x = z.Params.GetChildContentS(name); x != "" {
-		z.Logger.Debug("using", slog.String(name, x))
-		return x
-	}
-	z.Logger.Debug("using", slog.String(name, defaultValue))
-	return defaultValue
 }
 
 func (z *ZapiPerf) loadFilter() string {
@@ -338,27 +322,6 @@ func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
 			}
 		}
 	}
-}
-
-// load an int parameter or use defaultValue
-func (z *ZapiPerf) loadParamInt(name string, defaultValue int) int {
-
-	var (
-		x string
-		n int
-		e error
-	)
-
-	if x = z.Params.GetChildContentS(name); x != "" {
-		if n, e = strconv.Atoi(x); e == nil {
-			z.Logger.Debug("using", slog.String("name", name), slog.Int("value", n))
-			return n
-		}
-		z.Logger.Warn("invalid parameter (expected integer)", slog.String("name", name), slog.String("value", x))
-	}
-
-	z.Logger.Debug("using", slog.String("name", name), slog.Int("value", defaultValue))
-	return defaultValue
 }
 
 func (z *ZapiPerf) isPartialAggregation(instance *node.Node) bool {

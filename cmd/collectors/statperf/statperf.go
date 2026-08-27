@@ -111,7 +111,7 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	s.filter = s.loadFilter()
-	s.batchSize = s.loadParamInt("batch_size", defaultBatchSize)
+	s.batchSize = s.LoadParam("batch_size", defaultBatchSize)
 
 	if err := s.InitMatrix(); err != nil {
 		return err
@@ -143,7 +143,7 @@ func (s *StatPerf) loadFilter() string {
 func (s *StatPerf) InitMatrix() error {
 	mat := s.Matrix[s.Object]
 	// init perf properties
-	s.perfProp.latencyIoReqd = s.loadParamInt("latency_io_reqd", latencyIoReqd)
+	s.perfProp.latencyIoReqd = s.LoadParam("latency_io_reqd", latencyIoReqd)
 	s.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
 	mat.Object = s.Prop.Object
@@ -159,30 +159,6 @@ func (s *StatPerf) InitMatrix() error {
 	_, _ = s.Metadata.NewMetricUint64("skips")
 	_, _ = s.Metadata.NewMetricUint64("numPartials")
 	return nil
-}
-
-// load an int parameter or use defaultValue
-func (s *StatPerf) loadParamInt(name string, defaultValue int) int {
-
-	var (
-		x string
-		n int
-		e error
-	)
-
-	if x = s.Params.GetChildContentS(name); x != "" {
-		if n, e = strconv.Atoi(x); e == nil {
-			s.Logger.Debug("using",
-				slog.String("name", name),
-				slog.Int("value", n),
-			)
-			return n
-		}
-		s.Logger.Warn("invalid parameter (expected integer)", slog.String("name", name), slog.String("value", x))
-	}
-
-	s.Logger.Debug("using", slog.String("name", name), slog.Int("defaultValue", defaultValue))
-	return defaultValue
 }
 
 func GetCounterInstanceBaseSet() string {

@@ -198,7 +198,7 @@ func (r *RestPerf) InitQOS() error {
 func (r *RestPerf) InitMatrix() error {
 	mat := r.Matrix[r.Object]
 	// init perf properties
-	r.perfProp.latencyIoReqd = r.loadParamInt("latency_io_reqd", latencyIoReqd)
+	r.perfProp.latencyIoReqd = r.LoadParam("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
 	mat.Object = r.Prop.Object
@@ -239,30 +239,6 @@ func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
 		return s
 	}
 	r.Logger.Debug("", slog.String("name", name), slog.String("defaultValue", defaultValue))
-	return defaultValue
-}
-
-// load an int parameter or use defaultValue
-func (r *RestPerf) loadParamInt(name string, defaultValue int) int {
-
-	var (
-		x string
-		n int
-		e error
-	)
-
-	if x = r.Params.GetChildContentS(name); x != "" {
-		if n, e = strconv.Atoi(x); e == nil {
-			r.Logger.Debug("using",
-				slog.String("name", name),
-				slog.Int("value", n),
-			)
-			return n
-		}
-		r.Logger.Warn("invalid parameter (expected integer)", slog.String("name", name), slog.String("value", x))
-	}
-
-	r.Logger.Debug("using", slog.String("name", name), slog.Int("defaultValue", defaultValue))
 	return defaultValue
 }
 

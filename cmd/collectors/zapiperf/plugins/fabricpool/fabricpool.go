@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"strconv"
 )
 
 type FabricPool struct {
@@ -23,11 +22,7 @@ func (f *FabricPool) Init(conf.Remote) error {
 	if err != nil {
 		return err
 	}
-	if val := f.Params.GetChildContentS("include_constituents"); val != "" {
-		if boolValue, err := strconv.ParseBool(val); err == nil {
-			f.includeConstituents = boolValue
-		}
-	}
+	f.includeConstituents = f.LoadParam("include_constituents", f.includeConstituents)
 	return nil
 }
 

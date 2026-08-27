@@ -128,6 +128,15 @@ func New(parent string, o *options.Options, p *node.Node, pp *node.Node, object 
 	}
 }
 
+// LoadParam reads the plugin parameter name and parses it as T, falling back to
+// def when the parameter is absent or malformed.
+//
+// Call this from Init rather than Run, so a bad value is reported once at
+// startup instead of on every poll.
+func (p *AbstractPlugin) LoadParam[T node.ParamType](name string, def T) T {
+	return node.LoadParam(p.Params, p.SLogger, name, def)
+}
+
 // GetName returns the name of the plugin
 func (p *AbstractPlugin) GetName() string {
 	return p.Name

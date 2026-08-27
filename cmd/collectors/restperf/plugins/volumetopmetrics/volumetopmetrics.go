@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"log/slog"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 
@@ -149,13 +148,7 @@ func (t *TopMetrics) Init(remote conf.Remote) error {
 
 	t.maxVolumeCount = defaultTopN
 
-	if maxVol := t.Params.GetChildContentS("max_volumes"); maxVol != "" {
-		if maxVolCount, err := strconv.Atoi(maxVol); err != nil {
-			t.maxVolumeCount = defaultTopN
-		} else {
-			t.maxVolumeCount = min(maxVolCount, maxTopN)
-		}
-	}
+	t.maxVolumeCount = min(t.LoadParam("max_volumes", defaultTopN), maxTopN)
 
 	// enable client, file and user metrics collection by default
 	t.clientMetricsEnabled = true

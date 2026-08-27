@@ -721,6 +721,15 @@ func (c *AbstractCollector) GetParams() *node.Node {
 	return c.Params
 }
 
+// LoadParam reads the collector parameter name and parses it as T, falling back
+// to def when the parameter is absent or malformed.
+//
+// A malformed value is logged at Warn and does not fail the poll -- the default
+// is used instead.
+func (c *AbstractCollector) LoadParam[T node.ParamType](name string, def T) T {
+	return node.LoadParam(c.Params, c.Logger, name, def)
+}
+
 // GetOptions returns the poller options passed to the collector
 func (c *AbstractCollector) GetOptions() *options.Options {
 	return c.Options
