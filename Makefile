@@ -70,7 +70,7 @@ clean: ## Cleanup the project binary (bin) folders
 
 test: ## Run tests
 	@echo "Testing"
-	@FORMAT_PROMQL=1 go test -race -shuffle=on ./...
+	@go test -race -shuffle=on ./...
 
 fmt: ## Format the go source files
 	@echo "Formatting"
@@ -177,7 +177,6 @@ else
 	VERSION=${VERSION} REGRESSION=1 ./integration/test/test.sh
 	VERSION=${VERSION} ANALYZE_DOCKER_LOGS=1 ./integration/test/test.sh
 	VERSION=${VERSION} CHECK_METRICS=1 ./integration/test/test.sh
-	VERSION=${VERSION} FORMAT_PROMQL=1 ./integration/test/test.sh
 	bin/harvest generate metrics --config "${ci}" --poller dc1 --prom-url http://localhost:9090
 endif
 

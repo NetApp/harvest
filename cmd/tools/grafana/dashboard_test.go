@@ -1,6 +1,8 @@
 package grafana
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"maps"
 	"net/url"
@@ -19,12 +21,12 @@ import (
 )
 
 const (
-	TopResourceConstant      = "999999"
-	RangeConstant            = "888888"
+	TopResourceConstant = "999999"
+	RangeConstant       = "888888"
+	// RangeReverseConstant is what RangeConstant pretty-prints back to: a range
+	// selector renders through model.Duration, and 888888s = 10d6h54m48s.
 	RangeReverseConstant     = "10d6h54m48s"
-	IntervalConstant         = "777777"
 	IntervalDurationConstant = "666666"
-	FormatPromQL             = "FORMAT_PROMQL"
 )
 
 var cDotDashboards = []string{
@@ -1531,42 +1533,12 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 			path = ShortPath(path)
 			sorted := gjson.GetBytes(data, `@pretty:{"sortKeys":true, "indent":"  ", "width":0}`).ClonedString()
 			if sorted != string(data) {
-				sortedPath := writeSorted(t, path, sorted)
+				sortedPath := writeDashboardFixup(t, "sorted", path, []byte(sorted))
 				path = "grafana/dashboards/" + path
 				t.Errorf("dashboard=%s should have sorted keys but does not. Sorted version created at path=%s.\ncp %s %s",
 					path, sortedPath, sortedPath, path)
 			}
 		})
-}
-
-func writeSorted(t *testing.T, path string, sorted string) string {
-	dir, file := filepath.Split(path)
-	dir = filepath.Dir(dir)
-	tempDir := "/tmp"
-	dest := filepath.Join(tempDir, dir, file)
-	destDir := filepath.Dir(dest)
-	err := os.MkdirAll(destDir, 0750)
-	if err != nil {
-		t.Errorf("failed to create dir=%s err=%v", destDir, err)
-		return ""
-	}
-	create, err := os.Create(dest)
-
-	if err != nil {
-		t.Errorf("failed to create file=%s err=%v", dest, err)
-		return ""
-	}
-	_, err = create.WriteString(sorted)
-	if err != nil {
-		t.Errorf("failed to write sorted json to file=%s err=%v", dest, err)
-		return ""
-	}
-	err = create.Close()
-	if err != nil {
-		t.Errorf("failed to close file=%s err=%v", dest, err)
-		return ""
-	}
-	return dest
 }
 
 func TestDashboardTime(t *testing.T) {
@@ -1950,137 +1922,230 @@ func checkTestIntervalIsSet(t *testing.T, path string, data []byte) {
 	})
 }
 
-func TestFormatedPromQL(t *testing.T) {
-	SkipIfMissing(t, FormatPromQL)
-	// This is needed because the "time to full" dashboard uses a VM function that promtool does not understand
+// exprJob is one (dashboard, panel, target) site that carries a PromQL expression.
+type exprJob struct {
+	panelPath  string // gjson/sjson path, e.g. "panels.3.panels.1"
+	targetKey  string // index of the target within the panel, e.g. "0"
+	panelTitle string
+	expr       string
+}
 
+// dashExprs is one dashboard and every expression site in it.
+type dashExprs struct {
+	shortPath string // "cmode/volume.json"
+	data      []byte
+	jobs      []exprJob
+}
+
+// promQLResult mirrors the JSON emitted by cmd/tools/grafana/promqlfmt.
+type promQLResult struct {
+	Formatted string `json:"formatted"`
+	Err       string `json:"err,omitempty"`
+}
+
+func TestFormattedPromQL(t *testing.T) {
+	// The "time to full" dashboard uses a VictoriaMetrics function that the
+	// Prometheus parser does not understand.
 	excludeList := map[string]bool{
 		"cmode/timetillfull.json": true,
 	}
 
+	dashes := make([]dashExprs, 0, 64)
 	VisitDashboards(
 		Dashboards,
 		func(path string, data []byte) {
-			_, ok := excludeList[ShortPath(path)]
-			if ok {
+			shortPath := ShortPath(path)
+			if excludeList[shortPath] {
 				return
 			}
-			checkIfPromQLIsFormatted(t, path, data)
+			jobs := collectExprJobs(data)
+			if len(jobs) == 0 {
+				return
+			}
+			dashes = append(dashes, dashExprs{shortPath: shortPath, data: data, jobs: jobs})
 		},
 	)
+
+	// Deduplicate and sort so the payload is minimal and the run is deterministic
+	// under -shuffle=on.
+	seen := make(map[string]struct{}, 2048)
+	for _, d := range dashes {
+		for _, job := range d.jobs {
+			seen[job.expr] = struct{}{}
+		}
+	}
+	queries := slices.Sorted(maps.Keys(seen))
+
+	formatted := formatAll(t, queries)
+
+	for _, d := range dashes {
+		applyFormatted(t, d, formatted)
+	}
 }
 
-func checkIfPromQLIsFormatted(t *testing.T, path string, data []byte) {
-	var (
-		updatedData  []byte
-		notFormatted bool
-		errorStr     []string
-		err          error
-	)
+// collectExprJobs records every panel-target expression in a dashboard without
+// modifying it. Collection is kept separate from rewriting so that all
+// expressions across all dashboards can be formatted in a single subprocess.
+func collectExprJobs(data []byte) []exprJob {
+	jobs := make([]exprJob, 0, 32)
 
-	updatedData = slices.Clone(data)
-	dashPath := ShortPath(path)
-
-	// Change all panel expressions
-	VisitAllPanels(updatedData, func(path string, _, value gjson.Result) {
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
 		title := value.Get("title").ClonedString()
-		// Rewrite expressions
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() && expr.ClonedString() != "" {
-				updatedExpr := formatPromQL(expr.ClonedString())
-				if updatedExpr != expr.ClonedString() {
-					notFormatted = true
-					updatedData, err = sjson.SetBytes(updatedData, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
-					if err != nil {
-						fmt.Printf("Error while updating the panel query format: %v\n", err)
-					}
-					errorStr = append(errorStr, fmt.Sprintf("query not formatted in dashboard %s panel `%s`, it should be \n %s\n", dashPath, title, updatedExpr))
-				}
+				jobs = append(jobs, exprJob{
+					panelPath:  path,
+					targetKey:  targetKey.ClonedString(),
+					panelTitle: title,
+					expr:       expr.ClonedString(),
+				})
 			}
 			return true
 		})
 	})
-	if notFormatted {
-		sortedPath := writeFormatted(t, dashPath, updatedData)
-		path = "grafana/dashboards/" + dashPath
-		t.Errorf("%v \nFormatted version created at path=%s.\ncp %s %s",
-			errorStr, sortedPath, sortedPath, path)
-	}
+
+	return jobs
 }
 
-func formatPromQL(query string) string {
-	replacedQuery := strings.ReplaceAll(query, "$TopResources", TopResourceConstant)
-	replacedQuery = strings.ReplaceAll(replacedQuery, "$__range", RangeConstant)
-	replacedQuery = strings.ReplaceAll(replacedQuery, "$__interval", IntervalConstant)
-	replacedQuery = strings.ReplaceAll(replacedQuery, "${Interval}", IntervalDurationConstant)
+// formatAll formats every query in one shot and returns a query -> formatted map.
+//
+// promtool formats a single query per invocation, which cost ~2000 process spawns
+// and ~85s. The promqlfmt helper does the same work in one process by importing
+// the Prometheus parser directly. It lives in its own module so the root module
+// does not have to vendor github.com/prometheus/prometheus.
+func formatAll(t *testing.T, queries []string) map[string]string {
+	t.Helper()
 
-	command := exec.Command("promtool", "--experimental", "promql", "format", replacedQuery)
-	output, err := command.CombinedOutput()
-	updatedQuery := strings.TrimSuffix(string(output), "\n")
-	if strings.HasPrefix(updatedQuery, "  ") {
-		updatedQuery = strings.TrimLeft(updatedQuery, " ")
+	substituted := make([]string, len(queries))
+	for i, query := range queries {
+		substituted[i] = substituteGrafanaVars(query)
 	}
+
+	payload, err := json.Marshal(substituted)
 	if err != nil {
-		// An exit code can't be used since we need to ignore metrics that are not formatted but can't change
-		fmt.Printf("ERR formating metrics query=%s err=%v output=%s", query, err, string(output))
-		return query
+		t.Fatalf("failed to marshal %d queries err=%v", len(queries), err)
 	}
 
-	if len(output) == 0 {
-		return query
+	// #nosec G204 -- fixed arguments, no user input
+	cmd := exec.Command("go", "run", ".")
+	cmd.Dir = "promqlfmt"
+	cmd.Stdin = bytes.NewReader(payload)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	output, err := cmd.Output()
+	if err != nil {
+		t.Fatalf("failed to run promqlfmt err=%v stderr=%s", err, stderr.String())
 	}
 
-	updatedQuery = strings.ReplaceAll(updatedQuery, TopResourceConstant, "$TopResources")
-	updatedQuery = strings.ReplaceAll(updatedQuery, RangeReverseConstant, "$__range")
-	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalConstant, "$__interval")
-	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalDurationConstant, "${Interval}")
-	return updatedQuery
+	var results []promQLResult
+	if err := json.Unmarshal(output, &results); err != nil {
+		t.Fatalf("failed to unmarshal promqlfmt output err=%v", err)
+	}
+	if len(results) != len(queries) {
+		t.Fatalf("promqlfmt returned %d results, want %d", len(results), len(queries))
+	}
+
+	formatted := make(map[string]string, len(queries))
+	for i, result := range results {
+		if result.Err != "" {
+			t.Errorf("failed to parse promql query=%s err=%s", queries[i], result.Err)
+			continue
+		}
+		formatted[queries[i]] = restoreGrafanaVars(result.Formatted)
+	}
+
+	return formatted
 }
 
-func writeFormatted(t *testing.T, path string, updatedData []byte) string {
-	dir, file := filepath.Split(path)
-	dir = filepath.Dir(dir)
-	tempDir := "/tmp"
-	dest := filepath.Join(tempDir, dir, file)
+// substituteGrafanaVars replaces Grafana template variables with numeric
+// placeholders so the query parses as valid PromQL.
+func substituteGrafanaVars(query string) string {
+	query = strings.ReplaceAll(query, "$TopResources", TopResourceConstant)
+	query = strings.ReplaceAll(query, "$__range", RangeConstant)
+	query = strings.ReplaceAll(query, "${Interval}", IntervalDurationConstant)
+	return query
+}
+
+// restoreGrafanaVars undoes substituteGrafanaVars on formatted output. $__range
+// uses RangeReverseConstant because the pretty printer normalizes the duration.
+func restoreGrafanaVars(query string) string {
+	// The pretty printer indents a top-level parenthesized expression; the
+	// dashboards store it unindented.
+	if strings.HasPrefix(query, "  ") {
+		query = strings.TrimLeft(query, " ")
+	}
+
+	query = strings.ReplaceAll(query, TopResourceConstant, "$TopResources")
+	query = strings.ReplaceAll(query, RangeReverseConstant, "$__range")
+	query = strings.ReplaceAll(query, IntervalDurationConstant, "${Interval}")
+	return query
+}
+
+// applyFormatted compares each expression against its formatted form and, on any
+// mismatch, writes a corrected copy of the dashboard for the developer to copy in.
+func applyFormatted(t *testing.T, d dashExprs, formatted map[string]string) {
+	t.Helper()
+
+	var (
+		errorStr    []string
+		updatedData = slices.Clone(d.data)
+	)
+
+	for _, job := range d.jobs {
+		updatedExpr, ok := formatted[job.expr]
+		if !ok || updatedExpr == job.expr {
+			continue
+		}
+
+		var err error
+		updatedData, err = sjson.SetBytes(updatedData, job.panelPath+".targets."+job.targetKey+".expr", []byte(updatedExpr))
+		if err != nil {
+			t.Errorf("failed to update dashboard=%s panel=%q err=%v", d.shortPath, job.panelTitle, err)
+			continue
+		}
+		errorStr = append(errorStr, fmt.Sprintf("query not formatted in dashboard %s panel `%s`, it should be \n %s\n",
+			d.shortPath, job.panelTitle, updatedExpr))
+	}
+
+	if len(errorStr) > 0 {
+		dest := writeDashboardFixup(t, "promql", d.shortPath, updatedData)
+		path := "grafana/dashboards/" + d.shortPath
+		t.Errorf("%v \nFormatted version created at path=%s.\ncp %s %s", errorStr, dest, dest, path)
+	}
+}
+
+// writeDashboardFixup writes a corrected dashboard to
+// $TMPDIR/harvest-<kind>/<dir>/<file> and returns the path. kind keeps concurrent
+// failures of different checks from overwriting each other's output.
+//
+// This deliberately does not use t.TempDir(): the path is printed in a cp command
+// for the developer to run, so it has to outlive the test.
+func writeDashboardFixup(t *testing.T, kind string, shortPath string, data []byte) string {
+	t.Helper()
+
+	base := filepath.Join(os.TempDir(), "harvest-"+kind)
+	dest := filepath.Clean(filepath.Join(base, shortPath))
+
+	// shortPath comes from a dashboard file path, but confirm it cannot escape
+	// base before writing.
+	if !strings.HasPrefix(dest, base+string(os.PathSeparator)) {
+		t.Errorf("refusing to write outside %s: path=%s", base, shortPath)
+		return ""
+	}
+
 	destDir := filepath.Dir(dest)
-	err := os.MkdirAll(destDir, 0750)
-	if err != nil {
+	if err := os.MkdirAll(destDir, 0750); err != nil {
 		t.Errorf("failed to create dir=%s err=%v", destDir, err)
 		return ""
 	}
-	create, err := os.Create(dest)
-
-	if err != nil {
-		t.Errorf("failed to create file=%s err=%v", dest, err)
-		return ""
-	}
-	_, err = create.Write(updatedData)
-	if err != nil {
-		t.Errorf("failed to write formatted json to file=%s err=%v", dest, err)
-		return ""
-	}
-	err = create.Close()
-	if err != nil {
-		t.Errorf("failed to close file=%s err=%v", dest, err)
+	// #nosec G703 -- dest is confirmed to be contained within base above
+	if err := os.WriteFile(dest, data, 0600); err != nil {
+		t.Errorf("failed to write json to file=%s err=%v", dest, err)
 		return ""
 	}
 	return dest
-}
-
-func SkipIfMissing(t *testing.T, vars ...string) {
-	t.Helper()
-	anyMatches := false
-	for _, v := range vars {
-		e := os.Getenv(v)
-		if e != "" {
-			anyMatches = true
-			break
-		}
-	}
-	if !anyMatches {
-		t.Skipf("Set one of %s envvars to run this test", strings.Join(vars, ", "))
-	}
 }
 
 func TestLegendFormat(t *testing.T) {
