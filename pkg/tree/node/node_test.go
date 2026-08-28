@@ -156,3 +156,49 @@ func TestGetChildrenNoPanic(t *testing.T) {
 	assert.Equal(t, 1, len(s.GetChildS("child1").GetChildren()))
 	assert.Equal(t, 0, len(s.GetChildS("child2").GetChildren()))
 }
+
+func TestNodeGetParam(t *testing.T) {
+	n := New([]byte("root"))
+	n.NewChildS("aBool", "true")
+	n.NewChildS("anInt", "42")
+	n.NewChildS("anInt64", "9000000000")
+	n.NewChildS("aFloat", "1.5")
+	n.NewChildS("aString", "hello")
+	n.NewChildS("empty", "")
+	n.NewChildS("bad", "notanumber")
+
+	// present and parsable
+	assertGetParam(t, n, "aBool", false, true)
+	assertGetParam(t, n, "anInt", 7, 42)
+	assertGetParam(t, n, "anInt64", int64(7), int64(9000000000))
+	assertGetParam(t, n, "aFloat", 0.0, 1.5)
+	assertGetParam(t, n, "aString", "def", "hello")
+
+	// absent child and empty content both yield the default, with no error
+	assertGetParam(t, n, "missing", 500, 500)
+	assertGetParam(t, n, "empty", 500, 500)
+	assertGetParam(t, n, "missing", "def", "def")
+
+	// malformed content yields the default *and* an error
+	for _, tc := range []struct{ name string }{{"bad"}} {
+		if v, err := n.GetParam(tc.name, 500); err == nil || v != 500 {
+			t.Errorf("GetParam(%q, 500) = (%d, %v), want (500, non-nil error)", tc.name, v, err)
+		}
+		if v, err := n.GetParam(tc.name, false); err == nil || v {
+			t.Errorf("GetParam(%q, false) = (%v, %v), want (false, non-nil error)", tc.name, v, err)
+		}
+		if v, err := n.GetParam(tc.name, 0.0); err == nil || v != 0.0 {
+			t.Errorf("GetParam(%q, 0.0) = (%v, %v), want (0, non-nil error)", tc.name, v, err)
+		}
+	}
+
+	// a string default never fails to parse, even for content that isn't a number
+	assertGetParam(t, n, "bad", "def", "notanumber")
+}
+
+func assertGetParam[T ParamType](t *testing.T, n *Node, key string, def, want T) {
+	t.Helper()
+	got, err := n.GetParam(key, def)
+	assert.Nil(t, err)
+	assert.Equal(t, got, want)
+}

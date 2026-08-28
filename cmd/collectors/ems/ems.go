@@ -158,12 +158,7 @@ func (e *Ems) InitCache() error {
 		e.Prop.Object = strings.ToLower(e.Object)
 	}
 
-	if b := e.Params.GetChildContentS("max_url_size"); b != "" {
-		if s, err := strconv.Atoi(b); err == nil {
-			e.maxURLSize = s
-		}
-	}
-	e.Logger.Debug("", slog.Int("max_url_size", e.maxURLSize))
+	e.maxURLSize = e.LoadParam("max_url_size", e.maxURLSize)
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
 		e.severityFilter = severityFilterPrefix + s

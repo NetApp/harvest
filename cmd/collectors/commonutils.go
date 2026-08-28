@@ -280,13 +280,10 @@ func IsValidUnit(unit string) bool {
 	return validUnits[unit]
 }
 
+// ReadPluginKey reports whether the boolean plugin parameter key is set.
 func ReadPluginKey(param *node.Node, key string) bool {
-	if val := param.GetChildContentS(key); val != "" {
-		if boolValue, err := strconv.ParseBool(val); err == nil {
-			return boolValue
-		}
-	}
-	return false
+	v, _ := param.GetParam(key, false)
+	return v
 }
 
 type VscanNames struct {

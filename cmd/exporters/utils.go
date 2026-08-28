@@ -162,16 +162,12 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 	includeAllLabels := false
 	requireInstanceKeys := true
 
-	if x := options.GetChildContentS("include_all_labels"); x != "" {
-		if includeAllLabels, err = strconv.ParseBool(x); err != nil {
-			logger.Error("parameter: include_all_labels", slogx.Err(err))
-		}
+	if includeAllLabels, err = options.GetParam("include_all_labels", includeAllLabels); err != nil {
+		logger.Error("parameter: include_all_labels", slogx.Err(err))
 	}
 
-	if x := options.GetChildContentS("require_instance_keys"); x != "" {
-		if requireInstanceKeys, err = strconv.ParseBool(x); err != nil {
-			logger.Error("parameter: require_instance_keys", slogx.Err(err))
-		}
+	if requireInstanceKeys, err = options.GetParam("require_instance_keys", requireInstanceKeys); err != nil {
+		logger.Error("parameter: require_instance_keys", slogx.Err(err))
 	}
 
 	if data.Object == "" {

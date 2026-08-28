@@ -3,12 +3,12 @@ package vscan
 import (
 	"encoding/json"
 	"github.com/netapp/harvest/v2/assert"
-	"log/slog"
 	"os"
 	"testing"
 
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
@@ -25,6 +25,9 @@ func runTest(t *testing.T, createRestVscan func(params *node.Node) plugin.Plugin
 	params := node.NewS("Vscan")
 	params.NewChildS("metricsPerScanner", metricsPerScanner)
 	v := createRestVscan(params)
+	// the framework always calls Init before Run; metricsPerScanner is parsed there
+	assert.Nil(t, v.Init(conf.Remote{}))
+
 	data := readTestFile(testFile)
 	if data == nil {
 		t.Fatalf("failed to read test file %s", testFile)
@@ -81,9 +84,7 @@ func TestRunForAllImplementations(t *testing.T) {
 
 func createRestVscan(params *node.Node) plugin.Plugin {
 	o := options.Options{IsTest: true}
-	v := &Vscan{AbstractPlugin: plugin.New("vscan", &o, params, nil, "vscan", nil)}
-	v.SLogger = slog.Default()
-	return v
+	return &Vscan{AbstractPlugin: plugin.New("vscan", &o, params, nil, "vscan", nil)}
 }
 
 func readTestFile(testFilePath string) *matrix.Matrix {
@@ -103,4 +104,27 @@ func readTestFile(testFilePath string) *matrix.Matrix {
 	}
 
 	return data
+}
+
+// metricsPerScanner defaults to true, so an absent or malformed value must not
+// silently disable per-scanner aggregation.
+func TestMetricsPerScannerDefault(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		value string
+	}{
+		{name: "absent", value: ""},
+		{name: "malformed", value: "yes-please"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			params := node.NewS("Vscan")
+			if tc.value != "" {
+				params.NewChildS("metricsPerScanner", tc.value)
+			}
+
+			v := createRestVscan(params)
+			assert.Nil(t, v.Init(conf.Remote{}))
+			assert.True(t, v.(*Vscan).isPerScanner)
+		})
+	}
 }

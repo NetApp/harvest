@@ -112,7 +112,7 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 func (kp *KeyPerf) InitMatrix() error {
 	mat := kp.Matrix[kp.Object]
 	// init perf properties
-	kp.perfProp.latencyIoReqd = kp.loadParamInt("latency_io_reqd", latencyIoReqd)
+	kp.perfProp.latencyIoReqd = kp.LoadParam("latency_io_reqd", latencyIoReqd)
 	kp.perfProp.isCacheEmpty = true
 	// overwrite from abstract collector
 	mat.Object = kp.Prop.Object
@@ -128,27 +128,6 @@ func (kp *KeyPerf) InitMatrix() error {
 	_, _ = kp.Metadata.NewMetricUint64("skips")
 	_, _ = kp.Metadata.NewMetricUint64("numPartials")
 	return nil
-}
-
-// load an int parameter or use defaultValue
-func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
-
-	var (
-		x string
-		n int
-		e error
-	)
-
-	if x = kp.Params.GetChildContentS(name); x != "" {
-		if n, e = strconv.Atoi(x); e == nil {
-			kp.Logger.Debug("", slog.String("name", name), slog.Int("n", n))
-			return n
-		}
-		kp.Logger.Warn("invalid parameter", slog.String("parameter", name), slog.String("x", x))
-	}
-
-	kp.Logger.Debug("using values", slog.String("name", name), slog.Int("defaultValue", defaultValue))
-	return defaultValue
 }
 
 func (kp *KeyPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plugin {

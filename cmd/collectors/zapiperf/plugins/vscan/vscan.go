@@ -4,36 +4,36 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/collector"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
-	"strconv"
 )
 
 type Vscan struct {
 	*plugin.AbstractPlugin
+	isPerScanner bool
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Vscan{AbstractPlugin: p}
 }
 
+func (v *Vscan) Init(conf.Remote) error {
+	if err := v.InitAbc(); err != nil {
+		return err
+	}
+
+	// parsed once at startup rather than on every poll
+	v.isPerScanner = v.LoadParam("metricsPerScanner", true)
+
+	return nil
+}
+
 func (v *Vscan) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
-	// defaults plugin options
-	isPerScanner := true
-
-	if s := v.Params.GetChildContentS("metricsPerScanner"); s != "" {
-		if parseBool, err := strconv.ParseBool(s); err == nil {
-			isPerScanner = parseBool
-		} else {
-			v.SLogger.Error("Failed to parse metricsPerScanner", slogx.Err(err))
-		}
-	}
-	v.SLogger.Debug("Vscan options", slog.Bool("isPerScanner", isPerScanner))
 
 	v.addSvmAndScannerLabels(data)
-	if !isPerScanner {
+	if !v.isPerScanner {
 		return nil, nil, nil
 	}
 

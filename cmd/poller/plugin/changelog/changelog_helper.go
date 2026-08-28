@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"slices"
-	"strconv"
 )
 
 // Entry represents a single ChangeLog entry
@@ -91,12 +90,10 @@ func getChangeLogConfig(parentParams *node.Node, overwriteConfig []byte, logger 
 		if exportOption := parentParams.GetChildS("export_options"); exportOption != nil {
 			if exportedKeys := exportOption.GetChildS("instance_keys"); exportedKeys != nil {
 				entry.PublishLabels = append(entry.PublishLabels, exportedKeys.GetAllChildContentS()...)
-			} else if x := exportOption.GetChildContentS("include_all_labels"); x != "" {
-				if includeAllLabels, err := strconv.ParseBool(x); err != nil {
-					logger.Error("parameter: include_all_labels", slogx.Err(err))
-				} else if includeAllLabels {
-					entry.includeAll = true
-				}
+			} else if includeAllLabels, err := exportOption.GetParam("include_all_labels", false); err != nil {
+				logger.Error("parameter: include_all_labels", slogx.Err(err))
+			} else if includeAllLabels {
+				entry.includeAll = true
 			}
 		}
 	}
