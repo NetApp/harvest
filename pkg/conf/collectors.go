@@ -15,6 +15,7 @@ var IsCollector = map[string]struct{}{
 	"CmPerf":      {},
 	"Ems":         {},
 	"Eseries":     {},
+	"EseriesMel":  {},
 	"EseriesPerf": {},
 	"KeyPerf":     {},
 	"Rest":        {},
@@ -40,6 +41,7 @@ var IsONTAPCollector = map[string]struct{}{
 
 var IsESeriesCollector = map[string]struct{}{
 	"Eseries":     {},
+	"EseriesMel":  {},
 	"EseriesPerf": {},
 }
 
@@ -48,6 +50,7 @@ var IsNonONTAPCollector = map[string]struct{}{
 	"CiscoRest":   {},
 	"StorageGrid": {},
 	"Eseries":     {},
+	"EseriesMel":  {},
 	"EseriesPerf": {},
 }
 

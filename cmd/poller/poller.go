@@ -61,6 +61,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseries"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/eseriesmel"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/eseriesperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
