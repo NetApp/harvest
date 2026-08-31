@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/goccy/go-yaml"
-	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
+	"github.com/netapp/harvest/v2/cmd/collectors/staticcounter"
 	"github.com/netapp/harvest/v2/cmd/collectors/statperf"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -809,7 +809,7 @@ func processRestConfigCounters(path string, api string, metricsPanelMap map[stri
 
 func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string, api string, metricsPanelMap map[string]PanelData) {
 	var (
-		staticCounterDef keyperf.ObjectCounters
+		staticCounterDef staticcounter.ObjectCounters
 		err              error
 		defLocation      string
 	)
@@ -819,7 +819,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 		// CI  ../../conf/keyperf/9.15.0/volume.yaml
 		defLocation = filepath.Join(filepath.Dir(filepath.Dir(path)), "static_counter_definitions.yaml")
 
-		staticCounterDef, err = keyperf.LoadStaticCounterDefinitions(model.Object, defLocation, logger)
+		staticCounterDef, err = staticcounter.LoadStaticCounterDefinitions(model.Object, defLocation, logger)
 		if err != nil {
 			fmt.Printf("Failed to load static counter definitions=%s\n", err)
 		}

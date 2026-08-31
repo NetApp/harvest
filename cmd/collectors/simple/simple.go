@@ -9,12 +9,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"os"
 	"runtime"
 	"strconv"
-	"strings"
 )
 
 type NodeMon struct {
@@ -63,9 +63,9 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 	// fetch list of counters from template
 	for _, cnt := range counters.GetChildren() {
 
-		name, display := parseMetricName(cnt.GetNameS())
+		name, display := template.SplitMetricRename(cnt.GetNameS())
 		if cnt.GetNameS() == "" {
-			name, display = parseMetricName(cnt.GetContentS())
+			name, display = template.SplitMetricRename(cnt.GetContentS())
 		}
 		dtype := "int64"
 
@@ -81,13 +81,6 @@ func (n *NodeMon) loadMetrics(counters *node.Node) error {
 
 	n.Logger.Debug("initialized metric cache", slog.Int("numMetrics", len(mat.GetMetrics())))
 	return nil
-}
-
-func parseMetricName(name string) (string, string) {
-	if fields := strings.Fields(name); len(fields) == 3 && fields[1] == "=>" {
-		return fields[0], fields[2]
-	}
-	return name, name
 }
 
 // PollInstance - update instance cache with running pollers

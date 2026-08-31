@@ -43,7 +43,6 @@ const (
 	arrayKeyToken          = "#"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
-	timestampMetricName    = "timestamp"
 	idBatchSize            = 100
 )
 
@@ -196,23 +195,9 @@ func (r *RestPerf) InitQOS() error {
 }
 
 func (r *RestPerf) InitMatrix() error {
-	mat := r.Matrix[r.Object]
-	// init perf properties
 	r.perfProp.latencyIoReqd = r.LoadParam("latency_io_reqd", latencyIoReqd)
 	r.perfProp.isCacheEmpty = true
-	// overwrite from abstract collector
-	mat.Object = r.Prop.Object
-	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", r.Remote.Name)
-	if r.Params.HasChildS("labels") {
-		for _, l := range r.Params.GetChildS("labels").GetChildren() {
-			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
-		}
-	}
-
-	// Add metadata metric for skips/numPartials
-	_, _ = r.Metadata.NewMetricUint64("skips")
-	_, _ = r.Metadata.NewMetricUint64("numPartials")
+	collectors.SetupPerfMatrix(r.Matrix[r.Object], r.Metadata, r.Params, r.Remote.Name, r.Prop.Object)
 	return nil
 }
 
@@ -298,7 +283,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 		name := c.Get("name").ClonedString()
 		dataType := c.Get("type").ClonedString()
 
-		if p := r.GetOverride(name); p != "" {
+		if p := collectors.CounterOverride(r.Params, name); p != "" {
 			dataType = p
 		}
 
@@ -354,7 +339,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 					unit:        c.Get("unit").ClonedString(),
 					denominator: c.Get("denominator.name").ClonedString(),
 				}
-				if p := r.GetOverride(name); p != "" {
+				if p := collectors.CounterOverride(r.Params, name); p != "" {
 					r.perfProp.counterInfo[name].counterType = p
 				}
 			}
@@ -375,14 +360,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
-	if mat.GetMetric(timestampMetricName) == nil {
-		m, err := mat.NewMetricFloat64(timestampMetricName)
-		if err != nil {
-			r.Logger.Error("add timestamp metric", slogx.Err(err))
-		}
-		m.SetProperty("raw")
-		m.SetExportable(false)
-	}
+	collectors.EnsureTimestampMetric(mat, r.Logger)
 
 	_, err = r.processWorkLoadCounter()
 	if err != nil {
@@ -582,14 +560,6 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 	return &metricResponse{}
 }
 
-// GetOverride override counter property
-func (r *RestPerf) GetOverride(counter string) string {
-	if o := r.Params.GetChildS("override"); o != nil {
-		return o.GetChildContentS(counter)
-	}
-	return ""
-}
-
 func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 	var err error
 	mat := r.Matrix[r.Object]
@@ -687,7 +657,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		curMat       *matrix.Matrix
 	)
 
-	timestamp := r.Matrix[r.Object].GetMetric(timestampMetricName)
+	timestamp := r.Matrix[r.Object].GetMetric(collectors.TimestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
@@ -880,7 +850,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 	instanceKeys = r.Prop.InstanceKeys
 	startTime := time.Now()
 
-	tsMetric := curMat.MustGetMetric(timestampMetricName)
+	tsMetric := curMat.MustGetMetric(collectors.TimestampMetricName)
 
 	// init current time
 	ts = float64(startTime.UnixNano()) / collector2.BILLION
@@ -1210,7 +1180,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetName() != timestampMetricName && metric.Buckets() == nil {
+		if metric.GetName() != collectors.TimestampMetricName && metric.Buckets() == nil {
 			counter := r.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
@@ -1314,7 +1284,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, cachedData, prevMat, timestampMetricName, r.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, r.perfProp.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, r.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator)
 			}
@@ -1353,7 +1323,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
+				if skips, err = curMat.Divide(orderedKeys[i], collectors.TimestampMetricName); err != nil {
 					r.Logger.Error(
 						"Calculate rate",
 						slogx.Err(err),

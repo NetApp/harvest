@@ -14,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/ps"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"os"
@@ -88,13 +89,6 @@ func getClockTicks() {
 			clkTck = float64(num)
 		}
 	}
-}
-
-func parseMetricName(name string) (string, string) {
-	if fields := strings.Fields(name); len(fields) == 3 && fields[1] == "=>" {
-		return fields[0], fields[2]
-	}
-	return name, name
 }
 
 func getHistogramLabels(p *Process, name string) []string {
@@ -205,9 +199,9 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 	// fetch list of counters from template
 	for _, cnt := range counters.GetChildren() {
 
-		name, display := parseMetricName(cnt.GetNameS())
+		name, display := template.SplitMetricRename(cnt.GetNameS())
 		if cnt.GetNameS() == "" {
-			name, display = parseMetricName(cnt.GetContentS())
+			name, display = template.SplitMetricRename(cnt.GetContentS())
 		}
 
 		dtype := _DataTypes[name]
@@ -239,7 +233,7 @@ func (u *Unix) loadMetrics(counters *node.Node) error {
 			// validate
 			for w := range wanted.Iter() {
 				// parse label name and display name
-				label, ldisplay := parseMetricName(w)
+				label, ldisplay := template.SplitMetricRename(w)
 
 				if !labels.Has(label) {
 					u.Logger.Warn("invalid histogram metric", slog.String("label", label))

@@ -435,6 +435,7 @@ func toPluginPath(path string, pluginName string) string {
 	// conf/rest/9.12.0/lif.yaml          -> cmd/collectors/rest/plugins/lif/lif.go
 
 	before, after, _ := strings.Cut(path, "conf/")
+	base := strings.Split(after, "/")
 
 	// Both Zapi and REST sensor.yaml templates uses a single plugin defined in power.go
 	if strings.Contains(path, "sensor.yaml") {
@@ -456,7 +457,12 @@ func toPluginPath(path string, pluginName string) string {
 		return before + "cmd/collectors/storageunit.go"
 	}
 
-	base := strings.Split(after, "/")
+	// REST and ZAPI share protocol-agnostic plugin implementations.
+	if len(base) > 0 && (base[0] == "rest" || base[0] == "zapi") &&
+		(pluginName == "workload" || pluginName == "qospolicyadaptive") {
+		return fmt.Sprintf("%scmd/collectors/plugins/%s/%s.go", before, pluginName, pluginName)
+	}
+
 	p := fmt.Sprintf("%scmd/collectors/%s/plugins/%s/%s.go", before, base[0], pluginName, pluginName)
 
 	// special case for labels added outside normal per-object plugin

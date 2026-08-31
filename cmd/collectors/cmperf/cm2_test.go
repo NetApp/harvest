@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -259,7 +260,7 @@ func TestCookCounters_ArrayShapedBaseShipsRaw(t *testing.T) {
 	inst, err := curMat.NewInstance("inst1")
 	assert.Nil(t, err)
 	curMat.MustGetMetric("service_time").SetValueFloat64(inst, 100)
-	tsMetric, err := curMat.NewMetricFloat64(timestampMetricName)
+	tsMetric, err := curMat.NewMetricFloat64(collectors.TimestampMetricName)
 	assert.Nil(t, err)
 	tsMetric.SetProperty("raw")
 	tsMetric.SetValueFloat64(inst, 2)
@@ -267,7 +268,7 @@ func TestCookCounters_ArrayShapedBaseShipsRaw(t *testing.T) {
 	prevInst, err := prevMat.NewInstance("inst1")
 	assert.Nil(t, err)
 	prevMat.MustGetMetric("service_time").SetValueFloat64(prevInst, 40)
-	prevTs, err := prevMat.NewMetricFloat64(timestampMetricName)
+	prevTs, err := prevMat.NewMetricFloat64(collectors.TimestampMetricName)
 	assert.Nil(t, err)
 	prevTs.SetValueFloat64(prevInst, 1)
 
@@ -320,11 +321,11 @@ func TestCookCounters_ArrayNumeratorWithScalarBaseDivides(t *testing.T) {
 	curMat.MustGetMetric("read_io_type_base").SetValueFloat64(inst, 100)
 	prevMat.MustGetMetric("read_io_type_base").SetValueFloat64(prevInst, 50)
 
-	tsMetric, err := curMat.NewMetricFloat64(timestampMetricName)
+	tsMetric, err := curMat.NewMetricFloat64(collectors.TimestampMetricName)
 	assert.Nil(t, err)
 	tsMetric.SetProperty("raw")
 	tsMetric.SetValueFloat64(inst, 2)
-	prevTs, err := prevMat.NewMetricFloat64(timestampMetricName)
+	prevTs, err := prevMat.NewMetricFloat64(collectors.TimestampMetricName)
 	assert.Nil(t, err)
 	prevTs.SetValueFloat64(prevInst, 1)
 
