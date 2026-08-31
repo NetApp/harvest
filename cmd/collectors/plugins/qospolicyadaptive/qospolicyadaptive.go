@@ -25,18 +25,19 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (p *QosPolicyAdaptive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[p.Object]
-
-	// create metrics
 	if err := data.NewMetricsFloat64(metrics...); err != nil {
 		p.SLogger.Error("error while creating metric", slogx.Err(err))
+		return nil, nil, err
 	}
 
 	for _, instance := range data.GetInstances() {
+		if !instance.IsExportable() {
+			continue
+		}
 		p.setIOPs(data, instance, "absolute_min_iops")
 		p.setIOPs(data, instance, "expected_iops")
 		p.setIOPs(data, instance, "peak_iops")
 	}
-
 	return nil, nil, nil
 }
 
@@ -49,10 +50,8 @@ func (p *QosPolicyAdaptive) setIOPs(data *matrix.Matrix, instance *matrix.Instan
 	}
 	instance.SetLabel(labelName, xput.IOPS)
 
-	m := data.GetMetric(labelName)
-	if m != nil {
-		err = m.SetValueString(instance, xput.IOPS)
-		if err != nil {
+	if metric := data.GetMetric(labelName); metric != nil {
+		if err = metric.SetValueString(instance, xput.IOPS); err != nil {
 			p.SLogger.Error("Unable to set metric", slogx.Err(err), slog.String(labelName, xput.IOPS))
 		}
 	}
