@@ -77,6 +77,7 @@
   "eseries_interface_write_data": "Interface write data throughput in bytes per second",
   "eseries_interface_write_latency": "Write response time average in microseconds",
   "eseries_interface_write_ops": "Interface write I/O operations per second",
+  "eseries_mel_events": "A Major Event Log (MEL) entry recorded by the array — E-Series' record of significant events such as hardware failures and configuration changes — labeled with its event type, location, component, and severity; the value is the timestamp of its most recent occurrence.",
   "eseries_pool_block_size": "Recommended block size of the storage pool in bytes",
   "eseries_pool_block_sizes_supported": "Volume block sizes supported by the storage pool (e.g. 512,4096)",
   "eseries_pool_da_capable": "Whether all drives in the storage pool are Data Assurance (T10 PI) capable",

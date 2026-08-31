@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Aug-26
+Creation Date : 2026-Aug-31
 E-Series Version: 11.80.0
 ```
 
@@ -1493,6 +1493,16 @@ The `eseries_interface_write_ops` metric is visualized in the following Grafana 
 | E-Series: Interface | Highlights | timeseries | [Top $TopResources Interfaces by Write IOPs](/d/eseries-interface/e-series3a-interface?orgId=1&viewPanel=5) |
 ///
 
+
+
+### eseries_mel_events
+
+A Major Event Log (MEL) entry recorded by the array — E-Series' record of significant events such as hardware failures and configuration changes — labeled with its event type, location, component, and severity; the value is the timestamp of its most recent occurrence.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/mel-events` | `timeStamp` | conf/eseriesmel/11.80.0/events.yaml |
 
 
 ### eseries_pool_block_size
