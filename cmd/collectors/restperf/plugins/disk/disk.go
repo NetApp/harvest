@@ -424,6 +424,12 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		return output, nil, err
 	}
 
+	var pluginInstances uint64
+	for _, mat := range output {
+		pluginInstances += uint64(len(mat.GetInstances()))
+	}
+	d.RequestMetadata.PluginInstances.Store(pluginInstances)
+
 	return output, &d.RequestMetadata, nil
 }
 
