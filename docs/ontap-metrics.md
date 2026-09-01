@@ -15784,8 +15784,8 @@ Tracks the number of concurrent collectors running.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
 
