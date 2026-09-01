@@ -1020,9 +1020,10 @@ func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
 	logger.Info(
 		"posted CmPerf manifest",
 		slog.String("name", name),
-		slog.String("deleteMs", deleteDuration.Round(time.Millisecond).String()),
-		slog.String("postMs", postDuration.Round(time.Millisecond).String()),
+		slog.Int64("deleteMs", deleteDuration.Milliseconds()),
+		slog.Int64("postMs", postDuration.Milliseconds()),
 	)
+
 	return nil
 }
 
