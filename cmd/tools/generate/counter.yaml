@@ -2059,12 +2059,12 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
-        Unit: bytes
+        Unit: scalar
       - API: ZAPI
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
-        Unit: bytes
+        Unit: scalar
 
   - Name: poller_memory
     Description: Tracks the memory usage of the poller process, including Resident Set Size (RSS), swap memory, and Virtual Memory Size (VMS).
