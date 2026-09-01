@@ -112,11 +112,20 @@ func (e *EseriesMel) parseCounters() error {
 		name, display, kind, _ := template.ParseMetric(content)
 
 		switch kind {
-		case "key":
-			e.Prop.InstanceKeys = append(e.Prop.InstanceKeys, name)
+		case "key", "label":
+			if existing, ok := e.Prop.InstanceLabels[name]; ok {
+				e.Logger.Warn("duplicate counter, keeping first",
+					slog.String("counter", name),
+					slog.String("kept", existing),
+					slog.String("ignored", display))
+				continue
+			}
 			e.Prop.InstanceLabels[name] = display
-		case "label":
-			e.Prop.InstanceLabels[name] = display
+			if kind == "key" {
+				e.Prop.InstanceKeys = append(e.Prop.InstanceKeys, name)
+			}
+		default:
+			return errs.New(errs.ErrInvalidParam, "counters: "+content+" must be a label (^) or instance key (^^)")
 		}
 	}
 

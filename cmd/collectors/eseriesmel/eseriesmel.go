@@ -410,6 +410,9 @@ func (e *EseriesMel) logStopReason(extent melExtent, run pageRun) {
 			slog.Int64("endingSeqNum", extent.endingSeqNum),
 		)
 	case stopCovered, stopShortPage:
+		// Expected: reached the extent tip, or MEL returned fewer records than
+		// requested (its only end-of-data signal; there is no next link). A log
+		// here would fire on every last page.
 	}
 }
 
@@ -474,9 +477,10 @@ type stopReason int
 const (
 	// stopCovered means paging reached the extent's tip.
 	stopCovered stopReason = iota
-	// stopShortPage means the array returned fewer than count records (empty
-	// included). count caps records returned, not records scanned, so nothing
-	// more matches at or above the requested sequence number.
+	// stopShortPage is how the MEL endpoint says paging is done: it returns
+	// fewer records than the requested count (empty included) and has no next
+	// link or continuation token. count caps records returned, not records
+	// scanned, so nothing more matches at or above startSequenceNumber.
 	stopShortPage
 	// stopStalled means the array ignored startSequenceNumber; breaking avoids
 	// re-issuing the same request forever.
