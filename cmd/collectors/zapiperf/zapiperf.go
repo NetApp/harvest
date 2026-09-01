@@ -901,7 +901,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	calcDataInst := z.Metadata.MustGetInstance("data")
 	z.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
-	z.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
+	z.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips))
 
 	// store cache for next poll
 	z.Matrix[z.Object] = cachedData

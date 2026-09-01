@@ -130,7 +130,6 @@ func (s *SsdCacheCapacity) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Mat
 	)
 
 	metadata := &collector.Metadata{}
-	//nolint:gosec
 	metadata.PluginInstances.Store(uint64(totalInstances))
 
 	return []*matrix.Matrix{s.volumeMat, s.driveMat}, metadata, nil
