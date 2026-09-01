@@ -24,13 +24,25 @@ const endOfLine = "\n"
 
 func parseNetstatLine(line string) (stat *IOCountersStat, linkID *uint, err error) {
 	var (
-		numericValue uint64
-		columns      = strings.Fields(line)
+		numericValue  uint64
+		columns       = strings.Fields(line)
+		numberColumns = len(columns)
 	)
 
-	if columns[0] == "Name" {
+	if numberColumns > 0 && columns[0] == "Name" {
 		err = errNetstatHeader
 		return //nolint:nakedret //FIXME
+	}
+
+	if numberColumns < 11 || numberColumns > 13 {
+		err = fmt.Errorf("line %q has an invalid number of columns: %d", line, numberColumns)
+		return //nolint:nakedret //FIXME
+	}
+
+	base := 1
+	// sometimes Address is omitted
+	if numberColumns < 12 {
+		base = 0
 	}
 
 	// try to extract the numeric value from <Link#123>
@@ -41,17 +53,6 @@ func parseNetstatLine(line string) (stat *IOCountersStat, linkID *uint, err erro
 		}
 		linkIDUint := uint(numericValue)
 		linkID = &linkIDUint
-	}
-
-	base := 1
-	numberColumns := len(columns)
-	// sometimes Address is omitted
-	if numberColumns < 12 {
-		base = 0
-	}
-	if numberColumns < 11 || numberColumns > 13 {
-		err = fmt.Errorf("Line %q do have an invalid number of columns %d", line, numberColumns)
-		return //nolint:nakedret //FIXME
 	}
 
 	parsed := make([]uint64, 0, 7)
@@ -99,29 +100,20 @@ type netstatInterface struct {
 	stat   *IOCountersStat
 }
 
-func parseNetstatOutput(output string) ([]netstatInterface, error) {
-	var (
-		err   error
-		lines = strings.Split(strings.Trim(output, endOfLine), endOfLine)
-	)
+func parseNetstatOutput(output string) []netstatInterface {
+	lines := strings.Split(strings.Trim(output, endOfLine), endOfLine)
 
-	// number of interfaces is number of lines less one for the header
-	numberInterfaces := len(lines) - 1
-
-	interfaces := make([]netstatInterface, numberInterfaces)
-	// no output beside header
-	if numberInterfaces == 0 {
-		return interfaces, nil
-	}
-
-	for index := range numberInterfaces {
-		nsIface := netstatInterface{}
-		if nsIface.stat, nsIface.linkID, err = parseNetstatLine(lines[index+1]); err != nil {
-			return nil, err
+	interfaces := make([]netstatInterface, 0, len(lines))
+	for _, line := range lines {
+		stat, linkID, err := parseNetstatLine(line)
+		if err != nil {
+			// Invoke combines stdout and stderr, so diagnostics can appear
+			// anywhere in the output. They are not netstat interface rows.
+			continue
 		}
-		interfaces[index] = nsIface
+		interfaces = append(interfaces, netstatInterface{stat: stat, linkID: linkID})
 	}
-	return interfaces, nil
+	return interfaces
 }
 
 // map that hold the name of a network interface and the number of usage
@@ -189,10 +181,7 @@ func IOCountersWithContext(ctx context.Context, pernic bool) ([]IOCountersStat, 
 		return nil, err
 	}
 
-	nsInterfaces, err := parseNetstatOutput(string(out))
-	if err != nil {
-		return nil, err
-	}
+	nsInterfaces := parseNetstatOutput(string(out))
 
 	ifaceUsage := newMapInterfaceNameUsage(nsInterfaces)
 	notTruncated := ifaceUsage.notTruncated()
@@ -230,10 +219,7 @@ func IOCountersWithContext(ctx context.Context, pernic bool) ([]IOCountersStat, 
 				if out, err = invoke.CommandWithContext(ctx, netstat, "-ibdnWI"+interfaceName); err != nil {
 					return nil, err
 				}
-				parsedIfaces, err := parseNetstatOutput(string(out))
-				if err != nil {
-					return nil, err
-				}
+				parsedIfaces := parseNetstatOutput(string(out))
 				if len(parsedIfaces) == 0 {
 					// interface had been removed since `ifconfig -l` had been executed
 					continue
