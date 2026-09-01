@@ -1,0 +1,153 @@
+name: Events
+query: storage-systems/{array_id}/mel-events
+object: eseries_mel
+
+# includeDebug=false already matches the API's own default; kept explicit so
+# behavior doesn't silently change if the array's default ever does.
+filter:
+  - includeDebug=false
+
+events:
+  # AVAILABILITY
+  - event_type: 5123
+    name: MEL_EV_EXCESSIVE_REBOOTS_DETECTED
+  - event_type: 5395
+    name: MEL_EV_DFC_CHANNEL_FAILOVER
+  - event_type: 5904
+    name: MEL_EV_DSAS_WPORT_DEG_TO_FAIL_CTLR
+  - event_type: 6407
+    name: MEL_EV_MISSING_DRIVE_LOCKDOWN
+  - event_type: 8781
+    name: MEL_EV_DRV_NO_RESPONSE
+  - event_type: 8784
+    name: MEL_EV_LUN_DOWN
+  - event_type: 8812
+    name: MEL_EV_CFG_DRIVE_FAILURE
+  - event_type: 8813
+    name: MEL_EV_DRIVE_IN_VG_OR_HOT_SPARE_REMOVED
+  - event_type: 8820
+    name: MEL_EV_VOLUME_GROUP_MISSING
+  - event_type: 8821
+    name: MEL_EV_VOLUME_GROUP_INCOMPLETE
+  - event_type: 9472
+    name: MEL_EV_CONTROLLER
+  - event_type: 10250
+    name: MEL_EV_LINE_MISSING
+  - event_type: 10251
+    name: MEL_EV_LINE_FAILED
+  - event_type: 10253
+    name: MEL_EV_ENCL_FAIL
+  - event_type: 10267
+    name: MEL_EV_TEMP_SENSOR_WARNING
+  - event_type: 10268
+    name: MEL_EV_TEMP_SENSOR_FAIL
+  - event_type: 10269
+    name: MEL_EV_TEMP_SENSOR_MISSING
+  - event_type: 10275
+    name: MEL_EV_BYPASS_GENERIC
+  - event_type: 10281
+    name: MEL_EV_CONT_REDUNDANCY_LOSS
+  - event_type: 10283
+    name: MEL_EV_TRAY_REDUNDANCY_LOSS
+  - event_type: 10285
+    name: MEL_EV_DRIVE_REDUNDANCY_LOSS
+  - event_type: 10299
+    name: MEL_EV_POWER_SUPPLY_FAIL
+  - event_type: 10324
+    name: MEL_EV_ESM_DRIVE_BYPASS
+  - event_type: 10327
+    name: MEL_EV_DRAWER_OPEN
+  - event_type: 10345
+    name: MEL_EV_POWER_SUPPLY_NO_INPUT
+  - event_type: 16401
+    name: MEL_EV_VOL_XFER_ALERT
+  - event_type: 20485
+    name: MEL_EV_SYMBOL_CONT_FAIL
+  - event_type: 20544
+    name: MEL_EV_SYMBOL_CONT_SERVICE_MODE
+  - event_type: 24839
+    name: MEL_EV_DBM_HCK_ALTCTL_NOT_FUNC
+  - event_type: 37122
+    name: MEL_EV_HOST_REDUNDANCY_LOST
+
+  # CAPACITY
+  - event_type: 14339
+    name: MEL_EV_DISK_POOL_REC_RDRVCNT_BEL_THRSHLD
+  - event_type: 14340
+    name: MEL_EV_DISK_POOL_UTILIZATION_WARNING
+  - event_type: 14341
+    name: MEL_EV_DISK_POOL_UTILIZATION_CRITICAL
+  - event_type: 14345
+    name: MEL_EV_DISK_POOL_CAPACITY_DEPLETED
+  - event_type: 14348
+    name: MEL_EV_DISK_POOL_INSUFFICIENT_MEMORY
+
+  # CONFIGURATION
+  - event_type: 8475
+    name: MEL_EV_OCB_SETTING_CONFLICT
+  - event_type: 8778
+    name: MEL_EV_WRONG_SECTOR_SIZE
+  - event_type: 8800
+    name: MEL_EV_UNCERTIFIED_DRIVE
+  - event_type: 8802
+    name: MEL_EV_CFG_WRONG_DRIVE_TYPE
+  - event_type: 8807
+    name: MEL_EV_INCOMPAT_DRIVE_INVALID_CONFIG
+  - event_type: 8817
+    name: MEL_EV_DRIVE_UNSUPPORTED_CAPACITY
+  - event_type: 8824
+    name: MEL_EV_INCOMPATIBLE_ALIGNMENT_FOR_EMULATION_DRIVE
+  - event_type: 8844
+    name: MEL_EV_FAST_FORMAT_FAILED
+  - event_type: 8853
+    name: MEL_EV_DRIVE_FLASH_TECHNOLOGY_UNSUPPORTED
+  - event_type: 14353
+    name: MEL_EV_DISK_POOL_INVALID_VERSION
+  - event_type: 32268
+    name: MEL_EV_DRIVE_NEW_DRIVE_FW_UNVERIFIED
+  - event_type: 37123
+    name: MEL_EV_MULTIPATH_CONFIG_ERROR
+
+  # PERFORMANCE
+  - event_type: 13828
+    name: MEL_EV_FLASH_CACHE_FAILED_CACHE_SIZE_MISMATCH
+  - event_type: 13829
+    name: MEL_EV_FLASH_CACHE_NON_OPTIMAL_DRIVES
+
+  # PROTECTION
+  - event_type: 4126
+    name: MEL_EV_SYNTH_DRIVE_PFA
+  - event_type: 4128
+    name: MEL_EV_PI_DRIVE_LOCKED_OUT
+  - event_type: 8460
+    name: MEL_EV_CACHE_BATTERY_FAILURE
+  - event_type: 8491
+    name: MEL_EV_WB_CACHING_FORCIBLY_DISABLED
+  - event_type: 8497
+    name: MEL_EV_CACHE_NOT_FLUSHED_ON_ONLY_CTLR
+  - event_type: 8806
+    name: MEL_EV_RECONFIGURATION_FAILED
+  - event_type: 8828
+    name: MEL_EV_COPY_THEN_FAIL_NO_SPARE
+  - event_type: 8837
+    name: MEL_EV_DRIVE_PFA2
+  - event_type: 29440
+    name: MEL_EV_BBU_OVERHEATED
+  - event_type: 29441
+    name: MEL_EV_INSUFFICIENT_LEARNED_CAPACITY
+  - event_type: 29446
+    name: MEL_EV_BATTERY_MISSING
+
+counters:
+  - ^^eventType       => event_type
+  - ^^location        => location
+  - ^componentType    => component_type
+  - ^priority         => severity
+
+export_options:
+  instance_keys:
+    - component_type
+    - event_type
+    - location
+    - message
+    - severity

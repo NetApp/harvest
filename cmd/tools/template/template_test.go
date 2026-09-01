@@ -25,6 +25,7 @@ const toConf = "../../../conf"
 var allTemplatesButEms = []string{
 	"cmperf",
 	"eseries",
+	"eseriesmel",
 	"eseriesperf",
 	"keyperf",
 	"rest",
@@ -275,6 +276,8 @@ func TestExportLabelsExist(t *testing.T) {
 		"statperf/9.8.0/resource_headroom_aggr.yaml",
 		// object is disabled in cmperf/default.yaml and its ExternalServiceOperation plugin is not yet implemented
 		"cmperf/9.19.1/external_service_operation.yaml",
+		// "message" label is set programmatically from the "events" catalog block, not from counters
+		"eseriesmel/11.80.0/events.yaml",
 	}
 
 	visitTemplates(t, func(path string, model Model) {

@@ -351,7 +351,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	instanceInst := e.Metadata.MustGetInstance("instance")
 	e.Metadata.MustSetValueInt64("api_time", instanceInst, apiD.Microseconds())
 	e.Metadata.MustSetValueInt64("parse_time", instanceInst, time.Since(parseT).Microseconds())
-	e.Metadata.MustSetValueUint64("instances", instanceInst, uint64(bookendCacheSize)) //nolint:gosec
+	e.Metadata.MustSetValueUint64("instances", instanceInst, uint64(bookendCacheSize))
 
 	return nil, nil
 }
