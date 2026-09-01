@@ -114,13 +114,15 @@ func (h *Hardware) initClient() error {
 
 // Run fetches hardware-inventory data and processes all components
 func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	h.client.Metadata.Reset()
+
 	data := dataMap[h.Object]
 	globalLabels := data.GetGlobalLabels()
 
 	arrayID := h.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		h.SLogger.Error("array_id not found in parent params")
-		return nil, nil, nil
+		return nil, h.client.Metadata, nil
 	}
 
 	for _, mat := range h.data {
@@ -133,12 +135,12 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 	results, err := h.client.Fetch(h.client.APIPath+"/"+query, nil)
 	if err != nil {
 		h.SLogger.Error("Failed to fetch hardware-inventory", slogx.Err(err))
-		return nil, nil, err
+		return nil, h.client.Metadata, err
 	}
 
 	if len(results) == 0 {
 		h.SLogger.Warn("No hardware-inventory data returned")
-		return nil, nil, nil
+		return nil, h.client.Metadata, nil
 	}
 
 	response := results[0]
@@ -205,10 +207,9 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 		slog.Int("thermalSensors", len(h.data[thermalSensorMatrix].GetInstances())),
 	)
 
-	metadata := &collector.Metadata{}
-	metadata.PluginInstances.Store(uint64(totalInstances))
+	h.client.Metadata.PluginInstances.Store(uint64(totalInstances))
 
-	return matrices, metadata, nil
+	return matrices, h.client.Metadata, nil
 }
 
 // buildControllerLabelMap creates a map of controllerRef to controller label (e.g., "070000..." -> "A")
