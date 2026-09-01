@@ -1798,7 +1798,11 @@ func (p *Poller) addMemoryMetadata() {
 	p.status.MustSetValueUint64("memory.vms", p.statusHostInstance, memMetrics.VMSBytes/1024)
 	p.status.MustSetValueUint64("memory.swap", p.statusHostInstance, memMetrics.SwapBytes/1024)
 	p.memoryPercentMetric.SetValueFloat64(p.statusHostInstance, memMetrics.PercentageRssUsed)
-	p.status.MustAddValueInt64("concurrent_collectors", p.statusHostInstance, int64(p.concurrentCollectors.Load()))
+	// Use MustSetValueInt64 and do not use MustAddValueInt64. This metric shows the
+	// number of collectors that are active now. MustAddValueInt64 gives the same result
+	// today, because the poll loop calls p.status.Reset() first. Reset() makes new values.
+	// Do not depend on this behavior.
+	p.status.MustSetValueInt64("concurrent_collectors", p.statusHostInstance, int64(p.concurrentCollectors.Load()))
 
 	// Update maxRssBytes
 	p.maxRssBytes = max(p.maxRssBytes, memMetrics.RSSBytes)
