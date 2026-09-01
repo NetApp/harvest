@@ -586,7 +586,7 @@ func (kp *KeyPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	calcDataInst := kp.Metadata.MustGetInstance("data")
 	kp.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
 	kp.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
-	kp.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
+	kp.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips))
 
 	// store cache for next poll
 	kp.Matrix[kp.Object] = cachedData

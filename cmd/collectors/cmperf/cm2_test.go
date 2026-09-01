@@ -145,7 +145,7 @@ histograms:
 
 	schema := cmmetrics.ObjectSchema{}
 	for i, tt := range tests {
-		schema.CounterSchema = append(schema.CounterSchema, cmmetrics.CounterSchema{Index: uint32(i + 1), Name: tt.name, LabelsX: tt.labels}) //nolint:gosec
+		schema.CounterSchema = append(schema.CounterSchema, cmmetrics.CounterSchema{Index: uint32(i + 1), Name: tt.name, LabelsX: tt.labels})
 		c.Prop.Metrics[tt.name] = &rest2.Metric{Label: tt.name, Exportable: true}
 	}
 	c.buildCountersFromSchema(schema, matrix.New("test", "test", "test"), matrix.New("test", "test", "test"))

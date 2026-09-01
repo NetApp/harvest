@@ -206,7 +206,6 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 	)
 
 	metadata := &collector.Metadata{}
-	//nolint:gosec
 	metadata.PluginInstances.Store(uint64(totalInstances))
 
 	return matrices, metadata, nil

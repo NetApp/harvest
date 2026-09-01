@@ -1345,7 +1345,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	calcDataInst := r.Metadata.MustGetInstance("data")
 	r.Metadata.MustSetValueUint64("instances", calcDataInst, uint64(len(curMat.GetInstances())))
 	r.Metadata.MustSetValueInt64("calc_time", calcDataInst, calcD.Microseconds())
-	r.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips)) //nolint:gosec
+	r.Metadata.MustSetValueUint64("skips", calcDataInst, uint64(totalSkips))
 
 	// store cache for next poll
 	r.Matrix[r.Object] = cachedData
