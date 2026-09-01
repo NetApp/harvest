@@ -93,12 +93,14 @@ func (s *SsdCacheCapacity) initDriveMatrix() {
 }
 
 func (s *SsdCacheCapacity) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	s.client.Metadata.Reset()
+
 	data := dataMap[s.Object]
 
 	arrayID := s.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		s.SLogger.Warn("arrayID not found in ParentParams, skipping SSD cache capacity")
-		return nil, nil, nil
+		return nil, s.client.Metadata, nil
 	}
 
 	if s.schedule >= s.PluginInvocationRate {
@@ -129,11 +131,9 @@ func (s *SsdCacheCapacity) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Mat
 		slog.Int("drives", len(s.driveMat.GetInstances())),
 	)
 
-	metadata := &collector.Metadata{}
-	//nolint:gosec
-	metadata.PluginInstances.Store(uint64(totalInstances))
+	s.client.Metadata.PluginInstances.Store(uint64(totalInstances))
 
-	return []*matrix.Matrix{s.volumeMat, s.driveMat}, metadata, nil
+	return []*matrix.Matrix{s.volumeMat, s.driveMat}, s.client.Metadata, nil
 }
 
 func (s *SsdCacheCapacity) rebuildCaches(arrayID string) {

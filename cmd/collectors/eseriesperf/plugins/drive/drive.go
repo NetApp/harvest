@@ -53,12 +53,14 @@ func (d *Drive) Init(remote conf.Remote) error {
 }
 
 func (d *Drive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	d.client.Metadata.Reset()
+
 	data := dataMap[d.Object]
 
 	arrayID := d.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		d.SLogger.Warn("arrayID not found in ParentParams, skipping tray labels")
-		return nil, nil, nil
+		return nil, d.client.Metadata, nil
 	}
 
 	if d.schedule >= d.PluginInvocationRate {
@@ -69,7 +71,7 @@ func (d *Drive) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 
 	d.applyTrayLabels(data)
 
-	return nil, nil, nil
+	return nil, d.client.Metadata, nil
 }
 
 func (d *Drive) refreshTrayLabels(arrayID string) {

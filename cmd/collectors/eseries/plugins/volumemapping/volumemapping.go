@@ -62,13 +62,15 @@ func (v *VolumeMapping) Init(remote conf.Remote) error {
 }
 
 func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	v.client.Metadata.Reset()
+
 	data := dataMap[v.Object]
 
 	// Get arrayID from ParentParams
 	arrayID := v.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		v.SLogger.Warn("arrayID not found in ParentParams, skipping volume mapping")
-		return nil, nil, nil
+		return nil, v.client.Metadata, nil
 	}
 
 	// Rebuild caches at plugin interval to reduce API calls
@@ -80,7 +82,7 @@ func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 
 	v.applyLabelsToVolumes(data)
 
-	return nil, nil, nil
+	return nil, v.client.Metadata, nil
 }
 
 func (v *VolumeMapping) rebuildCaches(arrayID string) {

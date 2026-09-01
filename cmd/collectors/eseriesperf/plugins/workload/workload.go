@@ -53,12 +53,14 @@ func (w *Workload) Init(remote conf.Remote) error {
 }
 
 func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	w.client.Metadata.Reset()
+
 	data := dataMap[w.Object]
 
 	arrayID := w.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		w.SLogger.Warn("arrayID not found in ParentParams, skipping workload labels")
-		return nil, nil, nil
+		return nil, w.client.Metadata, nil
 	}
 
 	if w.schedule >= w.PluginInvocationRate {
@@ -69,7 +71,7 @@ func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 
 	w.applyWorkloadLabels(data)
 
-	return nil, nil, nil
+	return nil, w.client.Metadata, nil
 }
 
 func (w *Workload) refreshWorkloadLabels(arrayID string) {

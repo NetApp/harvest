@@ -53,12 +53,14 @@ func (p *Pool) Init(remote conf.Remote) error {
 }
 
 func (p *Pool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	p.client.Metadata.Reset()
+
 	data := dataMap[p.Object]
 
 	arrayID := p.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		p.SLogger.Warn("arrayID not found in ParentParams, skipping pool labels")
-		return nil, nil, nil
+		return nil, p.client.Metadata, nil
 	}
 
 	if p.schedule >= p.PluginInvocationRate {
@@ -69,7 +71,7 @@ func (p *Pool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 
 	p.applyPoolLabels(data)
 
-	return nil, nil, nil
+	return nil, p.client.Metadata, nil
 }
 
 func (p *Pool) refreshPoolLabels(arrayID string) {
