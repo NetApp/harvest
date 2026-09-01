@@ -32,7 +32,7 @@ const (
 type Config struct {
 	Type            Type
 	Username        string
-	Password        string //nolint:gosec
+	Password        string
 	CertFile        string
 	KeyFile         string
 	CAFile          string
@@ -282,7 +282,7 @@ func MakeRequest(config TSDBConfig, url string) (*http.Response, error) {
 
 	req.Header.Set("User-Agent", "harvest-mcp-server/"+version.Info())
 
-	resp, err := client.Do(req) //nolint:gosec
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request to %s: %w", url, err)
 	}
