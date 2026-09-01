@@ -71,6 +71,17 @@ counters:
         Template: conf/eseries/11.80.0/firmware.yaml (Firmware plugin)
 
   # =============================================================================
+  # MEL Event Metrics (EseriesMel Collector)
+  # =============================================================================
+  - Name: eseries_mel_events
+    Description: A Major Event Log (MEL) entry recorded by the array — E-Series' record of significant events such as hardware failures and configuration changes — labeled with its event type, location, component, and severity; the value is the timestamp of its most recent occurrence.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/mel-events
+        ESeriesCounter: timeStamp
+        Template: conf/eseriesmel/11.80.0/events.yaml
+
+  # =============================================================================
   # Array Performance Metrics (EseriesPerf Collector)
   # =============================================================================
   - Name: eseries_array_read_ops

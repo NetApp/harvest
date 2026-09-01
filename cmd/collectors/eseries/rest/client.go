@@ -438,7 +438,7 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 			firstSystem := systems[0]
 			systemID := firstSystem.Get("id").ClonedString()
 
-			managementVersion, err := c.getManagementVersion(systemID)
+			managementVersion, err := c.GetManagementVersion(systemID)
 			if err != nil {
 				c.Logger.Warn(
 					"Failed to get management version, using default version",
@@ -471,9 +471,9 @@ func (c *Client) Remote() conf.Remote {
 	return c.remote
 }
 
-// getManagementVersion returns the normalized SANtricity OS version from the
+// GetManagementVersion returns the normalized SANtricity OS version from the
 // "management" codeModule (e.g. "12.00.00.9018" -> "12.00.0").
-func (c *Client) getManagementVersion(systemID string) (string, error) {
+func (c *Client) GetManagementVersion(systemID string) (string, error) {
 	endpoint := c.APIPath + "/firmware/embedded-firmware/" + systemID + "/versions"
 	results, err := c.get(endpoint)
 	if err != nil {

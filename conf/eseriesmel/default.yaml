@@ -1,0 +1,8 @@
+collector: EseriesMel
+
+schedule:
+  - counter: 24h
+  - data: 3m
+
+objects:
+  Events: events.yaml
