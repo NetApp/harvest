@@ -244,34 +244,17 @@ func (e *EseriesMel) PollCounter() (map[string]*matrix.Matrix, error) {
 }
 
 func (e *EseriesMel) discoverArray() error {
-	systems, err := e.Client.GetStorageSystems()
+	array, err := e.Client.DiscoverArray(e.Logger)
 	if err != nil {
 		return err
 	}
 
-	if len(systems) == 0 {
-		return errs.New(errs.ErrNoInstance, "no storage system found")
-	}
-
-	if len(systems) > 1 {
-		e.Logger.Warn("multiple systems found, using first one", slog.Int("count", len(systems)))
-	}
-
-	system := systems[0]
-	e.arrayID = system.Get("id").ClonedString()
-	e.arrayName = system.Get("name").ClonedString()
-
-	if e.arrayID == "" {
-		return errs.New(errs.ErrNoInstance, "system missing id")
-	}
-
-	if e.arrayName == "" {
-		e.arrayName = e.arrayID
-	}
+	e.arrayID = array.ID
+	e.arrayName = array.Name
 
 	mat := e.Matrix[e.Object]
 	mat.SetGlobalLabel("array", e.arrayName)
-	mat.SetGlobalLabel("chassis_serial", system.Get("chassisSerialNumber").ClonedString())
+	mat.SetGlobalLabel("chassis_serial", array.System.Get("chassisSerialNumber").ClonedString())
 
 	if version, err := e.Client.GetManagementVersion(e.arrayID); err != nil {
 		e.Logger.Warn("failed to fetch management version, keeping previous value", slogx.Err(err))
@@ -587,14 +570,7 @@ func (e *EseriesMel) pollData(mat *matrix.Matrix, events []gjson.Result) uint64 
 				slog.String("key", instKey))
 		}
 
-		instance := mat.GetInstance(instKey)
-		if instance == nil {
-			var err error
-			if instance, err = mat.NewInstance(instKey); err != nil {
-				e.Logger.Error("failed to create instance", slogx.Err(err), slog.String("key", instKey))
-				continue
-			}
-		}
+		instance, _ := mat.GetOrCreateInstance(instKey)
 		instance.SetExportable(true)
 
 		// Labels must come from the same occurrence as the metric value, so only

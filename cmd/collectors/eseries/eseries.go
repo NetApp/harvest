@@ -187,32 +187,13 @@ func (e *ESeries) InitMatrix() {
 }
 
 func (e *ESeries) PollCounter() (map[string]*matrix.Matrix, error) {
-	var err error
-
-	systems, err := e.Client.GetStorageSystems()
+	array, err := e.Client.DiscoverArray(e.Logger)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(systems) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no storage system found")
-	}
-
-	if len(systems) > 1 {
-		e.Logger.Warn("multiple systems found, using first one", slog.Int("count", len(systems)))
-	}
-
-	system := systems[0]
-	e.arrayID = system.Get("id").ClonedString()
-	e.arrayName = system.Get("name").ClonedString()
-
-	if e.arrayID == "" {
-		return nil, errs.New(errs.ErrNoInstance, "system missing id")
-	}
-
-	if e.arrayName == "" {
-		e.arrayName = e.arrayID
-	}
+	e.arrayID = array.ID
+	e.arrayName = array.Name
 
 	// Store arrayID in Params for plugin access (not exported as global label)
 	if e.Params != nil {
