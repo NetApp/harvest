@@ -1,6 +1,53 @@
 package collectors
 
-import "github.com/netapp/harvest/v2/pkg/matrix"
+import (
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"log/slog"
+)
+
+const TimestampMetricName = "timestamp"
+
+// CounterOverride returns the configured property override for counter.
+func CounterOverride(params *node.Node, counter string) string {
+	if params == nil {
+		return ""
+	}
+	if override := params.GetChildS("override"); override != nil {
+		return override.GetChildContentS(counter)
+	}
+	return ""
+}
+
+// SetupPerfMatrix initializes matrix state shared by REST-based performance collectors.
+func SetupPerfMatrix(mat, metadata *matrix.Matrix, params *node.Node, clusterName, objectName string) {
+	mat.Object = objectName
+	mat.SetGlobalLabel("cluster", clusterName)
+	if params != nil {
+		if labels := params.GetChildS("labels"); labels != nil {
+			for _, label := range labels.GetChildren() {
+				mat.SetGlobalLabel(label.GetNameS(), label.GetContentS())
+			}
+		}
+	}
+	_, _ = metadata.NewMetricUint64("skips")
+	_, _ = metadata.NewMetricUint64("numPartials")
+}
+
+// EnsureTimestampMetric creates the raw, non-exportable per-instance timestamp metric.
+func EnsureTimestampMetric(mat *matrix.Matrix, logger *slog.Logger) {
+	if mat.GetMetric(TimestampMetricName) != nil {
+		return
+	}
+	metric, err := mat.NewMetricFloat64(TimestampMetricName)
+	if err != nil {
+		logger.Error("add timestamp metric", slogx.Err(err))
+		return
+	}
+	metric.SetProperty("raw")
+	metric.SetExportable(false)
+}
 
 // GetMetric retrieves the metric associated with the given key from the current matrix (curMat).
 // If the metric does not exist in curMat, it is created with the provided display settings.

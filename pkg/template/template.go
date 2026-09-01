@@ -9,16 +9,12 @@ import (
 // Users can rename a metric with "=>" (e.g., some_long_metric_name => short).
 // Trailing "^" characters are ignored/cleaned as they have special meaning in some collectors.
 func ParseMetric(rawName string) (string, string, string, string) {
-	var (
-		name, display string
-		values        []string
-	)
+	var name, display string
 	metricType := ""
 	// Ex: last_transfer_duration(duration) => last_transfer_duration
-	if values = strings.SplitN(rawName, "=>", 2); len(values) == 2 {
-		name = strings.TrimSpace(values[0])
-		display = strings.TrimSpace(values[1])
-		name, metricType = ParseMetricType(name)
+	if before, after, renamed := splitRename(rawName); renamed {
+		display = after
+		name, metricType = ParseMetricType(before)
 	} else {
 		name = rawName
 		display = strings.ReplaceAll(rawName, ".", "_")
@@ -34,6 +30,33 @@ func ParseMetric(rawName string) (string, string, string, string) {
 	}
 
 	return name, display, "float", metricType
+}
+
+// splitRename splits the "name => display" rename form shared by every counter
+// template, returning the name, the display name, and whether a rename was
+// present. When rawName carries no "=>" the third result is false, the name is
+// rawName unchanged and the display is empty. Both halves are whitespace
+// trimmed, so "a=>b" and "a => b" parse identically.
+func splitRename(rawName string) (string, string, bool) {
+	before, after, found := strings.Cut(rawName, "=>")
+	if !found {
+		return rawName, "", false
+	}
+	return strings.TrimSpace(before), strings.TrimSpace(after), true
+}
+
+// SplitMetricRename returns a counter's name and display name. Unlike ParseMetric
+// it applies no display normalization and no "^"/"^^" sigil or "(type)" handling:
+// when rawName carries no rename it is returned as both name and display, so names
+// keep any "." and "-" characters. Used by the unix and simple collectors, whose
+// metric names legitimately contain those characters. A degenerate rename with an
+// empty half ("a =>", "=> b") is treated as no rename at all.
+func SplitMetricRename(rawName string) (string, string) {
+	name, display, renamed := splitRename(rawName)
+	if !renamed || name == "" || display == "" {
+		return rawName, rawName
+	}
+	return name, display
 }
 
 func ParseMetricType(metricName string) (string, string) {

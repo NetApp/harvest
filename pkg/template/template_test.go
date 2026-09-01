@@ -66,3 +66,72 @@ func TestHandleArrayFormat(t *testing.T) {
 		}
 	}
 }
+
+func TestSplitMetricRename(t *testing.T) {
+	tests := []struct {
+		rawName string
+		name    string
+		display string
+	}{
+		{rawName: "cpu => cpu_percent", name: "cpu", display: "cpu_percent"},
+		// No surrounding whitespace parses the same as the spaced form, matching
+		// ParseMetric. It previously fell through unparsed, yielding a metric
+		// literally named "cpu=>cpu_percent".
+		{rawName: "cpu=>cpu_percent", name: "cpu", display: "cpu_percent"},
+		{rawName: "cpu\t=>\tcpu_percent", name: "cpu", display: "cpu_percent"},
+		{rawName: "cpu  =>  cpu_percent", name: "cpu", display: "cpu_percent"},
+		// No rename: the name is its own display, with "." and "-" preserved.
+		{rawName: "cpu", name: "cpu", display: "cpu"},
+		{rawName: "io.read-bytes", name: "io.read-bytes", display: "io.read-bytes"},
+		{rawName: "", name: "", display: ""},
+		// Degenerate renames fall back to the raw string rather than producing an
+		// empty name or display.
+		{rawName: "cpu =>", name: "cpu =>", display: "cpu =>"},
+		{rawName: "=> cpu_percent", name: "=> cpu_percent", display: "=> cpu_percent"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.rawName, func(t *testing.T) {
+			name, display := SplitMetricRename(test.rawName)
+			if name != test.name || display != test.display {
+				t.Fatalf("SplitMetricRename(%q) = (%q, %q), want (%q, %q)", test.rawName, name, display, test.name, test.display)
+			}
+		})
+	}
+}
+
+// TestParseMetric locks in ParseMetric's behavior now that it shares its rename
+// splitting with SplitMetricRename.
+func TestParseMetric(t *testing.T) {
+	tests := []struct {
+		rawName    string
+		name       string
+		display    string
+		kind       string
+		metricType string
+	}{
+		{rawName: "cpu", name: "cpu", display: "cpu", kind: "float"},
+		{rawName: "io.read-bytes", name: "io.read-bytes", display: "io_read_bytes", kind: "float"},
+		{rawName: "some_long_name => short", name: "some_long_name", display: "short", kind: "float"},
+		{rawName: "some_long_name=>short", name: "some_long_name", display: "short", kind: "float"},
+		{
+			rawName: "last_transfer_duration(duration) => ltd", name: "last_transfer_duration",
+			display: "ltd", kind: "float", metricType: "duration",
+		},
+		{rawName: "^^name", name: "name", display: "name", kind: "key"},
+		{rawName: "^^name => renamed", name: "name", display: "renamed", kind: "key"},
+		{rawName: "^label", name: "label", display: "label", kind: "label"},
+		{rawName: "^label => renamed", name: "label", display: "renamed", kind: "label"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.rawName, func(t *testing.T) {
+			name, display, kind, metricType := ParseMetric(test.rawName)
+			if name != test.name || display != test.display || kind != test.kind || metricType != test.metricType {
+				t.Fatalf("ParseMetric(%q) = (%q, %q, %q, %q), want (%q, %q, %q, %q)",
+					test.rawName, name, display, kind, metricType,
+					test.name, test.display, test.kind, test.metricType)
+			}
+		})
+	}
+}

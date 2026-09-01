@@ -27,6 +27,7 @@ package zapiperf
 import (
 	"context"
 	"errors"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/externalserviceoperation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/fabricpool"
@@ -70,7 +71,6 @@ const (
 	objWorkloadDetailVolume = "workload_detail_volume"
 	objWorkloadClass        = "user_defined|system_defined"
 	objWorkloadVolumeClass  = "autovolume"
-	timestampMetricName     = "timestamp"
 )
 
 var workloadDetailMetrics = []string{"resource_latency"}
@@ -362,7 +362,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 	curMat.Reset()
 
-	timestamp := curMat.GetMetric(timestampMetricName)
+	timestamp := curMat.GetMetric(collectors.TimestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric") // @TODO errconfig??
 	}
@@ -782,7 +782,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta(timestampMetricName, prevMat, cachedData, z.allowPartialAggregation, z.Logger); err != nil {
+	if _, err = curMat.Delta(collectors.TimestampMetricName, prevMat, cachedData, z.allowPartialAggregation, z.Logger); err != nil {
 		z.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -850,7 +850,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, cachedData, prevMat, timestampMetricName, z.Logger)
+				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, z.Logger)
 			} else {
 				skips, err = curMat.Divide(key, metric.GetComment())
 			}
@@ -884,7 +884,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		if metric.GetProperty() == "rate" {
-			if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
+			if skips, err = curMat.Divide(orderedKeys[i], collectors.TimestampMetricName); err != nil {
 				z.Logger.Error(
 					"Calculate rate",
 					slogx.Err(err),
@@ -1140,7 +1140,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	for key, counter := range counters {
 
 		// override counter properties from template
-		if p := z.GetOverride(key); p != "" {
+		if p := collectors.CounterOverride(z.Params, key); p != "" {
 			counter.SetChildContentS("properties", p)
 		}
 
@@ -1238,14 +1238,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
-	if !oldMetrics.Has(timestampMetricName) {
-		m, err := mat.NewMetricFloat64(timestampMetricName)
-		if err != nil {
-			z.Logger.Error("add timestamp metric", slogx.Err(err))
-		}
-		m.SetProperty("raw")
-		m.SetExportable(false)
-	}
+	collectors.EnsureTimestampMetric(mat, z.Logger)
 
 	// hack for workload objects, @TODO replace with a plugin
 	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
@@ -1328,7 +1321,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	for key := range oldMetrics.Iter() {
 		// temporary fix: prevent removing array counters
 		// @TODO
-		if key != timestampMetricName && !strings.Contains(key, ".") {
+		if key != collectors.TimestampMetricName && !strings.Contains(key, ".") {
 			mat.RemoveMetric(key)
 			z.Logger.Debug("removed metric", slog.String("key", key))
 		}
@@ -1535,14 +1528,6 @@ func (z *ZapiPerf) addCounter(counter *node.Node, name, display string, enabled 
 
 	}
 	return baseCounter
-}
-
-// GetOverride overrides a counter property
-func (z *ZapiPerf) GetOverride(counter string) string {
-	if o := z.Params.GetChildS("override"); o != nil {
-		return o.GetChildContentS(counter)
-	}
-	return ""
 }
 
 // parse ZAPI array counter (histogram), so we can store it

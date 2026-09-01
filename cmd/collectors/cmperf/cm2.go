@@ -162,7 +162,7 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, 
 			}
 		}
 
-		ov := c.GetOverride(name)
+		ov := collectors.CounterOverride(c.Params, name)
 		if ov != "" {
 			ctrType = ov
 		}
@@ -524,7 +524,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 
 	var metricCount uint64
 
-	tsMetric := curMat.MustGetMetric(timestampMetricName)
+	tsMetric := curMat.MustGetMetric(collectors.TimestampMetricName)
 
 	for _, inst := range oc.Data.Instances {
 		stringVals := make(map[string]string)

@@ -25,10 +25,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (w *Workload) Init(conf.Remote) error {
-	if err := w.InitAbc(); err != nil {
-		return err
-	}
-	return nil
+	return w.InitAbc()
 }
 
 func (w *Workload) createMetrics(data *matrix.Matrix) error {
@@ -41,10 +38,7 @@ func (w *Workload) createMetrics(data *matrix.Matrix) error {
 
 func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[w.Object]
-
-	// create metrics
-	err := w.createMetrics(data)
-	if err != nil {
+	if err := w.createMetrics(data); err != nil {
 		return nil, nil, err
 	}
 
@@ -55,6 +49,5 @@ func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", w.SLogger)
 		collectors.SetThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps", w.SLogger)
 	}
-
 	return nil, nil, nil
 }

@@ -17,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/pool"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/ssdcachestats"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/workload"
+	"github.com/netapp/harvest/v2/cmd/collectors/staticcounter"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -200,7 +201,7 @@ func findStaticCounterDefPath() string {
 }
 
 func (ep *EseriesPerf) buildCounters() {
-	staticCounterDef, err := LoadStaticCounterDefinitions(ep.Prop.Object, findStaticCounterDefPath(), ep.Logger)
+	staticCounterDef, err := staticcounter.LoadStaticCounterDefinitions(ep.Prop.Object, findStaticCounterDefPath(), ep.Logger)
 	if err != nil {
 		ep.Logger.Error("Failed to load static counter definitions", slogx.Err(err))
 	}

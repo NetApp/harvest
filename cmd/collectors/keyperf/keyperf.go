@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetopmetrics"
+	"github.com/netapp/harvest/v2/cmd/collectors/staticcounter"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -110,23 +111,9 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 }
 
 func (kp *KeyPerf) InitMatrix() error {
-	mat := kp.Matrix[kp.Object]
-	// init perf properties
 	kp.perfProp.latencyIoReqd = kp.LoadParam("latency_io_reqd", latencyIoReqd)
 	kp.perfProp.isCacheEmpty = true
-	// overwrite from abstract collector
-	mat.Object = kp.Prop.Object
-	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", kp.Remote.Name)
-	if kp.Params.HasChildS("labels") {
-		for _, l := range kp.Params.GetChildS("labels").GetChildren() {
-			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
-		}
-	}
-
-	// Add metadata metric for skips/numPartials
-	_, _ = kp.Metadata.NewMetricUint64("skips")
-	_, _ = kp.Metadata.NewMetricUint64("numPartials")
+	collectors.SetupPerfMatrix(kp.Matrix[kp.Object], kp.Metadata, kp.Params, kp.Remote.Name, kp.Prop.Object)
 	return nil
 }
 
@@ -158,7 +145,7 @@ func findStaticCounterDefPath() string {
 }
 
 func (kp *KeyPerf) buildCounters() {
-	staticCounterDef, err := LoadStaticCounterDefinitions(kp.Prop.Object, findStaticCounterDefPath(), kp.Logger)
+	staticCounterDef, err := staticcounter.LoadStaticCounterDefinitions(kp.Prop.Object, findStaticCounterDefPath(), kp.Logger)
 	if err != nil {
 		// It's acceptable to continue even if there are errors, as the remaining counters will still be processed.
 		// Any counters that require counter metadata will be skipped.

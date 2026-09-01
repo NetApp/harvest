@@ -30,13 +30,12 @@ import (
 )
 
 const (
-	latencyIoReqd       = 0
-	defaultBatchSize    = 500
-	arrayKeyToken       = "#"
-	subLabelToken       = "."
-	timestampMetricName = "timestamp"
-	endpoint            = "api/private/cli"
-	keyToken            = "?#"
+	latencyIoReqd    = 0
+	defaultBatchSize = 500
+	arrayKeyToken    = "#"
+	subLabelToken    = "."
+	endpoint         = "api/private/cli"
+	keyToken         = "?#"
 )
 
 type StatPerf struct {
@@ -141,23 +140,9 @@ func (s *StatPerf) loadFilter() string {
 }
 
 func (s *StatPerf) InitMatrix() error {
-	mat := s.Matrix[s.Object]
-	// init perf properties
 	s.perfProp.latencyIoReqd = s.LoadParam("latency_io_reqd", latencyIoReqd)
 	s.perfProp.isCacheEmpty = true
-	// overwrite from abstract collector
-	mat.Object = s.Prop.Object
-	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", s.Remote.Name)
-	if s.Params.HasChildS("labels") {
-		for _, l := range s.Params.GetChildS("labels").GetChildren() {
-			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
-		}
-	}
-
-	// Add metadata metric for skips/numPartials
-	_, _ = s.Metadata.NewMetricUint64("skips")
-	_, _ = s.Metadata.NewMetricUint64("numPartials")
+	collectors.SetupPerfMatrix(s.Matrix[s.Object], s.Metadata, s.Params, s.Remote.Name, s.Prop.Object)
 	return nil
 }
 
@@ -247,7 +232,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 		name := c.Name
 		dataType := c.Type
 
-		if p := s.GetOverride(name); p != "" {
+		if p := collectors.CounterOverride(s.Params, name); p != "" {
 			dataType = p
 		}
 
@@ -303,7 +288,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 					description: c.Description,
 					labelCount:  c.LabelCount,
 				}
-				if p := s.GetOverride(name); p != "" {
+				if p := collectors.CounterOverride(s.Params, name); p != "" {
 					s.perfProp.counterInfo[name].property = p
 				}
 			}
@@ -322,14 +307,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
-	if mat.GetMetric(timestampMetricName) == nil {
-		m, err := mat.NewMetricFloat64(timestampMetricName)
-		if err != nil {
-			s.Logger.Error("add timestamp metric", slogx.Err(err))
-		}
-		m.SetProperty("raw")
-		m.SetExportable(false)
-	}
+	collectors.EnsureTimestampMetric(mat, s.Logger)
 
 	// update metadata for collector logs
 	counterInst := s.Metadata.MustGetInstance("counter")
@@ -377,14 +355,6 @@ func (s *StatPerf) parseCounterProperty(name string, p string) string {
 	return property
 }
 
-// GetOverride override counter property
-func (s *StatPerf) GetOverride(counter string) string {
-	if o := s.Params.GetChildS("override"); o != nil {
-		return o.GetChildContentS(counter)
-	}
-	return ""
-}
-
 var retryRe = regexp.MustCompile(`retry request with less than (\d+)`)
 
 func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
@@ -402,7 +372,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoInstance, "no "+s.Object+" instances on cluster")
 	}
 
-	timestamp := s.Matrix[s.Object].GetMetric(timestampMetricName)
+	timestamp := s.Matrix[s.Object].GetMetric(collectors.TimestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
@@ -535,7 +505,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 		return 0, 0, 0
 	}
 
-	timestampMetric := curMat.MustGetMetric(timestampMetricName)
+	timestampMetric := curMat.MustGetMetric(collectors.TimestampMetricName)
 	perfRecords.ForEach(func(_, data gjson.Result) bool {
 		var instanceKey string
 		var instanceKeyValues []string
@@ -766,7 +736,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetName() != timestampMetricName && metric.Buckets() == nil {
+		if metric.GetName() != collectors.TimestampMetricName && metric.Buckets() == nil {
 			counter := s.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
@@ -863,7 +833,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, s.perfProp.latencyIoReqd, cachedData, prevMat, timestampMetricName, s.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, s.perfProp.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, s.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator)
 			}
@@ -902,7 +872,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		if counter != nil {
 			property := counter.property
 			if property == "rate" {
-				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
+				if skips, err = curMat.Divide(orderedKeys[i], collectors.TimestampMetricName); err != nil {
 					s.Logger.Error(
 						"Calculate rate",
 						slogx.Err(err),

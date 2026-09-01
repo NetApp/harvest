@@ -2,6 +2,7 @@ package cmperf
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/cmmetrics"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/cmperf/plugins/fabricpool"
@@ -33,7 +34,6 @@ import (
 const (
 	latencyIoReqd          = 0
 	arrayKeyToken          = "#"
-	timestampMetricName    = "timestamp"
 	qosWorkloadQuery       = "api/storage/qos/workloads"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
@@ -240,22 +240,9 @@ func (c *CmPerf) InitQOS() error {
 }
 
 func (c *CmPerf) InitMatrix() error {
-	mat := c.Matrix[c.Object]
-	// init perf properties
 	c.perfProp.latencyIoReqd = c.LoadParam("latency_io_reqd", latencyIoReqd)
 	c.perfProp.isCacheEmpty = true
-	// overwrite from abstract collector
-	mat.Object = c.Prop.Object
-	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", c.Remote.Name)
-	if c.Params.HasChildS("labels") {
-		for _, l := range c.Params.GetChildS("labels").GetChildren() {
-			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
-		}
-	}
-
-	_, _ = c.Metadata.NewMetricUint64("skips")
-	_, _ = c.Metadata.NewMetricUint64("numPartials")
+	collectors.SetupPerfMatrix(c.Matrix[c.Object], c.Metadata, c.Params, c.Remote.Name, c.Prop.Object)
 	return nil
 }
 
@@ -266,25 +253,9 @@ func (c *CmPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
 	// is because we might get instances in different batches
-	if mat.GetMetric(timestampMetricName) == nil {
-		m, err := mat.NewMetricFloat64(timestampMetricName)
-		if err != nil {
-			c.Logger.Error("add timestamp metric", slogx.Err(err))
-		} else {
-			m.SetProperty("raw")
-			m.SetExportable(false)
-		}
-	}
+	collectors.EnsureTimestampMetric(mat, c.Logger)
 
 	return nil, nil
-}
-
-// GetOverride override counter property
-func (c *CmPerf) GetOverride(counter string) string {
-	if o := c.Params.GetChildS("override"); o != nil {
-		return o.GetChildContentS(counter)
-	}
-	return ""
 }
 
 func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
@@ -297,7 +268,7 @@ func (c *CmPerf) PollData() (map[string]*matrix.Matrix, error) {
 		curMat       *matrix.Matrix
 	)
 
-	timestamp := c.Matrix[c.Object].GetMetric(timestampMetricName)
+	timestamp := c.Matrix[c.Object].GetMetric(collectors.TimestampMetricName)
 	if timestamp == nil {
 		return nil, errs.New(errs.ErrConfig, "missing timestamp metric")
 	}
@@ -390,7 +361,7 @@ func (c *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 	orderedDenominatorKeys := make([]string, 0, len(orderedDenominatorMetrics))
 
 	for key, metric := range curMat.GetMetrics() {
-		if metric.GetName() != timestampMetricName && metric.Buckets() == nil {
+		if metric.GetName() != collectors.TimestampMetricName && metric.Buckets() == nil {
 			counter := c.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
@@ -486,7 +457,7 @@ func (c *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, c.perfProp.latencyIoReqd, cachedData, prevMat, timestampMetricName, c.Logger)
+				skips, err = curMat.DivideWithThreshold(key, counter.denominator, c.perfProp.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, c.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator)
 			}
@@ -525,7 +496,7 @@ func (c *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 		if counter != nil {
 			property := counter.counterType
 			if property == "rate" {
-				if skips, err = curMat.Divide(orderedKeys[i], timestampMetricName); err != nil {
+				if skips, err = curMat.Divide(orderedKeys[i], collectors.TimestampMetricName); err != nil {
 					c.Logger.Error(
 						"Calculate rate",
 						slogx.Err(err),

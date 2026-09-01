@@ -5,9 +5,8 @@
 package certificate
 
 import (
-	"crypto/x509"
-	"encoding/pem"
 	"errors"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/collector"
@@ -140,61 +139,23 @@ func (c *Certificate) refreshAdminSerial() {
 }
 
 func (c *Certificate) setCertificateIssuerType(instance *matrix.Instance, certificateInstanceKey string) {
-	var (
-		cert *x509.Certificate
-		err  error
-	)
-
 	certificatePEM := instance.GetLabel("certificatePEM")
 
 	if certificatePEM == "" {
 		c.SLogger.Debug("Certificate is not found", slog.String("certificateInstanceKey", certificateInstanceKey))
 		instance.SetLabel("certificateIssuerType", "unknown")
-	} else {
-		instance.SetLabel("certificateIssuerType", "self_signed")
-		certDecoded, _ := pem.Decode([]byte(certificatePEM))
-		if certDecoded == nil {
-			c.SLogger.Warn("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed")
-			instance.SetLabel("certificateIssuerType", "unknown")
-			return
-		}
-
-		if cert, err = x509.ParseCertificate(certDecoded.Bytes); err != nil {
-			c.SLogger.Warn("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed", slogx.Err(err))
-			instance.SetLabel("certificateIssuerType", "unknown")
-			return
-		}
-
-		// Verifies if certificate is self-issued. This is true if the subject and issuer are equal.
-		if cert.Subject.String() == cert.Issuer.String() {
-			// Verifies if the certificate is self-signed. This is true if the certificate is signed using its own public key.
-			if err = cert.CheckSignature(x509.SHA256WithRSA, cert.RawTBSCertificate, cert.Signature); err != nil {
-				// Any verification exception means it is not signed with the give key. i.e. not self-signed
-				instance.SetLabel("certificateIssuerType", "ca_signed")
-			}
-		} else {
-			instance.SetLabel("certificateIssuerType", "ca_signed")
-		}
+		return
 	}
+
+	issuerType, err := collectors.CertificateIssuerType(certificatePEM)
+	if err != nil {
+		c.SLogger.Warn("PEM formatted object is not an X.509 certificate. Only PEM formatted X.509 certificate input is allowed", slogx.Err(err))
+	}
+	instance.SetLabel("certificateIssuerType", issuerType)
 }
 
 func (c *Certificate) setCertificateValidity(unixTime time.Time, instance *matrix.Instance) {
-	instance.SetLabel("certificateExpiryStatus", "unknown")
-
-	// find difference from unix Time
-	timestampDiff := time.Until(unixTime).Hours()
-
-	if timestampDiff <= 0 {
-		instance.SetLabel("certificateExpiryStatus", "expired")
-	} else {
-		// daysRemaining will be more than 0 if it has reached this point, convert to days
-		daysRemaining := timestampDiff / 24
-		if daysRemaining < 60 {
-			instance.SetLabel("certificateExpiryStatus", "expiring")
-		} else {
-			instance.SetLabel("certificateExpiryStatus", "active")
-		}
-	}
+	instance.SetLabel("certificateExpiryStatus", collectors.CertificateExpiryStatus(unixTime, time.Now()))
 }
 
 func (c *Certificate) GetAdminVserver() (string, error) {
