@@ -997,7 +997,10 @@ func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
 	}
 
 	deleteHref := "api/cluster/counter-cache/manifests/" + url.PathEscape(name)
-	if _, err := connection.DeleteRest(nil, deleteHref); err != nil {
+	deleteStart := time.Now()
+	_, err = connection.DeleteRest(nil, deleteHref)
+	deleteDuration := time.Since(deleteStart)
+	if err != nil {
 		// On first-time bootstrap, no manifest exists yet, so ONTAP returns 404.
 		// That's expected and not an error; anything else should still fail.
 		if restErr, ok := errors.AsType[*errs.RestError](err); !ok || restErr.StatusCode != http.StatusNotFound {
@@ -1007,11 +1010,19 @@ func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
 	}
 
 	postHref := "api/cluster/counter-cache/manifests"
-	if _, err := connection.PostRest(nil, postHref, manifest); err != nil {
+	postStart := time.Now()
+	_, err = connection.PostRest(nil, postHref, manifest)
+	postDuration := time.Since(postStart)
+	if err != nil {
 		return fmt.Errorf("post CmPerf manifest %s: %w", name, err)
 	}
 
-	logger.Info("posted CmPerf manifest", slog.String("name", name))
+	logger.Info(
+		"posted CmPerf manifest",
+		slog.String("name", name),
+		slog.String("deleteMs", deleteDuration.Round(time.Millisecond).String()),
+		slog.String("postMs", postDuration.Round(time.Millisecond).String()),
+	)
 	return nil
 }
 
