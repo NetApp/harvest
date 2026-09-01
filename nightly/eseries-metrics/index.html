@@ -2499,6 +2499,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#eseries_mel_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_mel_events
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#eseries_pool_block_size" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_pool_block_size
@@ -4392,6 +4401,15 @@
   <a href="#eseries_interface_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       eseries_interface_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eseries_mel_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      eseries_mel_events
     </span>
   </a>
   
@@ -8567,6 +8585,26 @@ E-Series Version: 11.80.0
 </tbody>
 </table>
 </div>
+<h3 id="eseries_mel_events">eseries_mel_events<a class="headerlink" href="#eseries_mel_events" title="Permanent link">&para;</a></h3>
+<p>A Major Event Log (MEL) entry recorded by the array — E-Series' record of significant events such as hardware failures and configuration changes — labeled with its event type, location, component, and severity; the value is the timestamp of its most recent occurrence.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>storage-systems/{array_id}/mel-events</code></td>
+<td><code>timeStamp</code></td>
+<td>conf/eseriesmel/11.80.0/events.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="eseries_pool_block_size">eseries_pool_block_size<a class="headerlink" href="#eseries_pool_block_size" title="Permanent link">&para;</a></h3>
 <p>Recommended block size of the storage pool in bytes</p>
 <table>
