@@ -776,15 +776,15 @@ func checkClusterExists(config auth.TSDBConfig, cluster, clusterMatch string) (*
 				sb.WriteString("\n- ")
 				sb.WriteString(c)
 			}
-			clusterList = fmt.Sprintf("\n\n**Active clusters (%d):**%s", len(names), sb.String()) //nolint:gosec
+			clusterList = fmt.Sprintf("\n\n**Active clusters (%d):**%s", len(names), sb.String())
 		}
 	}
 
 	var msg string
 	if cluster != "" {
-		msg = fmt.Sprintf("❌ **Cluster %q not found** in the connected TSDB.\n\nNo metrics with `cluster=%q` exist. Check the cluster name — it may differ from the poller name.%s", cluster, cluster, clusterList) //nolint:gosec
+		msg = fmt.Sprintf("❌ **Cluster %q not found** in the connected TSDB.\n\nNo metrics with `cluster=%q` exist. Check the cluster name — it may differ from the poller name.%s", cluster, cluster, clusterList)
 	} else {
-		msg = fmt.Sprintf("❌ **No clusters matched pattern `%s`** in the connected TSDB.\n\nNo metrics with `cluster=~%q` exist.%s", clusterMatch, clusterMatch, clusterList) //nolint:gosec
+		msg = fmt.Sprintf("❌ **No clusters matched pattern `%s`** in the connected TSDB.\n\nNo metrics with `cluster=~%q` exist.%s", clusterMatch, clusterMatch, clusterList)
 	}
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{&mcp.TextContent{Text: msg}},
@@ -962,20 +962,20 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 				icon = "🚨"
 			}
 
-			fmt.Fprintf(&healthReport, "%s **%s**: %d issues found - %s\n", icon, check.name, len(resultSlice), check.description) //nolint:gosec
+			fmt.Fprintf(&healthReport, "%s **%s**: %d issues found - %s\n", icon, check.name, len(resultSlice), check.description)
 
 			// Add details if requested
 			if args.IncludeDetails {
 				healthReport.WriteString("   Details:\n")
 				for i, result := range resultSlice {
 					if i >= 5 { // Limit to first 5 for readability
-						fmt.Fprintf(&healthReport, "   ... and %d more\n", len(resultSlice)-5) //nolint:gosec
+						fmt.Fprintf(&healthReport, "   ... and %d more\n", len(resultSlice)-5)
 						break
 					}
 					if resultMap, ok := result.(map[string]any); ok {
 						if metric, ok := resultMap["metric"].(map[string]any); ok {
 							name := extractIdentifiers(metric)
-							fmt.Fprintf(&healthReport, "   - %s\n", name) //nolint:gosec
+							fmt.Fprintf(&healthReport, "   - %s\n", name)
 						}
 					}
 				}
