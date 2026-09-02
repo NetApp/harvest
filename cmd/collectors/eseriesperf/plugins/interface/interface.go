@@ -55,12 +55,14 @@ func (n *InterfaceName) Init(remote conf.Remote) error {
 }
 
 func (n *InterfaceName) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	n.client.Metadata.Reset()
+
 	data := dataMap[n.Object]
 
 	arrayID := n.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		n.SLogger.Warn("arrayID not found in ParentParams, skipping interface names")
-		return nil, nil, nil
+		return nil, n.client.Metadata, nil
 	}
 
 	if n.schedule >= n.PluginInvocationRate {
@@ -71,7 +73,7 @@ func (n *InterfaceName) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 
 	n.applyInterfaceLabels(data)
 
-	return nil, nil, nil
+	return nil, n.client.Metadata, nil
 }
 
 func (n *InterfaceName) refreshInterfaceLabels(arrayID string) {

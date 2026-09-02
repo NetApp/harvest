@@ -57,12 +57,14 @@ func (c *Controller) Init(remote conf.Remote) error {
 }
 
 func (c *Controller) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	c.client.Metadata.Reset()
+
 	data := dataMap[c.Object]
 
 	arrayID := c.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		c.SLogger.Warn("arrayID not found in ParentParams, skipping controller labels")
-		return nil, nil, nil
+		return nil, c.client.Metadata, nil
 	}
 
 	if c.schedule >= c.PluginInvocationRate {
@@ -73,7 +75,7 @@ func (c *Controller) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 	c.applyControllerLabels(data)
 
-	return nil, nil, nil
+	return nil, c.client.Metadata, nil
 }
 
 func (c *Controller) refreshControllerLabels(arrayID string) {

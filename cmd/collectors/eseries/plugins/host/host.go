@@ -47,20 +47,22 @@ func (h *Host) Init(remote conf.Remote) error {
 }
 
 func (h *Host) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	h.client.Metadata.Reset()
+
 	data := dataMap[h.Object]
 
 	// Get arrayID from ParentParams
 	arrayID := h.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		h.SLogger.Warn("arrayID not found in ParentParams, skipping host enrichment")
-		return nil, nil, nil
+		return nil, h.client.Metadata, nil
 	}
 
 	// Build hosts lookup map
 	hostClusterNames, err := hostcluster.BuildHostClusterLookup(h.client, arrayID, h.SLogger)
 	if err != nil {
 		h.SLogger.Warn("Failed to build host lookup", slogx.Err(err))
-		return nil, nil, nil
+		return nil, h.client.Metadata, nil
 	}
 
 	// update host instances with host cluster names
@@ -73,5 +75,5 @@ func (h *Host) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		}
 	}
 
-	return nil, nil, nil
+	return nil, h.client.Metadata, nil
 }

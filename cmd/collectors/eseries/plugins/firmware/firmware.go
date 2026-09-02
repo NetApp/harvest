@@ -67,21 +67,23 @@ func (f *Firmware) Init(remote conf.Remote) error {
 }
 
 func (f *Firmware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	f.client.Metadata.Reset()
+
 	arrayID := f.ParentParams.GetChildContentS("array_id")
 	if arrayID == "" {
 		f.SLogger.Warn("array_id not found in ParentParams, skipping firmware collection")
-		return nil, nil, nil
+		return nil, f.client.Metadata, nil
 	}
 
 	query := rest.NewURLBuilder().APIPath("firmware/embedded-firmware/{array_id}/versions").ArrayID(arrayID).Build()
 	results, err := f.client.Fetch(f.client.APIPath+"/"+query, nil)
 	if err != nil {
 		f.SLogger.Error("Failed to fetch firmware versions", slogx.Err(err))
-		return nil, nil, err
+		return nil, f.client.Metadata, err
 	}
 	if len(results) == 0 {
 		f.SLogger.Warn("No firmware version data returned")
-		return nil, nil, nil
+		return nil, f.client.Metadata, nil
 	}
 
 	f.data.PurgeInstances()
@@ -90,10 +92,9 @@ func (f *Firmware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 
 	f.processCodeVersions(f.data, arrayID, results[0])
 
-	metadata := &collector.Metadata{}
-	metadata.PluginInstances.Store(uint64(len(f.data.GetInstances())))
+	f.client.Metadata.PluginInstances.Store(uint64(len(f.data.GetInstances())))
 
-	return []*matrix.Matrix{f.data}, metadata, nil
+	return []*matrix.Matrix{f.data}, f.client.Metadata, nil
 }
 
 func (f *Firmware) processCodeVersions(mat *matrix.Matrix, arrayID string, response gjson.Result) {
