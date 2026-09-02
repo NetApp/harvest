@@ -484,10 +484,17 @@ func (c *AbstractCollector) Start(
 					pluginStart = time.Now()
 					dataTaskInst := c.Metadata.MustGetInstance(task.Name)
 
+					var totals pluginTotals
+
 					for _, v := range c.Plugins {
 						for _, plg := range v {
 							plg.SetRemote(c.Remote)
 							pluginData, pluginMetadata, err := plg.Run(data)
+
+							// Add the totals before the code examines err. A plugin can do API
+							// calls and then fail. The metadata must show these API calls.
+							totals.add(pluginMetadata)
+
 							if err != nil {
 								c.Logger.Error("", slogx.Err(err), slog.String("plugin", plg.GetName()))
 								continue
@@ -495,13 +502,10 @@ func (c *AbstractCollector) Start(
 							if pluginData != nil {
 								results = append(results, pluginData...)
 							}
-							if pluginMetadata != nil {
-								c.Metadata.MustAddValueUint64("bytesRx", dataTaskInst, pluginMetadata.BytesRx.Load())
-								c.Metadata.MustAddValueUint64("numCalls", dataTaskInst, pluginMetadata.NumCalls.Load())
-								c.Metadata.MustSetValueUint64("pluginInstances", dataTaskInst, pluginMetadata.PluginInstances.Load())
-							}
 						}
 					}
+
+					totals.write(c.Metadata, dataTaskInst)
 
 					pluginTime = time.Since(pluginStart)
 					c.Metadata.MustSetValueInt64("plugin_time", dataTaskInst, pluginTime.Microseconds())
