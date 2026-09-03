@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Aug-31
+Creation Date : 2026-Sep-03
 E-Series Version: 11.80.0
 ```
 
@@ -1503,6 +1503,17 @@ A Major Event Log (MEL) entry recorded by the array — E-Series' record of sign
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `storage-systems/{array_id}/mel-events` | `timeStamp` | conf/eseriesmel/11.80.0/events.yaml |
+
+The `eseries_mel_events` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: MEL Events | Highlights | stat | [Distinct Events](/d/eseries-mel/e-series3a-mel events?orgId=1&viewPanel=4) |
+| E-Series: MEL Events | Highlights | piechart | [Events by Severity](/d/eseries-mel/e-series3a-mel events?orgId=1&viewPanel=5) |
+| E-Series: MEL Events | Highlights | table | [MEL Events (${__from:date:YYYY-MM-DD HH:mm} to ${__to:date:YYYY-MM-DD HH:mm})](/d/eseries-mel/e-series3a-mel events?orgId=1&viewPanel=6) |
+///
+
 
 
 ### eseries_pool_block_size

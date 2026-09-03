@@ -1070,6 +1070,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/smb.json":                2,
 		"cmode/switch.json":             2,
 		"cmode/workload.json":           2,
+		"eseries/mel.json":              2,
 		"storagegrid/fabricpool.json":   2,
 	}
 	// count the number of expanded sections in the dashboard and ensure num expanded = 1
@@ -1558,6 +1559,7 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 	}{
 		"cmode/auditlog.json": {"now-24h", "now"},
 		"cmode/mav.json":      {"now-24h", "now"},
+		"eseries/mel.json":    {"now-24h", "now"},
 		"default":             {"now-3h", "now"},
 	}
 
