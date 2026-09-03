@@ -303,7 +303,7 @@ No SDK or other requirements.
 
 The EseriesMel collector exports a single metric, `eseries_mel_events`. Its value is the epoch timestamp of the event's most recent occurrence.
 
-- Metric labels: `array`, `chassis_serial`, `component_type`, `event_type`, `location`, `management_version`, `message`, `severity`
+- Metric labels: `array`, `chassis_serial`, `component_type`, `datacenter`, `event_type`, `location`, `management_version`, `message`, `severity`
 - Repeated occurrences of the same `(event_type, location)` pair collapse into a single series carrying the latest timestamp.
 
 Example:
@@ -322,6 +322,7 @@ Each poll, the collector first asks `mel-events/available` for the array's curre
 - Each subsequent poll reads only the events between the last cursor position and the new tip.
 - A series is exported only for the poll in which its event is read. Once the cursor moves past it, the event is not retained on later polls.
 - If the array purges events before the collector reads them, the collector logs a warning and realigns the cursor to the new range start; the missed events cannot be recovered.
+- If the MEL sequence counter rolls back (for example after a controller replacement or log reset), the collector logs a warning and resets the cursor to the start of the new range.
 
 ### EseriesMel Parameters
 
@@ -440,11 +441,14 @@ export_options:
 
 `events` is a required allow-list: only event types listed here are collected, so adding coverage for a new event means adding an entry. Each entry's `name` becomes the exported `message` label. The shipped catalog groups 60 events by comment into Availability, Capacity, Configuration, Performance, and Protection.
 
-To see the full shipped catalog, look at [conf/eseriesmel/11.80.0/events.yaml](https://github.com/NetApp/harvest/blob/main/conf/eseriesmel/11.80.0/events.yaml). To find event types available on a live array, query the array directly:
+To see the full shipped catalog, look at [conf/eseriesmel/11.80.0/events.yaml](https://github.com/NetApp/harvest/blob/main/conf/eseriesmel/11.80.0/events.yaml). To find event types available on a live array, first read the sequence-number range, then fetch a page from the range start (Harvest itself starts at the range tip and does not replay history):
 
 ```
 curl --insecure --user "user:password" \
-  'https://10.0.1.100:8443/devmgr/v2/storage-systems/1/mel-events?startSequenceNumber=-1&count=100'
+  'https://10.0.1.100:8443/devmgr/v2/storage-systems/1/mel-events/available'
+
+curl --insecure --user "user:password" \
+  'https://10.0.1.100:8443/devmgr/v2/storage-systems/1/mel-events?startSequenceNumber=0&count=100'
 ```
 
 ### EseriesMel Counters
@@ -458,9 +462,9 @@ Counters define which metrics and labels to collect from the REST API response. 
 **Counter Prefixes:**
 
 - `^^` - **Instance key**: Uniquely identifies each instance (required, must have at least one)
-- `^` - **Instance label**: String metadata exported to `<object>_labels` metric
+- `^` - **Instance label**: String metadata attached to `eseries_mel_events` (there is no `eseries_mel_labels` metric)
 
-Unlike other collectors, EseriesMel has no analogue of a bare, unprefixed numeric counter: it exports a single `eseries_mel_events` metric that the collector sets programmatically, so every counter line must use `^^` or `^`.
+Unlike other collectors, EseriesMel has no analogue of a bare, unprefixed numeric counter: it exports a single `eseries_mel_events` metric that the collector sets programmatically, so every counter line must use `^^` or `^`. The shipped template lists those labels under `export_options.instance_keys`, so they appear on `eseries_mel_events` itself.
 
 **Arrow Syntax (`=>`):**
 
@@ -478,7 +482,7 @@ counters:
 
 Some exported label values differ from the raw API response:
 
-- `severity` strips the API's `priority` prefix (e.g. `priorityCritical` becomes `critical`).
+- `severity` maps known `priority*` API values to a short form (e.g. `priorityCritical` becomes `critical`). Unrecognized values are exported as-is.
 - `component_type` resolves the API's `relative` placeholder through `componentLocation.componentRelativeLocation.componentType`.
 - The API's `__UNDEFINED` sentinel, and an unresolvable `relative`, both export as `unknown`.
 
