@@ -1,7 +1,7 @@
 # Prepare E-Series Systems
 
 !!! note "Beta Feature"
-    E-Series monitoring support is new in Harvest and should be considered beta.
+    The EseriesMel collector (Major Event Log) is new in Harvest and should be considered beta.
     Feedback and bug reports are welcome on [GitHub Discussions](https://github.com/NetApp/harvest/discussions).
 
 NetApp E-Series storage systems with REST API support can be monitored directly by Harvest. This guide covers the setup required to prepare your E-Series array.
