@@ -107,7 +107,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<br>\n\nThis dashboard shows events **Harvest collected while running**, within the time range selected at the top right (default: last 24 hours). Events that occurred before Harvest started polling an array are not shown \u2014 the collector starts at the array's current log position and does not backfill history. How far back you can look is also bounded by your Prometheus retention.\n\nRequires both the [Eseries collector](https://netapp.github.io/harvest/nightly/configure-eseries/) (for array discovery, used by the Datacenter/Array filters above) and the [EseriesMel collector](https://netapp.github.io/harvest/nightly/configure-eseries/#eseriesmel-collector) (for events) to be enabled for the poller in Harvest configuration.",
+        "content": "<br>\n\nThis dashboard shows events **Harvest collected while running**, within the time range selected at the top right (default: last 24 hours). Events that occurred before Harvest started polling an array are not shown \u2014 the collector starts at the array's current log position and does not backfill history. How far back you can look is also bounded by your Prometheus retention.\n\nRequires both the [Eseries collector](https://netapp.github.io/harvest/latest/configure-eseries/) (for array discovery, used by the Datacenter/Array filters above) and the [EseriesMel collector](https://netapp.github.io/harvest/latest/configure-eseries/#eseriesmel-collector) (for events) to be enabled for the poller in Harvest configuration.",
         "mode": "markdown"
       },
       "pluginVersion": "12.3.2",
