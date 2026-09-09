@@ -436,9 +436,9 @@ func (m *Matrix) SetGlobalLabel(label, value string) {
 	m.globalLabels[label] = value
 }
 
-// SetGlobalLabels copies allLabels to globalLabels when the label does not exist in globalLabels.
+// SetGlobalLabelsIfAbsent copies allLabels to globalLabels when the label does not exist in globalLabels.
 // Use UpdateGlobalLabels instead when the source labels can change between polls.
-func (m *Matrix) SetGlobalLabels(allLabels map[string]string) {
+func (m *Matrix) SetGlobalLabelsIfAbsent(allLabels map[string]string) {
 	if allLabels == nil {
 		return
 	}
@@ -450,7 +450,7 @@ func (m *Matrix) SetGlobalLabels(allLabels map[string]string) {
 }
 
 // UpdateGlobalLabels copies allLabels to globalLabels, overwriting existing values.
-// Use SetGlobalLabels instead when existing values must be preserved.
+// Use SetGlobalLabelsIfAbsent instead when existing values must be preserved.
 func (m *Matrix) UpdateGlobalLabels(allLabels map[string]string) {
 	maps.Copy(m.globalLabels, allLabels)
 }

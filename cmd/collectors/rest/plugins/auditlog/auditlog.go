@@ -112,7 +112,7 @@ func (a *AuditLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 		return nil, nil, err
 	}
 	data := dataMap[a.Object]
-	a.data.SetGlobalLabels(data.GetGlobalLabels())
+	a.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	clusterTime, err := collectors.GetClusterTime(a.client, nil, a.SLogger)
 	if err != nil {

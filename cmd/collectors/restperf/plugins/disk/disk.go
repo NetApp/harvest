@@ -240,11 +240,11 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 
 	// Set all global labels from rest.go if already not exist
 	for a := range d.instanceLabels {
-		d.shelfData[a].SetGlobalLabels(data.GetGlobalLabels())
+		d.shelfData[a].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}
 
 	for a := range d.powerData {
-		d.powerData[a].SetGlobalLabels(data.GetGlobalLabels())
+		d.powerData[a].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}
 
 	// To display only local shelves in case of Metro Config cluster.

@@ -426,7 +426,7 @@ func (s *Sensor) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	s.RequestMetadata.Reset()
 
 	// Set all global labels if they don't already exist
-	s.data.SetGlobalLabels(data.GetGlobalLabels())
+	s.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	// Collect chassis fru show, so we can determine if a controller's PSUs are shared or not
 	nodeToNumNode, err := collectChassisFRU(s.client, s.Remote.Name, s.SLogger)

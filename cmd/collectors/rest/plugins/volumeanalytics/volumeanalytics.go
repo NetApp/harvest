@@ -126,7 +126,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	}
 	for k := range v.data {
 		// Set all global labels if already not exist
-		v.data[k].SetGlobalLabels(data.GetGlobalLabels())
+		v.data[k].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}
 
 	for instanceID, dataInstance := range data.GetInstances() {

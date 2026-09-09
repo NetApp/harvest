@@ -127,7 +127,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 	}
 
 	changeMat := changeLogMap[c.matrixName]
-	changeMat.SetGlobalLabels(data.GetGlobalLabels())
+	changeMat.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	object := data.Object
 	if c.changeLogConfig.Object == "" {
 		c.SLogger.Warn("ChangeLog is not supported. Missing correct configuration", slog.String("object", object))

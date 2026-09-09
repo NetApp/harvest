@@ -68,7 +68,7 @@ func (l *LLDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 	l.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	l.matrix.SetGlobalLabels(data.GetGlobalLabels())
+	l.matrix.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	data.Reset()
 

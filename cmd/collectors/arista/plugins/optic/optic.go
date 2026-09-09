@@ -73,7 +73,7 @@ func (o *Optic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 	o.matrix.Reset()
 
 	// Set all global labels if they don't already exist
-	o.matrix.SetGlobalLabels(data.GetGlobalLabels())
+	o.matrix.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	data.Reset()
 

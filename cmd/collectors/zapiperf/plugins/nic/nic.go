@@ -96,7 +96,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	n.data.Reset()
 
 	// Set all global labels from zapi.go if already not exist
-	n.data.SetGlobalLabels(data.GetGlobalLabels())
+	n.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	if read = data.GetMetric("rx_bytes"); read == nil {
 		return nil, nil, errs.New(errs.ErrNoMetric, "rx_bytes")
