@@ -38,7 +38,9 @@ func (f *Firmware) Init(remote conf.Remote) error {
 
 	duration, err := time.ParseDuration(clientTimeout)
 	if err != nil {
-		f.SLogger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
+		f.SLogger.Info("Using default timeout", slogx.Err(err),
+			slog.String("client_timeout", clientTimeout),
+			slog.String("timeout", rest.DefaultTimeout))
 		duration, _ = time.ParseDuration(rest.DefaultTimeout)
 	}
 

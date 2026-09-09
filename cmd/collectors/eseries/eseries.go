@@ -132,7 +132,9 @@ func (e *ESeries) InitClient() error {
 
 	duration, err := time.ParseDuration(clientTimeout)
 	if err != nil {
-		e.Logger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
+		e.Logger.Info("Using default timeout", slogx.Err(err),
+			slog.String("client_timeout", clientTimeout),
+			slog.String("timeout", rest.DefaultTimeout))
 		duration, _ = time.ParseDuration(rest.DefaultTimeout)
 	}
 

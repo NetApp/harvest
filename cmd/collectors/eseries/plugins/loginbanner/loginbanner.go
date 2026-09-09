@@ -58,7 +58,9 @@ func (l *LoginBanner) Init(remote conf.Remote) error {
 
 	duration, err := time.ParseDuration(clientTimeout)
 	if err != nil {
-		l.SLogger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
+		l.SLogger.Info("Using default timeout", slogx.Err(err),
+			slog.String("client_timeout", clientTimeout),
+			slog.String("timeout", rest.DefaultTimeout))
 		duration, _ = time.ParseDuration(rest.DefaultTimeout)
 	}
 
@@ -164,7 +166,7 @@ func (l *LoginBanner) applyState(wwn string, present bool) error {
 	if present {
 		value = 1.0
 	}
-	l.data.GetMetric(metricName).SetValueFloat64(inst, value)
+	l.data.MustGetMetric(metricName).SetValueFloat64(inst, value)
 	return nil
 }
 
