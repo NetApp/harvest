@@ -43,7 +43,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 
 	metricName := "labels"
 	volumeAggrMatrix := matrix.New(".Volume", "volume_aggr", "volume_aggr")
-	volumeAggrMatrix.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
+	volumeAggrMatrix.UpdateGlobalLabels(data.GetGlobalLabels())
 
 	metric, err := volumeAggrMatrix.NewMetricFloat64(metricName)
 	if err != nil {

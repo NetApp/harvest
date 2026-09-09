@@ -69,7 +69,6 @@ func (v *Version) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 	v.matrix.PurgeInstances()
 	v.matrix.Reset()
 
-	// Set all global labels if they don't already exist
 	v.matrix.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	data.Reset()

@@ -238,7 +238,6 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 	data := dataMap[d.Object]
 	d.RequestMetadata.Reset()
 
-	// Set all global labels from rest.go if already not exist
 	for a := range d.instanceLabels {
 		d.shelfData[a].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}

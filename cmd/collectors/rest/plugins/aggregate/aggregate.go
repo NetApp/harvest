@@ -89,7 +89,6 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
 	}
 
-	// Set all global labels if they do not already exist
 	aggrSpaceMat.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	a.collectObjectStoreData(aggrSpaceMat, data)

@@ -82,7 +82,6 @@ func (v *VscanPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 	v.vscanServer.PurgeInstances()
 	v.vscanServer.Reset()
 
-	// Set all global labels if they do not already exist
 	v.vscanServer.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	svmPoolMap := v.fetchPool(data)
