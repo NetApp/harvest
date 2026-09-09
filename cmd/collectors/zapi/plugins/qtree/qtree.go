@@ -164,7 +164,6 @@ func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 	q.data.PurgeInstances()
 	q.data.Reset()
 
-	// Set all global labels from zapi.go if already not exist
 	q.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	request = node.NewXMLS(q.query)

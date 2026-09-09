@@ -153,14 +153,13 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 		return nil, nil, err
 	}
 	for k := range h.data {
-		// Set all global labels if already not exist
 		h.data[k].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 		h.resolutionData[k].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}
 
 	// Initialize emsMatrix separately as it doesn't need to be stored or processed for resolution
 	emsMat := matrix.New(h.Parent+emsHealthMatrix, emsHealthMatrix, emsHealthMatrix)
-	emsMat.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
+	emsMat.UpdateGlobalLabels(data.GetGlobalLabels())
 	if err := h.initMatrix(emsHealthMatrix, "", map[string]*matrix.Matrix{emsHealthMatrix: emsMat}); err != nil {
 		h.SLogger.Warn("error while initializing emsHealthMatrix", slogx.Err(err))
 		return nil, nil, err

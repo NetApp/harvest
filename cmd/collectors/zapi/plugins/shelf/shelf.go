@@ -198,7 +198,6 @@ func (s *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 		instance.SetLabel("shelf", instance.GetLabel("shelf_id"))
 	}
 
-	// Set all global labels from zapi.go if already not exist
 	for a := range s.instanceLabels {
 		s.data[a].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}

@@ -71,7 +71,6 @@ func (s *SnapshotViolation) populateSnapshotViolation(dataMap map[string]*matrix
 	s.data.PurgeInstances()
 	s.data.Reset()
 
-	// Set all global labels from Rest.go if already not exist
 	s.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	// Map to store prefixes by svm key

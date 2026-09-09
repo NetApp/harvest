@@ -64,7 +64,6 @@ func (c *CDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	c.matrix.PurgeInstances()
 	c.matrix.Reset()
 
-	// Set all global labels if they don't already exist
 	c.matrix.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	data.Reset()

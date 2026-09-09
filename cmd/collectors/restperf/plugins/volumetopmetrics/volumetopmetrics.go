@@ -185,7 +185,6 @@ func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		return nil, nil, err
 	}
 	for k := range t.data {
-		// Set all global labels if already not exist
 		t.data[k].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}
 

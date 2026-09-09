@@ -64,7 +64,6 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	b.data.Reset()
 	b.client.Metadata.Reset()
 
-	// Set all global labels from Rest.go if already not exist
 	b.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	// request the buckets for each tenant

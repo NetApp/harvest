@@ -44,7 +44,6 @@ func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 	m.data.PurgeInstances()
 	m.data.Reset()
 
-	// Set all global labels
 	data := dataMap[m.Object]
 	localClusterName := data.GetGlobalLabels()["cluster"]
 	m.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())

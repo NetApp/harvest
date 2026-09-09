@@ -65,7 +65,6 @@ func (c *Cluster) handleTags(data *matrix.Matrix) {
 	c.tags.PurgeInstances()
 	c.tags.Reset()
 
-	// Set all global labels
 	c.tags.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	// Based on the tags array, cluster_tags instances/metrics would be created.
