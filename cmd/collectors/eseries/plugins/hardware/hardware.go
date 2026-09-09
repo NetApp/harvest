@@ -128,7 +128,7 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 	for _, mat := range h.data {
 		mat.PurgeInstances()
 		mat.Reset()
-		mat.SetGlobalLabels(globalLabels)
+		mat.UpdateGlobalLabels(globalLabels)
 	}
 
 	query := "storage-systems/" + arrayID + "/hardware-inventory"

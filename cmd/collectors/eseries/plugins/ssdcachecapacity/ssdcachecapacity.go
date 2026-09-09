@@ -112,15 +112,11 @@ func (s *SsdCacheCapacity) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Mat
 	globalLabels := data.GetGlobalLabels()
 	s.volumeMat.PurgeInstances()
 	s.volumeMat.Reset()
-	for k, v := range globalLabels {
-		s.volumeMat.SetGlobalLabel(k, v)
-	}
+	s.volumeMat.UpdateGlobalLabels(globalLabels)
 
 	s.driveMat.PurgeInstances()
 	s.driveMat.Reset()
-	for k, v := range globalLabels {
-		s.driveMat.SetGlobalLabel(k, v)
-	}
+	s.driveMat.UpdateGlobalLabels(globalLabels)
 
 	s.populateMappings(data)
 	s.populateCapacityMetrics(data)

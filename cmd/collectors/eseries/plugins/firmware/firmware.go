@@ -88,7 +88,7 @@ func (f *Firmware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 
 	f.data.PurgeInstances()
 	f.data.Reset()
-	f.data.SetGlobalLabels(dataMap[f.Object].GetGlobalLabels())
+	f.data.UpdateGlobalLabels(dataMap[f.Object].GetGlobalLabels())
 
 	f.processCodeVersions(f.data, arrayID, results[0])
 

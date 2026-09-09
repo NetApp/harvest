@@ -23,6 +23,9 @@ counters:
   - unconfiguredSpace                     => unconfigured_space
   - usedPoolSpace                         => used_pool_space
 
+plugins:
+  - LoginBanner
+
 export_options:
   instance_keys:
     - wwn

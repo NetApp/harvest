@@ -58,6 +58,14 @@ counters:
         ESeriesCounter: hostSparesUsed
         Template: conf/eseries/11.80.0/array.yaml
 
+  - Name: eseries_array_login_banner_enabled
+    Description: Whether a login banner is configured on the storage array (1 means configured, 0 means not configured). No sample is exported when the banner state cannot be determined, for example when the array returns an error or an unexpected status.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/login-banner
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/array.yaml (LoginBanner plugin)
+
   # =============================================================================
   # Firmware Metrics (Firmware Plugin)
   # =============================================================================

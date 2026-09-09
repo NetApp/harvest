@@ -201,24 +201,52 @@ func (c *Client) Fetch(fullPath string, cacheConfig *CacheConfig, headers ...map
 }
 
 func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Result, error) {
+	statusCode, body, err := c.GetRaw(endpoint, headers...)
+	if err != nil {
+		return nil, err
+	}
+
+	if statusCode != http.StatusOK {
+		return nil, errs.NewRest().
+			StatusCode(statusCode).
+			API(endpoint).
+			Build()
+	}
+
+	// Check if response is an array or object
+	parsed := gjson.ParseBytes(body)
+	switch {
+	case parsed.IsArray():
+		return parsed.Array(), nil
+	case parsed.IsObject():
+		// Single object response - wrap in array
+		return []gjson.Result{parsed}, nil
+	default:
+		return nil, fmt.Errorf("unexpected response format from %s%s", c.baseURL, endpoint)
+	}
+}
+
+// GetRaw is useful directly for endpoints that return plain text (or no body)
+// depending on status, such as the login-banner endpoint.
+func (c *Client) GetRaw(endpoint string, headers ...map[string]string) (int, []byte, error) {
 	var (
-		err     error
-		results []gjson.Result
+		err        error
+		statusCode int
+		body       []byte
 	)
 
-	doInvoke := func() ([]gjson.Result, error) {
+	doInvoke := func() (int, []byte, error) {
 		var (
 			req       *http.Request
 			res       *http.Response
 			innerBody []byte
 			innerErr  error
-			innerRes  []gjson.Result
 		)
 
 		url := c.baseURL + endpoint
 
 		if req, innerErr = http.NewRequest(http.MethodGet, url, http.NoBody); innerErr != nil {
-			return nil, innerErr
+			return 0, nil, innerErr
 		}
 
 		for _, hs := range headers {
@@ -230,18 +258,18 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 		pollerAuth, innerErr := c.auth.GetPollerAuth()
 		if innerErr != nil {
 			c.Logger.Error("failed to get auth credentials", slog.String("url", url), slogx.Err(innerErr))
-			return nil, innerErr
+			return 0, nil, innerErr
 		}
 		req.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 
 		if res, innerErr = c.client.Do(req); innerErr != nil {
 			c.Logger.Error("request failed", slog.String("url", url), slog.String("err", innerErr.Error()))
-			return nil, innerErr
+			return 0, nil, innerErr
 		}
 		defer res.Body.Close()
 
 		if innerBody, innerErr = io.ReadAll(res.Body); innerErr != nil {
-			return nil, innerErr
+			return 0, nil, innerErr
 		}
 
 		// Track metadata
@@ -254,7 +282,7 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 				slog.Int("status", res.StatusCode),
 				slog.String("url", url),
 			)
-			return nil, errs.NewRest().
+			return res.StatusCode, innerBody, errs.NewRest().
 				StatusCode(res.StatusCode).
 				Error(errs.ErrAuthFailed).
 				Message(res.Status).
@@ -262,36 +290,17 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 				Build()
 		}
 
-		if res.StatusCode != http.StatusOK {
-			return nil, errs.NewRest().
-				StatusCode(res.StatusCode).
-				API(endpoint).
-				Build()
-		}
-
-		// Check if response is an array or object
-		parsed := gjson.ParseBytes(innerBody)
-		switch {
-		case parsed.IsArray():
-			innerRes = parsed.Array()
-		case parsed.IsObject():
-			// Single object response - wrap in array
-			innerRes = []gjson.Result{parsed}
-		default:
-			return nil, fmt.Errorf("unexpected response format from %s", url)
-		}
-
-		return innerRes, nil
+		return res.StatusCode, innerBody, nil
 	}
 
-	results, err = doInvoke()
+	statusCode, body, err = doInvoke()
 
 	if err != nil {
 		if re, ok := errors.AsType[*errs.RestError](err); ok {
 			if errors.Is(re, errs.ErrAuthFailed) {
 				pollerAuth, err2 := c.auth.GetPollerAuth()
 				if err2 != nil {
-					return nil, err2
+					return 0, nil, err2
 				}
 				// If this is an auth failure and the client is using a credential script,
 				// expire the current credentials, call the script again, update the credentials,
@@ -300,14 +309,14 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 					c.Logger.Debug("Expiring cached credential script credentials after 401 response")
 					c.auth.Expire()
 					c.Logger.Debug("Retrying request with refreshed credentials from script")
-					results, err = doInvoke()
-					return results, err
+					statusCode, body, err = doInvoke()
+					return statusCode, body, err
 				}
 			}
 		}
 	}
 
-	return results, err
+	return statusCode, body, err
 }
 
 // Post makes a REST POST request with the given body and returns parsed results.

@@ -21,6 +21,7 @@
   "eseries_array_free_pool_space": "Free space available in storage pools in bytes",
   "eseries_array_host_spares_used": "Number of hot spare drives currently in use",
   "eseries_array_labels": "This metric provides information about E-Series storage arrays.",
+  "eseries_array_login_banner_enabled": "Whether a login banner is configured on the storage array (1 means configured, 0 means not configured). No sample is exported when the banner state cannot be determined, for example when the array returns an error or an unexpected status.",
   "eseries_array_read_data": "Array-wide read data throughput in bytes per second",
   "eseries_array_read_ops": "Array-wide read I/O operations per second",
   "eseries_array_tray_count": "Number of drive trays in the storage array",
