@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Sep-03
+Creation Date : 2026-Sep-09
 E-Series Version: 11.80.0
 ```
 
@@ -415,6 +415,25 @@ This metric provides information about E-Series storage arrays.
 | REST | `storage-systems` | `Harvest generated` | conf/eseries/11.80.0/array.yaml |
 
 The `eseries_array_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Array | Capacity | table | [Array Configuration](/d/eseries-array/e-series3a-array?orgId=1&viewPanel=2) |
+///
+
+
+
+### eseries_array_login_banner_enabled
+
+Whether a login banner is configured on the storage array (1 means configured, 0 means not configured). No sample is exported when the banner state cannot be determined, for example when the array returns an error or an unexpected status.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/login-banner` | `Harvest generated` | conf/eseries/11.80.0/array.yaml (LoginBanner plugin) |
+
+The `eseries_array_login_banner_enabled` metric is visualized in the following Grafana dashboards:
 
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |

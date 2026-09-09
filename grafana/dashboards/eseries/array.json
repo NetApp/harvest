@@ -736,32 +736,69 @@
                 "cellOptions": {
                   "type": "auto"
                 },
-                "filterable": true
+                "filterable": true,
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
               },
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   }
                 ]
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Login Banner"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "1": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 26
+            "y": 27
           },
           "id": 2,
           "options": {
+            "cellHeight": "sm",
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
               "datasource": {
@@ -775,52 +812,91 @@
               "interval": "",
               "legendFormat": "",
               "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_array_login_banner_enabled{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
             }
           ],
           "title": "Array Configuration",
           "transformations": [
             {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "wwn"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "array",
+                    "boot_version",
+                    "chassis_serial",
+                    "datacenter",
+                    "firmware_version",
+                    "ip_addresses",
+                    "management_ip1",
+                    "management_ip2",
+                    "model",
+                    "nvsram_version",
+                    "password_status",
+                    "status",
+                    "timezone",
+                    "Value #B"
+                  ]
+                }
+              }
+            },
+            {
               "id": "organize",
               "options": {
                 "excludeByName": {
-                  "Time": true,
-                  "Value": true,
-                  "__name__": true,
-                  "instance": true,
-                  "job": true,
-                  "name": true,
-                  "wwn": true
+                  "array 1": true,
+                  "array 2": true,
+                  "boot_version": true,
+                  "datacenter 1": true,
+                  "datacenter 2": true
                 },
+                "includeByName": {},
                 "indexByName": {
-                  "Time": 9,
-                  "Value": 17,
-                  "__name__": 10,
+                  "Value #B": 10,
                   "array": 2,
-                  "boot_version": 11,
+                  "boot_version": 13,
                   "chassis_serial": 4,
                   "datacenter": 0,
                   "firmware_version": 5,
-                  "instance": 12,
-                  "job": 13,
-                  "management_ip1": 6,
-                  "management_ip2": 7,
+                  "ip_addresses": 6,
+                  "management_ip1": 7,
+                  "management_ip2": 8,
                   "model": 3,
-                  "name": 1,
-                  "nvsram_version": 14,
-                  "password_status": 15,
-                  "status": 8,
-                  "wwn": 16
+                  "nvsram_version": 12,
+                  "password_status": 11,
+                  "status": 9,
+                  "timezone": 14
                 },
                 "renameByName": {
+                  "Value #B": "Login Banner",
                   "array": "Array",
                   "boot_version": "Boot Version",
                   "chassis_serial": "Serial Number",
                   "datacenter": "Datacenter",
                   "firmware_version": "Firmware Version",
+                  "ip_addresses": "Controller IPs",
                   "management_ip1": "Admin IP 1",
                   "management_ip2": "Admin IP 2",
                   "model": "Model",
-                  "name": "",
                   "nvsram_version": "NVSRAM Version",
                   "password_status": "Password Status",
                   "status": "Status",
@@ -843,9 +919,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -854,6 +934,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -861,6 +942,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -878,7 +960,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   },
                   {
                     "color": "red",
@@ -894,7 +977,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 34
+            "y": 35
           },
           "id": 4,
           "options": {
@@ -914,7 +997,7 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
               "datasource": {
@@ -943,9 +1026,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -954,6 +1041,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -961,6 +1049,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -976,7 +1065,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   }
                 ]
               },
@@ -988,7 +1078,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 34
+            "y": 35
           },
           "id": 5,
           "options": {
@@ -1008,7 +1098,7 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
               "datasource": {
@@ -1037,9 +1127,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1048,6 +1142,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1055,6 +1150,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1070,7 +1166,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": 0
                   }
                 ]
               },
@@ -1082,7 +1179,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 44
+            "y": 45
           },
           "id": 6,
           "options": {
@@ -1102,7 +1199,7 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
               "datasource": {
@@ -1131,9 +1228,13 @@
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
+                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -1142,6 +1243,7 @@
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -1149,6 +1251,7 @@
                   "type": "linear"
                 },
                 "showPoints": "never",
+                "showValues": false,
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1164,7 +1267,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "blue"
+                    "color": "blue",
+                    "value": 0
                   }
                 ]
               },
@@ -1176,7 +1280,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 44
+            "y": 45
           },
           "id": 7,
           "options": {
@@ -1196,7 +1300,7 @@
               "sort": "desc"
             }
           },
-          "pluginVersion": "8.1.8",
+          "pluginVersion": "12.3.2",
           "targets": [
             {
               "datasource": {
@@ -1258,7 +1362,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 207
           },
           "id": 15,
           "options": {

@@ -214,6 +214,19 @@ func TestNewExportOptions(t *testing.T) {
 	assert.Equal(t, children[1].GetContentS(), "volume")
 }
 
+func TestMatrix_UpdateGlobalLabels(t *testing.T) {
+	m := New("TestUpdateGlobalLabels", "test", "test")
+	m.SetGlobalLabel("array", "old")
+	m.SetGlobalLabel("datacenter", "dc1")
+
+	m.SetGlobalLabels(map[string]string{"array": "new"})
+	assert.Equal(t, m.GetGlobalLabels()["array"], "old")
+
+	m.UpdateGlobalLabels(map[string]string{"array": "new"})
+	assert.Equal(t, m.GetGlobalLabels()["array"], "new")
+	assert.Equal(t, m.GetGlobalLabels()["datacenter"], "dc1")
+}
+
 func TestMatrix_DefaultExportOptionsAreOwned(t *testing.T) {
 	m := New("TestExportOptions", "test", "test")
 	m.GetExportOptions().PopChildS("include_all_labels")

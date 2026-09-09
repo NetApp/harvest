@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/firmware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/hardware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/host"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/loginbanner"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/ssdcachecapacity"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volumemapping"
@@ -131,7 +132,9 @@ func (e *ESeries) InitClient() error {
 
 	duration, err := time.ParseDuration(clientTimeout)
 	if err != nil {
-		e.Logger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
+		e.Logger.Info("Using default timeout", slogx.Err(err),
+			slog.String("client_timeout", clientTimeout),
+			slog.String("timeout", rest.DefaultTimeout))
 		duration, _ = time.ParseDuration(rest.DefaultTimeout)
 	}
 
@@ -197,8 +200,8 @@ func (e *ESeries) PollCounter() (map[string]*matrix.Matrix, error) {
 
 	// Store arrayID in Params for plugin access (not exported as global label)
 	if e.Params != nil {
-		e.Params.NewChildS("array_id", e.arrayID)
-		e.Params.NewChildS("array", e.arrayName)
+		e.Params.SetChildContentS("array_id", e.arrayID)
+		e.Params.SetChildContentS("array", e.arrayName)
 	}
 
 	mat := e.Matrix[e.Object]
@@ -403,6 +406,8 @@ func (e *ESeries) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plu
 		return hardware.New(abc)
 	case "Host":
 		return host.New(abc)
+	case "LoginBanner":
+		return loginbanner.New(abc)
 	case "SsdCacheCapacity":
 		return ssdcachecapacity.New(abc)
 	case "Volume":

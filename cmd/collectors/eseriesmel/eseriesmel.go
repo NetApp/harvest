@@ -180,7 +180,9 @@ func (e *EseriesMel) InitClient() error {
 
 	duration, err := time.ParseDuration(clientTimeout)
 	if err != nil {
-		e.Logger.Info("Using default timeout", slog.String("timeout", defaultClientTime))
+		e.Logger.Info("Using default timeout", slogx.Err(err),
+			slog.String("client_timeout", clientTimeout),
+			slog.String("timeout", defaultClientTime))
 		duration, _ = time.ParseDuration(defaultClientTime)
 	}
 

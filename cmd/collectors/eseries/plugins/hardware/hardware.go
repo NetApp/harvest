@@ -90,7 +90,9 @@ func (h *Hardware) initClient() error {
 
 	duration, err := time.ParseDuration(clientTimeout)
 	if err != nil {
-		h.SLogger.Info("Using default timeout", slog.String("timeout", rest.DefaultTimeout))
+		h.SLogger.Info("Using default timeout", slogx.Err(err),
+			slog.String("client_timeout", clientTimeout),
+			slog.String("timeout", rest.DefaultTimeout))
 		duration, _ = time.ParseDuration(rest.DefaultTimeout)
 	}
 
@@ -128,7 +130,7 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 	for _, mat := range h.data {
 		mat.PurgeInstances()
 		mat.Reset()
-		mat.SetGlobalLabels(globalLabels)
+		mat.UpdateGlobalLabels(globalLabels)
 	}
 
 	query := "storage-systems/" + arrayID + "/hardware-inventory"
