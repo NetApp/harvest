@@ -95,7 +95,7 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	m.RequestMetadata.Reset()
 
 	// Set all global labels from Rest.go if already not exist
-	m.data.SetGlobalLabels(data.GetGlobalLabels())
+	m.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	if m.currentVal >= PluginInvocationRate {
 		m.currentVal = 0

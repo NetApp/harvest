@@ -550,7 +550,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			if _, ok := m[msgName]; !ok {
 				// create matrix if not exists for the ems event
 				mx = matrix.New(msgName, e.Prop.Object, msgName)
-				mx.SetGlobalLabels(e.Matrix[e.Object].GetGlobalLabels())
+				mx.SetGlobalLabelsIfAbsent(e.Matrix[e.Object].GetGlobalLabels())
 				m[msgName] = mx
 			} else {
 				existingEms = true

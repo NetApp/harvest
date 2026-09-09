@@ -219,7 +219,7 @@ func TestMatrix_UpdateGlobalLabels(t *testing.T) {
 	m.SetGlobalLabel("array", "old")
 	m.SetGlobalLabel("datacenter", "dc1")
 
-	m.SetGlobalLabels(map[string]string{"array": "new"})
+	m.SetGlobalLabelsIfAbsent(map[string]string{"array": "new"})
 	assert.Equal(t, m.GetGlobalLabels()["array"], "old")
 
 	m.UpdateGlobalLabels(map[string]string{"array": "new"})

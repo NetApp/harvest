@@ -90,7 +90,7 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 	}
 
 	// Set all global labels if they do not already exist
-	aggrSpaceMat.SetGlobalLabels(data.GetGlobalLabels())
+	aggrSpaceMat.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	a.collectObjectStoreData(aggrSpaceMat, data)
 

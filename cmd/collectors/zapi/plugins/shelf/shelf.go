@@ -200,7 +200,7 @@ func (s *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 
 	// Set all global labels from zapi.go if already not exist
 	for a := range s.instanceLabels {
-		s.data[a].SetGlobalLabels(data.GetGlobalLabels())
+		s.data[a].SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	}
 
 	request := node.NewXMLS(s.query)

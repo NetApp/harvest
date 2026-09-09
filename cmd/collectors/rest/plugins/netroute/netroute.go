@@ -66,7 +66,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 	n.data.PurgeInstances()
 	n.data.Reset()
 
-	n.data.SetGlobalLabels(data.GetGlobalLabels())
+	n.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	count := 0
 	for key, instance := range data.GetInstances() {

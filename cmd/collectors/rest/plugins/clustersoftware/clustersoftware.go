@@ -124,7 +124,7 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 	c.data[updateMatrix].Reset()
 
 	// Set all global labels
-	c.data[updateMatrix].SetGlobalLabels(globalLabels)
+	c.data[updateMatrix].SetGlobalLabelsIfAbsent(globalLabels)
 
 	for _, updateDetail := range updateDetailsJSON.Array() {
 		phase := updateDetail.Get("phase").ClonedString()
@@ -171,7 +171,7 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 	c.data[statusMatrix].Reset()
 
 	// Set all global labels
-	c.data[statusMatrix].SetGlobalLabels(globalLabels)
+	c.data[statusMatrix].SetGlobalLabelsIfAbsent(globalLabels)
 
 	for _, statusDetail := range statusDetailsJSON.Array() {
 		name := statusDetail.Get("name").ClonedString()
@@ -214,7 +214,7 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 	c.data[validationMatrix].Reset()
 
 	// Set all global labels
-	c.data[validationMatrix].SetGlobalLabels(globalLabels)
+	c.data[validationMatrix].SetGlobalLabelsIfAbsent(globalLabels)
 
 	for _, validationDetail := range validationDetailsJSON.Array() {
 		updateCheck := validationDetail.Get("update_check").ClonedString()

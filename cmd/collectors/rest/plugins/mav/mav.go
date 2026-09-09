@@ -135,8 +135,8 @@ func (m *Mav) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	m.mavDataExtendedMatrix.PurgeInstances()
 	m.mavDataExtendedMatrix.Reset()
 
-	m.mavData.SetGlobalLabels(data.GetGlobalLabels())
-	m.mavDataExtendedMatrix.SetGlobalLabels(data.GetGlobalLabels())
+	m.mavData.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
+	m.mavDataExtendedMatrix.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	err := m.collectMAVRequests()
 	if err != nil {

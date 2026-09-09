@@ -82,7 +82,7 @@ func New(c, n string, o *options.Options, p conf.Exporter, params *conf.Poller) 
 		labels := params.Labels
 		if labels != nil {
 			for _, labelPtr := range *labels {
-				abc.Metadata.SetGlobalLabels(labelPtr)
+				abc.Metadata.SetGlobalLabelsIfAbsent(labelPtr)
 			}
 		}
 	}

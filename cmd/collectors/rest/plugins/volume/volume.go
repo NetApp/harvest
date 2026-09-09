@@ -241,7 +241,7 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	v.arw.Reset()
 
 	// Set all global labels
-	v.arw.SetGlobalLabels(data.GetGlobalLabels())
+	v.arw.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 	arwStatusValue := "Active Mode"
 	// Case where cluster doesn't have any volumes, arwStatus show as 'Not Monitoring'
 	if len(data.GetInstances()) == 0 {
@@ -409,7 +409,7 @@ func (v *Volume) handleTags(globalLabels map[string]string) {
 	v.tags.Reset()
 
 	// Set all global labels
-	v.tags.SetGlobalLabels(globalLabels)
+	v.tags.SetGlobalLabelsIfAbsent(globalLabels)
 
 	// Based on the tags array, volume_tags instances/metrics would be created.
 	for _, volume := range v.volTagMap {

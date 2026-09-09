@@ -47,7 +47,7 @@ func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 	// Set all global labels
 	data := dataMap[m.Object]
 	localClusterName := data.GetGlobalLabels()["cluster"]
-	m.data.SetGlobalLabels(data.GetGlobalLabels())
+	m.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	for _, instance := range data.GetInstances() {
 		instance.SetExportable(false)

@@ -54,7 +54,7 @@ func (l *License) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 
 	l.data.PurgeInstances()
 	l.data.Reset()
-	l.data.SetGlobalLabels(data.GetGlobalLabels())
+	l.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
 	expiryTimeMetric := l.data.MustGetMetric("expiry_time")
 	capacityMaxSizeMetric := l.data.MustGetMetric("capacity_maximum_size")
