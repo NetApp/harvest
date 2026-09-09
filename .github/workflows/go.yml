@@ -37,7 +37,11 @@ jobs:
           # separate module whose Prometheus dependency TestFormattedPromQL builds.
           # Cache the module and build caches so that is not re-downloaded and
           # re-compiled on every run.
-          cache: true
+          #
+          # zizmor's cache-poisoning audit fires only because on.push.branches
+          # matches release/**; this job runs `make ci` and publishes no
+          # artifacts, so there is nothing for a poisoned cache to taint.
+          cache: true # zizmor: ignore[cache-poisoning]
           cache-dependency-path: cmd/tools/grafana/promqlfmt/go.sum
 
       - name: Makefile ci
