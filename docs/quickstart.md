@@ -114,7 +114,7 @@ You should see output indicating that the Prometheus service is active and runni
 To install Grafana, follow these steps:
 
 ```bash
-GRAFANA_VERSION=12.3.2
+GRAFANA_VERSION=13.2.1
 cd ${HARVEST_INSTALL_PATH}
 wget https://dl.grafana.com/oss/release/grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz
 tar -xvf grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz

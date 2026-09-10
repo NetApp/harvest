@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/assert"
+	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -32,6 +33,211 @@ func TestCheckVersion(t *testing.T) {
 	for _, check := range checks {
 		got := checkVersion(check.version)
 		assert.Equal(t, got, check.want)
+	}
+}
+
+// TestFindFolder ensures the folder uid is read independently of the legacy numeric id,
+// which Grafana may omit or report as zero, see https://github.com/NetApp/harvest/issues/4460
+func TestFindFolder(t *testing.T) {
+	type test struct {
+		name      string
+		folders   []map[string]any
+		want      string
+		wantID    int64
+		wantFound bool
+	}
+
+	const cDot = "Harvest-main-cDOT"
+
+	tests := []test{
+		{
+			name:      "id is zero",
+			folders:   []map[string]any{{"id": float64(0), "uid": "u1", "title": cDot}},
+			want:      "u1",
+			wantID:    0,
+			wantFound: true,
+		},
+		{
+			name:      "legacy grafana reports a numeric id",
+			folders:   []map[string]any{{"id": float64(5), "uid": "u1", "title": cDot}},
+			want:      "u1",
+			wantID:    5,
+			wantFound: true,
+		},
+		{
+			name:      "id is absent entirely",
+			folders:   []map[string]any{{"uid": "u1", "title": cDot}},
+			want:      "u1",
+			wantID:    0,
+			wantFound: true,
+		},
+		{
+			name:      "title not found",
+			folders:   []map[string]any{{"uid": "u1", "title": "Harvest-main-7mode"}},
+			want:      "",
+			wantID:    0,
+			wantFound: false,
+		},
+		{
+			name: "duplicate titles, first one wins",
+			folders: []map[string]any{
+				{"uid": "u1", "title": cDot},
+				{"uid": "u2", "title": cDot},
+			},
+			want:      "u1",
+			wantID:    0,
+			wantFound: true,
+		},
+		{
+			name:      "uid is missing",
+			folders:   []map[string]any{{"id": float64(5), "title": cDot}},
+			want:      "",
+			wantID:    0,
+			wantFound: false,
+		},
+		{
+			name:      "title is not a string",
+			folders:   []map[string]any{{"uid": "u1", "title": float64(1)}},
+			want:      "",
+			wantID:    0,
+			wantFound: false,
+		},
+		{
+			name:      "empty response",
+			folders:   nil,
+			want:      "",
+			wantID:    0,
+			wantFound: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			uid, id, found := findFolder(tt.folders, cDot)
+			assert.Equal(t, uid, tt.want)
+			assert.Equal(t, id, tt.wantID)
+			assert.Equal(t, found, tt.wantFound)
+		})
+	}
+}
+
+// TestBuildDashboardRequest ensures folderUid is sent whenever it is known. Grafana 12 and
+// later ignore folderId, which put every dashboard in the Dashboards root,
+// see https://github.com/NetApp/harvest/issues/4460
+func TestBuildDashboardRequest(t *testing.T) {
+	type test struct {
+		name          string
+		folder        Folder
+		wantUID       string
+		wantUIDExists bool
+		wantID        int64
+		wantIDExists  bool
+	}
+
+	tests := []test{
+		{
+			name:          "uid but no id",
+			folder:        Folder{name: "Harvest-main-cDOT", uid: "abc123"},
+			wantUID:       "abc123",
+			wantUIDExists: true,
+			wantIDExists:  false,
+		},
+		{
+			name:          "legacy grafana has both",
+			folder:        Folder{name: "Harvest-main-cDOT", uid: "abc123", id: 42},
+			wantUID:       "abc123",
+			wantUIDExists: true,
+			wantID:        42,
+			wantIDExists:  true,
+		},
+		{
+			name:          "only an id",
+			folder:        Folder{name: "Harvest-main-cDOT", id: 42},
+			wantUIDExists: false,
+			wantID:        42,
+			wantIDExists:  true,
+		},
+		{
+			name:          "no folder means the root",
+			folder:        Folder{},
+			wantUIDExists: false,
+			wantIDExists:  false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dashboard := map[string]any{"title": "ONTAP: Volume"}
+			got := buildDashboardRequest(dashboard, &tt.folder, true)
+
+			uid, uidExists := got["folderUid"]
+			assert.Equal(t, uidExists, tt.wantUIDExists)
+			if tt.wantUIDExists {
+				assert.Equal(t, uid, any(tt.wantUID))
+			}
+
+			id, idExists := got["folderId"]
+			assert.Equal(t, idExists, tt.wantIDExists)
+			if tt.wantIDExists {
+				assert.Equal(t, id, any(tt.wantID))
+			}
+
+			assert.Equal(t, got["overwrite"], any(true))
+			assert.Equal(t, got["dashboard"], any(dashboard))
+		})
+	}
+}
+
+func TestSearchFolderQuery(t *testing.T) {
+	type test struct {
+		name    string
+		version string
+		folder  Folder
+		want    string
+	}
+
+	tests := []test{
+		{
+			name:    "modern grafana uses the uid",
+			version: "13.2.1",
+			folder:  Folder{uid: "u1"},
+			want:    "/api/search?type=dash-db&folderUIDs=u1",
+		},
+		{
+			name:    "grafana 8 uses the numeric id",
+			version: "8.5.0",
+			folder:  Folder{uid: "u1", id: 42},
+			want:    "/api/search?type=dash-db&folderIds=42",
+		},
+		{
+			name:   "unknown version with no numeric id",
+			folder: Folder{uid: "u1"},
+			want:   "/api/search?type=dash-db&folderUIDs=u1",
+		},
+		{
+			name:   "unknown version with a numeric id",
+			folder: Folder{uid: "u1", id: 42},
+			want:   "/api/search?type=dash-db&folderIds=42",
+		},
+		{
+			name:    "uid is escaped",
+			version: "13.2.1",
+			folder:  Folder{uid: "a b&c"},
+			want:    "/api/search?type=dash-db&folderUIDs=a+b%26c",
+		},
+	}
+
+	// TestCheckVersion leaves grafanaVersion populated, so each case sets it explicitly
+	t.Cleanup(func() { grafanaVersion = nil })
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			grafanaVersion = nil
+			if tt.version != "" {
+				grafanaVersion = goversion.Must(goversion.NewVersion(tt.version))
+			}
+			assert.Equal(t, searchFolderQuery(&tt.folder), tt.want)
+		})
 	}
 }
 
