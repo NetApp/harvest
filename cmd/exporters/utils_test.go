@@ -12,11 +12,14 @@ import (
 // newLabeledMatrix returns a matrix with one instance carrying 7 labels,
 // gathered via the include_all_labels map-iteration path, so their order is
 // randomized per call unless sortLabels is requested.
-func newLabeledMatrix() *matrix.Matrix {
+func newLabeledMatrix(t *testing.T) *matrix.Matrix {
+	t.Helper()
 	m := matrix.New("sort_labels_test", "sort_labels_test", "sort_labels_test")
 
-	metric, _ := m.NewMetricUint64("value")
-	instance, _ := m.NewInstance("A")
+	metric, err := m.NewMetricUint64("value")
+	assert.Nil(t, err)
+	instance, err := m.NewInstance("A")
+	assert.Nil(t, err)
 	metric.SetValueInt64(instance, 42)
 
 	instance.SetLabel("aaa", "1")
@@ -44,7 +47,7 @@ func renderOnce(t *testing.T, m *matrix.Matrix, sortLabels bool) string {
 // TestRenderSortedIsDeterministic verifies that repeated renders with
 // sortLabels enabled produce byte-identical output.
 func TestRenderSortedIsDeterministic(t *testing.T) {
-	m := newLabeledMatrix()
+	m := newLabeledMatrix(t)
 
 	first := renderOnce(t, m, true)
 	assert.True(t, first != "")
@@ -62,7 +65,7 @@ func TestRenderSortedIsDeterministic(t *testing.T) {
 // a handful of reachable orderings makes 50 identical runs effectively
 // impossible.
 func TestRenderUnsortedIsNotDeterministic(t *testing.T) {
-	m := newLabeledMatrix()
+	m := newLabeledMatrix(t)
 
 	seen := make(map[string]struct{})
 	for range 50 {

@@ -84,7 +84,8 @@ func TestExportDebug(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-// test that sort_labels defaults to true when omitted, and that an explicit value is honored
+// test that sort_labels defaults to true when omitted, and that an explicit false is overridden
+// since VictoriaMetrics requires deterministic label order
 func TestSortLabelsDefault(t *testing.T) {
 	tests := []struct {
 		exporterName   string
@@ -92,7 +93,7 @@ func TestSortLabelsDefault(t *testing.T) {
 	}{
 		{"victoriametrics-sort-unset", true},
 		{"victoriametrics-sort-true", true},
-		{"victoriametrics-sort-false", false},
+		{"victoriametrics-sort-false", true},
 	}
 
 	for _, tt := range tests {

@@ -805,10 +805,10 @@ type Exporter struct {
 	AllowedAddrsRegex *[]string `yaml:"allow_addrs_regex,omitempty"`
 	CacheMaxKeep      *string   `yaml:"cache_max_keep,omitempty"`
 	ShouldAddMetaTags *bool     `yaml:"add_meta_tags,omitempty"`
+	SortLabels        *bool     `yaml:"sort_labels,omitempty"`
 
 	// Prometheus specific
 	HeartBeatURL string `yaml:"heart_beat_url,omitempty"`
-	SortLabels   *bool  `yaml:"sort_labels,omitempty"`
 	TLS          TLS    `yaml:"tls,omitempty"`
 
 	// InfluxDB specific

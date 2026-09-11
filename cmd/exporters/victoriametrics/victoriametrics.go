@@ -80,7 +80,11 @@ func (v *VictoriaMetrics) Init() error {
 		v.globalPrefix = globalPrefix
 	}
 
-	v.sortLabels = v.Params.ShouldSortLabels()
+	// VictoriaMetrics keys a series off the raw label string, so sorting is not optional here
+	v.sortLabels = true
+	if v.Params.SortLabels != nil && !*v.Params.SortLabels {
+		v.Logger.Warn("ignoring sort_labels: false, VictoriaMetrics requires deterministic label order")
+	}
 
 	// Checking the required/optional params
 	// customer should either provide url or addr

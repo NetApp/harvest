@@ -31,7 +31,7 @@ When using `url`, the `addr` and `port` field will be ignored.
 | `addr`           | string                       | address of the database, format: `HOST` (HTTP only)                                                |         |
 | `port`           | int, optional                | port of the database                                                                               | `8086`  |
 | `client_timeout` | int, optional                | client timeout in seconds                                                                          | `5`     |
-| `sort_labels`    | bool, optional               | emit metric labels in a deterministic order. VictoriaMetrics requires this — without it, VictoriaMetrics will mark series stale if label order changes between polls. Enabled by default starting with Harvest 26.11; set to `false` for the pre-26.11 behavior. | `true` (since 26.11; `false` before) |
+| `sort_labels`    | bool, optional               | always emits metric labels in a deterministic order for this exporter. VictoriaMetrics requires this — without it, VictoriaMetrics will mark series stale if label order changes between polls. Setting `sort_labels: false` is ignored (with a logged warning), since it is never safe for VictoriaMetrics. | `true` (always)                      |
 
 ### Example
 
