@@ -121,7 +121,7 @@ func TestFindFolder(t *testing.T) {
 	}
 }
 
-// TestBuildDashboardRequest ensures folderUid is sent whenever it is known. Grafana 12 and
+// TestBuildDashboardRequest ensures folderUid is sent whenever it is known. Grafana 13.1 and
 // later ignore folderId, which put every dashboard in the Dashboards root,
 // see https://github.com/NetApp/harvest/issues/4460
 func TestBuildDashboardRequest(t *testing.T) {
@@ -204,10 +204,30 @@ func TestSearchFolderQuery(t *testing.T) {
 			want:    "/api/search?type=dash-db&folderUIDs=u1",
 		},
 		{
-			name:    "grafana 8 uses the numeric id",
-			version: "8.5.0",
+			name:    "grafana 8 ignores folderUIDs, use the numeric id",
+			version: "8.5.27",
 			folder:  Folder{uid: "u1", id: 42},
 			want:    "/api/search?type=dash-db&folderIds=42",
+		},
+		{
+			// Grafana 9.2 ignores folderUIDs and returns the whole instance
+			name:    "grafana 9.2 ignores folderUIDs, use the numeric id",
+			version: "9.2.13",
+			folder:  Folder{uid: "u1", id: 42},
+			want:    "/api/search?type=dash-db&folderIds=42",
+		},
+		{
+			name:    "grafana 11 still honors folderIds",
+			version: "11.6.16",
+			folder:  Folder{uid: "u1", id: 42},
+			want:    "/api/search?type=dash-db&folderIds=42",
+		},
+		{
+			// folderIds stops filtering in Grafana 12.0
+			name:    "grafana 12 ignores folderIds, use the uid",
+			version: "12.0.10",
+			folder:  Folder{uid: "u1", id: 42},
+			want:    "/api/search?type=dash-db&folderUIDs=u1",
 		},
 		{
 			name:   "unknown version with no numeric id",

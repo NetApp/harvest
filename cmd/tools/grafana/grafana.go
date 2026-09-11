@@ -654,12 +654,19 @@ func importDashboards(opts *options) {
 	// Set overwrite flag to true, dashboards are always overwritten.
 	opts.overwrite = true
 
-	for k, v := range opts.dirGrafanaFolderMap {
-		// Fail loudly rather than silently importing into the Dashboards root.
-		// customize writes to disk and never talks to Grafana, so it has no folder uid.
-		if opts.customizeDir == "" && v.uid == "" {
-			printErrorAndExit(fmt.Errorf("no Grafana folder uid for folder [%s], refusing to import into the Dashboards root", v.name))
+	// Check every folder before importing anything, otherwise map iteration order decides how
+	// many dashboards land in the wrong place before we notice. Fail loudly rather than
+	// silently importing into the Dashboards root.
+	// customize writes to disk and never talks to Grafana, so it has no folder uid.
+	if opts.customizeDir == "" {
+		for _, v := range opts.dirGrafanaFolderMap {
+			if v.uid == "" {
+				printErrorAndExit(fmt.Errorf("no Grafana folder uid for folder [%s], refusing to import into the Dashboards root", v.name))
+			}
 		}
+	}
+
+	for k, v := range opts.dirGrafanaFolderMap {
 		importFiles(k, v)
 	}
 }
@@ -1643,7 +1650,7 @@ func findFolder(folders []map[string]any, name string) (string, int64, bool) {
 }
 
 // buildDashboardRequest builds the POST /api/dashboards/db payload.
-// folderUid is authoritative. Grafana 12 and later silently ignore folderId here, which put
+// folderUid is authoritative. Grafana 13.1 and later silently ignore folderId here, which put
 // every dashboard in the Dashboards root, see https://github.com/NetApp/harvest/issues/4460.
 // Grafana documents folderUid as overriding folderId, so folderId is still sent for releases
 // that predate folderUid support in this endpoint. Neither key is sent when it carries no
@@ -1665,15 +1672,20 @@ func buildDashboardRequest(dashboard map[string]any, folder *Folder, overwrite b
 }
 
 // searchFolderQuery builds the /api/search query that lists a folder's dashboards.
-// folderUIDs is preferred, but older Grafana releases only understand folderIds and silently
-// ignore unknown query parameters, which would return every dashboard in the instance.
-// A zero id means the server gave us no numeric id, so uid is the only option.
+// Neither parameter works everywhere: Grafana 12.0 and later ignore folderIds, while Grafana
+// 9.4 and earlier ignore folderUIDs. An ignored parameter is not an error, it returns every
+// dashboard in the instance, so we have to send the one this server understands.
+// When the version is unknown, prefer folderIds: sending it to a Grafana that ignores it
+// exports nothing, whereas folderUIDs on an old server would export everything.
+// A zero id means the server gave us no numeric id, so uid is the only option left.
 func searchFolderQuery(folder *Folder) string {
-	if folder.id == 0 || (grafanaVersion != nil && grafanaVersion.GreaterThanOrEqual(goversion.Must(goversion.NewVersion("9.0.0")))) {
-		return "/api/search?type=dash-db&folderUIDs=" + neturl.QueryEscape(folder.uid)
+	twelve := goversion.Must(goversion.NewVersion("12.0.0"))
+
+	if folder.id != 0 && (grafanaVersion == nil || grafanaVersion.LessThan(twelve)) {
+		return "/api/search?type=dash-db&folderIds=" + strconv.FormatInt(folder.id, 10)
 	}
 
-	return "/api/search?type=dash-db&folderIds=" + strconv.FormatInt(folder.id, 10)
+	return "/api/search?type=dash-db&folderUIDs=" + neturl.QueryEscape(folder.uid)
 }
 
 func createServerFolder(folder *Folder) error {
