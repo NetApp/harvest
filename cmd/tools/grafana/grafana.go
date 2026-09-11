@@ -23,6 +23,7 @@ import (
 	"log/slog"
 	"maps"
 	"net/http"
+	neturl "net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -36,6 +37,7 @@ const (
 	clientTimeout                 = 5
 	DefaultDataSource             = "prometheus"
 	GPerm             os.FileMode = 0644
+	folderLimit                   = 1000 // max folders requested from /api/folders
 )
 
 var Dashboards = []string{
@@ -90,9 +92,13 @@ type options struct {
 }
 
 type Folder struct {
-	name      string // Grafana folder where to upload from where to download dashboards
+	name string // Grafana folder where to upload from where to download dashboards
+	// id is Grafana's legacy numeric folder id. Grafana still returns one, but it no longer
+	// honors folderId when saving a dashboard, so id is only used as a fallback for the export
+	// search query, never for import placement.
+	// See https://github.com/NetApp/harvest/issues/4460
 	id        int64
-	uid       string
+	uid       string // uid identifies the folder
 	parentUID string // If nested folders are enabled, and the folder is nested, this is the parent folder's uid
 }
 
@@ -125,6 +131,7 @@ func askForToken() {
 }
 
 func doCustomize(_ *cobra.Command, _ []string) {
+	opts.command = "customize"
 	adjustOptions()
 	exitIfExist(opts.customizeDir, "output-dir")
 
@@ -133,6 +140,7 @@ func doCustomize(_ *cobra.Command, _ []string) {
 }
 
 func doExport(_ *cobra.Command, _ []string) {
+	opts.command = "export"
 	adjustOptions()
 	exitIfExist(opts.dir, "directory")
 	askForToken()
@@ -166,13 +174,13 @@ func exportFiles(dir string, folder *Folder) error {
 		fmt.Printf("folder %s error %v\n", folder.name, err)
 		os.Exit(1)
 	}
-	if folder.id == 0 {
+	if folder.uid == "" {
 		fmt.Printf("error folder %s doesn't exist in grafana, unable to continue\n", folder.name)
 		os.Exit(1)
 	}
 	fmt.Printf("querying for content of folder name [%s]\n", folder.name)
 
-	result, status, code, err := sendRequestArray(opts, "GET", "/api/search?folderIds="+strconv.FormatInt(folder.id, 10), nil)
+	result, status, code, err := sendRequestArray(opts, "GET", searchFolderQuery(folder), nil)
 	if err != nil && code != 200 {
 		fmt.Printf("server response [%d: %s]: %v\n", code, status, err)
 		return err
@@ -181,8 +189,14 @@ func exportFiles(dir string, folder *Folder) error {
 	uids = make(map[string]string)
 	rep := strings.NewReplacer("/", "_", "-", "_")
 	for _, elem := range result {
-		uid := elem["uid"].(string)
-		uri := elem["uri"].(string)
+		// Skip anything Grafana tells us lives in a different folder. Older releases ignore
+		// unknown query parameters instead of failing, and without this check that would
+		// export every dashboard in the instance.
+		if fu, ok := elem["folderUid"].(string); ok && fu != folder.uid {
+			continue
+		}
+		uid, _ := elem["uid"].(string)
+		uri, _ := elem["uri"].(string)
 		if uid != "" && uri != "" {
 			uids[uid] = rep.Replace(uri)
 		}
@@ -598,14 +612,24 @@ func checkAndCreateServerFolder(folder *Folder) error {
 		os.Exit(1)
 	}
 
-	folderName := folder.name
-	if folder.uid != "" && folder.id != 0 {
+	// A folder is identified by its uid, not by the legacy numeric id
+	if folder.uid != "" {
 		fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.name)
-	} else if err := createServerFolders(folder); err != nil {
-		return err
-	} else {
-		fmt.Printf("created Grafana folder [%s] - OK\n", folderName)
+		return nil
 	}
+
+	// A nested name never matches a folder title, so createServerFolders resolves each level
+	// and reports whether anything was actually created.
+	created, err := createServerFolders(folder)
+	if err != nil {
+		return err
+	}
+	if created {
+		fmt.Printf("created Grafana folder [%s] - OK\n", folder.name)
+	} else {
+		fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.name)
+	}
+
 	return nil
 }
 
@@ -629,6 +653,18 @@ func importDashboards(opts *options) {
 	}
 	// Set overwrite flag to true, dashboards are always overwritten.
 	opts.overwrite = true
+
+	// Check every folder before importing anything, otherwise map iteration order decides how
+	// many dashboards land in the wrong place before we notice. Fail loudly rather than
+	// silently importing into the Dashboards root.
+	// customize writes to disk and never talks to Grafana, so it has no folder uid.
+	if opts.customizeDir == "" {
+		for _, v := range opts.dirGrafanaFolderMap {
+			if v.uid == "" {
+				printErrorAndExit(fmt.Errorf("no Grafana folder uid for folder [%s], refusing to import into the Dashboards root", v.name))
+			}
+		}
+	}
 
 	for k, v := range opts.dirGrafanaFolderMap {
 		importFiles(k, v)
@@ -738,10 +774,7 @@ func importFiles(dir string, folder *Folder) {
 			continue
 		}
 
-		request = make(map[string]any)
-		request["overwrite"] = opts.overwrite
-		request["folderId"] = folder.id
-		request["dashboard"] = dashboard
+		request = buildDashboardRequest(dashboard, folder, opts.overwrite)
 
 		result, status, code, err := sendRequest(opts, "POST", "/api/dashboards/db", request)
 
@@ -1448,19 +1481,26 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 		os.Exit(0)
 	}
 
-	buildInfo := result["buildInfo"].(map[string]any)
-	if buildInfo == nil {
+	buildInfo, ok := result["buildInfo"].(map[string]any)
+	if !ok {
 		fmt.Printf("warning: unable to get grafana version. Ignoring grafana version check")
 		return nil
 	}
-	grafanaVersion := buildInfo["version"].(string)
-	if grafanaVersion == "" {
+	versionStr, _ := buildInfo["version"].(string)
+	if versionStr == "" {
 		fmt.Printf("warning: unable to get grafana version. Ignoring grafana version check")
 		return nil
 	}
-	fmt.Printf("connected to Grafana server (version: %s)\n", grafanaVersion)
+	fmt.Printf("connected to Grafana server (version: %s)\n", versionStr)
+
+	// Parse the version for every command, not only import. createServerFolders and
+	// searchFolderQuery both branch on it.
+	if v, err := goversion.NewVersion(versionStr); err == nil {
+		grafanaVersion = v
+	}
+
 	// if we are going to import check grafana version
-	if opts.command == "import" && !checkVersion(grafanaVersion) {
+	if opts.command == "import" && !checkVersion(versionStr) {
 		fmt.Printf("warning: current set of dashboards require Grafana version (%s) or higher\n", grafanaMinVers)
 		fmt.Printf("continue anyway? [y/N]: ")
 		_, _ = fmt.Scanf("%s\n", &answer)
@@ -1546,10 +1586,10 @@ func checkVersion(inputVersion string) bool {
 
 func checkFolder(folder *Folder) error {
 
-	q := "/api/folders?limit=1000"
+	q := "/api/folders?limit=" + strconv.Itoa(folderLimit)
 
 	if folder.parentUID != "" {
-		q += "&parentUid=" + folder.parentUID
+		q += "&parentUid=" + neturl.QueryEscape(folder.parentUID)
 	}
 
 	result, status, code, err := sendRequestArray(opts, "GET", q, nil)
@@ -1562,24 +1602,98 @@ func checkFolder(folder *Folder) error {
 		return errors.New("server response: " + status)
 	}
 
-	if len(result) == 0 {
-		return nil
+	if len(result) >= folderLimit {
+		fmt.Printf("warning: Grafana returned %d folders, the list may be truncated and folder [%s] may not be found\n", len(result), folder.name)
 	}
 
-	for _, x := range result {
-		if name, ok := x["title"]; ok {
-			if name.(string) == folder.name {
-				if id, idExist := x["id"]; idExist {
-					folder.id = int64(id.(float64))
-					if uid, uidExist := x["uid"]; uidExist {
-						folder.uid = uid.(string)
-					}
-				}
+	if uid, id, found := findFolder(result, folder.name); found {
+		folder.uid = uid
+		folder.id = id
+	}
+
+	return nil
+}
+
+// findFolder returns the uid and legacy numeric id of the folder titled name.
+// uid is read independently of id, which Grafana may omit or report as zero.
+// Grafana allows several folders to share a title, so the first match wins. Picking the same
+// one on every run keeps dashboards together instead of scattering them.
+func findFolder(folders []map[string]any, name string) (string, int64, bool) {
+	var (
+		uid   string
+		id    int64
+		found bool
+	)
+
+	for _, f := range folders {
+		title, ok := f["title"].(string)
+		if !ok || title != name {
+			continue
+		}
+		u, ok := f["uid"].(string)
+		if !ok || u == "" {
+			continue
+		}
+		if found {
+			fmt.Printf("warning: more than one Grafana folder is titled [%s], using uid [%s]. Consider deleting the duplicates\n", name, uid)
+			break
+		}
+		uid, found = u, true
+		if raw, exist := f["id"]; exist {
+			if n, ok := raw.(float64); ok {
+				id = int64(n)
 			}
 		}
 	}
 
-	return nil
+	return uid, id, found
+}
+
+// buildDashboardRequest builds the POST /api/dashboards/db payload.
+// folderUid is authoritative. Grafana 13.1 and later silently ignore folderId here, which put
+// every dashboard in the Dashboards root, see https://github.com/NetApp/harvest/issues/4460.
+// Grafana 13.0 and earlier, including every Grafana 12 release, still honor folderId. That is
+// later than the folderIds search parameter broke, see searchFolderQuery.
+// Grafana documents folderUid as overriding folderId, so folderId is still sent for releases
+// that predate folderUid support in this endpoint. Neither key is sent when it carries no
+// information, since folderUid="" and folderId=0 both mean the Dashboards root.
+func buildDashboardRequest(dashboard map[string]any, folder *Folder, overwrite bool) map[string]any {
+	request := map[string]any{
+		"overwrite": overwrite,
+		"dashboard": dashboard,
+	}
+
+	if folder.uid != "" {
+		request["folderUid"] = folder.uid
+	}
+	if folder.id != 0 {
+		request["folderId"] = folder.id
+	}
+
+	return request
+}
+
+// searchFolderQuery builds the /api/search query that lists a folder's dashboards.
+//
+// Note this folderIds is the search query parameter. It is a different thing from the folderId
+// field buildDashboardRequest sends, and the two stopped working in different releases.
+//
+// Neither parameter works everywhere, and both fail silently rather than returning an error:
+//   - Grafana 12.0 and later stop filtering on folderIds and return no dashboards at all.
+//   - Grafana 9.4 and earlier do not understand folderUIDs and return every dashboard in the
+//     instance, which would export the whole instance into the user's directory.
+//
+// So when the version is unknown, prefer folderIds. Its worst case is exporting nothing, while
+// folderUIDs against an old server exports everything.
+// A zero id means the server gave us no numeric id, so uid is the only option left.
+func searchFolderQuery(folder *Folder) string {
+	twelve := goversion.Must(goversion.NewVersion("12.0.0"))
+
+	if folder.id != 0 && (grafanaVersion == nil || grafanaVersion.LessThan(twelve)) {
+		return "/api/search?type=dash-db&folderIds=" + strconv.FormatInt(folder.id, 10)
+	}
+
+	return "/api/search?type=dash-db&folderUIDs=" + neturl.QueryEscape(folder.uid)
 }
 
 func createServerFolder(folder *Folder) error {
@@ -1601,45 +1715,62 @@ func createServerFolder(folder *Folder) error {
 		return errors.New("server response: " + status)
 	}
 
-	folder.id = int64(result["id"].(float64))
-	folder.uid = result["uid"].(string)
+	uid, ok := result["uid"].(string)
+	if !ok || uid == "" {
+		return fmt.Errorf("folder [%s] was created but Grafana did not return a uid", folder.name)
+	}
+	folder.uid = uid
+
+	// the legacy numeric id is optional
+	folder.id = 0
+	if raw, exist := result["id"]; exist {
+		if n, ok := raw.(float64); ok {
+			folder.id = int64(n)
+		}
+	}
 
 	return nil
 }
 
-func createServerFolders(folder *Folder) error {
+// createServerFolders creates folder, including any missing intermediate folders when the name
+// is nested. It reports whether any folder was actually created.
+func createServerFolders(folder *Folder) (bool, error) {
 
 	if grafanaVersion == nil || grafanaVersion.LessThan(goversion.Must(goversion.NewVersion("11.0.0"))) {
-		return createServerFolder(folder)
+		if err := createServerFolder(folder); err != nil {
+			return false, err
+		}
+		return true, nil
 	}
 
 	// handle nested folders
 	folders := strings.Split(folder.name, "/")
 	var parentUID string
+	var created bool
 
 	for _, f := range folders {
-		curFolder := &Folder{name: f}
-		if parentUID != "" {
-			curFolder.parentUID = parentUID
-		}
+		curFolder := &Folder{name: f, parentUID: parentUID}
 
 		if err := checkFolder(curFolder); err != nil {
-			return err
+			return created, err
 		}
 
-		if curFolder.id == 0 {
-			curFolder.name = f
+		// uid, not id, decides whether the folder already exists
+		if curFolder.uid == "" {
 			if err := createServerFolder(curFolder); err != nil {
-				return err
+				return created, err
 			}
+			created = true
 		}
 
 		parentUID = curFolder.uid
-		folder.name = f
+		// Dashboards are imported into the leaf folder. folder.name is deliberately left alone
+		// so log messages keep reporting the full path the user asked for.
+		folder.uid = curFolder.uid
 		folder.id = curFolder.id
 	}
 
-	return nil
+	return created, nil
 }
 
 func convertToCamelCase(snakeCaseStr string) string {

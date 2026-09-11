@@ -212,3 +212,22 @@ This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Ple
 ### Answer
 
 This panel requires ONTAP 9.12+ and the APIs are only available via REST. Enable the REST collector in your `harvest.yml` config.
+
+## Dashboards were imported into the Dashboards root instead of the Harvest folders
+
+### Answer
+
+Harvest 26.08.0 and earlier told Grafana where to put a dashboard using the legacy `folderId`
+field. Grafana 13.1 and later silently ignore it, so `harvest grafana import` created the
+`Harvest-main-*` folders, reported every dashboard as imported, and yet left them all in the
+Dashboards root. See [#4460](https://github.com/NetApp/harvest/issues/4460).
+
+Grafana 13.0 and earlier, including every Grafana 12 release, still honor `folderId`, so import
+placed dashboards correctly on those versions.
+
+Upgrade Harvest and re-run `harvest grafana import`. Dashboards are matched by uid, so the ones
+already in the Dashboards root are moved into the correct folder rather than duplicated.
+
+`harvest grafana export` was broken by a related change and fails further back. It listed a
+folder's dashboards with `/api/search?folderIds=`, which Grafana 12.0 and later ignore, so
+export wrote no files at all. Grafana 11 and earlier are unaffected.

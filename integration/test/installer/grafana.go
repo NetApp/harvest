@@ -20,7 +20,7 @@ func (g *Grafana) Init(image string) {
 }
 
 func (g *Grafana) Install() bool {
-	g.image = "grafana/grafana:12.3.2"
+	g.image = "grafana/grafana:13.2.1"
 	slog.Info("Grafana image : " + g.image)
 	imageName := "grafana"
 	err := docker.StopContainers(imageName)
