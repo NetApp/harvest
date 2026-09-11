@@ -1991,6 +1991,30 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#dashboards-were-imported-into-the-dashboards-root-instead-of-the-harvest-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dashboards were imported into the Dashboards root instead of the Harvest folders
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dashboards were imported into the Dashboards root instead of the Harvest folders">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#answer_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Answer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2944,6 +2968,30 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#dashboards-were-imported-into-the-dashboards-root-instead-of-the-harvest-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dashboards were imported into the Dashboards root instead of the Harvest folders
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dashboards were imported into the Dashboards root instead of the Harvest folders">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#answer_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Answer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3116,6 +3164,19 @@ graph LR;
 <h2 id="why-do-i-have-volume-sis-stat-panel-empty-in-volume-dashboard">Why do I have Volume Sis Stat panel empty in Volume dashboard?<a class="headerlink" href="#why-do-i-have-volume-sis-stat-panel-empty-in-volume-dashboard" title="Permanent link">&para;</a></h2>
 <h3 id="answer_12">Answer<a class="headerlink" href="#answer_12" title="Permanent link">&para;</a></h3>
 <p>This panel requires ONTAP 9.12+ and the APIs are only available via REST. Enable the REST collector in your <code>harvest.yml</code> config.</p>
+<h2 id="dashboards-were-imported-into-the-dashboards-root-instead-of-the-harvest-folders">Dashboards were imported into the Dashboards root instead of the Harvest folders<a class="headerlink" href="#dashboards-were-imported-into-the-dashboards-root-instead-of-the-harvest-folders" title="Permanent link">&para;</a></h2>
+<h3 id="answer_13">Answer<a class="headerlink" href="#answer_13" title="Permanent link">&para;</a></h3>
+<p>Harvest 26.08.0 and earlier told Grafana where to put a dashboard using the legacy <code>folderId</code>
+field. Grafana 13.1 and later silently ignore it, so <code>harvest grafana import</code> created the
+<code>Harvest-main-*</code> folders, reported every dashboard as imported, and yet left them all in the
+Dashboards root. See <a href="https://github.com/NetApp/harvest/issues/4460">#4460</a>.</p>
+<p>Grafana 13.0 and earlier, including every Grafana 12 release, still honor <code>folderId</code>, so import
+placed dashboards correctly on those versions.</p>
+<p>Upgrade Harvest and re-run <code>harvest grafana import</code>. Dashboards are matched by uid, so the ones
+already in the Dashboards root are moved into the correct folder rather than duplicated.</p>
+<p><code>harvest grafana export</code> was broken by a related change and fails further back. It listed a
+folder's dashboards with <code>/api/search?folderIds=</code>, which Grafana 12.0 and later ignore, so
+export wrote no files at all. Grafana 11 and earlier are unaffected.</p>
 
 
 
