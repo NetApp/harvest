@@ -34,6 +34,46 @@ var cDotDashboards = []string{
 	"../../../grafana/dashboards/cmode-details",
 }
 
+// dashboardsRoot is the single source of truth for the dashboards Harvest
+// ships. Everything below is derived from it, so a directory added later
+// cannot be silently left out of the tests.
+const dashboardsRoot = "../../../grafana/dashboards"
+
+// legacyDirs are exempt from the convention checks in this file. The 7mode
+// dashboards predate those conventions and are frozen, so holding them to
+// rules like sorted keys or legend formats would mean rewriting eight
+// dashboards nobody maintains. They are still subject to the structural
+// checks in TestIDIsBlank, which walk every shipped dashboard.
+var legacyDirs = []string{"7mode"}
+
+// dashboards are the directories held to the full convention suite: every
+// shipped directory except legacyDirs. It is derived so new directories
+// are covered by default.
+var dashboards = conventionDashboards()
+
+func conventionDashboards() []string {
+	entries, err := os.ReadDir(dashboardsRoot)
+	if err != nil {
+		panic(fmt.Sprintf("failed to read dashboards root=%s err=%v", dashboardsRoot, err))
+	}
+
+	dirs := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		// influxdb dashboards target a different datasource and VisitDashboards skips them
+		if name == "influxdb" || slices.Contains(legacyDirs, name) {
+			continue
+		}
+		dirs = append(dirs, filepath.Join(dashboardsRoot, name))
+	}
+	slices.Sort(dirs)
+
+	return dirs
+}
+
 var exceptionLegendMap = map[string][]string{
 	"cmode/metadata.json":                {"exporter", "target"},
 	"cmode/cluster.json":                 {"node"},
@@ -88,7 +128,7 @@ var throughputPattern = regexp.MustCompile(`(throughput|read_data|write_data|tot
 var aggregationThroughputPattern = regexp.MustCompile(`(?i)(\w+)\(`)
 
 func TestThroughput(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkThroughput(t, path, data)
 	})
 }
@@ -117,7 +157,7 @@ func checkThroughput(t *testing.T, path string, data []byte) {
 }
 
 func TestThreshold(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkThreshold(t, path, data)
 	})
 }
@@ -213,7 +253,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 }
 
 func TestDatasource(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
 	})
 }
@@ -303,7 +343,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 	reg := regexp.MustCompile(pattern)
 	mt := newMetricsTable()
 	expectedMt := parseUnits()
-	VisitDashboards(Dashboards,
+	VisitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkUnits(t, path, mt, data)
 		})
@@ -659,7 +699,7 @@ func unitForExpr(e Expression, overrides []override, defaultUnit string,
 }
 
 func TestVariablesRefresh(t *testing.T) {
-	VisitDashboards(Dashboards,
+	VisitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkVariablesRefresh(t, path, data)
 		})
@@ -691,7 +731,7 @@ func checkVariablesRefresh(t *testing.T, path string, data []byte) {
 }
 
 func TestVariablesAreSorted(t *testing.T) {
-	VisitDashboards(Dashboards,
+	VisitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkVariablesAreSorted(t, path, data)
 		})
@@ -723,7 +763,7 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 }
 
 func TestVariablesIncludeAllOption(t *testing.T) {
-	VisitDashboards(Dashboards,
+	VisitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkVariablesHaveAll(t, path, data)
 		})
@@ -794,7 +834,7 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 
 func TestNoUnusedVariables(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkUnusedVariables(t, path, data)
 		})
@@ -850,17 +890,21 @@ varLoop:
 }
 
 func TestIDIsBlank(t *testing.T) {
+	uids := make(map[string]string)
+
 	VisitDashboards(
-		Dashboards,
+		[]string{dashboardsRoot},
 		func(path string, data []byte) {
+			checkValidJSON(t, path, data)
 			checkUIDNotEmpty(t, path, data)
+			checkUIDIsUnique(t, path, data, uids)
 			checkIDIsNull(t, path, data)
 		})
 }
 
 func TestExemplarIsFalse(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkExemplarIsFalse(t, path, data)
 		})
@@ -872,12 +916,40 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 	}
 }
 
+// checkValidJSON underpins every other check in this file. gjson parses
+// leniently and reports empty results for a malformed dashboard instead of
+// failing, so without this a corrupt file passes the whole suite silently and
+// ships looking green.
+func checkValidJSON(t *testing.T, path string, data []byte) {
+	if json.Valid(data) {
+		return
+	}
+	// json.Valid only yields a bool, so unmarshal again to name the offending byte
+	var discard any
+	t.Errorf("dashboard=%s is not valid JSON: %v", ShortPath(path), json.Unmarshal(data, &discard))
+}
+
 func checkUIDNotEmpty(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
 	uid := gjson.GetBytes(data, "uid").ClonedString()
 	if uid == "" {
 		t.Errorf(`dashboard=%s uid is "", but should not be empty`, path)
 	}
+}
+
+// checkUIDIsUnique guards the other half of a stable uid: two dashboards
+// sharing one uid means importing the second overwrites the first.
+func checkUIDIsUnique(t *testing.T, path string, data []byte, uids map[string]string) {
+	path = ShortPath(path)
+	uid := gjson.GetBytes(data, "uid").ClonedString()
+	if uid == "" {
+		return // already reported by checkUIDNotEmpty
+	}
+	if previous, ok := uids[uid]; ok {
+		t.Errorf(`dashboard=%s uid=%s is already used by dashboard=%s, uids must be unique`, path, uid, previous)
+		return
+	}
+	uids[uid] = path
 }
 
 func checkIDIsNull(t *testing.T, path string, data []byte) {
@@ -889,7 +961,7 @@ func checkIDIsNull(t *testing.T, path string, data []byte) {
 
 func TestUniquePanelIDs(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkUniquePanelIDs(t, path, data)
 		})
@@ -920,7 +992,7 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 
 func TestTopKRange(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkTopKRange(t, path, data)
 		})
@@ -1075,7 +1147,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 	}
 	// count the number of expanded sections in the dashboard and ensure num expanded = 1
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkExpansion(t, exceptions, path, data)
 		})
@@ -1113,7 +1185,7 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 
 func TestLegends(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkLegends(t, path, data)
 		})
@@ -1190,7 +1262,7 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 
 func TestConnectNullValues(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkConnectNullValues(t, path, data)
 		})
@@ -1213,7 +1285,7 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 
 func TestPanelChildPanels(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkPanelChildPanels(t, ShortPath(path), data)
 		})
@@ -1231,7 +1303,7 @@ func checkPanelChildPanels(t *testing.T, path string, data []byte) {
 
 func TestRatesAreNot1m(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkRate1m(t, ShortPath(path), data)
 		},
@@ -1249,7 +1321,7 @@ func checkRate1m(t *testing.T, path string, data []byte) {
 
 func TestTableFilter(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkTableFilter(t, path, data)
 		})
@@ -1271,7 +1343,7 @@ func checkTableFilter(t *testing.T, path string, data []byte) {
 
 func TestJoinExpressions(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkJoinExpressions(t, path, data)
 		})
@@ -1319,7 +1391,7 @@ func checkJoinExpressions(t *testing.T, path string, data []byte) {
 
 func TestTitlesOfTopN(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkTitlesOfTopN(t, ShortPath(path), data)
 		},
@@ -1357,7 +1429,7 @@ func asTitle(id string) string {
 
 func TestIOPS(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkIOPSDecimal(t, path, data)
 		})
@@ -1386,7 +1458,7 @@ func checkIOPSDecimal(t *testing.T, path string, data []byte) {
 
 func TestPercentHasMinMax(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkPercentHasMinMax(t, path, data)
 		})
@@ -1434,7 +1506,7 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 
 func TestRefreshIsOff(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkDashboardRefresh(t, ShortPath(path), data)
 		},
@@ -1452,7 +1524,7 @@ func checkDashboardRefresh(t *testing.T, path string, data []byte) {
 
 func TestHeatmapSettings(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkHeatmapSettings(t, ShortPath(path), data)
 		},
@@ -1485,7 +1557,7 @@ func checkHeatmapSettings(t *testing.T, path string, data []byte) {
 
 func TestBytePanelsHave2Decimals(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			checkBytePanelsHave2Decimals(t, path, data)
 		})
@@ -1529,7 +1601,7 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 
 func TestDashboardKeysAreSorted(t *testing.T) {
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			path = ShortPath(path)
 			sorted := gjson.GetBytes(data, `@pretty:{"sortKeys":true, "indent":"  ", "width":0}`).ClonedString()
@@ -1543,7 +1615,7 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 }
 
 func TestDashboardTime(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkDashboardTime(t, path, data)
 	})
 }
@@ -1577,7 +1649,7 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 }
 
 func TestNoDrillDownRows(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkRowNames(t, path, data)
 	})
 }
@@ -1757,7 +1829,7 @@ func TestLinks(t *testing.T) {
 	hasLinks := map[string][]string{}
 	uids := map[string]string{}
 
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkLinks(t, path, data, hasLinks, uids)
 	})
 
@@ -1857,7 +1929,7 @@ func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map
 }
 
 func TestTags(t *testing.T) {
-	VisitDashboards(Dashboards,
+	VisitDashboards(dashboards,
 		func(path string, data []byte) {
 			checkTags(t, path, data)
 		})
@@ -1954,7 +2026,7 @@ func TestFormattedPromQL(t *testing.T) {
 
 	dashes := make([]dashExprs, 0, 64)
 	VisitDashboards(
-		Dashboards,
+		dashboards,
 		func(path string, data []byte) {
 			shortPath := ShortPath(path)
 			if excludeList[shortPath] {
@@ -2151,7 +2223,7 @@ func writeDashboardFixup(t *testing.T, kind string, shortPath string, data []byt
 }
 
 func TestLegendFormat(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkLegendFormat(t, path, data)
 	})
 }
@@ -2201,7 +2273,7 @@ func checkLegendFormat(t *testing.T, path string, data []byte) {
 }
 
 func TestMultiSelectEnabled(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkMultiSelectEnabled(t, path, data)
 	})
 }
@@ -2242,7 +2314,7 @@ func checkMultiSelectEnabled(t *testing.T, path string, data []byte) {
 }
 
 func TestTimeSeriesDefaults(t *testing.T) {
-	VisitDashboards(Dashboards, func(path string, data []byte) {
+	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkTimeSeriesDefaults(t, path, data)
 	})
 }
