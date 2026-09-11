@@ -40,16 +40,6 @@ const (
 	folderLimit                   = 1000 // max folders requested from /api/folders
 )
 
-var Dashboards = []string{
-	"../../../grafana/dashboards/arista",
-	"../../../grafana/dashboards/cisco",
-	"../../../grafana/dashboards/cmode",
-	"../../../grafana/dashboards/cmode-details",
-	"../../../grafana/dashboards/storagegrid",
-	"../../../grafana/dashboards/eseries",
-	"../../../grafana/dashboards/asar2",
-}
-
 var (
 	grafanaMinVers = "7.1.0" // lowest grafana version we require
 	homePath       string

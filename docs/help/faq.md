@@ -226,8 +226,28 @@ Grafana 13.0 and earlier, including every Grafana 12 release, still honor `folde
 placed dashboards correctly on those versions.
 
 Upgrade Harvest and re-run `harvest grafana import`. Dashboards are matched by uid, so the ones
-already in the Dashboards root are moved into the correct folder rather than duplicated.
+already in the Dashboards root are moved into the correct folder rather than duplicated. The eight
+7mode dashboards are the exception, see *Every `grafana import` adds another copy of the eight
+7mode dashboards* below.
 
 `harvest grafana export` was broken by a related change and fails further back. It listed a
 folder's dashboards with `/api/search?folderIds=`, which Grafana 12.0 and later ignore, so
 export wrote no files at all. Grafana 11 and earlier are unaffected.
+
+## Every `grafana import` adds another copy of the eight 7mode dashboards
+
+### Answer
+
+Harvest 26.08.0 and earlier shipped the eight dashboards in `grafana/dashboards/7mode` with an
+empty `uid`. Grafana identifies a dashboard by its uid, so with none set it minted a fresh one and
+created a new dashboard on every import instead of updating the existing one. Two imports left 16
+copies of the 8 dashboards, three left 24, and so on. Every other Harvest dashboard sets a uid and
+was always updated in place.
+
+Each of the eight now has a stable uid (`7mode-aggregate`, `7mode-cluster`, and so on), so imports
+update them in place like the rest.
+
+Because the uids are new, the first import after upgrading cannot recognize the copies already in
+your Grafana. It creates one more set of eight at the new uids and leaves the earlier copies
+behind, so delete those earlier copies by hand. That cleanup is needed only once: every later
+import matches the stable uids and updates the same eight dashboards in place.
