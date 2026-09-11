@@ -118,7 +118,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 		}
 	}
 
-	want = 17
+	want = 20
 	got = 0
 	if exporters := template.GetChildS("Exporters"); exporters != nil {
 		for range exporters.GetChildren() {

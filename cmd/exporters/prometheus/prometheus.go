@@ -51,6 +51,7 @@ type Prometheus struct {
 	cacheAddrs      map[string]bool
 	checkAddrs      bool
 	addMetaTags     bool
+	sortLabels      bool
 	globalPrefix    string
 	replacer        *strings.Replacer
 }
@@ -111,6 +112,8 @@ func (p *Prometheus) Init() error {
 	if p.Params.ShouldAddMetaTags != nil && *p.Params.ShouldAddMetaTags {
 		p.addMetaTags = true
 	}
+
+	p.sortLabels = p.Params.ShouldSortLabels()
 
 	maxKeep := cacheMaxKeep
 	var maxKeepDur time.Duration
@@ -230,7 +233,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	// render metrics into Prometheus format
 	start := time.Now()
-	metrics, stats, metricNames = exporters.Render(data, p.addMetaTags, p.Params.SortLabels, p.globalPrefix, p.Logger, "")
+	metrics, stats, metricNames = exporters.Render(data, p.addMetaTags, p.sortLabels, p.globalPrefix, p.Logger, "")
 
 	// fix render time for metadata
 	d := time.Since(start)

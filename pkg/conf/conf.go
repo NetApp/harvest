@@ -805,10 +805,10 @@ type Exporter struct {
 	AllowedAddrsRegex *[]string `yaml:"allow_addrs_regex,omitempty"`
 	CacheMaxKeep      *string   `yaml:"cache_max_keep,omitempty"`
 	ShouldAddMetaTags *bool     `yaml:"add_meta_tags,omitempty"`
+	SortLabels        *bool     `yaml:"sort_labels,omitempty"`
 
 	// Prometheus specific
 	HeartBeatURL string `yaml:"heart_beat_url,omitempty"`
-	SortLabels   bool   `yaml:"sort_labels,omitempty"`
 	TLS          TLS    `yaml:"tls,omitempty"`
 
 	// InfluxDB specific
@@ -822,6 +822,15 @@ type Exporter struct {
 
 	IsTest     bool `yaml:"-"` // true when run from unit tests
 	IsEmbedded bool `yaml:"-"` // true when the exporter is embedded in a poller
+}
+
+// ShouldSortLabels reports whether this exporter should emit labels in a deterministic order.
+// Defaults to true; set sort_labels: false to disable.
+func (e Exporter) ShouldSortLabels() bool {
+	if e.SortLabels == nil {
+		return true
+	}
+	return *e.SortLabels
 }
 
 type Pollers struct {

@@ -31,6 +31,7 @@ type VictoriaMetrics struct {
 	client       *http.Client
 	url          string
 	addMetaTags  bool
+	sortLabels   bool
 	globalPrefix string
 	bufferPool   *sync.Pool
 }
@@ -77,6 +78,12 @@ func (v *VictoriaMetrics) Init() error {
 		}
 	} else {
 		v.globalPrefix = globalPrefix
+	}
+
+	// VictoriaMetrics keys a series off the raw label string, so sorting is not optional here
+	v.sortLabels = true
+	if v.Params.SortLabels != nil && !*v.Params.SortLabels {
+		v.Logger.Warn("ignoring sort_labels: false, VictoriaMetrics requires deterministic label order")
 	}
 
 	// Checking the required/optional params
@@ -152,7 +159,7 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10) // Ex: "1762933202"
 
 	// render metrics into open metrics format with timestamp
-	metrics, stats, _ = exporters.Render(data, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
+	metrics, stats, _ = exporters.Render(data, v.addMetaTags, v.sortLabels, v.globalPrefix, v.Logger, timestamp)
 
 	// fix render time
 	v.Metadata.MustAddValueInt64("time", v.Metadata.MustGetInstance("render"), time.Since(s).Microseconds())
@@ -175,7 +182,7 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	v.Metadata.MustSetValueInt64("time", v.Metadata.MustGetInstance("export"), time.Since(s).Microseconds())
 
 	// render metadata metrics into open metrics format with timestamp
-	metrics, stats, _ = exporters.Render(v.Metadata, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
+	metrics, stats, _ = exporters.Render(v.Metadata, v.addMetaTags, v.sortLabels, v.globalPrefix, v.Logger, timestamp)
 	if err = v.Emit(metrics); err != nil {
 		v.Logger.Error("emit metadata", slogx.Err(err))
 	}

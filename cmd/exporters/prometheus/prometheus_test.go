@@ -109,7 +109,7 @@ net_app_bike_max_speed{} 3`, "bike"},
 
 	for _, tt := range tests {
 		t.Run(tt.prefix, func(t *testing.T) {
-			p, err := setUpPrometheusExporter(tt.prefix)
+			p, err := setUpPrometheusExporter(tt.prefix, nil)
 			assert.Nil(t, err)
 			m := setUpMatrix(tt.object)
 
@@ -131,6 +131,56 @@ net_app_bike_max_speed{} 3`, "bike"},
 	}
 }
 
+func TestSortLabelsDefault(t *testing.T) {
+	wantSortedLine1 := `netapp_change_log{category="label",cluster="umeng-aff300-01-02",new_value="offline",object="volume",old_value="online",op="update",track="state"} 3`
+	wantSortedLine2 := `netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume",op="metric_change",track="netapp_volume_size_total"} 3`
+
+	trueVal := true
+	falseVal := false
+
+	tests := []struct {
+		name           string
+		sortLabels     *bool
+		wantSortLabels bool
+	}{
+		{"omitted key defaults to sorted", nil, true},
+		{"explicit true sorts", &trueVal, true},
+		{"explicit false does not sort", &falseVal, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p, err := setUpPrometheusExporter("netapp", tt.sortLabels)
+			assert.Nil(t, err)
+
+			m := setUpChangeMatrix()
+			_, err = p.Export(m)
+			assert.Nil(t, err)
+
+			prom := p.(*Prometheus)
+			assert.Equal(t, prom.sortLabels, tt.wantSortLabels)
+
+			var lines []string
+			for _, metrics := range prom.aCache.(*memCache).Get() {
+				for _, metric := range metrics {
+					lines = append(lines, string(metric))
+				}
+			}
+			slices.Sort(lines)
+			assert.Equal(t, len(lines), 2)
+
+			if !tt.wantSortLabels {
+				// unsorted output has no fixed order to assert against; see
+				// TestRenderUnsortedIsNotDeterministic for that coverage.
+				return
+			}
+
+			diff := cmp.Diff(wantSortedLine1+"\n"+wantSortedLine2, strings.Join(lines, "\n"))
+			assert.Equal(t, diff, "")
+		})
+	}
+}
+
 func TestGlobalPrefixWithChangelog(t *testing.T) {
 
 	type test struct {
@@ -146,7 +196,8 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 
 	for _, tt := range tests {
 		t.Run(tt.prefix, func(t *testing.T) {
-			p, err := setUpPrometheusExporter("netapp")
+			sortLabels := true
+			p, err := setUpPrometheusExporter("netapp", &sortLabels)
 			assert.Nil(t, err)
 
 			m := setUpChangeMatrix()
@@ -170,7 +221,7 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 	}
 }
 
-func setUpPrometheusExporter(prefix string) (exporter.Exporter, error) {
+func setUpPrometheusExporter(prefix string, sortLabels *bool) (exporter.Exporter, error) {
 
 	absExp := exporter.New(
 		"Prometheus",
@@ -178,7 +229,7 @@ func setUpPrometheusExporter(prefix string) (exporter.Exporter, error) {
 		&options.Options{PromPort: 1},
 		conf.Exporter{
 			IsTest:     true,
-			SortLabels: true,
+			SortLabels: sortLabels,
 		},
 		nil,
 	)
@@ -221,7 +272,7 @@ func setUpHistogramMatrix() *matrix.Matrix {
 }
 
 func TestRenderHistogramExample(t *testing.T) {
-	p, err := setUpPrometheusExporter("")
+	p, err := setUpPrometheusExporter("", nil)
 	assert.Nil(t, err)
 
 	m := setUpHistogramMatrix()
