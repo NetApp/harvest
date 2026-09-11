@@ -1652,6 +1652,8 @@ func findFolder(folders []map[string]any, name string) (string, int64, bool) {
 // buildDashboardRequest builds the POST /api/dashboards/db payload.
 // folderUid is authoritative. Grafana 13.1 and later silently ignore folderId here, which put
 // every dashboard in the Dashboards root, see https://github.com/NetApp/harvest/issues/4460.
+// Grafana 13.0 and earlier, including every Grafana 12 release, still honor folderId. That is
+// later than the folderIds search parameter broke, see searchFolderQuery.
 // Grafana documents folderUid as overriding folderId, so folderId is still sent for releases
 // that predate folderUid support in this endpoint. Neither key is sent when it carries no
 // information, since folderUid="" and folderId=0 both mean the Dashboards root.
@@ -1672,11 +1674,17 @@ func buildDashboardRequest(dashboard map[string]any, folder *Folder, overwrite b
 }
 
 // searchFolderQuery builds the /api/search query that lists a folder's dashboards.
-// Neither parameter works everywhere: Grafana 12.0 and later ignore folderIds, while Grafana
-// 9.4 and earlier ignore folderUIDs. An ignored parameter is not an error, it returns every
-// dashboard in the instance, so we have to send the one this server understands.
-// When the version is unknown, prefer folderIds: sending it to a Grafana that ignores it
-// exports nothing, whereas folderUIDs on an old server would export everything.
+//
+// Note this folderIds is the search query parameter. It is a different thing from the folderId
+// field buildDashboardRequest sends, and the two stopped working in different releases.
+//
+// Neither parameter works everywhere, and both fail silently rather than returning an error:
+//   - Grafana 12.0 and later stop filtering on folderIds and return no dashboards at all.
+//   - Grafana 9.4 and earlier do not understand folderUIDs and return every dashboard in the
+//     instance, which would export the whole instance into the user's directory.
+//
+// So when the version is unknown, prefer folderIds. Its worst case is exporting nothing, while
+// folderUIDs against an old server exports everything.
 // A zero id means the server gave us no numeric id, so uid is the only option left.
 func searchFolderQuery(folder *Folder) string {
 	twelve := goversion.Must(goversion.NewVersion("12.0.0"))
