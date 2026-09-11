@@ -552,3 +552,11 @@ func TestPromPort(t *testing.T) {
 		t.Errorf("got port=%d, want port=0", port)
 	}
 }
+
+func TestShouldSortLabels(t *testing.T) {
+	trueVal, falseVal := true, false
+
+	assert.True(t, Exporter{}.ShouldSortLabels())
+	assert.True(t, Exporter{SortLabels: &trueVal}.ShouldSortLabels())
+	assert.False(t, Exporter{SortLabels: &falseVal}.ShouldSortLabels())
+}

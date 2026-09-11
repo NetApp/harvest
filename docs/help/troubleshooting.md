@@ -271,7 +271,7 @@ Here are possible reasons and things to check:
     * `conf/zapi/default.yaml` - default for config is 3m
     * `conf/zapiperf/default.yaml` - default of perf is 1m
 * Check you poller logs for any errors or lag messages
-* When using [VictoriaMetrics](https://discord.com/channels/855068651522490400/1087312484215566426/1087356045531303936), make sure your Prometheus exporter config includes `sort_labels: true`, since VictoriaMetrics will mark series stale if the label order changes between polls.
+* When using [VictoriaMetrics](https://discord.com/channels/855068651522490400/1087312484215566426/1087356045531303936), Harvest emits labels in a deterministic order by default starting with 26.11, since VictoriaMetrics will mark series stale if the label order changes between polls. If you are on 26.11 or later and still see gaps, confirm you have not explicitly set `sort_labels: false`. If you are on an earlier version, make sure your Prometheus exporter config includes `sort_labels: true`.
 
 ## NABox
 

@@ -81,6 +81,17 @@ Exporters:
     exporter: VictoriaMetrics
     addr: localhost
     url: https://example.com:8428/api/v1/import/prometheus
+  victoriametrics-sort-unset:
+    exporter: VictoriaMetrics
+    addr: localhost
+  victoriametrics-sort-true:
+    exporter: VictoriaMetrics
+    addr: localhost
+    sort_labels: true
+  victoriametrics-sort-false:
+    exporter: VictoriaMetrics
+    addr: localhost
+    sort_labels: false
 
 Defaults:
   collectors:
