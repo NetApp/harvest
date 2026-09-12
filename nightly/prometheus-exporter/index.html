@@ -2708,8 +2708,8 @@ You need to keep that order consistent otherwise it will appear that you have lo
 <tr>
 <td><code>sort_labels</code></td>
 <td>bool, optional</td>
-<td>sort metric labels before exporting. <a href="https://github.com/NetApp/harvest/issues/756">VictoriaMetrics</a> requires this otherwise stale metrics are reported.</td>
-<td><code>false</code></td>
+<td>emit metric labels in a deterministic order. <a href="https://github.com/NetApp/harvest/issues/756">VictoriaMetrics</a> requires this, since it treats a change in label order as a new series and marks the old one stale. Prometheus normalizes label order itself, so it is unaffected. Enabled by default starting with Harvest 26.11; set to <code>false</code> for the pre-26.11 behavior.</td>
+<td><code>true</code> (since 26.11; <code>false</code> before)</td>
 </tr>
 <tr>
 <td><code>tls</code></td>
@@ -2855,6 +2855,7 @@ No need to define the exporter in the <code>Exporters</code> section.</p>
 <li>Harvest will automatically create a subdirectory for each poller to avoid conflicts between multiple pollers</li>
 <li>The cache directory is cleared on startup</li>
 <li>Ensure the specified directory is writable by the Harvest process</li>
+<li><code>sort_labels</code> is applied when metrics are rendered, before they are written to the disk cache, so cached output has the same label order as in-memory output</li>
 </ul>
 <p><strong>Example:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>

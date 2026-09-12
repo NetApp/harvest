@@ -2621,7 +2621,7 @@ bin/zapi<span class="w"> </span>-p<span class="w"> </span>umeng-aff300-05-06<spa
 </ul>
 </li>
 <li>Check you poller logs for any errors or lag messages</li>
-<li>When using <a href="https://discord.com/channels/855068651522490400/1087312484215566426/1087356045531303936">VictoriaMetrics</a>, make sure your Prometheus exporter config includes <code>sort_labels: true</code>, since VictoriaMetrics will mark series stale if the label order changes between polls.</li>
+<li>When using <a href="https://discord.com/channels/855068651522490400/1087312484215566426/1087356045531303936">VictoriaMetrics</a>, Harvest emits labels in a deterministic order by default starting with 26.11, since VictoriaMetrics will mark series stale if the label order changes between polls. If you are on 26.11 or later and still see gaps, confirm you have not explicitly set <code>sort_labels: false</code>. If you are on an earlier version, make sure your Prometheus exporter config includes <code>sort_labels: true</code>.</li>
 </ul>
 <h2 id="nabox">NABox<a class="headerlink" href="#nabox" title="Permanent link">&para;</a></h2>
 <p>For NABox installations, refer to the NABox documentation on troubleshooting:</p>

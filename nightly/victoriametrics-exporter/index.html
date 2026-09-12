@@ -2196,8 +2196,8 @@ When using <code>url</code>, the <code>addr</code> and <code>port</code> field w
 <tr>
 <td><code>sort_labels</code></td>
 <td>bool, optional</td>
-<td>sort metric labels before exporting. Required for VictoriaMetrics — without it, VictoriaMetrics will mark series stale if label order changes between polls.</td>
-<td><code>false</code></td>
+<td>always emits metric labels in a deterministic order for this exporter. VictoriaMetrics requires this — without it, VictoriaMetrics will mark series stale if label order changes between polls. Setting <code>sort_labels: false</code> is ignored (with a logged warning), since it is never safe for VictoriaMetrics.</td>
+<td><code>true</code> (always)</td>
 </tr>
 </tbody>
 </table>

@@ -2015,6 +2015,30 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#every-grafana-import-adds-another-copy-of-the-eight-7mode-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Every grafana import adds another copy of the eight 7mode dashboards
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Every grafana import adds another copy of the eight 7mode dashboards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#answer_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Answer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2992,6 +3016,30 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#every-grafana-import-adds-another-copy-of-the-eight-7mode-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Every grafana import adds another copy of the eight 7mode dashboards
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Every grafana import adds another copy of the eight 7mode dashboards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#answer_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Answer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3173,10 +3221,25 @@ Dashboards root. See <a href="https://github.com/NetApp/harvest/issues/4460">#44
 <p>Grafana 13.0 and earlier, including every Grafana 12 release, still honor <code>folderId</code>, so import
 placed dashboards correctly on those versions.</p>
 <p>Upgrade Harvest and re-run <code>harvest grafana import</code>. Dashboards are matched by uid, so the ones
-already in the Dashboards root are moved into the correct folder rather than duplicated.</p>
+already in the Dashboards root are moved into the correct folder rather than duplicated. The eight
+7mode dashboards are the exception, see <em>Every <code>grafana import</code> adds another copy of the eight
+7mode dashboards</em> below.</p>
 <p><code>harvest grafana export</code> was broken by a related change and fails further back. It listed a
 folder's dashboards with <code>/api/search?folderIds=</code>, which Grafana 12.0 and later ignore, so
 export wrote no files at all. Grafana 11 and earlier are unaffected.</p>
+<h2 id="every-grafana-import-adds-another-copy-of-the-eight-7mode-dashboards">Every <code>grafana import</code> adds another copy of the eight 7mode dashboards<a class="headerlink" href="#every-grafana-import-adds-another-copy-of-the-eight-7mode-dashboards" title="Permanent link">&para;</a></h2>
+<h3 id="answer_14">Answer<a class="headerlink" href="#answer_14" title="Permanent link">&para;</a></h3>
+<p>Harvest 26.08.0 and earlier shipped the eight dashboards in <code>grafana/dashboards/7mode</code> with an
+empty <code>uid</code>. Grafana identifies a dashboard by its uid, so with none set it minted a fresh one and
+created a new dashboard on every import instead of updating the existing one. Two imports left 16
+copies of the 8 dashboards, three left 24, and so on. Every other Harvest dashboard sets a uid and
+was always updated in place.</p>
+<p>Each of the eight now has a stable uid (<code>7mode-aggregate</code>, <code>7mode-cluster</code>, and so on), so imports
+update them in place like the rest.</p>
+<p>Because the uids are new, the first import after upgrading cannot recognize the copies already in
+your Grafana. It creates one more set of eight at the new uids and leaves the earlier copies
+behind, so delete those earlier copies by hand. That cleanup is needed only once: every later
+import matches the stable uids and updates the same eight dashboards in place.</p>
 
 
 
