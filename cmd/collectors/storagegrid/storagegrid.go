@@ -164,6 +164,10 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 			s.Logger.Error("failed to get metric", slogx.Err(err), slog.String("metric", metric.Name))
 			continue
 		}
+		if mat == nil {
+			s.Logger.Warn("no matrix for metric", slog.String("metric", metric.Name))
+			continue
+		}
 		metrics[metric.Name] = mat
 		numInstances := len(mat.GetInstances())
 		if numInstances == 0 {
@@ -189,6 +193,18 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	return metrics, nil
 }
 
+// emptyPromMatrix returns the matrix shape used for metrics fetched through the
+// Prometheus proxy endpoint, with no instances or metrics populated yet. Both
+// GetMetric's no-data path and makePromMetrics build on it so the two cannot
+// drift apart.
+func (s *StorageGrid) emptyPromMatrix(metricName string) *matrix.Matrix {
+	mat := s.Matrix[s.Object].CloneEmpty()
+	mat.SetExportOptions(matrix.DefaultExportOptions())
+	mat.Object = s.Props.Object
+	mat.UUID += "." + metricName
+	return mat
+}
+
 func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result, tenantNamesByID map[string]string) (*matrix.Matrix, error) {
 	var (
 		metric   *matrix.Metric
@@ -196,10 +212,7 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 		err      error
 	)
 
-	mat := s.Matrix[s.Object].CloneEmpty()
-	mat.SetExportOptions(matrix.DefaultExportOptions())
-	mat.Object = s.Props.Object
-	mat.UUID += "." + metricName
+	mat := s.emptyPromMatrix(metricName)
 
 	r := (*result)[0]
 	resultType := r.Get("resultType").ClonedString()
@@ -620,13 +633,17 @@ func (s *StorageGrid) GetMetric(metric string, display string, tenantNamesByID m
 	if err != nil {
 		return nil, fmt.Errorf("failed to get metric=[%s] error: %w", metric, err)
 	}
-	if len(records) == 0 {
-		s.Logger.Debug("no metrics on cluster", slog.String("metric", metric))
-		return nil, nil
-	}
 	nameOfMetric := metric
 	if display != "" {
 		nameOfMetric = display
+	}
+	if len(records) == 0 {
+		s.Logger.Debug("no metrics on cluster", slog.String("metric", metric))
+		// Return an empty matrix rather than nil. Callers dereference the result
+		// after checking only err, and no matrix method guards a nil receiver.
+		// This is also what makePromMetrics returns when a response parses but
+		// yields no results.
+		return s.emptyPromMatrix(nameOfMetric), nil
 	}
 	return s.makePromMetrics(nameOfMetric, &records, tenantNamesByID)
 }

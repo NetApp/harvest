@@ -210,6 +210,16 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		}
 	}
 
+	s.updateSVM(data)
+
+	s.currentVal++
+	return nil, s.client.Metadata, nil
+}
+
+// updateSVM applies the collected ZAPI responses as labels on the svm matrix.
+// It is split out of Run, mirroring the REST plugin's updateSVM, so the label
+// logic can be tested without a cluster.
+func (s *SVM) updateSVM(data *matrix.Matrix) {
 	// update svm instance based on the above zapi response
 	for _, svmInstance := range data.GetInstances() {
 		if !svmInstance.IsExportable() {
@@ -294,9 +304,6 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 			svmInstance.SetLabel("nfs_kerberos_protocol_enabled", kerberosEnabled)
 		}
 	}
-
-	s.currentVal++
-	return nil, s.client.Metadata, nil
 }
 
 func (s *SVM) GetAuditProtocols() (map[string]string, error) {

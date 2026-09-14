@@ -1,0 +1,6 @@
+{
+  "records": [
+    { "svm": { "name": "svm1" }, "policies": { "enabled": true, "name": "fp_on" } }
+  ],
+  "num_records": 1
+}

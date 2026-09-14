@@ -74,7 +74,7 @@ govulncheck: ## Run govulncheck on the source files
 
 test: ## Run tests
 	@echo "Running tests..."
-	@go test -race -shuffle=on -v ./...
+	@go test -race -shuffle=on ./...
 
 build: clean deps fmt lint govulncheck ## Build the MCP server binary with development checks
 	@echo "Building MCP server..."

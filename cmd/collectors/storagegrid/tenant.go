@@ -89,6 +89,10 @@ func (t *Tenant) collectPromMetrics(tenantNamesByID map[string]string) []*matrix
 			t.SLogger.Error("Unable to get metric", slogx.Err(err), slog.String("metric", metric))
 			continue
 		}
+		if mat == nil {
+			t.SLogger.Warn("No matrix for metric", slog.String("metric", metric))
+			continue
+		}
 		mat.Object = "storagegrid"
 		metrics[metric] = mat
 	}

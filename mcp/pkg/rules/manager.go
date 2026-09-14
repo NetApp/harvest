@@ -304,6 +304,13 @@ func (rm *RuleManager) DeleteRule(req *DeleteRuleRequest) error {
 		return errors.New("rule not found in file structure")
 	}
 
+	// Removing a group's last rule would leave "rules: []" behind, and both
+	// Prometheus and vmalert refuse to load a group with no rules, so drop any
+	// group that is now empty.
+	ruleFile.Groups = slices.DeleteFunc(ruleFile.Groups, func(g RuleGroup) bool {
+		return len(g.Rules) == 0
+	})
+
 	// Write the file
 	if err := rm.fileManager.writeRuleFile(filename, ruleFile); err != nil {
 		return fmt.Errorf("failed to write rule file: %w", err)

@@ -71,6 +71,8 @@ clean: ## Cleanup the project binary (bin) folders
 test: ## Run tests
 	@echo "Testing"
 	@go test -race -shuffle=on ./...
+	@echo "Testing mcp module"
+	@$(MAKE) --no-print-directory -C mcp test
 
 fmt: ## Format the go source files
 	@echo "Formatting"
