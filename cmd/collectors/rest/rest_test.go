@@ -1,12 +1,14 @@
 package rest
 
 import (
+	"errors"
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slice"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
@@ -311,4 +313,80 @@ func TestQuotas(t *testing.T) {
 	}
 
 	assert.False(t, slice.HasDuplicates(instanceKeys))
+}
+
+// TestHandleError covers the classification step behind GitHub issue #4197
+// "MetroclusterCheck collector frequent failed status", which shipped with the
+// status/untested label.
+//
+// handleError decides whether a REST failure is a transient, expected condition
+// that the poller should stand by on, or a genuine fetch failure that drives the
+// collector to failed status. Before the fix, code 2428841 had no branch here
+// and fell through to the generic "failed to fetch data".
+func TestHandleError(t *testing.T) {
+	tests := []struct {
+		name           string
+		code           int64
+		wantRejected   bool
+		wantSentinel   error
+		wantGenericMsg bool
+	}{
+		{
+			name:         "MetroCluster check in progress is rejected, not a fetch failure",
+			code:         2428841,
+			wantRejected: true,
+			wantSentinel: errs.ErrMetroClusterCheckInProgress,
+		},
+		{
+			name:         "MetroCluster not configured is rejected, not a fetch failure",
+			code:         2426405,
+			wantRejected: true,
+			wantSentinel: errs.ErrMetroClusterNotConfigured,
+		},
+		{
+			name:           "any other code is a generic fetch failure",
+			code:           8585320,
+			wantRejected:   false,
+			wantGenericMsg: true,
+		},
+	}
+
+	r := &Rest{}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			in := errs.NewRest().Error(errs.ErrAPIRequestRejected).Code(tc.code).Build()
+
+			got, err := r.handleError(in)
+
+			assert.Nil(t, got)
+			assert.NotNil(t, err)
+
+			if tc.wantRejected {
+				// ErrAPIRequestRejected is what the collector keys standby off.
+				assert.ErrorIs(t, err, errs.ErrAPIRequestRejected)
+				assert.ErrorIs(t, err, tc.wantSentinel)
+				assert.False(t, strings.Contains(err.Error(), "failed to fetch data"))
+			}
+			if tc.wantGenericMsg {
+				assert.True(t, strings.Contains(err.Error(), "failed to fetch data"))
+				assert.False(t, errors.Is(err, errs.ErrMetroClusterCheckInProgress))
+				assert.False(t, errors.Is(err, errs.ErrMetroClusterNotConfigured))
+			}
+		})
+	}
+}
+
+// TestHandleErrorPassesThroughPlainError pins that a transport-level error,
+// which carries no ONTAP code at all, is still reported as a fetch failure
+// rather than being silently classified as an expected condition.
+func TestHandleErrorPassesThroughPlainError(t *testing.T) {
+	r := &Rest{}
+
+	got, err := r.handleError(errors.New("connection refused"))
+
+	assert.Nil(t, got)
+	assert.NotNil(t, err)
+	assert.True(t, strings.Contains(err.Error(), "failed to fetch data"))
+	assert.True(t, strings.Contains(err.Error(), "connection refused"))
 }

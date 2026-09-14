@@ -32,6 +32,10 @@ type SVM struct {
 	iscsiServiceInfo    map[string]string
 	iscsiCredentialInfo map[string]string
 	client              *rest.Client
+	// testFilePaths maps an API query to a response fixture, and is set only
+	// from unit tests. This is the multi-endpoint form of the testFilePath seam
+	// used by the restperf nic plugin.
+	testFilePaths map[string]string
 }
 
 type Nsswitch struct {
@@ -56,6 +60,16 @@ func (s *SVM) Init(remote conf.Remote) error {
 		return err
 	}
 
+	s.nsswitchInfo = make(map[string]Nsswitch)
+	s.kerberosInfo = make(map[string]string)
+	s.fpolicyInfo = make(map[string]Fpolicy)
+	s.iscsiServiceInfo = make(map[string]string)
+	s.iscsiCredentialInfo = make(map[string]string)
+
+	if s.Options.IsTest {
+		return nil
+	}
+
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if s.client, err = rest.New(conf.ZapiPoller(s.ParentParams), timeout, s.Auth); err != nil {
 		s.SLogger.Error("connecting", slogx.Err(err))
@@ -65,13 +79,15 @@ func (s *SVM) Init(remote conf.Remote) error {
 	if _, err := s.client.Init(5, remote); err != nil {
 		return err
 	}
-	s.nsswitchInfo = make(map[string]Nsswitch)
-	s.kerberosInfo = make(map[string]string)
-	s.fpolicyInfo = make(map[string]Fpolicy)
-	s.iscsiServiceInfo = make(map[string]string)
-	s.iscsiCredentialInfo = make(map[string]string)
 
 	return nil
+}
+
+// invokeRestCall fetches href, unless a test has registered a response fixture
+// for query, in which case the fixture is read instead and the client is never
+// used.
+func (s *SVM) invokeRestCall(query string, href string) ([]gjson.Result, error) {
+	return collectors.InvokeRestCallWithTestFile(s.client, href, s.testFilePaths[query])
 }
 
 func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
@@ -234,7 +250,7 @@ func (s *SVM) GetKerberosConfig() (map[string]string, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
+	if result, err = s.invokeRestCall(query, href); err != nil {
 		return nil, err
 	}
 
@@ -268,19 +284,23 @@ func (s *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
+	if result, err = s.invokeRestCall(query, href); err != nil {
 		return nil, err
 	}
 
 	for _, fpolicyData := range result {
-		fpolicyEnable := fpolicyData.Get("policies.enabled").ClonedString()
-		fpolicyName := fpolicyData.Get("policies.name").ClonedString()
 		svmName := fpolicyData.Get("svm.name").ClonedString()
-		if _, ok := svmFpolicyMap[svmName]; !ok {
-			svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
-		} else if svmFpolicyMap[svmName].enable == "false" {
-			// If svm is already present, update the status value only if it is false
-			svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
+		// policies is an array in the ONTAP REST schema: an SVM may have more
+		// than one fpolicy policy. Reading "policies.enabled" directly resolves
+		// only when the value happens to be a single object, so iterate instead.
+		// gjson's Array() also wraps a lone object, so both shapes work.
+		for _, policy := range fpolicyData.Get("policies").Array() {
+			fpolicyEnable := policy.Get("enabled").ClonedString()
+			fpolicyName := policy.Get("name").ClonedString()
+			if existing, ok := svmFpolicyMap[svmName]; !ok || existing.enable == "false" {
+				// If svm is already present, update the status value only if it is false
+				svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
+			}
 		}
 	}
 
@@ -303,7 +323,7 @@ func (s *SVM) GetIscsiServices() (map[string]string, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
+	if result, err = s.invokeRestCall(query, href); err != nil {
 		return nil, err
 	}
 
@@ -337,7 +357,7 @@ func (s *SVM) GetIscsiCredentials() (map[string]string, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
+	if result, err = s.invokeRestCall(query, href); err != nil {
 		return nil, err
 	}
 
