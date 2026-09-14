@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":semanticCommitTypeAll(chore)",
     ":semanticCommitScopeDisabled",
     "docker:disable"
@@ -10,17 +10,12 @@
   "schedule": ["before 4am on monday"],
   "groupName": "all dependencies",
   "groupSlug": "all",
+  "postUpdateOptions": ["gomodTidyAll"],
+  "ignoreDeps": ["github.com/netapp/harvest/v2"],
   "lockFileMaintenance": {
     "enabled": false
   },
   "packageRules": [
-    {
-      "groupName": "all dependencies",
-      "groupSlug": "all",
-      "matchPackagePatterns": [
-        "*"
-      ]
-    },
     {
       "description": "TestFormattedPromQL asserts every dashboard expression matches this parser's pretty-printer, so a bump reformats ~1800 expressions at once. Keep it out of the grouped PR so the reformat is reviewable on its own.",
       "matchPackageNames": [
@@ -28,6 +23,13 @@
       ],
       "groupName": "prometheus promql parser",
       "groupSlug": "promql-parser"
+    },
+    {
+      "description": "integration/ and mcp/ are separate modules that consume the root module from disk (replace github.com/netapp/harvest/v2 => ../). gomodTidyAll re-tidies them after a root bump; this rule additionally lets their own indirect requirements be updated, which gomod disables by default",
+      "matchManagers": ["gomod"],
+      "matchFileNames": ["integration/go.mod", "mcp/go.mod"],
+      "matchDepTypes": ["indirect"],
+      "enabled": true
     }
   ],
   "separateMajorMinor": false
