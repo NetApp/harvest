@@ -1,11 +1,10 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help deps clean build test fmt lint govulncheck package all
+.PHONY: help deps clean build test fmt lint govulncheck license-check package all
 
 SHELL := /bin/bash
-GOLANGCI_LINT_VERSION := latest
-GOVULNCHECK_VERSION := latest
 HARVEST_ENV := ../.harvest.env
+WWHRD_CONFIG ?= ../.wwhrd.yml
 
 # Read the environment file if it exists and export the uncommented variables
 ifneq (,$(wildcard $(HARVEST_ENV)))
@@ -66,11 +65,14 @@ fmt: ## Format the Go source files
 lint: ## Run golangci-lint on the source files
 	@echo "Linting..."
 	@go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
-	@go run golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest ./...
 
 govulncheck: ## Run govulncheck on the source files
 	@echo "Running vulnerability check..."
 	@go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
+
+license-check: ## Check dependency licences against the shared allowlist
+	@echo "Licence checking"
+	@go run github.com/frapposelli/wwhrd@latest check -q -t -f ${WWHRD_CONFIG}
 
 test: ## Run tests
 	@echo "Running tests..."

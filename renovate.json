@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":semanticCommitTypeAll(chore)",
     ":semanticCommitScopeDisabled",
     "docker:disable"
@@ -10,17 +10,22 @@
   "schedule": ["before 4am on monday"],
   "groupName": "all dependencies",
   "groupSlug": "all",
+  "postUpdateOptions": ["gomodTidyAll"],
+  "ignoreDeps": ["github.com/netapp/harvest/v2"],
   "lockFileMaintenance": {
     "enabled": false
   },
-  "packageRules": [
+  "customManagers": [
     {
-      "groupName": "all dependencies",
-      "groupSlug": "all",
-      "matchPackagePatterns": [
-        "*"
-      ]
-    },
+      "customType": "regex",
+      "description": "GOLANGCI_LINT_VERSION in .harvest.env pins the linter that `make lint` runs in every module",
+      "managerFilePatterns": ["/^\\.harvest\\.env$/"],
+      "matchStrings": ["GOLANGCI_LINT_VERSION=(?<currentValue>v\\S+)"],
+      "depNameTemplate": "github.com/golangci/golangci-lint/v2",
+      "datasourceTemplate": "go"
+    }
+  ],
+  "packageRules": [
     {
       "description": "TestFormattedPromQL asserts every dashboard expression matches this parser's pretty-printer, so a bump reformats ~1800 expressions at once. Keep it out of the grouped PR so the reformat is reviewable on its own.",
       "matchPackageNames": [
@@ -28,6 +33,22 @@
       ],
       "groupName": "prometheus promql parser",
       "groupSlug": "promql-parser"
+    },
+    {
+      "description": "A golangci-lint release can add linters, which lands as new findings across the whole codebase rather than as a dependency problem. Keep it out of the grouped PR and off the weekly schedule: it waits on the dependency dashboard until someone asks for it.",
+      "matchPackageNames": [
+        "github.com/golangci/golangci-lint/v2"
+      ],
+      "groupName": "golangci-lint",
+      "groupSlug": "golangci-lint",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "integration/ and mcp/ are separate modules that consume the root module from disk (replace github.com/netapp/harvest/v2 => ../). gomodTidyAll re-tidies them after a root bump; this rule additionally lets their own indirect requirements be updated, which gomod disables by default",
+      "matchManagers": ["gomod"],
+      "matchFileNames": ["integration/go.mod", "mcp/go.mod"],
+      "matchDepTypes": ["indirect"],
+      "enabled": true
     }
   ],
   "separateMajorMinor": false

@@ -1,13 +1,18 @@
 # Copyright 2021 NetApp, Inc.  All Rights Reserved
 .DEFAULT_GOAL:=help
 
-.PHONY: help deps clean build test fmt lint package asup dev fetch-asup ci
+.PHONY: help deps clean build test fmt lint tidy tidy-check package asup dev fetch-asup ci
 
 SHELL := /bin/bash
-GOLANGCI_LINT_VERSION := v2.13.0
-GOVULNCHECK_VERSION := latest
 HARVEST_ENV := .harvest.env
 HELM_CHART_DIR := deploy/helm/harvest
+# Every Go module in the repo. integration/ and mcp/ consume the root module from
+# disk (replace github.com/netapp/harvest/v2 => ../), so a root dependency bump
+# raises their indirect requirements too and their go.mod files have to follow.
+GO_MODULES := . integration mcp cmd/tools/grafana/promqlfmt
+PROMQLFMT_DIR := cmd/tools/grafana/promqlfmt
+# Absolute so it can be passed to a check running in any module directory
+WWHRD_CONFIG := $(CURDIR)/.wwhrd.yml
 
 # Read the environment file if it exists and export the uncommented variables
 ifneq (,$(wildcard $(HARVEST_ENV)))
@@ -78,15 +83,32 @@ fmt: ## Format the go source files
 	@echo "Formatting"
 	@go fmt ./...
 
-lint: ## Run golangci-lint on the source files
+tidy: ## Tidy go.mod and go.sum in every module
+	@echo "Tidying"
+	@for m in $(GO_MODULES); do echo "  $$m"; (cd $$m && go mod tidy) || exit 1; done
+	@go mod vendor
+
+tidy-check: ## Check that every module's go.mod and go.sum are tidy
+	@echo "Checking go.mod files are tidy"
+	@for m in $(GO_MODULES); do \
+		(cd $$m && go mod tidy -diff) || { echo "ERROR: $$m/go.mod is not tidy (see diff above) -- run 'make tidy'"; exit 1; }; \
+	done
+
+lint: tidy-check ## Run golangci-lint on the source files
 	@echo "Linting"
 	@go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
-	@cd integration && go mod tidy && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
+	@cd integration && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
+	@cd $(PROMQLFMT_DIR) && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
+	@echo "Linting mcp module"
+	@$(MAKE) --no-print-directory -C mcp lint
 
-govulncheck: ## Run govulncheck on the source files
+govulncheck: tidy-check ## Run govulncheck on the source files
 	@echo "Govulnchecking"
 	@go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
-	@cd integration && go mod tidy && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
+	@cd integration && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
+	@cd $(PROMQLFMT_DIR) && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
+	@echo "Govulnchecking mcp module"
+	@$(MAKE) --no-print-directory -C mcp govulncheck
 
 mkdocs:
 ifeq (${MKDOCS_EXISTS}, )
@@ -148,10 +170,13 @@ endif
 
 docs: mkdocs ## Serve docs for local dev
 
-license-check:
+license-check: tidy-check
 	@echo "Licence checking"
 	@go run github.com/frapposelli/wwhrd@latest check -q -t
-	@cd integration && go mod tidy && go run github.com/frapposelli/wwhrd@latest check -q -t -f ../.wwhrd.yml
+	@cd integration && go run github.com/frapposelli/wwhrd@latest check -q -t -f $(WWHRD_CONFIG)
+	@cd $(PROMQLFMT_DIR) && go run github.com/frapposelli/wwhrd@latest check -q -t -f $(WWHRD_CONFIG)
+	@echo "Licence checking mcp module"
+	@$(MAKE) --no-print-directory -C mcp license-check WWHRD_CONFIG=$(WWHRD_CONFIG)
 
 ci: clean deps fmt harvest lint test govulncheck license-check
 
