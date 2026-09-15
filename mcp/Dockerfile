@@ -15,6 +15,7 @@ COPY mcp/ ./mcp/
 COPY go.mod go.sum ./
 COPY pkg/ ./pkg/
 COPY .golangci.yml ./
+COPY .harvest.env ./
 
 WORKDIR $BUILD_DIR/mcp
 
