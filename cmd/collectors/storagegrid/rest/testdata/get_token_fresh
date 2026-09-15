@@ -1,0 +1,4 @@
+#!/bin/bash
+# Used by cmd/collectors/storagegrid/rest/client_test.go
+# Stands in for the same credential script after it has rotated the token.
+echo 'authToken: fresh-token'

@@ -1,0 +1,10 @@
+{
+  "records": [
+    { "svm": { "name": "svm1" }, "enabled": false },
+    { "svm": { "name": "svm1" }, "enabled": true },
+    { "svm": { "name": "svm2" }, "enabled": true },
+    { "svm": { "name": "svm2" }, "enabled": false },
+    { "svm": { "name": "svm3" }, "enabled": false }
+  ],
+  "num_records": 5
+}

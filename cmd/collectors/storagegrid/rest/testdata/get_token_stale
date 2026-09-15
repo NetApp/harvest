@@ -1,0 +1,4 @@
+#!/bin/bash
+# Used by cmd/collectors/storagegrid/rest/client_test.go
+# Stands in for a credential script whose cached token the grid has since rejected.
+echo 'authToken: stale-token'

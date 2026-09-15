@@ -627,3 +627,143 @@ Pollers:
 		})
 	}
 }
+
+// credsFromYAML decodes a harvest config and returns Credentials for the named
+// poller, matching how TestCredentials_GetPollerAuth sets up its cases.
+func credsFromYAML(t *testing.T, yaml string) (*Credentials, *conf.Poller) {
+	t.Helper()
+	conf.Config.Defaults = nil
+	err := conf.DecodeConfig([]byte(yaml))
+	assert.Nil(t, err)
+	poller, err := conf.PollerNamed("test")
+	assert.Nil(t, err)
+	return NewCredentials(poller, slog.Default()), poller
+}
+
+// TestExpireForcesCredentialScriptRefetch covers GitHub issues #4140
+// "The credential script for the REST Collector does not refresh the password on
+// authentication errors" and #4009 "StorageGRID: Cached credential script tokens
+// not expired on 401" (the latter shipped with the status/untested label).
+//
+// Expire is the hook every client calls after a 401. It resets the credential
+// schedule so the next Password lookup re-runs the script instead of handing
+// back the rejected value. Seven clients depend on it -- cmd/tools/rest,
+// pkg/api/ontapi/zapi, and the storagegrid, eseries, cisco and arista REST
+// clients -- and none of them could detect a regression here on their own.
+//
+// The two fixtures make the refetch observable: get_pass echoes "script-data-",
+// get_pass2 echoes "script-alt-".
+func TestExpireForcesCredentialScriptRefetch(t *testing.T) {
+	c, poller := credsFromYAML(t, `
+Pollers:
+  test:
+    addr: a.b.c
+    username: flo
+    credentials_script:
+      path: testdata/get_pass
+`)
+
+	first, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, first.Password, "script-data-flo-a.b.c")
+	assert.True(t, first.HasCredentialScript)
+
+	// Point the poller at a script that returns a different value. Without
+	// expiring, the cached response must still be served -- that is the whole
+	// point of the schedule.
+	poller.CredentialsScript.Path = "testdata/get_pass2"
+
+	cached, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, cached.Password, "script-data-flo-a.b.c")
+
+	// After Expire, the next lookup must re-run the script.
+	c.Expire()
+
+	refetched, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, refetched.Password, "script-alt-flo-a.b.c")
+}
+
+// TestExpireIsANoOpWithoutCredentialScript pins that Expire does nothing for a
+// poller using a static password. Clearing the schedule there would be
+// meaningless, and Expire is called on the 401 path regardless of auth style.
+func TestExpireIsANoOpWithoutCredentialScript(t *testing.T) {
+	c, _ := credsFromYAML(t, `
+Pollers:
+  test:
+    addr: a.b.c
+    username: flo
+    password: static-pass
+`)
+
+	first, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, first.Password, "static-pass")
+	assert.False(t, first.HasCredentialScript)
+
+	c.Expire()
+
+	after, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, after.Password, "static-pass")
+}
+
+// TestExpireRefetchesAuthToken is the #4009 shape specifically: a credential
+// script that returns an authToken rather than a password. The StorageGrid
+// client short-circuits on a non-empty AuthToken, so a stale token has to be
+// cleared through Expire or the 401 retry reuses it and fails again.
+func TestExpireRefetchesAuthToken(t *testing.T) {
+	c, poller := credsFromYAML(t, `
+Pollers:
+  test:
+    addr: a.b.c
+    username: flo
+    credentials_script:
+      path: testdata/get_credentials_authToken
+`)
+
+	first, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.NotEqual(t, first.AuthToken, "")
+	assert.True(t, first.HasCredentialScript)
+
+	// Swap in a script that yields a password instead of a token, so the
+	// refetch is observable.
+	poller.CredentialsScript.Path = "testdata/get_pass"
+
+	cachedAuth, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, cachedAuth.AuthToken, first.AuthToken)
+
+	c.Expire()
+
+	refetched, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, refetched.AuthToken, "")
+	assert.Equal(t, refetched.Password, "script-data-flo-a.b.c")
+}
+
+// TestExpireIsRepeatable pins that Expire can be called more than once, and
+// while no fetch is in flight, without deadlocking on authMu. The 401 paths can
+// call it on consecutive polls.
+func TestExpireIsRepeatable(t *testing.T) {
+	c, _ := credsFromYAML(t, `
+Pollers:
+  test:
+    addr: a.b.c
+    username: flo
+    credentials_script:
+      path: testdata/get_pass
+`)
+
+	_, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+
+	c.Expire()
+	c.Expire()
+
+	got, err := c.GetPollerAuth()
+	assert.Nil(t, err)
+	assert.Equal(t, got.Password, "script-data-flo-a.b.c")
+}

@@ -356,6 +356,23 @@ type authBody struct {
 	Password string `json:"password"`
 }
 
+// authorizeURL builds the URL of the StorageGrid authorize endpoint.
+//
+// APIPath is empty until sniffAPIVersion succeeds, and sniffAPIVersion is the
+// first call Init makes, so a 401 during version discovery reaches this with no
+// API path set. url.JoinPath drops empty elements, which would produce an
+// unversioned ".../authorize" -- not a StorageGrid endpoint, and against a
+// non-StorageGrid target an HTML error page that surfaces as
+// "invalid character '<'". Fall back to the default API version, as
+// sniffAPIVersion does when version discovery yields nothing.
+func (c *Client) authorizeURL() (string, error) {
+	apiPath := c.APIPath
+	if apiPath == "" {
+		apiPath = "/api/v" + DefaultAPIVersion
+	}
+	return url.JoinPath(c.baseURL, apiPath, "authorize")
+}
+
 func (c *Client) fetchTokenWithAuthRetry() error {
 	fetchToken := func() error {
 		var (
@@ -364,7 +381,7 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 			response *http.Response
 			body     []byte
 		)
-		u, err := url.JoinPath(c.baseURL, c.APIPath, "authorize")
+		u, err := c.authorizeURL()
 		if err != nil {
 			return fmt.Errorf("failed to create auth URL err: %w", err)
 		}

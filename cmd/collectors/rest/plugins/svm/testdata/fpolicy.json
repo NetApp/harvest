@@ -1,0 +1,23 @@
+{
+  "records": [
+    {
+      "svm": { "name": "svm1" },
+      "policies": [
+        { "enabled": false, "name": "fp_off" },
+        { "enabled": true, "name": "fp_on" }
+      ]
+    },
+    {
+      "svm": { "name": "svm2" },
+      "policies": [
+        { "enabled": true, "name": "fp_first" },
+        { "enabled": false, "name": "fp_second" }
+      ]
+    },
+    {
+      "svm": { "name": "svm3" },
+      "policies": []
+    }
+  ],
+  "num_records": 3
+}
