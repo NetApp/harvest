@@ -3,10 +3,6 @@
 .PHONY: help deps clean build test fmt lint govulncheck license-check package all
 
 SHELL := /bin/bash
-# Keep in sync with ../Makefile. The root Makefile passes its own pins down when
-# it delegates to this one, so these only apply to a standalone make in mcp/.
-GOLANGCI_LINT_VERSION ?= v2.13.2
-GOVULNCHECK_VERSION ?= latest
 HARVEST_ENV := ../.harvest.env
 WWHRD_CONFIG ?= ../.wwhrd.yml
 

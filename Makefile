@@ -4,8 +4,6 @@
 .PHONY: help deps clean build test fmt lint tidy tidy-check package asup dev fetch-asup ci
 
 SHELL := /bin/bash
-GOLANGCI_LINT_VERSION := v2.13.0
-GOVULNCHECK_VERSION := latest
 HARVEST_ENV := .harvest.env
 HELM_CHART_DIR := deploy/helm/harvest
 # Every Go module in the repo. integration/ and mcp/ consume the root module from
@@ -100,7 +98,7 @@ lint: tidy-check ## Run golangci-lint on the source files
 	@cd integration && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
 	@cd $(PROMQLFMT_DIR) && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
 	@echo "Linting mcp module"
-	@$(MAKE) --no-print-directory -C mcp lint GOLANGCI_LINT_VERSION=${GOLANGCI_LINT_VERSION}
+	@$(MAKE) --no-print-directory -C mcp lint
 
 govulncheck: tidy-check ## Run govulncheck on the source files
 	@echo "Govulnchecking"
@@ -108,7 +106,7 @@ govulncheck: tidy-check ## Run govulncheck on the source files
 	@cd integration && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
 	@cd $(PROMQLFMT_DIR) && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
 	@echo "Govulnchecking mcp module"
-	@$(MAKE) --no-print-directory -C mcp govulncheck GOVULNCHECK_VERSION=${GOVULNCHECK_VERSION}
+	@$(MAKE) --no-print-directory -C mcp govulncheck
 
 mkdocs:
 ifeq (${MKDOCS_EXISTS}, )
