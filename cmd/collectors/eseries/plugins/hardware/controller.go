@@ -92,15 +92,15 @@ func cleanConfigType(configType string) string {
 	}
 }
 
-// ipvxAddressString extracts the address from an IpVxAddress entry.
-func ipvxAddressString(server gjson.Result) string {
+// ipvxAddress extracts the address and normalized type from an IpVxAddress entry.
+func ipvxAddress(server gjson.Result) (string, string) {
 	switch strings.ToLower(server.Get("addressType").ClonedString()) {
 	case "ipv4":
-		return server.Get("ipv4Address").ClonedString()
+		return server.Get("ipv4Address").ClonedString(), "ipv4"
 	case "ipv6":
-		return server.Get("ipv6Address").ClonedString()
+		return server.Get("ipv6Address").ClonedString(), "ipv6"
 	default:
-		return ""
+		return "", ""
 	}
 }
 
@@ -111,29 +111,85 @@ func ntpServerAddress(server gjson.Result) (string, string) {
 	case "domainname":
 		return server.Get("domainName").ClonedString(), "domainName"
 	case "ipvx":
-		ipvxAddress := server.Get("ipvxAddress")
-		return ipvxAddressString(ipvxAddress), ipvxAddress.Get("addressType").ClonedString()
+		return ipvxAddress(server.Get("ipvxAddress"))
 	default:
 		return "", ""
 	}
 }
 
-func primaryAndBackup(servers []gjson.Result, extract func(gjson.Result) string) (string, string) {
+func primaryAndBackup(servers []serverEntry) (string, string) {
 	var primary, backup string
 	for _, server := range servers {
-		address := extract(server)
-		if address == "" {
+		if server.address == "" {
 			continue
 		}
 		if primary == "" {
-			primary = address
+			primary = server.address
 			continue
 		}
-		backup = address
+		backup = server.address
 		break
 	}
 
 	return primary, backup
+}
+
+// serverEntry is one decoded DNS/NTP server address.
+type serverEntry struct {
+	address     string
+	addressType string
+}
+
+// serverList is one DNS/NTP server list: where to find it and how to decode its entries.
+type serverList struct {
+	path    string
+	extract func(gjson.Result) (string, string)
+}
+
+// serverPaths locates the DNS/NTP server lists within a dnsProperties/ntpProperties object.
+type serverPaths struct {
+	kind   string // "dns" or "ntp", for logging
+	static serverList
+	dhcp   serverList
+}
+
+var (
+	dnsServerPaths = serverPaths{
+		kind:   "dns",
+		static: serverList{"acquisitionProperties.dnsServers", ipvxAddress},
+		dhcp:   serverList{"dhcpAcquiredDnsServers", ipvxAddress},
+	}
+	ntpServerPaths = serverPaths{
+		kind:   "ntp",
+		static: serverList{"acquisitionProperties.ntpServers", ntpServerAddress},
+		dhcp:   serverList{"dhcpAcquiredNtpServers", ipvxAddress},
+	}
+)
+
+// serversInUse returns the decoded servers in use for props (only stat and dhcp).
+func (h *Hardware) serversInUse(props gjson.Result, paths serverPaths, acquisitionType string, logAttrs ...any) []serverEntry {
+	var list serverList
+
+	switch {
+	case strings.EqualFold(acquisitionType, "stat"):
+		list = paths.static
+	case strings.EqualFold(acquisitionType, "dhcp"):
+		list = paths.dhcp
+	default:
+		h.SLogger.Debug("No servers exported for acquisition type",
+			append([]any{slog.String("kind", paths.kind), slog.String("acquisition_type", acquisitionType)}, logAttrs...)...)
+
+		return nil
+	}
+
+	servers := props.Get(list.path).Array()
+	entries := make([]serverEntry, 0, len(servers))
+	for _, server := range servers {
+		address, addressType := list.extract(server)
+		entries = append(entries, serverEntry{address, addressType})
+	}
+
+	return entries
 }
 
 func (h *Hardware) addServerInstance(mat *matrix.Matrix, controllerID, controllerLocation, labelName, server, addressType, acquisitionType string) bool {
@@ -526,24 +582,13 @@ func (h *Hardware) processDNSProperties(controller gjson.Result, controllerID, c
 	mat := h.data[dnsPropertyMatrix]
 	acquisitionType := dnsProps.Get("acquisitionProperties.dnsAcquisitionType").ClonedString()
 
-	// Only stat and dhcp have servers in use; the lists stay populated for other
-	// acquisition types, which does not imply the servers are active. Unmatched types
-	// leave servers as the zero Result, whose Array() is empty.
-	var servers gjson.Result
-	switch {
-	case strings.EqualFold(acquisitionType, "stat"):
-		servers = dnsProps.Get("acquisitionProperties.dnsServers")
-	case strings.EqualFold(acquisitionType, "dhcp"):
-		servers = dnsProps.Get("dhcpAcquiredDnsServers")
-	default:
-		h.SLogger.Debug("No DNS servers exported for acquisition type",
-			slog.String("controller_id", controllerID), slog.String("acquisition_type", acquisitionType))
-	}
+	servers := h.serversInUse(dnsProps, dnsServerPaths, acquisitionType,
+		slog.String("controller_id", controllerID))
 
 	count := 0
-	for _, server := range servers.Array() {
+	for _, server := range servers {
 		if h.addServerInstance(mat, controllerID, controllerLocation, "dns_server",
-			ipvxAddressString(server), server.Get("addressType").ClonedString(), cleanConfigType(acquisitionType)) {
+			server.address, server.addressType, cleanConfigType(acquisitionType)) {
 			count++
 		}
 	}
@@ -562,28 +607,12 @@ func (h *Hardware) processNTPProperties(controller gjson.Result, controllerID, c
 	mat := h.data[ntpPropertyMatrix]
 	acquisitionType := ntpProps.Get("acquisitionProperties.ntpAcquisitionType").ClonedString()
 
-	// Only stat and dhcp have servers in use; disabled/unknown/__UNDEFINED leave servers
-	// empty. Static entries are NetworkAddress (may be an FQDN); dhcp entries are the flat
-	// IpVxAddress shape.
-	var servers []gjson.Result
-	extract := ntpServerAddress
-	switch {
-	case strings.EqualFold(acquisitionType, "stat"):
-		servers = ntpProps.Get("acquisitionProperties.ntpServers").Array()
-	case strings.EqualFold(acquisitionType, "dhcp"):
-		servers = ntpProps.Get("dhcpAcquiredNtpServers").Array()
-		extract = func(server gjson.Result) (string, string) {
-			return ipvxAddressString(server), server.Get("addressType").ClonedString()
-		}
-	default:
-		h.SLogger.Debug("No NTP servers exported for acquisition type",
-			slog.String("controller_id", controllerID), slog.String("acquisition_type", acquisitionType))
-	}
+	servers := h.serversInUse(ntpProps, ntpServerPaths, acquisitionType,
+		slog.String("controller_id", controllerID))
 
 	count := 0
 	for _, server := range servers {
-		address, addressType := extract(server)
-		if h.addServerInstance(mat, controllerID, controllerLocation, "ntp_server", address, addressType, cleanConfigType(acquisitionType)) {
+		if h.addServerInstance(mat, controllerID, controllerLocation, "ntp_server", server.address, server.addressType, cleanConfigType(acquisitionType)) {
 			count++
 		}
 	}
@@ -739,47 +768,20 @@ func (h *Hardware) processNetInterfaces(controller gjson.Result, controllerID, c
 		dnsAcqType := ethernet.Get("dnsProperties.acquisitionProperties.dnsAcquisitionType").ClonedString()
 		inst.SetLabelTrimmed("dns_config_method", cleanConfigType(dnsAcqType))
 
-		// Only stat and dhcp have servers in use; other acquisition types leave dnsServers
-		// as the zero Result, whose Array() is empty.
-		var dnsServers gjson.Result
-		switch {
-		case strings.EqualFold(dnsAcqType, "stat"):
-			dnsServers = ethernet.Get("dnsProperties.acquisitionProperties.dnsServers")
-		case strings.EqualFold(dnsAcqType, "dhcp"):
-			dnsServers = ethernet.Get("dnsProperties.dhcpAcquiredDnsServers")
-		default:
-			h.SLogger.Debug("No DNS servers exported for acquisition type",
-				slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName),
-				slog.String("acquisition_type", dnsAcqType))
-		}
+		dnsServers := h.serversInUse(ethernet.Get("dnsProperties"), dnsServerPaths, dnsAcqType,
+			slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName))
 
-		primaryDNS, backupDNS := primaryAndBackup(dnsServers.Array(), ipvxAddressString)
+		primaryDNS, backupDNS := primaryAndBackup(dnsServers)
 		inst.SetLabelTrimmed("primary_dns_server", primaryDNS)
 		inst.SetLabelTrimmed("backup_dns_server", backupDNS)
 
 		ntpAcqType := ethernet.Get("ntpProperties.acquisitionProperties.ntpAcquisitionType").ClonedString()
 		inst.SetLabelTrimmed("ntp_service", cleanConfigType(ntpAcqType))
 
-		// Only stat and dhcp have servers in use. Static entries may be an FQDN;
-		// DHCP-acquired ones are always an address.
-		var ntpServers gjson.Result
-		extractNTP := ipvxAddressString
-		switch {
-		case strings.EqualFold(ntpAcqType, "stat"):
-			ntpServers = ethernet.Get("ntpProperties.acquisitionProperties.ntpServers")
-			extractNTP = func(server gjson.Result) string {
-				address, _ := ntpServerAddress(server)
-				return address
-			}
-		case strings.EqualFold(ntpAcqType, "dhcp"):
-			ntpServers = ethernet.Get("ntpProperties.dhcpAcquiredNtpServers")
-		default:
-			h.SLogger.Debug("No NTP servers exported for acquisition type",
-				slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName),
-				slog.String("acquisition_type", ntpAcqType))
-		}
+		ntpServers := h.serversInUse(ethernet.Get("ntpProperties"), ntpServerPaths, ntpAcqType,
+			slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName))
 
-		primaryNTP, backupNTP := primaryAndBackup(ntpServers.Array(), extractNTP)
+		primaryNTP, backupNTP := primaryAndBackup(ntpServers)
 		inst.SetLabelTrimmed("primary_ntp_server", primaryNTP)
 		inst.SetLabelTrimmed("backup_ntp_server", backupNTP)
 	}

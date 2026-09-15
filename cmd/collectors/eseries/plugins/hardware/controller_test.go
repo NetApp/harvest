@@ -31,12 +31,6 @@ func parseResults(jsonStr string) []gjson.Result {
 	return gjson.Parse(jsonStr).Array()
 }
 
-// parseController parses a single controller JSON object, as passed to
-// processDNSProperties and processNTPProperties.
-func parseController(jsonStr string) gjson.Result {
-	return gjson.Parse(jsonStr)
-}
-
 // netInterfaceController wraps the DNS and NTP portion of one ethernet port in the controller
 // shape processNetInterfaces expects, so each test case only spells out the part under test.
 func netInterfaceController(ethernetProperties string) gjson.Result {
@@ -371,6 +365,17 @@ func TestProcessDNSProperties(t *testing.T) {
 			json: `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"ipv6","ipv6Address":"2001:db8::1"}]}}}}`,
 		},
 		{
+			name:            "static: mixed-case addressType is normalized to lowercase in the exported label",
+			wantCount:       1,
+			wantServerCount: new(1),
+			wantKey:         "ctrl1_10.192.0.251",
+			wantLabels: map[string]string{
+				"dns_server":   "10.192.0.251",
+				"address_type": "ipv4",
+			},
+			json: `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"IPv4","ipv4Address":"10.192.0.251"}]}}}}`,
+		},
+		{
 			name:            "regression: dnsProperties at the controller top level is ignored, only networkSettings.dnsProperties is read",
 			wantCount:       0,
 			wantServerCount: new(0),
@@ -422,7 +427,7 @@ func TestProcessDNSProperties(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			h := newTestHardware()
-			controller := parseController(tt.json)
+			controller := gjson.Parse(tt.json)
 			controllerID := controller.Get("controllerRef").ClonedString()
 			h.data[controllerMatrix].GetOrCreateInstance(controllerID)
 			h.processDNSProperties(controller, controllerID, "A")
@@ -442,7 +447,7 @@ func TestProcessDNSProperties(t *testing.T) {
 				}
 			}
 
-			if tt.wantKey == "" || len(tt.wantLabels) == 0 {
+			if tt.wantKey == "" {
 				return
 			}
 
@@ -553,7 +558,7 @@ func TestProcessNTPProperties(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			h := newTestHardware()
-			controller := parseController(tt.json)
+			controller := gjson.Parse(tt.json)
 			controllerID := controller.Get("controllerRef").ClonedString()
 			h.data[controllerMatrix].GetOrCreateInstance(controllerID)
 			h.processNTPProperties(controller, controllerID, "A")
@@ -573,7 +578,7 @@ func TestProcessNTPProperties(t *testing.T) {
 				}
 			}
 
-			if tt.wantKey == "" || len(tt.wantLabels) == 0 {
+			if tt.wantKey == "" {
 				return
 			}
 
@@ -725,21 +730,23 @@ func TestProcessNetInterfaces(t *testing.T) {
 	}
 }
 
-func TestIpvxAddressString(t *testing.T) {
+func TestIpvxAddress(t *testing.T) {
 	tests := []struct {
-		name string
-		json string
-		want string
+		name        string
+		json        string
+		wantAddress string
+		wantType    string
 	}{
-		{"lowercase ipv4", `{"addressType":"ipv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1"},
-		{"mixed-case IPv4 is matched case-insensitively", `{"addressType":"IPv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1"},
-		{"uppercase IPV6 is matched case-insensitively", `{"addressType":"IPV6","ipv6Address":"::1"}`, "::1"},
-		{"unrecognized addressType returns empty", `{"addressType":"bogus"}`, ""},
+		{"lowercase ipv4", `{"addressType":"ipv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1", "ipv4"},
+		{"mixed-case IPv4 is matched case-insensitively and normalized on output", `{"addressType":"IPv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1", "ipv4"},
+		{"uppercase IPV6 is matched case-insensitively and normalized on output", `{"addressType":"IPV6","ipv6Address":"::1"}`, "::1", "ipv6"},
+		{"unrecognized addressType returns empty", `{"addressType":"bogus"}`, "", ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ipvxAddressString(gjson.Parse(tt.json)); got != tt.want {
-				t.Errorf("ipvxAddressString(%s) = %q, want %q", tt.json, got, tt.want)
+			gotAddress, gotType := ipvxAddress(gjson.Parse(tt.json))
+			if gotAddress != tt.wantAddress || gotType != tt.wantType {
+				t.Errorf("ipvxAddress(%s) = (%q, %q), want (%q, %q)", tt.json, gotAddress, gotType, tt.wantAddress, tt.wantType)
 			}
 		})
 	}
@@ -755,6 +762,7 @@ func TestNtpServerAddress(t *testing.T) {
 		{"lowercase domainName", `{"addrType":"domainName","domainName":"time.nist.gov"}`, "time.nist.gov", "domainName"},
 		{"mixed-case DomainName is matched case-insensitively", `{"addrType":"DomainName","domainName":"time.nist.gov"}`, "time.nist.gov", "domainName"},
 		{"uppercase IPVX is matched case-insensitively", `{"addrType":"IPVX","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.0.0.1"}}`, "10.0.0.1", "ipv4"},
+		{"ipvx branch normalizes the inner addressType too, not just its own addrType", `{"addrType":"ipvx","ipvxAddress":{"addressType":"IPv4","ipv4Address":"10.0.0.1"}}`, "10.0.0.1", "ipv4"},
 		{"unrecognized addrType returns empty", `{"addrType":"none"}`, "", ""},
 	}
 	for _, tt := range tests {
