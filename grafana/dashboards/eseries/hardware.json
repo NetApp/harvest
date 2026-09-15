@@ -2187,7 +2187,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "DNS and NTP configuration per management port",
+          "description": "DNS and NTP configuration per management port. Shows only the first two servers of each type; the DNS & NTP row below lists every server per controller.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -2258,7 +2258,9 @@
                     "dns_config_method",
                     "primary_dns_server",
                     "backup_dns_server",
-                    "ntp_service"
+                    "ntp_service",
+                    "primary_ntp_server",
+                    "backup_ntp_server"
                   ]
                 }
               }
@@ -2271,23 +2273,27 @@
                   "alias": 3,
                   "array": 1,
                   "backup_dns_server": 7,
+                  "backup_ntp_server": 10,
                   "controller": 2,
                   "datacenter": 0,
                   "dns_config_method": 5,
                   "ntp_service": 8,
                   "port": 4,
-                  "primary_dns_server": 6
+                  "primary_dns_server": 6,
+                  "primary_ntp_server": 9
                 },
                 "renameByName": {
                   "alias": "Hostname",
                   "array": "Array",
                   "backup_dns_server": "Backup DNS",
+                  "backup_ntp_server": "Backup NTP",
                   "controller": "Controller",
                   "datacenter": "Datacenter",
                   "dns_config_method": "DNS Config",
                   "ntp_service": "NTP Service",
                   "port": "Port",
-                  "primary_dns_server": "Primary DNS"
+                  "primary_dns_server": "Primary DNS",
+                  "primary_ntp_server": "Primary NTP"
                 }
               }
             }
@@ -3041,6 +3047,226 @@
         }
       ],
       "title": "IO Module / Host Board",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 115,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "DNS servers configured per controller",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 29
+          },
+          "id": 113,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_controller_dns_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "DNS Servers",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "dns_server",
+                    "address_type",
+                    "acquisition_type"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "acquisition_type": 5,
+                  "address_type": 4,
+                  "array": 1,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "dns_server": 3
+                },
+                "renameByName": {
+                  "acquisition_type": "Config Method",
+                  "address_type": "Address Type",
+                  "array": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "dns_server": "DNS Server"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "description": "NTP servers configured per controller",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 37
+          },
+          "id": 114,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "exemplar": false,
+              "expr": "eseries_controller_ntp_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "NTP Servers",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "ntp_server",
+                    "address_type",
+                    "acquisition_type"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "acquisition_type": 5,
+                  "address_type": 4,
+                  "array": 1,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "ntp_server": 3
+                },
+                "renameByName": {
+                  "acquisition_type": "Config Method",
+                  "address_type": "Address Type",
+                  "array": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "ntp_server": "NTP Server"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "DNS & NTP",
       "type": "row"
     }
   ],

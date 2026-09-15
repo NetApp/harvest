@@ -27,6 +27,7 @@ const (
 	driveInterfaceMatrix    = "eseries_controller_drive_interface"
 	codeVersionMatrix       = "eseries_controller_code_version"
 	dnsPropertyMatrix       = "eseries_controller_dns"
+	ntpPropertyMatrix       = "eseries_controller_ntp"
 	netInterfaceMatrix      = "eseries_controller_net_interface"
 	cacheMemoryDimmMatrix   = "eseries_cache_memory_dimm"
 	cacheBackupDeviceMatrix = "eseries_cache_backup_device"
@@ -66,6 +67,7 @@ func (h *Hardware) Init(_ conf.Remote) error {
 	h.initDriveInterfaceMatrix()
 	h.initCodeVersionMatrix()
 	h.initDNSMatrix()
+	h.initNTPMatrix()
 	h.initNetInterfaceMatrix()
 	h.initCacheMemoryDimmMatrix()
 	h.initCacheBackupDeviceMatrix()
@@ -198,6 +200,8 @@ func (h *Hardware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 		slog.Int("hostInterfaces", len(h.data[hostInterfaceMatrix].GetInstances())),
 		slog.Int("driveInterfaces", len(h.data[driveInterfaceMatrix].GetInstances())),
 		slog.Int("codeVersions", len(h.data[codeVersionMatrix].GetInstances())),
+		slog.Int("dnsServers", len(h.data[dnsPropertyMatrix].GetInstances())),
+		slog.Int("ntpServers", len(h.data[ntpPropertyMatrix].GetInstances())),
 		slog.Int("netInterfaces", len(h.data[netInterfaceMatrix].GetInstances())),
 		slog.Int("cacheMemoryDimms", len(h.data[cacheMemoryDimmMatrix].GetInstances())),
 		slog.Int("cacheBackupDevices", len(h.data[cacheBackupDeviceMatrix].GetInstances())),
