@@ -1074,6 +1074,22 @@ counters:
         ESeriesCounter: Harvest generated
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
+  - Name: eseries_controller_dns_labels
+    Description: This metric provides information about the DNS servers configured on the controller.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_dns_server_count
+    Description: Number of unique DNS servers currently in use by the controller.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: controllers.networkSettings.dnsProperties
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
   - Name: eseries_controller_drive_interface_labels
     Description: This metric provides information about controller drive-side interfaces.
     APIs:
@@ -1096,6 +1112,22 @@ counters:
       - API: REST
         Endpoint: storage-systems/{array_id}/hardware-inventory
         ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_ntp_labels
+    Description: This metric provides information about the NTP servers configured on the controller.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_ntp_server_count
+    Description: Number of unique NTP servers currently in use by the controller.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: controllers.networkSettings.ntpProperties
         Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
 
   - Name: eseries_controller_processor_memory

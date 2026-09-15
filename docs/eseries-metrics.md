@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2026-Sep-09
+Creation Date : 2026-Sep-15
 E-Series Version: 11.80.0
 ```
 
@@ -720,6 +720,35 @@ The `eseries_controller_cpu_utilization` metric is visualized in the following G
 
 
 
+### eseries_controller_dns_labels
+
+This metric provides information about the DNS servers configured on the controller.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/hardware-inventory` | `Harvest generated` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+
+The `eseries_controller_dns_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Hardware | DNS & NTP | table | [DNS Servers](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=113) |
+///
+
+
+
+### eseries_controller_dns_server_count
+
+Number of unique DNS servers currently in use by the controller.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers.networkSettings.dnsProperties` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+
+
 ### eseries_controller_drive_interface_labels
 
 This metric provides information about controller drive-side interfaces.
@@ -796,6 +825,35 @@ The `eseries_controller_net_interface_labels` metric is visualized in the follow
 | E-Series: Hardware | Management | table | [DNS & NTP Configuration](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=8) |
 ///
 
+
+
+### eseries_controller_ntp_labels
+
+This metric provides information about the NTP servers configured on the controller.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/hardware-inventory` | `Harvest generated` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
+
+The `eseries_controller_ntp_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| E-Series: Hardware | DNS & NTP | table | [NTP Servers](/d/eseries-hardware/e-series3a-hardware?orgId=1&viewPanel=114) |
+///
+
+
+
+### eseries_controller_ntp_server_count
+
+Number of unique NTP servers currently in use by the controller.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `storage-systems/{array_id}/hardware-inventory` | `controllers.networkSettings.ntpProperties` | conf/eseries/11.80.0/hardware.yaml (Hardware plugin) |
 
 
 ### eseries_controller_processor_memory

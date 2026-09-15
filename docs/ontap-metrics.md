@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Sep-09
+Creation Date : 2026-Sep-15
 ONTAP Version: 9.16.1
 ```
 
@@ -8319,6 +8319,7 @@ The `net_port_status` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Network | Ethernet | table | [Ethernet ports](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=59) |
+| ONTAP: Network | Ethernet | table | [NIC ports](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=58) |
 ///
 
 

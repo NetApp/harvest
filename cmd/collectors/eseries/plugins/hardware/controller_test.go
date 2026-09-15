@@ -9,7 +9,8 @@ import (
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
-// newTestHardware returns a Hardware ready to test processHostInterfacesFromAPI.
+// newTestHardware returns a Hardware ready to test processHostInterfacesFromAPI,
+// processDNSProperties, and processNTPProperties.
 func newTestHardware() *Hardware {
 	h := &Hardware{
 		AbstractPlugin: &plugin.AbstractPlugin{
@@ -19,11 +20,27 @@ func newTestHardware() *Hardware {
 		data: make(map[string]*matrix.Matrix),
 	}
 	h.initHostInterfaceMatrix()
+	h.initDNSMatrix()
+	h.initNTPMatrix()
+	h.initNetInterfaceMatrix()
+	h.initControllerMatrix()
 	return h
 }
 
 func parseResults(jsonStr string) []gjson.Result {
 	return gjson.Parse(jsonStr).Array()
+}
+
+// parseController parses a single controller JSON object, as passed to
+// processDNSProperties and processNTPProperties.
+func parseController(jsonStr string) gjson.Result {
+	return gjson.Parse(jsonStr)
+}
+
+// netInterfaceController wraps the DNS and NTP portion of one ethernet port in the controller
+// shape processNetInterfaces expects, so each test case only spells out the part under test.
+func netInterfaceController(ethernetProperties string) gjson.Result {
+	return gjson.Parse(`{"netInterfaces":[{"ethernet":{"interfaceName":"wan0",` + ethernetProperties + `}}]}`)
 }
 
 func TestProcessHostInterfacesFromAPI(t *testing.T) {
@@ -314,6 +331,437 @@ func TestFormatIPv6Address(t *testing.T) {
 			result := formatIPv6Address(tt.input)
 			if result != tt.expected {
 				t.Errorf("formatIPv6Address(%q) = %q, want %q", tt.input, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestProcessDNSProperties(t *testing.T) {
+	tests := []struct {
+		name            string
+		json            string
+		wantCount       int
+		wantServerCount *int // eseries_controller.dns_server_count; nil skips the check
+		wantKey         string
+		wantLabels      map[string]string
+	}{
+		{
+			name:            "static: two IPv4 servers",
+			wantCount:       2,
+			wantServerCount: new(2),
+			wantKey:         "ctrl1_10.192.0.250",
+			wantLabels: map[string]string{
+				"controller_id":    "ctrl1",
+				"controller":       "A",
+				"dns_server":       "10.192.0.250",
+				"address_type":     "ipv4",
+				"acquisition_type": "Static",
+			},
+			json: `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.250"},{"addressType":"ipv4","ipv4Address":"10.193.0.250"}]}}}}`,
+		},
+		{
+			name:            "static: IPv6 server uses ipv6Address field",
+			wantCount:       1,
+			wantServerCount: new(1),
+			wantKey:         "ctrl1_2001:db8::1",
+			wantLabels: map[string]string{
+				"dns_server":   "2001:db8::1",
+				"address_type": "ipv6",
+			},
+			json: `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"ipv6","ipv6Address":"2001:db8::1"}]}}}}`,
+		},
+		{
+			name:            "regression: dnsProperties at the controller top level is ignored, only networkSettings.dnsProperties is read",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.250"}]}}}`,
+		},
+		{
+			name:            "dhcp: servers come from dhcpAcquiredDnsServers, not the empty static list",
+			wantCount:       1,
+			wantServerCount: new(1),
+			wantKey:         "ctrl1_10.192.0.99",
+			wantLabels: map[string]string{
+				"dns_server":       "10.192.0.99",
+				"acquisition_type": "dhcp",
+			},
+			json: `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"dhcp","dnsServers":[]},"dhcpAcquiredDnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.99"}]}}}`,
+		},
+		{
+			name:            "dhcp: empty dhcpAcquiredDnsServers yields no instances",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"dhcp"},"dhcpAcquiredDnsServers":[]}}}`,
+		},
+		{
+			name:            "disabled: no servers on either list",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"disabled","dnsServers":null}}}}`,
+		},
+		{
+			name:            "unknown: populated static list is not exported (whitelist covers only stat and dhcp)",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"unknown","dnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.250"}]}}}}`,
+		},
+		{
+			name:            "static: three servers all count, uncapped (no maxItems in the swagger)",
+			wantCount:       3,
+			wantServerCount: new(3),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.250"},{"addressType":"ipv4","ipv4Address":"10.193.0.250"},{"addressType":"ipv4","ipv4Address":"10.194.0.250"}]}}}}`,
+		},
+		{
+			name:            "missing networkSettings.dnsProperties: no instances, count is 0 not absent",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{}}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHardware()
+			controller := parseController(tt.json)
+			controllerID := controller.Get("controllerRef").ClonedString()
+			h.data[controllerMatrix].GetOrCreateInstance(controllerID)
+			h.processDNSProperties(controller, controllerID, "A")
+
+			instances := h.data[dnsPropertyMatrix].GetInstances()
+			if len(instances) != tt.wantCount {
+				t.Fatalf("instance count = %d, want %d", len(instances), tt.wantCount)
+			}
+
+			if tt.wantServerCount != nil {
+				got, ok := h.data[controllerMatrix].GetMetric("dns_server_count").GetValueFloat64(h.data[controllerMatrix].GetInstance(controllerID))
+				if !ok {
+					t.Fatalf("dns_server_count not set")
+				}
+				if int(got) != *tt.wantServerCount {
+					t.Errorf("dns_server_count = %v, want %d", got, *tt.wantServerCount)
+				}
+			}
+
+			if tt.wantKey == "" || len(tt.wantLabels) == 0 {
+				return
+			}
+
+			inst := instances[tt.wantKey]
+			if inst == nil {
+				t.Fatalf("instance %q not found", tt.wantKey)
+			}
+			for label, want := range tt.wantLabels {
+				if got := inst.GetLabel(label); got != want {
+					t.Errorf("label %q = %q, want %q", label, got, want)
+				}
+			}
+		})
+	}
+}
+
+func TestProcessNTPProperties(t *testing.T) {
+	tests := []struct {
+		name            string
+		json            string
+		wantCount       int
+		wantServerCount *int // eseries_controller.ntp_server_count; nil skips the check
+		wantKey         string
+		wantLabels      map[string]string
+	}{
+		{
+			name:            "static: two ipvx servers",
+			wantCount:       2,
+			wantServerCount: new(2),
+			wantKey:         "ctrl1_10.192.88.175",
+			wantLabels: map[string]string{
+				"controller_id":    "ctrl1",
+				"controller":       "A",
+				"ntp_server":       "10.192.88.175",
+				"address_type":     "ipv4",
+				"acquisition_type": "Static",
+			},
+			json: `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":[{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.175"}},{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.150"}}]}}}}`,
+		},
+		{
+			name:            "static: domainName server, no ipvxAddress",
+			wantCount:       1,
+			wantServerCount: new(1),
+			wantKey:         "ctrl1_time-a-b.nist.gov",
+			wantLabels: map[string]string{
+				"ntp_server":       "time-a-b.nist.gov",
+				"address_type":     "domainName",
+				"acquisition_type": "Static",
+			},
+			json: `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":[{"addrType":"domainName","domainName":"time-a-b.nist.gov","ipvxAddress":null}]}}}}`,
+		},
+		{
+			name:            "static: ntpServers is null",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":null}}}}`,
+		},
+		{
+			name:            "static: unrecognized addrType is skipped",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":[{"addrType":"none"}]}}}}`,
+		},
+		{
+			name:            "dhcp: servers come from dhcpAcquiredNtpServers",
+			wantCount:       1,
+			wantServerCount: new(1),
+			wantKey:         "ctrl1_10.192.88.99",
+			wantLabels: map[string]string{
+				"ntp_server":       "10.192.88.99",
+				"acquisition_type": "dhcp",
+			},
+			json: `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"dhcp"},"dhcpAcquiredNtpServers":[{"addressType":"ipv4","ipv4Address":"10.192.88.99"}]}}}`,
+		},
+		{
+			name:            "dhcp: empty dhcpAcquiredNtpServers yields no instances",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"dhcp"},"dhcpAcquiredNtpServers":[]}}}`,
+		},
+		{
+			name:            "disabled: no servers on either list",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"disabled","ntpServers":null}}}}`,
+		},
+		{
+			name:            "disabled: populated static list is not exported (whitelist covers only stat and dhcp)",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"disabled","ntpServers":[{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.175"}}]}}}}`,
+		},
+		{
+			name:            "duplicate address: one instance, no panic",
+			wantCount:       1,
+			wantServerCount: new(1),
+			wantKey:         "ctrl1_10.192.88.175",
+			json:            `{"controllerRef":"ctrl1","networkSettings":{"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":[{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.175"}},{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.175"}}]}}}}`,
+		},
+		{
+			name:            "missing networkSettings.ntpProperties: no instances, count is 0 not absent",
+			wantCount:       0,
+			wantServerCount: new(0),
+			json:            `{"controllerRef":"ctrl1","networkSettings":{}}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHardware()
+			controller := parseController(tt.json)
+			controllerID := controller.Get("controllerRef").ClonedString()
+			h.data[controllerMatrix].GetOrCreateInstance(controllerID)
+			h.processNTPProperties(controller, controllerID, "A")
+
+			instances := h.data[ntpPropertyMatrix].GetInstances()
+			if len(instances) != tt.wantCount {
+				t.Fatalf("instance count = %d, want %d", len(instances), tt.wantCount)
+			}
+
+			if tt.wantServerCount != nil {
+				got, ok := h.data[controllerMatrix].GetMetric("ntp_server_count").GetValueFloat64(h.data[controllerMatrix].GetInstance(controllerID))
+				if !ok {
+					t.Fatalf("ntp_server_count not set")
+				}
+				if int(got) != *tt.wantServerCount {
+					t.Errorf("ntp_server_count = %v, want %d", got, *tt.wantServerCount)
+				}
+			}
+
+			if tt.wantKey == "" || len(tt.wantLabels) == 0 {
+				return
+			}
+
+			inst := instances[tt.wantKey]
+			if inst == nil {
+				t.Fatalf("instance %q not found", tt.wantKey)
+			}
+			for label, want := range tt.wantLabels {
+				if got := inst.GetLabel(label); got != want {
+					t.Errorf("label %q = %q, want %q", label, got, want)
+				}
+			}
+		})
+	}
+}
+
+func TestProcessNetInterfaces(t *testing.T) {
+	tests := []struct {
+		name       string
+		properties string
+		wantLabels map[string]string
+	}{
+		{
+			name:       "static dns: servers in precedence order",
+			properties: `"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.250"},{"addressType":"ipv4","ipv4Address":"10.193.0.250"}]}}`,
+			wantLabels: map[string]string{
+				"dns_config_method":  "Static",
+				"primary_dns_server": "10.192.0.250",
+				"backup_dns_server":  "10.193.0.250",
+			},
+		},
+		{
+			name:       "dhcp dns: servers come from dhcpAcquiredDnsServers, not the empty static list",
+			properties: `"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"dhcp","dnsServers":[]},"dhcpAcquiredDnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.99"},{"addressType":"ipv4","ipv4Address":"10.192.0.98"}]}`,
+			wantLabels: map[string]string{
+				"dns_config_method":  "dhcp",
+				"primary_dns_server": "10.192.0.99",
+				"backup_dns_server":  "10.192.0.98",
+			},
+		},
+		{
+			name:       "dhcp dns: empty acquired list leaves both addresses empty",
+			properties: `"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"dhcp"},"dhcpAcquiredDnsServers":[]}`,
+			wantLabels: map[string]string{
+				"dns_config_method":  "dhcp",
+				"primary_dns_server": "",
+				"backup_dns_server":  "",
+			},
+		},
+		{
+			name:       "static dns: only the first two of three servers surface",
+			properties: `"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"stat","dnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.250"},{"addressType":"ipv4","ipv4Address":"10.193.0.250"},{"addressType":"ipv4","ipv4Address":"10.194.0.250"}]}}`,
+			wantLabels: map[string]string{
+				"primary_dns_server": "10.192.0.250",
+				"backup_dns_server":  "10.193.0.250",
+			},
+		},
+		{
+			name:       "static ntp: two ipvx servers",
+			properties: `"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":[{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.175"}},{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.150"}}]}}`,
+			wantLabels: map[string]string{
+				"ntp_service":        "Static",
+				"primary_ntp_server": "10.192.88.175",
+				"backup_ntp_server":  "10.192.88.150",
+			},
+		},
+		{
+			name:       "static ntp: domainName server yields an FQDN with no backup",
+			properties: `"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":[{"addrType":"domainName","domainName":"time-a-b.nist.gov","ipvxAddress":null}]}}`,
+			wantLabels: map[string]string{
+				"ntp_service":        "Static",
+				"primary_ntp_server": "time-a-b.nist.gov",
+				"backup_ntp_server":  "",
+			},
+		},
+		{
+			name:       "static ntp: an unrecognized entry ahead of a valid one is skipped, not treated as primary",
+			properties: `"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"stat","ntpServers":[{"addrType":"none"},{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.175"}}]}}`,
+			wantLabels: map[string]string{
+				"primary_ntp_server": "10.192.88.175",
+				"backup_ntp_server":  "",
+			},
+		},
+		{
+			name:       "dhcp ntp: servers come from dhcpAcquiredNtpServers in the flat ipvx shape",
+			properties: `"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"dhcp"},"dhcpAcquiredNtpServers":[{"addressType":"ipv4","ipv4Address":"10.192.88.99"}]}`,
+			wantLabels: map[string]string{
+				"ntp_service":        "dhcp",
+				"primary_ntp_server": "10.192.88.99",
+				"backup_ntp_server":  "",
+			},
+		},
+		{
+			name:       "disabled ntp: null server list still records the method",
+			properties: `"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"disabled","ntpServers":null}}`,
+			wantLabels: map[string]string{
+				"ntp_service":        "disabled",
+				"primary_ntp_server": "",
+				"backup_ntp_server":  "",
+			},
+		},
+		{
+			name:       "disabled ntp: populated server list still yields no exported addresses (whitelist covers only stat and dhcp)",
+			properties: `"ntpProperties":{"acquisitionProperties":{"ntpAcquisitionType":"disabled","ntpServers":[{"addrType":"ipvx","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.192.88.175"}}]}}`,
+			wantLabels: map[string]string{
+				"ntp_service":        "disabled",
+				"primary_ntp_server": "",
+				"backup_ntp_server":  "",
+			},
+		},
+		{
+			name:       "unknown dns: populated server list still yields no exported addresses (whitelist covers only stat and dhcp)",
+			properties: `"dnsProperties":{"acquisitionProperties":{"dnsAcquisitionType":"unknown","dnsServers":[{"addressType":"ipv4","ipv4Address":"10.192.0.250"}]}}`,
+			wantLabels: map[string]string{
+				"dns_config_method":  "unknown",
+				"primary_dns_server": "",
+				"backup_dns_server":  "",
+			},
+		},
+		{
+			name:       "missing dnsProperties and ntpProperties: empty labels, no panic",
+			properties: `"linkStatus":"up"`,
+			wantLabels: map[string]string{
+				"dns_config_method":  "",
+				"primary_dns_server": "",
+				"backup_dns_server":  "",
+				"ntp_service":        "",
+				"primary_ntp_server": "",
+				"backup_ntp_server":  "",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHardware()
+			h.processNetInterfaces(netInterfaceController(tt.properties), "ctrl1", "A")
+
+			inst := h.data[netInterfaceMatrix].GetInstance("ctrl1_wan0")
+			if inst == nil {
+				t.Fatalf("instance %q not found", "ctrl1_wan0")
+			}
+			for label, want := range tt.wantLabels {
+				if got := inst.GetLabel(label); got != want {
+					t.Errorf("label %q = %q, want %q", label, got, want)
+				}
+			}
+		})
+	}
+}
+
+func TestIpvxAddressString(t *testing.T) {
+	tests := []struct {
+		name string
+		json string
+		want string
+	}{
+		{"lowercase ipv4", `{"addressType":"ipv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1"},
+		{"mixed-case IPv4 is matched case-insensitively", `{"addressType":"IPv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1"},
+		{"uppercase IPV6 is matched case-insensitively", `{"addressType":"IPV6","ipv6Address":"::1"}`, "::1"},
+		{"unrecognized addressType returns empty", `{"addressType":"bogus"}`, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ipvxAddressString(gjson.Parse(tt.json)); got != tt.want {
+				t.Errorf("ipvxAddressString(%s) = %q, want %q", tt.json, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNtpServerAddress(t *testing.T) {
+	tests := []struct {
+		name        string
+		json        string
+		wantAddress string
+		wantType    string
+	}{
+		{"lowercase domainName", `{"addrType":"domainName","domainName":"time.nist.gov"}`, "time.nist.gov", "domainName"},
+		{"mixed-case DomainName is matched case-insensitively", `{"addrType":"DomainName","domainName":"time.nist.gov"}`, "time.nist.gov", "domainName"},
+		{"uppercase IPVX is matched case-insensitively", `{"addrType":"IPVX","ipvxAddress":{"addressType":"ipv4","ipv4Address":"10.0.0.1"}}`, "10.0.0.1", "ipv4"},
+		{"unrecognized addrType returns empty", `{"addrType":"none"}`, "", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotAddress, gotType := ntpServerAddress(gjson.Parse(tt.json))
+			if gotAddress != tt.wantAddress || gotType != tt.wantType {
+				t.Errorf("ntpServerAddress(%s) = (%q, %q), want (%q, %q)", tt.json, gotAddress, gotType, tt.wantAddress, tt.wantType)
 			}
 		})
 	}

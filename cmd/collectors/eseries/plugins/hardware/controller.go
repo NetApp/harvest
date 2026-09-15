@@ -92,10 +92,9 @@ func cleanConfigType(configType string) string {
 	}
 }
 
-// getDNSServerAddress extracts the IP address from a DNS server entry
-func getDNSServerAddress(server gjson.Result) string {
-	addressType := server.Get("addressType").ClonedString()
-	switch addressType {
+// ipvxAddressString extracts the address from an IpVxAddress entry.
+func ipvxAddressString(server gjson.Result) string {
+	switch strings.ToLower(server.Get("addressType").ClonedString()) {
 	case "ipv4":
 		return server.Get("ipv4Address").ClonedString()
 	case "ipv6":
@@ -103,6 +102,72 @@ func getDNSServerAddress(server gjson.Result) string {
 	default:
 		return ""
 	}
+}
+
+// ntpServerAddress extracts the address and type from a static NTP NetworkAddress entry,
+// which may be an FQDN or an IPv4/IPv6 address.
+func ntpServerAddress(server gjson.Result) (string, string) {
+	switch strings.ToLower(server.Get("addrType").ClonedString()) {
+	case "domainname":
+		return server.Get("domainName").ClonedString(), "domainName"
+	case "ipvx":
+		ipvxAddress := server.Get("ipvxAddress")
+		return ipvxAddressString(ipvxAddress), ipvxAddress.Get("addressType").ClonedString()
+	default:
+		return "", ""
+	}
+}
+
+func primaryAndBackup(servers []gjson.Result, extract func(gjson.Result) string) (string, string) {
+	var primary, backup string
+	for _, server := range servers {
+		address := extract(server)
+		if address == "" {
+			continue
+		}
+		if primary == "" {
+			primary = address
+			continue
+		}
+		backup = address
+		break
+	}
+
+	return primary, backup
+}
+
+func (h *Hardware) addServerInstance(mat *matrix.Matrix, controllerID, controllerLocation, labelName, server, addressType, acquisitionType string) bool {
+	if server == "" {
+		h.SLogger.Debug("Skipping server with empty address",
+			slog.String("controller_id", controllerID), slog.String("label", labelName))
+		return false
+	}
+
+	inst, created := mat.GetOrCreateInstance(controllerID + "_" + server)
+	if !created {
+		return false
+	}
+
+	inst.SetLabelTrimmed("controller_id", controllerID)
+	inst.SetLabelTrimmed("controller", controllerLocation)
+	inst.SetLabelTrimmed(labelName, server)
+	inst.SetLabelTrimmed("address_type", addressType)
+	inst.SetLabelTrimmed("acquisition_type", acquisitionType)
+	return true
+}
+
+// setControllerCount records a per-controller count metric (dns_server_count or
+// ntp_server_count) on the eseries_controller matrix. processController creates the
+// controller's instance earlier in the same processControllers iteration.
+func (h *Hardware) setControllerCount(controllerID, metricName string, count int) {
+	mat := h.data[controllerMatrix]
+	inst := mat.GetInstance(controllerID)
+	if inst == nil {
+		h.SLogger.Debug("Controller instance not found, skipping count metric",
+			slog.String("controller_id", controllerID), slog.String("metric", metricName))
+		return
+	}
+	mat.MustGetMetric(metricName).SetValueFloat64(inst, float64(count))
 }
 
 func (h *Hardware) initControllerMatrix() {
@@ -120,6 +185,12 @@ func (h *Hardware) initControllerMatrix() {
 	}
 	if _, err := mat.NewMetricFloat64("processor_memory"); err != nil {
 		h.SLogger.Error("Failed to create processor_memory metric", slogx.Err(err))
+	}
+	if _, err := mat.NewMetricFloat64("dns_server_count"); err != nil {
+		h.SLogger.Error("Failed to create dns_server_count metric", slogx.Err(err))
+	}
+	if _, err := mat.NewMetricFloat64("ntp_server_count"); err != nil {
+		h.SLogger.Error("Failed to create ntp_server_count metric", slogx.Err(err))
 	}
 
 	h.data[controllerMatrix] = mat
@@ -172,6 +243,17 @@ func (h *Hardware) initDNSMatrix() {
 	h.data[dnsPropertyMatrix] = mat
 }
 
+// initNTPMatrix creates the matrix for NTP property data
+func (h *Hardware) initNTPMatrix() {
+	mat := matrix.New(h.Parent+"."+ntpPropertyMatrix, ntpPropertyMatrix, ntpPropertyMatrix)
+	mat.SetExportOptions(matrix.NewExportOptionsWithLabels(
+		[]string{"controller_id", "ntp_server"},
+		[]string{"controller_id", "controller", "ntp_server", "address_type", "acquisition_type"},
+	))
+
+	h.data[ntpPropertyMatrix] = mat
+}
+
 // initNetInterfaceMatrix creates the matrix for network interface (management port) data
 func (h *Hardware) initNetInterfaceMatrix() {
 	mat := matrix.New(h.Parent+"."+netInterfaceMatrix, netInterfaceMatrix, netInterfaceMatrix)
@@ -182,7 +264,8 @@ func (h *Hardware) initNetInterfaceMatrix() {
 			"ipv4_enabled", "ipv4_address", "ipv4_subnet_mask", "ipv4_gateway", "ipv4_config_method",
 			"ipv6_enabled", "ipv6_local_address", "ipv6_routable_address", "ipv6_config_method",
 			"full_duplex", "configured_speed", "current_speed", "remote_access_enabled",
-			"dns_config_method", "primary_dns_server", "backup_dns_server", "ntp_service",
+			"dns_config_method", "primary_dns_server", "backup_dns_server",
+			"ntp_service", "primary_ntp_server", "backup_ntp_server",
 		},
 	))
 
@@ -213,6 +296,7 @@ func (h *Hardware) processControllers(response gjson.Result, _ map[string]string
 
 		h.processCodeVersions(controller, controllerID, controllerLocation)
 		h.processDNSProperties(controller, controllerID, controllerLocation)
+		h.processNTPProperties(controller, controllerID, controllerLocation)
 		h.processNetInterfaces(controller, controllerID, controllerLocation)
 	}
 }
@@ -431,51 +515,80 @@ func (h *Hardware) processCodeVersions(controller gjson.Result, controllerID, co
 	}
 }
 
-// processDNSProperties processes the dnsProperties within a controller
+// processDNSProperties records the controller's DNS servers from networkSettings.dnsProperties.
 func (h *Hardware) processDNSProperties(controller gjson.Result, controllerID, controllerLocation string) {
-	mat := h.data[dnsPropertyMatrix]
-	dnsProps := controller.Get("dnsProperties")
-
+	dnsProps := controller.Get("networkSettings.dnsProperties")
 	if !dnsProps.Exists() {
+		h.setControllerCount(controllerID, "dns_server_count", 0)
 		return
 	}
 
-	// DNS properties structure: {"acquisitionProperties": {"dnsAcquisitionType": "...", "dnsServers": [...]}}
+	mat := h.data[dnsPropertyMatrix]
 	acquisitionType := dnsProps.Get("acquisitionProperties.dnsAcquisitionType").ClonedString()
-	dnsServers := dnsProps.Get("acquisitionProperties.dnsServers")
 
-	if !dnsServers.Exists() || !dnsServers.IsArray() {
+	// Only stat and dhcp have servers in use; the lists stay populated for other
+	// acquisition types, which does not imply the servers are active. Unmatched types
+	// leave servers as the zero Result, whose Array() is empty.
+	var servers gjson.Result
+	switch {
+	case strings.EqualFold(acquisitionType, "stat"):
+		servers = dnsProps.Get("acquisitionProperties.dnsServers")
+	case strings.EqualFold(acquisitionType, "dhcp"):
+		servers = dnsProps.Get("dhcpAcquiredDnsServers")
+	default:
+		h.SLogger.Debug("No DNS servers exported for acquisition type",
+			slog.String("controller_id", controllerID), slog.String("acquisition_type", acquisitionType))
+	}
+
+	count := 0
+	for _, server := range servers.Array() {
+		if h.addServerInstance(mat, controllerID, controllerLocation, "dns_server",
+			ipvxAddressString(server), server.Get("addressType").ClonedString(), cleanConfigType(acquisitionType)) {
+			count++
+		}
+	}
+
+	h.setControllerCount(controllerID, "dns_server_count", count)
+}
+
+// processNTPProperties records the controller's NTP servers from networkSettings.ntpProperties.
+func (h *Hardware) processNTPProperties(controller gjson.Result, controllerID, controllerLocation string) {
+	ntpProps := controller.Get("networkSettings.ntpProperties")
+	if !ntpProps.Exists() {
+		h.setControllerCount(controllerID, "ntp_server_count", 0)
 		return
 	}
 
-	for _, server := range dnsServers.Array() {
-		addressType := server.Get("addressType").ClonedString()
-		var dnsServer string
+	mat := h.data[ntpPropertyMatrix]
+	acquisitionType := ntpProps.Get("acquisitionProperties.ntpAcquisitionType").ClonedString()
 
-		switch addressType {
-		case "ipv4":
-			dnsServer = server.Get("ipv4Address").ClonedString()
-		case "ipv6":
-			dnsServer = server.Get("ipv6Address").ClonedString()
+	// Only stat and dhcp have servers in use; disabled/unknown/__UNDEFINED leave servers
+	// empty. Static entries are NetworkAddress (may be an FQDN); dhcp entries are the flat
+	// IpVxAddress shape.
+	var servers []gjson.Result
+	extract := ntpServerAddress
+	switch {
+	case strings.EqualFold(acquisitionType, "stat"):
+		servers = ntpProps.Get("acquisitionProperties.ntpServers").Array()
+	case strings.EqualFold(acquisitionType, "dhcp"):
+		servers = ntpProps.Get("dhcpAcquiredNtpServers").Array()
+		extract = func(server gjson.Result) (string, string) {
+			return ipvxAddressString(server), server.Get("addressType").ClonedString()
 		}
-
-		if dnsServer == "" {
-			continue
-		}
-
-		key := controllerID + "_" + dnsServer
-		inst, err := mat.NewInstance(key)
-		if err != nil {
-			h.SLogger.Error("Failed to create DNS instance", slogx.Err(err), slog.String("key", key))
-			continue
-		}
-
-		inst.SetLabelTrimmed("controller_id", controllerID)
-		inst.SetLabelTrimmed("controller", controllerLocation)
-		inst.SetLabelTrimmed("dns_server", dnsServer)
-		inst.SetLabelTrimmed("address_type", addressType)
-		inst.SetLabelTrimmed("acquisition_type", acquisitionType)
+	default:
+		h.SLogger.Debug("No NTP servers exported for acquisition type",
+			slog.String("controller_id", controllerID), slog.String("acquisition_type", acquisitionType))
 	}
+
+	count := 0
+	for _, server := range servers {
+		address, addressType := extract(server)
+		if h.addServerInstance(mat, controllerID, controllerLocation, "ntp_server", address, addressType, cleanConfigType(acquisitionType)) {
+			count++
+		}
+	}
+
+	h.setControllerCount(controllerID, "ntp_server_count", count)
 }
 
 // formatMacAddress formats a MAC address from "D039EADCD97C" to "D0:39:EA:DC:D9:7C"
@@ -626,21 +739,49 @@ func (h *Hardware) processNetInterfaces(controller gjson.Result, controllerID, c
 		dnsAcqType := ethernet.Get("dnsProperties.acquisitionProperties.dnsAcquisitionType").ClonedString()
 		inst.SetLabelTrimmed("dns_config_method", cleanConfigType(dnsAcqType))
 
-		dnsServers := ethernet.Get("dnsProperties.acquisitionProperties.dnsServers")
-		if dnsServers.Exists() && dnsServers.IsArray() {
-			serverArray := dnsServers.Array()
-			if len(serverArray) > 0 {
-				primaryServer := getDNSServerAddress(serverArray[0])
-				inst.SetLabelTrimmed("primary_dns_server", primaryServer)
-			}
-			if len(serverArray) > 1 {
-				backupServer := getDNSServerAddress(serverArray[1])
-				inst.SetLabelTrimmed("backup_dns_server", backupServer)
-			}
+		// Only stat and dhcp have servers in use; other acquisition types leave dnsServers
+		// as the zero Result, whose Array() is empty.
+		var dnsServers gjson.Result
+		switch {
+		case strings.EqualFold(dnsAcqType, "stat"):
+			dnsServers = ethernet.Get("dnsProperties.acquisitionProperties.dnsServers")
+		case strings.EqualFold(dnsAcqType, "dhcp"):
+			dnsServers = ethernet.Get("dnsProperties.dhcpAcquiredDnsServers")
+		default:
+			h.SLogger.Debug("No DNS servers exported for acquisition type",
+				slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName),
+				slog.String("acquisition_type", dnsAcqType))
 		}
+
+		primaryDNS, backupDNS := primaryAndBackup(dnsServers.Array(), ipvxAddressString)
+		inst.SetLabelTrimmed("primary_dns_server", primaryDNS)
+		inst.SetLabelTrimmed("backup_dns_server", backupDNS)
 
 		ntpAcqType := ethernet.Get("ntpProperties.acquisitionProperties.ntpAcquisitionType").ClonedString()
 		inst.SetLabelTrimmed("ntp_service", cleanConfigType(ntpAcqType))
+
+		// Only stat and dhcp have servers in use. Static entries may be an FQDN;
+		// DHCP-acquired ones are always an address.
+		var ntpServers gjson.Result
+		extractNTP := ipvxAddressString
+		switch {
+		case strings.EqualFold(ntpAcqType, "stat"):
+			ntpServers = ethernet.Get("ntpProperties.acquisitionProperties.ntpServers")
+			extractNTP = func(server gjson.Result) string {
+				address, _ := ntpServerAddress(server)
+				return address
+			}
+		case strings.EqualFold(ntpAcqType, "dhcp"):
+			ntpServers = ethernet.Get("ntpProperties.dhcpAcquiredNtpServers")
+		default:
+			h.SLogger.Debug("No NTP servers exported for acquisition type",
+				slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName),
+				slog.String("acquisition_type", ntpAcqType))
+		}
+
+		primaryNTP, backupNTP := primaryAndBackup(ntpServers.Array(), extractNTP)
+		inst.SetLabelTrimmed("primary_ntp_server", primaryNTP)
+		inst.SetLabelTrimmed("backup_ntp_server", backupNTP)
 	}
 }
 
