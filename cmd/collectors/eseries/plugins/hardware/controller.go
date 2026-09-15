@@ -167,7 +167,7 @@ var (
 )
 
 // serversInUse returns the decoded servers in use for props (only stat and dhcp).
-func (h *Hardware) serversInUse(props gjson.Result, paths serverPaths, acquisitionType string, logAttrs ...any) []serverEntry {
+func (h *Hardware) serversInUse(props gjson.Result, paths serverPaths, acquisitionType, controllerID, interfaceName string) []serverEntry {
 	var list serverList
 
 	switch {
@@ -177,7 +177,8 @@ func (h *Hardware) serversInUse(props gjson.Result, paths serverPaths, acquisiti
 		list = paths.dhcp
 	default:
 		h.SLogger.Debug("No servers exported for acquisition type",
-			append([]any{slog.String("kind", paths.kind), slog.String("acquisition_type", acquisitionType)}, logAttrs...)...)
+			slog.String("kind", paths.kind), slog.String("acquisition_type", acquisitionType),
+			slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName))
 
 		return nil
 	}
@@ -582,8 +583,7 @@ func (h *Hardware) processDNSProperties(controller gjson.Result, controllerID, c
 	mat := h.data[dnsPropertyMatrix]
 	acquisitionType := dnsProps.Get("acquisitionProperties.dnsAcquisitionType").ClonedString()
 
-	servers := h.serversInUse(dnsProps, dnsServerPaths, acquisitionType,
-		slog.String("controller_id", controllerID))
+	servers := h.serversInUse(dnsProps, dnsServerPaths, acquisitionType, controllerID, "")
 
 	count := 0
 	for _, server := range servers {
@@ -607,8 +607,7 @@ func (h *Hardware) processNTPProperties(controller gjson.Result, controllerID, c
 	mat := h.data[ntpPropertyMatrix]
 	acquisitionType := ntpProps.Get("acquisitionProperties.ntpAcquisitionType").ClonedString()
 
-	servers := h.serversInUse(ntpProps, ntpServerPaths, acquisitionType,
-		slog.String("controller_id", controllerID))
+	servers := h.serversInUse(ntpProps, ntpServerPaths, acquisitionType, controllerID, "")
 
 	count := 0
 	for _, server := range servers {
@@ -768,8 +767,7 @@ func (h *Hardware) processNetInterfaces(controller gjson.Result, controllerID, c
 		dnsAcqType := ethernet.Get("dnsProperties.acquisitionProperties.dnsAcquisitionType").ClonedString()
 		inst.SetLabelTrimmed("dns_config_method", cleanConfigType(dnsAcqType))
 
-		dnsServers := h.serversInUse(ethernet.Get("dnsProperties"), dnsServerPaths, dnsAcqType,
-			slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName))
+		dnsServers := h.serversInUse(ethernet.Get("dnsProperties"), dnsServerPaths, dnsAcqType, controllerID, interfaceName)
 
 		primaryDNS, backupDNS := primaryAndBackup(dnsServers)
 		inst.SetLabelTrimmed("primary_dns_server", primaryDNS)
@@ -778,8 +776,7 @@ func (h *Hardware) processNetInterfaces(controller gjson.Result, controllerID, c
 		ntpAcqType := ethernet.Get("ntpProperties.acquisitionProperties.ntpAcquisitionType").ClonedString()
 		inst.SetLabelTrimmed("ntp_service", cleanConfigType(ntpAcqType))
 
-		ntpServers := h.serversInUse(ethernet.Get("ntpProperties"), ntpServerPaths, ntpAcqType,
-			slog.String("controller_id", controllerID), slog.String("interface_name", interfaceName))
+		ntpServers := h.serversInUse(ethernet.Get("ntpProperties"), ntpServerPaths, ntpAcqType, controllerID, interfaceName)
 
 		primaryNTP, backupNTP := primaryAndBackup(ntpServers)
 		inst.SetLabelTrimmed("primary_ntp_server", primaryNTP)
