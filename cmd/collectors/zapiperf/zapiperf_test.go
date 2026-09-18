@@ -1,10 +1,13 @@
 package zapiperf
 
 import (
+	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree"
@@ -290,4 +293,62 @@ func (z *ZapiPerf) testPollInstanceAndData(t *testing.T, pollInstanceFile, pollD
 	if exportableInstance != expectedExportedInst {
 		t.Errorf("Exported instances got= %d, expected: %d", exportableInstance, expectedExportedInst)
 	}
+}
+
+// TestPollInstanceKeepsCacheOnError checks that a failed instance request is propagated instead of
+// being reported as ErrNoInstance, and that it does not wipe the instance cache. Reporting a
+// connection error as ErrNoInstance parks the object for the max of 5m and the instance schedule
+// (10m by default) instead of retrying in 4s.
+func TestPollInstanceKeepsCacheOnError(t *testing.T) {
+	z := NewZapiPerf("Lun", "lun.yaml")
+
+	z.testFilePath = "testdata/pollInstance1.xml"
+	_, err := z.PollInstance()
+	assert.Nil(t, err)
+
+	want := len(z.Matrix[z.Object].GetInstances())
+	if want == 0 {
+		t.Fatal("instance cache is empty, nothing to protect")
+	}
+
+	z.testFilePath = "testdata/doesNotExist.xml"
+	_, err = z.PollInstance()
+
+	// the request error must reach the framework, which classifies it, e.g. ErrConnection
+	assert.NotNil(t, err)
+	assert.False(t, errors.Is(err, errs.ErrNoInstance))
+	// a failed poll must not purge the cache
+	assert.Equal(t, len(z.Matrix[z.Object].GetInstances()), want)
+}
+
+// TestPollInstancePurgesOnSuccess checks that a successful poll still removes instances that ONTAP
+// no longer reports.
+func TestPollInstancePurgesOnSuccess(t *testing.T) {
+	z := NewZapiPerf("Lun", "lun.yaml")
+
+	z.testFilePath = "testdata/pollInstance2.xml"
+	_, err := z.PollInstance()
+	assert.Nil(t, err)
+	assert.Equal(t, len(z.Matrix[z.Object].GetInstances()), 13)
+
+	z.testFilePath = "testdata/pollInstance3.xml"
+	_, err = z.PollInstance()
+	assert.Nil(t, err)
+	assert.Equal(t, len(z.Matrix[z.Object].GetInstances()), 12)
+}
+
+// TestPollInstanceNoInstances checks that an object which legitimately has no instances still
+// reports ErrNoInstance, and that the stale cache is purged.
+func TestPollInstanceNoInstances(t *testing.T) {
+	z := NewZapiPerf("Lun", "lun.yaml")
+
+	z.testFilePath = "testdata/pollInstance1.xml"
+	_, err := z.PollInstance()
+	assert.Nil(t, err)
+
+	z.testFilePath = "testdata/pollInstanceEmpty.xml"
+	_, err = z.PollInstance()
+
+	assert.ErrorIs(t, err, errs.ErrNoInstance)
+	assert.Equal(t, len(z.Matrix[z.Object].GetInstances()), 0)
 }

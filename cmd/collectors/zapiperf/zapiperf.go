@@ -1561,7 +1561,7 @@ func parseHistogramLabels(elem *node.Node) ([]string, string) {
 func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	var (
-		err                               error
+		fetchErr                          error
 		request, results                  *node.Node
 		oldInstances                      *set.Set
 		newSize                           int
@@ -1631,9 +1631,9 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 		var headers map[string]string
 
-		poller, err := conf.PollerNamed(z.Options.Poller)
-		if err != nil {
-			slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", z.Options.Poller))
+		poller, pollerErr := conf.PollerNamed(z.Options.Poller)
+		if pollerErr != nil {
+			slog.Error("failed to find poller", slogx.Err(pollerErr), slog.String("poller", z.Options.Poller))
 		}
 
 		if poller.IsRecording() {
@@ -1642,24 +1642,27 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 			}
 		}
 
-		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath, headers)
+		responseData, batchErr := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath, headers)
 
-		if err != nil {
-			if errors.Is(err, errs.ErrAPIRequestRejected) {
+		if batchErr != nil {
+			if errors.Is(batchErr, errs.ErrAPIRequestRejected) {
 				z.Logger.Info(
-					err.Error(),
+					batchErr.Error(),
 					slog.String("request", request.GetNameS()),
 					slog.String("batchTag", batchTag),
 				)
 			} else {
 				z.Logger.Error(
 					"InvokeBatchRequest failed",
-					slogx.Err(err),
+					slogx.Err(batchErr),
 					slog.String("request", request.GetNameS()),
 					slog.String("batchTag", batchTag),
 				)
 			}
 			apiD += time.Since(apiT)
+			// Propagate the request error instead of reporting ErrNoInstance, so the framework can
+			// classify it. ErrConnection gets a 4s retry instead of a 10m standby.
+			fetchErr = batchErr
 			break
 		}
 
@@ -1708,9 +1711,13 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		parseD += time.Since(parseT)
 	}
 
-	for key := range oldInstances.Iter() {
-		mat.RemoveInstance(key)
-		z.Logger.Debug("removed instance", slog.String("key", key))
+	// Only purge when the poll completed. A failed or partial response does not list every
+	// instance, so purging would wipe live instances.
+	if fetchErr == nil {
+		for key := range oldInstances.Iter() {
+			mat.RemoveInstance(key)
+			z.Logger.Debug("removed instance", slog.String("key", key))
+		}
 	}
 
 	newSize = len(mat.GetInstances())
@@ -1722,11 +1729,18 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	z.Metadata.MustSetValueUint64("instances", instanceInst, uint64(newSize))
 	z.Metadata.MustSetValueUint64("bytesRx", instanceInst, z.Client.Metadata.BytesRx.Load())
 	z.Metadata.MustSetValueUint64("numCalls", instanceInst, z.Client.Metadata.NumCalls.Load())
+
+	// Check fetchErr before newSize: on a failure during the first poll the cache is empty, and
+	// reporting that as ErrNoInstance is the bug this guards against.
+	if fetchErr != nil {
+		return nil, fetchErr
+	}
+
 	if newSize == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "")
 	}
 
-	return nil, err
+	return nil, nil
 }
 
 func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance) {
