@@ -13,9 +13,7 @@ import (
 )
 
 func newWindowEms() *Ems {
-	e := NewEms()
-	e.maxLookback = defaultMaxLookback
-	return e
+	return NewEms()
 }
 
 // Only the lower bound is sent to ONTAP: this endpoint rejects a two-sided
@@ -33,24 +31,22 @@ func TestTimeWindowSendsOnlyLowerBound(t *testing.T) {
 	assert.Equal(t, toTime, clusterTime.Add(-emsVisibilityLag).Unix())
 }
 
-// Regression test for the failure loop: lastFilterTime only advances on a
-// successful poll, so a run of failures used to widen the window without limit
-// and each poll became slower than the last. A 8h watermark must not be
-// honored.
-func TestTimeWindowClampsStaleWatermark(t *testing.T) {
+// The window is not clamped. lastFilterTime only advances on a successful poll,
+// so a run of hard errors leaves the window spanning every interval since the
+// last success - and it is honored as-is. ONTAP's retention decides what can
+// actually come back for it; only a warning is emitted.
+func TestTimeWindowHonorsStaleWatermark(t *testing.T) {
 	e := newWindowEms()
-	e.maxLookback = 15 * time.Minute
 	clusterTime := time.Now()
 	e.lastFilterTime = clusterTime.Add(-8 * time.Hour).Unix()
 
 	_, fromTime, _ := e.timeWindow(clusterTime)
 
-	assert.Equal(t, fromTime, clusterTime.Add(-e.maxLookback).Unix())
+	assert.Equal(t, fromTime, e.lastFilterTime)
 }
 
 func TestTimeWindowKeepsFreshWatermark(t *testing.T) {
 	e := newWindowEms()
-	e.maxLookback = 15 * time.Minute
 	clusterTime := time.Now()
 	e.lastFilterTime = clusterTime.Add(-2 * time.Minute).Unix()
 
@@ -270,32 +266,6 @@ func TestInitCacheRejectsBadParams(t *testing.T) {
 			param: "batch_size",
 			value: "2000",
 			check: func(t *testing.T, e *Ems) { assert.Equal(t, e.batchSize, "2000") },
-		},
-		{
-			// At or below emsVisibilityLag every window comes out empty and the
-			// collector silently stops collecting.
-			name:  "zero max_lookback falls back to the default",
-			param: "max_lookback",
-			value: "0",
-			check: func(t *testing.T, e *Ems) { assert.Equal(t, e.maxLookback, defaultMaxLookback) },
-		},
-		{
-			name:  "negative max_lookback falls back to the default",
-			param: "max_lookback",
-			value: "-1m",
-			check: func(t *testing.T, e *Ems) { assert.Equal(t, e.maxLookback, defaultMaxLookback) },
-		},
-		{
-			name:  "max_lookback at the visibility lag falls back to the default",
-			param: "max_lookback",
-			value: emsVisibilityLag.String(),
-			check: func(t *testing.T, e *Ems) { assert.Equal(t, e.maxLookback, defaultMaxLookback) },
-		},
-		{
-			name:  "valid max_lookback is honored",
-			param: "max_lookback",
-			value: "30m",
-			check: func(t *testing.T, e *Ems) { assert.Equal(t, e.maxLookback, 30*time.Minute) },
 		},
 		{
 			name:  "negative max_records falls back to the default",

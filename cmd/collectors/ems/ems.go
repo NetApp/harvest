@@ -31,10 +31,11 @@ const maxURLSize = 8_000 // bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
 
-// defaultMaxLookback caps how far back the collector asks for events.
-// lastFilterTime only advances on a successful poll, so without a cap the
-// window widens by one poll interval after every failure.
-const defaultMaxLookback = 15 * time.Minute
+// staleWatermarkIntervals is how many poll intervals the watermark may fall
+// behind before the collector says so. lastFilterTime only advances on a
+// successful poll, so a run of hard errors leaves the window covering every
+// interval since the last success.
+const staleWatermarkIntervals = 2
 
 // emsVisibilityLag holds the end of the window back from cluster time. An event
 // becomes queryable a moment after its own timestamp, so closing the window at
@@ -68,7 +69,6 @@ type Ems struct {
 	bookendEmsMap  map[string]*set.Set      // This is reverse bookend ems map, [Resolving ems]:[Set of Issuing ems]. Using Set here to ensure that it has slice of unique issuing ems
 	resolveAfter   map[string]time.Duration // This is resolve after map, [Issuing ems]:[Duration]. After this duration, ems got auto resolved.
 	batchSize      string
-	maxLookback    time.Duration
 	maxRecords     int
 	walkBudget     time.Duration
 }
@@ -224,23 +224,6 @@ func (e *Ems) InitCache() error {
 		}
 	}
 
-	e.maxLookback = defaultMaxLookback
-	if m := e.Params.GetChildContentS("max_lookback"); m != "" {
-		// Must exceed emsVisibilityLag. At or below it the clamp pulls
-		// fromTime to at least toTime, every window comes out empty, and the
-		// collector silently stops collecting anything at all.
-		if d, err := time.ParseDuration(m); err == nil && d > emsVisibilityLag {
-			e.maxLookback = d
-		} else {
-			e.Logger.Warn("Invalid value of max_lookback, using default",
-				slogx.Err(err),
-				slog.String("max_lookback", m),
-				slog.String("minimum", emsVisibilityLag.String()),
-				slog.String("default", defaultMaxLookback.String()),
-			)
-		}
-	}
-
 	// One collection must fit inside one poll interval. Overrunning it does not
 	// buy fresher data - it just backs polls up behind each other.
 	budget, err := collectors.GetDataInterval(e.GetParams(), defaultDataPollDuration)
@@ -362,7 +345,6 @@ func (e *Ems) InitCache() error {
 		"EMS collector settings",
 		slog.String("batchSize", e.batchSize),
 		slog.Int("maxRecords", e.maxRecords),
-		slog.Duration("maxLookback", e.maxLookback),
 		slog.Duration("walkBudget", e.walkBudget),
 		slog.Int("eventsInTemplate", len(e.emsProp)),
 		slog.String("severityFilter", e.severityFilter),
@@ -400,14 +382,16 @@ func (e *Ems) timeWindow(clusterTime time.Time) ([]string, int64, int64) {
 		fromTime = clusterTime.Add(-dataDuration).Unix()
 	}
 
-	if oldest := clusterTime.Add(-e.maxLookback).Unix(); fromTime < oldest {
+	// Report a watermark that has fallen behind, but do not move it: the
+	// window stays as wide as the watermark says it is, and retention decides
+	// what ONTAP can actually return for it.
+	if gap := clusterTime.Sub(time.Unix(fromTime, 0)); gap > staleWatermarkIntervals*e.walkBudget {
 		e.Logger.Warn(
-			"EMS watermark is older than max_lookback, skipping ahead. Events in the gap are not collected",
+			"EMS watermark is behind, this window spans more than one poll",
 			slog.Time("watermark", time.Unix(fromTime, 0)),
-			slog.Duration("gap", clusterTime.Sub(time.Unix(fromTime, 0))),
-			slog.Duration("maxLookback", e.maxLookback),
+			slog.Duration("gap", gap),
+			slog.Duration("dataInterval", e.walkBudget),
 		)
-		fromTime = oldest
 	}
 
 	return []string{fmt.Sprintf("time=>=%d", fromTime)}, fromTime, toTime
