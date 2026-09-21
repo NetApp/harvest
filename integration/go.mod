@@ -7,7 +7,7 @@ replace github.com/netapp/harvest/v2 => ../
 require (
 	github.com/carlmjohnson/requests v0.26.1
 	github.com/netapp/harvest/v2 v2.0.0-20260810113142-174afaf73702
-	golang.org/x/text v0.41.0
+	golang.org/x/text v0.42.0
 )
 
 require (
