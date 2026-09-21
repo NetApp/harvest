@@ -147,6 +147,8 @@ func (e *Ems) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	e.InitVars(a.Params)
+
 	if err := collector.Init(e); err != nil {
 		return err
 	}
@@ -250,6 +252,20 @@ func (e *Ems) InitCache() error {
 		budget = defaultDataPollDuration
 	}
 	e.walkBudget = budget
+
+	// conf/ems/default.yaml documents that client_timeout belongs at or below
+	// the data interval, but nothing enforced it, so an operator who shortened
+	// the interval got silently truncated polls instead of being told. Warn
+	// rather than refuse to start: the collector still works in this state -
+	// pageReservation keeps the budget usable - and turning a suboptimal
+	// config into a dead poller is the worse failure.
+	if ct := e.Client.GetTimeout(); timeoutExceedsInterval(ct, e.walkBudget) {
+		e.Logger.Warn(
+			"client_timeout exceeds the data poll interval, so one request can outlive its poll",
+			slog.Duration("clientTimeout", ct),
+			slog.Duration("dataInterval", e.walkBudget),
+		)
+	}
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
 		e.severityFilter = severityFilterPrefix + s
@@ -493,7 +509,7 @@ func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64, quota 
 		// without this a page starting just before the deadline could overrun
 		// the poll interval by the full timeout, which is the pile-up the
 		// budget exists to prevent.
-		if len(records) >= quota || time.Until(deadline) < e.Client.GetTimeout() {
+		if len(records) >= quota || time.Until(deadline) < pageReservation(e.Client.GetTimeout(), e.walkBudget) {
 			truncated = true
 			return errWalkBudget
 		}
@@ -558,6 +574,30 @@ func hrefQuota(maxRecords, taken, i, hrefs int) int {
 	return max(1, remaining/(hrefs-i))
 }
 
+// timeoutExceedsInterval reports whether client_timeout leaves no room inside
+// the poll interval, so a single request can outlive the poll it belongs to.
+// A zero timeout means no HTTP client is configured, which is the case under
+// Options.IsTest, and is not a misconfiguration.
+func timeoutExceedsInterval(clientTimeout, interval time.Duration) bool {
+	return clientTimeout > 0 && clientTimeout > interval
+}
+
+// pageReservation is how much of the walk budget to hold back so a page that
+// has been started can finish. The REST client takes no context, so a request
+// in flight cannot be cut short; the only lever is declining to begin one when
+// too little of the budget is left.
+//
+// Capped at half the budget. client_timeout defaults to 1m against a 3m data
+// interval, but a poller with a shorter interval - 1m is common - would
+// otherwise reserve the whole budget, refusing every page after the first and
+// reporting every poll as truncated.
+func pageReservation(clientTimeout, budget time.Duration) time.Duration {
+	if half := budget / 2; clientTimeout > half {
+		return half
+	}
+	return clientTimeout
+}
+
 // collect walks every href within a shared record cap and time budget.
 func (e *Ems) collect(hrefs []string, deadline time.Time, toTime int64) ([]gjson.Result, bool, error) {
 	var (
@@ -582,7 +622,8 @@ func (e *Ems) collect(hrefs []string, deadline time.Time, toTime int64) ([]gjson
 		}
 		records = append(records, r...)
 
-		if t && !time.Now().Before(deadline.Add(-e.Client.GetTimeout())) {
+		reserve := pageReservation(e.Client.GetTimeout(), e.walkBudget)
+		if t && !time.Now().Before(deadline.Add(-reserve)) {
 			// Out of time, not just out of quota: there is no room to start a
 			// request for the hrefs after this one either.
 			skipped = len(hrefs) - i - 1

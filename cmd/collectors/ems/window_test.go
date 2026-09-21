@@ -366,3 +366,112 @@ func TestHrefQuotaDoesNotStarveLaterHrefs(t *testing.T) {
 	}
 	assert.True(t, taken <= maxRecords)
 }
+
+// client_timeout defaults to 2m against a 3m data interval. A poller with a
+// shorter interval must not end up reserving more than its whole budget, or
+// every page after the first is refused and every poll looks truncated.
+func TestPageReservation(t *testing.T) {
+	tests := []struct {
+		name                  string
+		clientTimeout, budget time.Duration
+		want                  time.Duration
+	}{
+		{
+			// The shipped defaults: 1m is under half of a 3m interval, so the
+			// whole timeout is held back and 2m stays usable.
+			name:          "shipped defaults reserve the whole timeout",
+			clientTimeout: time.Minute,
+			budget:        3 * time.Minute,
+			want:          time.Minute,
+		},
+		{
+			// data: 1m with the 1m default. Reserving the whole timeout would
+			// leave nothing, so the cap takes over.
+			name:          "timeout equal to the budget is capped at half",
+			clientTimeout: time.Minute,
+			budget:        time.Minute,
+			want:          30 * time.Second,
+		},
+		{
+			name:          "timeout well inside the budget is reserved in full",
+			clientTimeout: 30 * time.Second,
+			budget:        3 * time.Minute,
+			want:          30 * time.Second,
+		},
+		{
+			// data: 1m with the 2m default. Without the cap this reserves more
+			// than the budget and nothing after the first page ever runs.
+			name:          "timeout larger than the budget is capped at half",
+			clientTimeout: 2 * time.Minute,
+			budget:        time.Minute,
+			want:          30 * time.Second,
+		},
+		{
+			name:          "timeout exactly half the budget is reserved in full",
+			clientTimeout: 90 * time.Second,
+			budget:        3 * time.Minute,
+			want:          90 * time.Second,
+		},
+		{
+			// GetTimeout reports 0 when there is no underlying HTTP client,
+			// which is the case under Options.IsTest. Degrade to no reservation
+			// rather than something negative.
+			name:          "zero timeout reserves nothing",
+			clientTimeout: 0,
+			budget:        3 * time.Minute,
+			want:          0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, pageReservation(tt.clientTimeout, tt.budget), tt.want)
+		})
+	}
+}
+
+// conf/ems/default.yaml documents that client_timeout belongs at or below the
+// data interval. Nothing enforced it, so a shortened interval produced silently
+// truncated polls rather than a warning.
+func TestTimeoutExceedsInterval(t *testing.T) {
+	tests := []struct {
+		name                    string
+		clientTimeout, interval time.Duration
+		want                    bool
+	}{
+		{
+			name:          "shipped defaults are fine",
+			clientTimeout: time.Minute,
+			interval:      3 * time.Minute,
+			want:          false,
+		},
+		{
+			// Equal is acceptable: a request may fill the interval, not exceed it.
+			name:          "equal is acceptable",
+			clientTimeout: time.Minute,
+			interval:      time.Minute,
+			want:          false,
+		},
+		{
+			// data: 1m left with a 2m timeout, the case Rahul asked about.
+			name:          "timeout beyond the interval is flagged",
+			clientTimeout: 2 * time.Minute,
+			interval:      time.Minute,
+			want:          true,
+		},
+		{
+			// No HTTP client configured, as under Options.IsTest. Not a
+			// misconfiguration, so it must not warn.
+			name:          "zero timeout is not a misconfiguration",
+			clientTimeout: 0,
+			interval:      time.Minute,
+			want:          false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, timeoutExceedsInterval(tt.clientTimeout, tt.interval), tt.want)
+		})
+	}
+}

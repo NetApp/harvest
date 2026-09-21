@@ -1,7 +1,7 @@
 collector: Ems
 
-#  Keep this below the data interval below.
-client_timeout: 2m
+# Keep this at or below the data interval: exceeding it permits a request that outlives the poll.
+client_timeout: 1m
 
 schedule:
   - instance: 24h
