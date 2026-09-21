@@ -5,9 +5,7 @@ query:                    ext_cache_obj
 object:                   flashcache
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name
-  - ^node_name              => node
+  - ^^node_name              => node
   - accesses
   - disk_reads_replaced
   - evicts

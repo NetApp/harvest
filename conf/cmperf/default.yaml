@@ -4,7 +4,7 @@ collector:          CmPerf
 # Order here matters!
 schedule:
   - counter:  24h
-  - instance: 720h   # The instance schedule is only used by the `workload` and `workload_volume` templates
+  - instance: 720h   # The instance schedule is only used by the `workload`,`workload_volume` and `workload_queue_combined` templates
   - data:      1m
 
 objects:
@@ -28,7 +28,6 @@ objects:
   Namespace:                namespace.yaml
   NicCommon:                nic_common.yaml
   NvmMirror:                nvm_mirror.yaml
-  #  ObjectStoreClient:        object_store_client_op.yaml
   Path:                     path.yaml
   #  Qtree:                    qtree.yaml           #Enabling `qtree.yaml` may slow down data collection
   Rwctx:                    rwctx.yaml
@@ -61,4 +60,5 @@ objects:
   VscanSVM:                 vscan_svm.yaml
 
   Workload:                 workload.yaml
+  WorkloadQueue:            workload_queue_combined.yaml
   WorkloadVolume:           workload_volume.yaml

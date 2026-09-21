@@ -5,7 +5,6 @@ object:                   wafl
 
 counters:
   - ^^node_name               => node
-  - ^instance_uuid
   - avg_non_wafl_msg_latency # latency
   - avg_wafl_msg_latency      => avg_msg_latency
   - avg_wafl_repl_msg_latency => avg_repl_msg_latency

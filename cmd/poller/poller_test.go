@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestUnion2(t *testing.T) {
@@ -901,6 +902,49 @@ func TestBuildCmPerfManifest(t *testing.T) {
 			}
 			if diff := cmp.Diff(wantMap, gotMap); diff != "" {
 				t.Errorf("manifest mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestCmManifestTimeout(t *testing.T) {
+	tests := []struct {
+		name            string
+		manifestTimeout string // conf.Poller.CmPerfManifestTimeout, when non-empty
+		want            time.Duration
+	}{
+		{
+			name: "empty returns default",
+			want: defaultCmManifestTimeout,
+		},
+		{
+			name:            "valid manifest_timeout is used",
+			manifestTimeout: "5m",
+			want:            5 * time.Minute,
+		},
+		{
+			name:            "unparsable manifest_timeout falls back to default",
+			manifestTimeout: "not-a-duration",
+			want:            defaultCmManifestTimeout,
+		},
+		{
+			name:            "zero manifest_timeout falls back to default",
+			manifestTimeout: "0s",
+			want:            defaultCmManifestTimeout,
+		},
+		{
+			name:            "negative manifest_timeout falls back to default",
+			manifestTimeout: "-1m",
+			want:            defaultCmManifestTimeout,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &Poller{params: &conf.Poller{CmPerfManifestTimeout: tt.manifestTimeout}}
+
+			if got := p.cmManifestTimeout(); got != tt.want {
+				t.Errorf("cmManifestTimeout() got [%v], want [%v]", got, tt.want)
 			}
 		})
 	}

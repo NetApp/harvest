@@ -1,0 +1,52 @@
+name:                     WorkloadQueue
+query:                    workload_queue_combined
+object:                   qos_queue
+
+# recommended to use large interval, since workload objects are expensive
+client_timeout:           1m30s
+
+schedule:
+  - instance: 10m
+
+counters:
+  - ^^instance_uuid
+  - ^instance_name                       => workload
+  - cpu_dblade_background_service_time
+  - cpu_dblade_residence_time
+  - cpu_dblade_util_service_time
+  - cpu_nblade_residence_time
+  - cpu_nblade_util_service_time
+  - delay_avscan_wait_time
+  - delay_cloud_io_wait_time
+  - delay_cluster_interconnect_wait_time
+  - delay_cop_wait_time
+  - delay_disk_io_wait_time
+  - delay_flexcache_ral_wait_time
+  - delay_flexcache_spinhi_wait_time
+  - delay_network_wait_time
+  - delay_nvlog_transfer_wait_time
+  - delay_qos_limit_wait_time
+  - delay_qos_min_throughput_wait_time
+  - delay_sync_repl_wait_time
+  - delay_wafl_response_wait_time
+  - delay_wafl_susp_cp_wait_time
+  - delay_wafl_susp_other_wait_time
+  - disk_hdd_background_service_time
+  - disk_ssd_background_service_time
+  - refine:
+      - with_constituents: false   # true includes FlexGroup constituents
+
+qos_labels:
+  - svm.name     => svm
+  - volume
+  - policy.name  => policy_group
+  - wid
+  - name         => workload
+
+export_options:
+  instance_keys:
+    - policy_group
+    - svm
+    - volume
+    - wid
+    - workload

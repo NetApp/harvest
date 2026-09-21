@@ -565,29 +565,46 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 
 		instanceKey := c.buildInstanceKey(inst, stringVals)
 		if instanceKey == "" {
-			c.Logger.Debug("skip instance, key is empty",
+			c.Logger.Warn("skip instance, key is empty",
 				slog.String("name", inst.Name),
 				slog.String("uuid", inst.UUID))
 			continue
 		}
 
-		matInst := curMat.GetInstance(instanceKey)
-		if matInst == nil {
-			if isWorkloadObject(c.Prop.Query) {
-				// Workload instances are created exclusively by PollInstance. Skipping here mirrors RestPerf behavior and prevents
-				// exporting new volumes with empty svm/volume labels before PollInstance runs.
+		var matInst *matrix.Instance
+
+		if isWorkloadObject(c.Prop.Query) {
+			// Workload instances are created exclusively by PollInstance. Skipping here mirrors RestPerf behavior and prevents
+			// exporting new volumes with empty svm/volume labels before PollInstance runs.
+			matInst = curMat.GetInstance(instanceKey)
+			if matInst == nil {
 				c.Logger.Debug("skip workload instance in PollData, defer to PollInstance",
-					slog.String("key", instanceKey))
+					slog.String("instanceKey", instanceKey))
 				continue
 			}
+		} else {
+			// curMat comes from CloneMetricTemplate and holds no instances, so NewInstance
+			// returns ErrDuplicateInstanceKey when two CM2 instances resolve to the same key.
 			var newErr error
 			matInst, newErr = curMat.NewInstance(instanceKey)
 			if newErr != nil {
-				c.Logger.Warn("failed to create instance",
-					slog.String("key", instanceKey), slogx.Err(newErr))
+				c.Logger.Error("add instance", slogx.Err(newErr),
+					slog.String("instanceKey", instanceKey),
+					slog.Any("templateKeys", c.Prop.InstanceKeys),
+					slog.String("name", inst.Name),
+					slog.String("uuid", inst.UUID),
+					slog.String("node", stringVals["node_name"]))
 				continue
 			}
 		}
+
+		// This instance was reported in this poll's CM2 file, so mark it live. SetExportable(true) is
+		// the part that matters: CloneForCollection preserves exportable across polls, so this is what
+		// lets an instance recover after an earlier incomplete collection marked it non-exportable.
+		// The file-level incomplete-collection check in pollCM2Files runs after populateMatrix and can
+		// still override this to non-exportable when the overall collection was not complete.
+		matInst.SetPartial(false)
+		matInst.SetExportable(true)
 
 		tsMetric.SetValueFloat64(matInst, ts)
 

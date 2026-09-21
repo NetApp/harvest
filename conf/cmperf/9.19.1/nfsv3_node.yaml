@@ -9,8 +9,7 @@ global_labels:
 allow_partial_aggregation: true
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name          => node
+  - ^^node_name             => node
   - access_avg_latency
   - access_total
   - commit_avg_latency

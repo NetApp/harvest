@@ -47,3 +47,41 @@ func TestCanonicalSamplePeriod(t *testing.T) {
 		})
 	}
 }
+
+func TestIsWorkloadObject(t *testing.T) {
+	tests := []struct {
+		query string
+		want  bool
+	}{
+		{query: "workload", want: true},
+		{query: "workload_volume", want: true},
+		{query: "workload_queue_combined", want: true},
+		{query: "volume", want: false},
+		{query: "wafl", want: false},
+		{query: "workload_queue_combined:constituent", want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.query, func(t *testing.T) {
+			assert.Equal(t, isWorkloadObject(tt.query), tt.want)
+		})
+	}
+}
+
+func TestWorkloadFilterFor(t *testing.T) {
+	tests := []struct {
+		query string
+		want  []string
+	}{
+		{query: "workload", want: []string{"workload_class=" + objWorkloadClass}},
+		{query: "workload_volume", want: []string{"workload_class=" + objWorkloadVolumeClass}},
+		{query: "workload_queue_combined", want: []string{"qtree=null", "lun=null", "file=null"}},
+		{query: "unknown", want: []string{"workload_class=" + objWorkloadClass}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.query, func(t *testing.T) {
+			assert.Equal(t, workloadFilterFor(tt.query), tt.want)
+		})
+	}
+}

@@ -3,9 +3,8 @@ query:                    object_store_server
 object:                   ontaps3_svm
 
 counters:
-  - ^^instance_uuid
-  - ^node_name                                           => node
-  - ^vserver_name                                        => svm
+  - ^^node_name                                           => node
+  - ^^vserver_name                                        => svm
   - abort_multipart_upload_failed
   - abort_multipart_upload_failed_client_close
   - abort_multipart_upload_latency

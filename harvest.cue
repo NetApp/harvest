@@ -80,33 +80,34 @@ label: [string]: string
 Pollers: [Name=_]: #Poller
 
 #Poller: {
-	addr?:               string
-	auth_style?:         "basic_auth" | "certificate_auth"
-	ca_cert?:            string
-	certificate_script?: #CertificateScript
-	client_timeout?:     string
-	cm_perf_manifest?:   string
-	collectors?:         [...#CollectorDef] | [...string]
-	conf_path?:          string
-	credentials_file?:   string
-	credentials_script?: #CredentialsScript
-	datacenter?:         string
-	disabled?:           bool
-	exporters:           [...#ExporterDefs]
-	gcnv_ontap_mode?:    bool
-	is_kfs?:             bool
-	labels?:             [...label]
-	log:                 [...string]
-	log_max_bytes?:      int
-	log_max_files?:      int
-	password?:           string
-	poller_log_schedule?: string
-	prefer_zapi?:        bool
-	prom_port?:          int
-	recorder?:           #Recorder
-	ssl_cert?:           string
-	ssl_key?:            string
-	tls_min_version?:    string
-	use_insecure_tls?:   bool
-	username?:           string
+	addr?:                     string
+	auth_style?:               "basic_auth" | "certificate_auth"
+	ca_cert?:                  string
+	certificate_script?:       #CertificateScript
+	client_timeout?:           string
+	cm_perf_manifest?:         string
+	cm_perf_manifest_timeout?: string
+	collectors?:               [...#CollectorDef] | [...string]
+	conf_path?:                string
+	credentials_file?:         string
+	credentials_script?:       #CredentialsScript
+	datacenter?:               string
+	disabled?:                 bool
+	exporters:                 [...#ExporterDefs]
+	gcnv_ontap_mode?:          bool
+	is_kfs?:                   bool
+	labels?:                   [...label]
+	log:                       [...string]
+	log_max_bytes?:            int
+	log_max_files?:            int
+	password?:                 string
+	poller_log_schedule?:      string
+	prefer_zapi?:              bool
+	prom_port?:                int
+	recorder?:                 #Recorder
+	ssl_cert?:                 string
+	ssl_key?:                  string
+	tls_min_version?:          string
+	use_insecure_tls?:         bool
+	username?:                 string
 }

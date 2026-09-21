@@ -623,42 +623,43 @@ func (e *ExporterDef) UnmarshalYAML(n ast.Node) error {
 }
 
 type Poller struct {
-	APIVersion        string               `yaml:"api_version,omitempty"`
-	APIVfiler         string               `yaml:"api_vfiler,omitempty"`
-	Addr              string               `yaml:"addr,omitempty"`
-	AuthStyle         string               `yaml:"auth_style,omitempty"`
-	CaCertPath        string               `yaml:"ca_cert,omitempty"`
-	CertificateScript CertificateScript    `yaml:"certificate_script,omitempty"`
-	CmPerfManifest    string               `yaml:"cm_perf_manifest,omitzero"`
-	ClientTimeout     string               `yaml:"client_timeout,omitempty"`
-	Collectors        []Collector          `yaml:"collectors,omitempty"`
-	ConfPath          string               `yaml:"conf_path,omitempty"`
-	CredentialsFile   string               `yaml:"credentials_file,omitempty"`
-	CredentialsScript CredentialsScript    `yaml:"credentials_script,omitempty"`
-	Datacenter        string               `yaml:"datacenter,omitempty"`
-	IsDisabled        bool                 `yaml:"disabled,omitempty"`
-	ExporterDefs      []ExporterDef        `yaml:"exporters,omitempty"`
-	Exporters         []string             `yaml:"-"`
-	GCNVOntapMode     bool                 `yaml:"gcnv_ontap_mode,omitempty"`
-	IsKfs             bool                 `yaml:"is_kfs,omitempty"`
-	Labels            *[]map[string]string `yaml:"labels,omitempty"`
-	LogMaxBytes       int64                `yaml:"log_max_bytes,omitempty"`
-	LogMaxFiles       int                  `yaml:"log_max_files,omitempty"`
-	LogSet            *[]string            `yaml:"log,omitempty"`
-	Password          string               `yaml:"password,omitempty"`
-	PollerLogSchedule string               `yaml:"poller_log_schedule,omitempty"`
-	PollerSchedule    string               `yaml:"poller_schedule,omitempty"`
-	Pool              Pool                 `yaml:"pool,omitempty"`
-	PreferZAPI        bool                 `yaml:"prefer_zapi,omitempty"`
-	PromPort          int                  `yaml:"prom_port,omitempty"`
-	Recorder          Recorder             `yaml:"recorder,omitempty"`
-	SslCert           string               `yaml:"ssl_cert,omitempty"`
-	SslKey            string               `yaml:"ssl_key,omitempty"`
-	TLSMinVersion     string               `yaml:"tls_min_version,omitempty"`
-	UseInsecureTLS    *bool                `yaml:"use_insecure_tls,omitempty"`
-	Username          string               `yaml:"username,omitempty"`
-	promIndex         int
-	Name              string
+	APIVersion            string               `yaml:"api_version,omitempty"`
+	APIVfiler             string               `yaml:"api_vfiler,omitempty"`
+	Addr                  string               `yaml:"addr,omitempty"`
+	AuthStyle             string               `yaml:"auth_style,omitempty"`
+	CaCertPath            string               `yaml:"ca_cert,omitempty"`
+	CertificateScript     CertificateScript    `yaml:"certificate_script,omitempty"`
+	CmPerfManifest        string               `yaml:"cm_perf_manifest,omitzero"`
+	CmPerfManifestTimeout string               `yaml:"cm_perf_manifest_timeout,omitzero"`
+	ClientTimeout         string               `yaml:"client_timeout,omitempty"`
+	Collectors            []Collector          `yaml:"collectors,omitempty"`
+	ConfPath              string               `yaml:"conf_path,omitempty"`
+	CredentialsFile       string               `yaml:"credentials_file,omitempty"`
+	CredentialsScript     CredentialsScript    `yaml:"credentials_script,omitempty"`
+	Datacenter            string               `yaml:"datacenter,omitempty"`
+	IsDisabled            bool                 `yaml:"disabled,omitempty"`
+	ExporterDefs          []ExporterDef        `yaml:"exporters,omitempty"`
+	Exporters             []string             `yaml:"-"`
+	GCNVOntapMode         bool                 `yaml:"gcnv_ontap_mode,omitempty"`
+	IsKfs                 bool                 `yaml:"is_kfs,omitempty"`
+	Labels                *[]map[string]string `yaml:"labels,omitempty"`
+	LogMaxBytes           int64                `yaml:"log_max_bytes,omitempty"`
+	LogMaxFiles           int                  `yaml:"log_max_files,omitempty"`
+	LogSet                *[]string            `yaml:"log,omitempty"`
+	Password              string               `yaml:"password,omitempty"`
+	PollerLogSchedule     string               `yaml:"poller_log_schedule,omitempty"`
+	PollerSchedule        string               `yaml:"poller_schedule,omitempty"`
+	Pool                  Pool                 `yaml:"pool,omitempty"`
+	PreferZAPI            bool                 `yaml:"prefer_zapi,omitempty"`
+	PromPort              int                  `yaml:"prom_port,omitempty"`
+	Recorder              Recorder             `yaml:"recorder,omitempty"`
+	SslCert               string               `yaml:"ssl_cert,omitempty"`
+	SslKey                string               `yaml:"ssl_key,omitempty"`
+	TLSMinVersion         string               `yaml:"tls_min_version,omitempty"`
+	UseInsecureTLS        *bool                `yaml:"use_insecure_tls,omitempty"`
+	Username              string               `yaml:"username,omitempty"`
+	promIndex             int
+	Name                  string
 }
 
 // Union merges a poller's config with the defaults.
