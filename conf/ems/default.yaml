@@ -1,6 +1,8 @@
 collector: Ems
 
-client_timeout: 1m
+#  Keep this below the data interval below.
+client_timeout: 2m
+
 schedule:
   - instance: 24h
   - data:     3m

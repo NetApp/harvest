@@ -1,7 +1,12 @@
 package ems
 
 import (
+	"cmp"
+	"errors"
 	"fmt"
+	"maps"
+	"slices"
+
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/ems/metrictransformer"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
@@ -25,6 +30,23 @@ const defaultDataPollDuration = 3 * time.Minute
 const maxURLSize = 8_000 // bytes
 const severityFilterPrefix = "message.severity="
 const defaultSeverityFilter = "alert|emergency|error|informational|notice"
+
+// defaultMaxLookback caps how far back the collector asks for events.
+// lastFilterTime only advances on a successful poll, so without a cap the
+// window widens by one poll interval after every failure.
+const defaultMaxLookback = 15 * time.Minute
+
+// emsVisibilityLag holds the end of the window back from cluster time. An event
+// becomes queryable a moment after its own timestamp, so closing the window at
+// exactly cluster time would drop events stamped just before the boundary - the
+// next poll starts at that boundary and would never ask for them again.
+const emsVisibilityLag = 5 * time.Second
+
+// defaultEmsBatchSize is larger than collectors.DefaultBatchSize because the
+// cost of this endpoint is per request, not per record.
+const defaultEmsBatchSize = "10000"
+
+const defaultMaxRecords = 20_000
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
 const Hyphen = "-"
@@ -45,6 +67,10 @@ type Ems struct {
 	eventNames     []string                 // consist of all ems events supported
 	bookendEmsMap  map[string]*set.Set      // This is reverse bookend ems map, [Resolving ems]:[Set of Issuing ems]. Using Set here to ensure that it has slice of unique issuing ems
 	resolveAfter   map[string]time.Duration // This is resolve after map, [Issuing ems]:[Duration]. After this duration, ems got auto resolved.
+	batchSize      string
+	maxLookback    time.Duration
+	maxRecords     int
+	walkBudget     time.Duration
 }
 
 type Metric struct {
@@ -57,6 +83,18 @@ type Metric struct {
 type Matches struct {
 	Name  string
 	value string
+}
+
+// missingLabelKey identifies a template label that an ONTAP release does not
+// send for a given event.
+type missingLabelKey struct {
+	ems   string
+	label string
+}
+
+type missingLabelCount struct {
+	count   int
+	example string
 }
 
 type emsProp struct {
@@ -159,11 +197,63 @@ func (e *Ems) InitCache() error {
 	}
 
 	e.maxURLSize = e.LoadParam("max_url_size", e.maxURLSize)
+	e.maxRecords = e.LoadParam("max_records", defaultMaxRecords)
+	if e.maxRecords <= 0 {
+		e.Logger.Warn("max_records must be positive, using default",
+			slog.Int("max_records", e.maxRecords),
+			slog.Int("default", defaultMaxRecords),
+		)
+		e.maxRecords = defaultMaxRecords
+	}
+
+	// Ems overrides Rest.InitCache, so the batch_size handling there does not
+	// run for this collector and has to be repeated here.
+	e.batchSize = defaultEmsBatchSize
+	if b := e.Params.GetChildContentS("batch_size"); b != "" {
+		// Atoi alone accepts 0 and negatives, which would ask ONTAP for an
+		// empty or nonsensical page.
+		if n, err := strconv.Atoi(b); err == nil && n > 0 {
+			e.batchSize = b
+		} else {
+			e.Logger.Warn("Invalid value of batch_size, using default",
+				slog.String("batch_size", b),
+				slog.String("default", defaultEmsBatchSize),
+			)
+		}
+	}
+
+	e.maxLookback = defaultMaxLookback
+	if m := e.Params.GetChildContentS("max_lookback"); m != "" {
+		// Must exceed emsVisibilityLag. At or below it the clamp pulls
+		// fromTime to at least toTime, every window comes out empty, and the
+		// collector silently stops collecting anything at all.
+		if d, err := time.ParseDuration(m); err == nil && d > emsVisibilityLag {
+			e.maxLookback = d
+		} else {
+			e.Logger.Warn("Invalid value of max_lookback, using default",
+				slogx.Err(err),
+				slog.String("max_lookback", m),
+				slog.String("minimum", emsVisibilityLag.String()),
+				slog.String("default", defaultMaxLookback.String()),
+			)
+		}
+	}
+
+	// One collection must fit inside one poll interval. Overrunning it does not
+	// buy fresher data - it just backs polls up behind each other.
+	budget, err := collectors.GetDataInterval(e.GetParams(), defaultDataPollDuration)
+	if err != nil {
+		e.Logger.Warn("Failed to parse duration. using default",
+			slogx.Err(err),
+			slog.String("defaultDataPollDuration", defaultDataPollDuration.String()),
+		)
+		budget = defaultDataPollDuration
+	}
+	e.walkBudget = budget
 
 	if s := e.Params.GetChildContentS("severity"); s != "" {
 		e.severityFilter = severityFilterPrefix + s
 	}
-	e.Logger.Debug("", slog.String("severityFilter", e.severityFilter))
 
 	if export := e.Params.GetChildS("export_options"); export != nil {
 		e.Matrix[e.Object].SetExportOptions(export)
@@ -204,11 +294,11 @@ func (e *Ems) InitCache() error {
 	}
 
 	for _, line := range events.GetChildren() {
-		prop := emsProp{}
-
-		prop.InstanceKeys = make([]string, 0)
-		prop.InstanceLabels = make(map[string]string)
-		prop.Metrics = make(map[string]*Metric)
+		prop := emsProp{
+			InstanceKeys:   make([]string, 0),
+			InstanceLabels: make(map[string]string),
+			Metrics:        make(map[string]*Metric),
+		}
 
 		// check if name is present in template
 		if line.GetChildContentS("name") == "" {
@@ -248,14 +338,40 @@ func (e *Ems) InitCache() error {
 	}
 	// add severity filter
 	e.Filter = append(e.Filter, e.severityFilter)
+
+	// Logged once at startup rather than per poll. These are the settings that
+	// determine how much work a collection does, so they belong in any log
+	// shipped with a report of EMS collection being slow.
+	e.Logger.Info(
+		"EMS collector settings",
+		slog.String("batchSize", e.batchSize),
+		slog.Int("maxRecords", e.maxRecords),
+		slog.Duration("maxLookback", e.maxLookback),
+		slog.Duration("walkBudget", e.walkBudget),
+		slog.Int("eventsInTemplate", len(e.emsProp)),
+		slog.String("severityFilter", e.severityFilter),
+	)
+
 	return nil
 }
 
-// returns time filter (clustertime - polldata duration)
-func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
+// timeWindow returns the time filter for this poll plus the window it covers.
+//
+// Only the lower bound goes to ONTAP. This endpoint rejects a two-sided filter
+// on `time` outright - 400, code 262188, target `time`, "Field \"time\" was
+// specified twice".
+// fetchEMSData enforces the end of the window client-side instead.
+//
+// The window still needs an end. Without one the watermark could only advance
+// to the newest record that happened to be seen, which is not the same as the
+// window being complete. Discarding the records past toTime costs
+// little: they are the few that arrive during the request itself.
+func (e *Ems) timeWindow(clusterTime time.Time) ([]string, int64, int64) {
+	toTime := clusterTime.Add(-emsVisibilityLag).Unix()
 	fromTime := e.lastFilterTime
+
 	// check if this is the first request
-	if e.lastFilterTime == 0 {
+	if fromTime == 0 {
 		// if first request fetch cluster time
 		dataDuration, err := collectors.GetDataInterval(e.GetParams(), defaultDataPollDuration)
 		if err != nil {
@@ -267,18 +383,228 @@ func (e *Ems) getTimeStampFilter(clusterTime time.Time) string {
 		}
 		fromTime = clusterTime.Add(-dataDuration).Unix()
 	}
-	return fmt.Sprintf("time=>=%d", fromTime)
+
+	if oldest := clusterTime.Add(-e.maxLookback).Unix(); fromTime < oldest {
+		e.Logger.Warn(
+			"EMS watermark is older than max_lookback, skipping ahead. Events in the gap are not collected",
+			slog.Time("watermark", time.Unix(fromTime, 0)),
+			slog.Duration("gap", clusterTime.Sub(time.Unix(fromTime, 0))),
+			slog.Duration("maxLookback", e.maxLookback),
+		)
+		fromTime = oldest
+	}
+
+	return []string{fmt.Sprintf("time=>=%d", fromTime)}, fromTime, toTime
 }
 
-func (e *Ems) fetchEMSData(href string) ([]gjson.Result, error) {
-	var (
-		records []gjson.Result
-		err     error
-	)
-	if records, err = e.GetRestData(href); err != nil {
-		return nil, err
+// sortRecords orders events chronologically, so that when an issuing ems and
+// the ems that resolves it arrive in the same poll, the resolving one is
+// processed last and the issue is cleared. HandleResults depends on that order.
+//
+// This was previously done with order_by=index asc in the query. Two reasons it
+// moved here, measured on a 32-node cluster against the collector's own query
+// shape over three interleaved rounds:
+//
+//   - ONTAP caps a sorted page at 5000 records while an unsorted one returns up
+//     10000.
+//   - The sort itself added ~17% to each request (10.3/17.7/3.1s with it,
+//     7.5/16.3/2.7s without).
+//
+// Sorting here costs nothing and preserves the ordering the bookend logic
+// needs.
+//
+// time is the primary key rather than index. index is a per-node sequence
+// number, so it does not order events against each other across nodes; on a
+// 32-node cluster sorting by it alone is close to arbitrary. index remains the
+// tiebreaker for events sharing a timestamp.
+func sortRecords(records []gjson.Result) {
+	slices.SortStableFunc(records, func(a, b gjson.Result) int {
+		return cmp.Or(
+			cmp.Compare(eventTime(a), eventTime(b)),
+			cmp.Compare(a.Get("index").Int(), b.Get("index").Int()),
+		)
+	})
+}
+
+// inWindow reports whether a record falls inside the window ending at toTime.
+// A zero timestamp means the record's time could not be read; it is kept
+// rather than silently dropped over an unparseable field.
+func inWindow(record gjson.Result, toTime int64) bool {
+	t := eventTime(record)
+	return t == 0 || t <= toTime
+}
+
+// nextWatermark returns the lower bound for the poll following one that covered
+// a window ending at toTime. inWindow keeps records at exactly toTime and the
+// query is inclusive (time=>=), so the next window must open one second later
+// or that second's events are collected and handled twice. These two functions
+// are the whole window boundary and have to stay consistent with each other.
+func nextWatermark(toTime int64) int64 {
+	return toTime + 1
+}
+
+// eventTime returns an event's timestamp as epoch seconds. ONTAP renders `time`
+// as an RFC3339 string on this endpoint, but accepts epoch seconds in filters,
+// so both forms are handled. Returns 0 when the timestamp cannot be read, which
+// callers treat as "keep the record" rather than silently discarding it.
+func eventTime(record gjson.Result) int64 {
+	t := record.Get("time")
+	if !t.Exists() {
+		return 0
 	}
-	return records, nil
+	if secs := t.Int(); secs > 0 {
+		return secs
+	}
+	return int64(collectors.HandleTimestamp(t.ClonedString()))
+}
+
+// errWalkBudget stops the pagination walk once the record cap or the deadline
+// is reached. It never escapes fetchEMSData.
+var errWalkBudget = errors.New("ems walk budget exhausted")
+
+// fetchEMSData pages through href, dropping records past the end of the window
+// and stopping early once maxRecords or the deadline is reached.
+//
+// Partial results are returned rather than discarded.
+func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64, quota int) ([]gjson.Result, bool, error) {
+	var (
+		records   []gjson.Result
+		truncated bool
+	)
+
+	err := rest.FetchAllStream(e.Client, &e.RequestMetadata, href, func(batch []gjson.Result, _ int64) error {
+		for _, record := range batch {
+			// Client-side end bound. This endpoint rejects a two-sided filter
+			// on `time`, so the end of the window is enforced here - see
+			// timeWindow.
+			if !inWindow(record, toTime) {
+				continue
+			}
+			records = append(records, record)
+		}
+
+		// quota is what is left of the poll-wide record cap, not a per-href
+		// allowance, so several hrefs cannot together collect a multiple of
+		// max_records.
+		//
+		// The time check refuses to *begin* a page unless a whole
+		// client_timeout still fits inside the budget. The REST client takes
+		// no context, so a request already in flight cannot be cut short;
+		// without this a page starting just before the deadline could overrun
+		// the poll interval by the full timeout, which is the pile-up the
+		// budget exists to prevent.
+		if len(records) >= quota || time.Until(deadline) < e.Client.GetTimeout() {
+			truncated = true
+			return errWalkBudget
+		}
+		return nil
+	})
+
+	switch {
+	case errors.Is(err, errWalkBudget):
+		return records, truncated, nil
+	case errors.Is(err, errs.ErrNoInstance):
+		// no events in the window is normal, not a failure
+		return nil, false, nil
+	case err != nil:
+		return nil, false, err
+	}
+
+	return records, truncated, nil
+}
+
+// buildHrefs splits the event-name list into as many queries as maxURLSize allows.
+func (e *Ems) buildHrefs(filter []string) ([]string, error) {
+	var hrefs []string
+	start := 0
+	for end := 0; end < len(e.eventNames); end++ {
+		h := e.getHref(e.eventNames[start:end], filter)
+		if len(h) > e.maxURLSize {
+			if end == 0 {
+				return nil, fmt.Errorf("maxURLSize=%d is too small to form queries. Increase it to at least %d",
+					e.maxURLSize, len(h))
+			}
+			end--
+			h = e.getHref(e.eventNames[start:end], filter)
+			hrefs = append(hrefs, h)
+			start = end
+		} else if end == len(e.eventNames)-1 {
+			end = len(e.eventNames)
+			h = e.getHref(e.eventNames[start:end], filter)
+			hrefs = append(hrefs, h)
+		}
+	}
+	return hrefs, nil
+}
+
+// hrefQuota returns how many records the href at index i may collect, given
+// what the poll has already taken.
+//
+// The record cap is divided between the remaining hrefs rather than offered to
+// each in turn. The event names are split across hrefs in a stable order, so a
+// first-come allowance lets one flooding event name consume the whole cap and
+// leave the trailing names unqueried - permanently, since the split does not
+// change between polls. A rare LUN.offline in the last chunk would go
+// uncollected because wafl.vol.autoSize.done is noisy in the first.
+//
+// Unused allowance rolls forward: an href that returns less than its share
+// leaves the remainder to those after it, so dividing the cap costs nothing
+// when no href is flooding.
+func hrefQuota(maxRecords, taken, i, hrefs int) int {
+	remaining := maxRecords - taken
+	if remaining <= 0 {
+		return 0
+	}
+	return max(1, remaining/(hrefs-i))
+}
+
+// collect walks every href within a shared record cap and time budget.
+func (e *Ems) collect(hrefs []string, deadline time.Time, toTime int64) ([]gjson.Result, bool, error) {
+	var (
+		records   []gjson.Result
+		truncated bool
+		skipped   int
+	)
+
+	for i, h := range hrefs {
+		quota := hrefQuota(e.maxRecords, len(records), i, len(hrefs))
+		if quota <= 0 {
+			// Cap reached. Remaining hrefs are not queried at all, so say how
+			// many rather than reporting only that something was dropped.
+			skipped = len(hrefs) - i
+			truncated = true
+			break
+		}
+
+		r, t, err := e.fetchEMSData(h, deadline, toTime, quota)
+		if err != nil {
+			return nil, false, err
+		}
+		records = append(records, r...)
+
+		if t && !time.Now().Before(deadline.Add(-e.Client.GetTimeout())) {
+			// Out of time, not just out of quota: there is no room to start a
+			// request for the hrefs after this one either.
+			skipped = len(hrefs) - i - 1
+			truncated = true
+			break
+		}
+		if t {
+			// This href hit its share of the cap. Keep going: the others are
+			// entitled to theirs, and time remains to ask for it.
+			truncated = true
+		}
+	}
+
+	if skipped > 0 {
+		e.Logger.Warn(
+			"EMS budget spent before every event-name query ran",
+			slog.Int("queriesSkipped", skipped),
+			slog.Int("queries", len(hrefs)),
+		)
+	}
+
+	return records, truncated, nil
 }
 
 // PollInstance queries the cluster's EMS catalog and intersects that catalog with the EMS template.
@@ -369,6 +695,8 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	// Update cache for bookend ems
 	e.updateMatrix(time.Now())
 
+	e.RequestMetadata.Reset()
+
 	startTime = time.Now()
 
 	// add time filter
@@ -376,42 +704,60 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	if err != nil {
 		return nil, err
 	}
-	toTime := clusterTime.Unix()
-	timeFilter := e.getTimeStampFilter(clusterTime)
-	filter := e.Filter
-	filter = append(filter, timeFilter)
+	timeFilters, fromTime, toTime := e.timeWindow(clusterTime)
+	if toTime <= fromTime {
+		// Nothing to ask for yet. Happens when the poll interval is shorter
+		// than emsVisibilityLag, or when cluster time moved backwards.
+		e.Logger.Debug("EMS window is empty, skipping poll",
+			slog.Time("from", time.Unix(fromTime, 0)),
+			slog.Time("to", time.Unix(toTime, 0)),
+		)
+		return e.Matrix, nil
+	}
+
+	// Copy rather than append to e.Filter directly: append would write through
+	// to the shared backing array whenever it has spare capacity.
+	filter := make([]string, 0, len(e.Filter)+len(timeFilters))
+	filter = append(filter, e.Filter...)
+	filter = append(filter, timeFilters...)
 
 	// build hrefs up to maxURLSize
-	var hrefs []string
-	start := 0
-	for end := 0; end < len(e.eventNames); end++ {
-		h := e.getHref(e.eventNames[start:end], filter)
-		if len(h) > e.maxURLSize {
-			if end == 0 {
-				return nil, fmt.Errorf("maxURLSize=%d is too small to form queries. Increase it to at least %d",
-					e.maxURLSize, len(h))
-			}
-			end--
-			h = e.getHref(e.eventNames[start:end], filter)
-			hrefs = append(hrefs, h)
-			start = end
-		} else if end == len(e.eventNames)-1 {
-			end = len(e.eventNames)
-			h = e.getHref(e.eventNames[start:end], filter)
-			hrefs = append(hrefs, h)
-		}
+	hrefs, err := e.buildHrefs(filter)
+	if err != nil {
+		return nil, err
 	}
-	for _, h := range hrefs {
-		r, err := e.fetchEMSData(h)
-		if err != nil {
-			return nil, err
+
+	deadline := startTime.Add(e.walkBudget)
+	records, truncated, err := e.collect(hrefs, deadline, toTime)
+	if err != nil {
+		return nil, err
+	}
+
+	if truncated {
+		// recordsPerSec is the throughput ONTAP actually delivered. The
+		// endpoint is served under a throughput budget, so this is the number
+		// that says whether a window is collectable at all: a window holding
+		// more records than budget x throughput can never be finished,
+		// regardless of how the request is shaped.
+		var recordsPerSec float64
+		if elapsed := time.Since(startTime).Seconds(); elapsed > 0 {
+			recordsPerSec = float64(len(records)) / elapsed
 		}
-		records = append(records, r...)
+		e.Logger.Warn(
+			"EMS collection hit its budget, some events in this window were not collected",
+			slog.Int("records", len(records)),
+			slog.Int("maxRecords", e.maxRecords),
+			slog.Duration("budget", e.walkBudget),
+			slog.Float64("recordsPerSec", recordsPerSec),
+			slog.Time("from", time.Unix(fromTime, 0)),
+			slog.Time("to", time.Unix(toTime, 0)),
+		)
 	}
 
 	apiD = time.Since(startTime)
 
 	startTime = time.Now()
+	sortRecords(records)
 	_, count, instanceCount = e.HandleResults(records, e.emsProp)
 
 	parseD = time.Since(startTime)
@@ -421,27 +767,36 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 	e.Metadata.MustSetValueInt64("parse_time", dataInst, parseD.Microseconds())
 	e.Metadata.MustSetValueUint64("metrics", dataInst, count)
 	e.Metadata.MustSetValueUint64("instances", dataInst, instanceCount)
+	// numCalls is the page count for this poll, which is the number that shows
+	// whether batch_size is actually reducing round trips.
+	e.Metadata.MustSetValueUint64("bytesRx", dataInst, e.RequestMetadata.BytesRx.Load())
+	e.Metadata.MustSetValueUint64("numCalls", dataInst, e.RequestMetadata.NumCalls.Load())
 
 	e.AddCollectCount(count)
 
-	// update lastFilterTime to current cluster time
-	e.lastFilterTime = toTime
+	// The watermark advances even when the walk was truncated: holding it back
+	// would only widen the next window and make the next poll slower.
+	e.lastFilterTime = nextWatermark(toTime)
 	return e.Matrix, nil
 }
 
 func (e *Ems) getHref(names []string, filter []string) string {
+	// Copy: getHref is called repeatedly with the same filter slice while
+	// hrefs are being sized. Appending in place would let one call's
+	// name filter leak into the next.
+	f := make([]string, 0, len(filter)+2)
+	f = append(f, filter...)
+
 	nameFilter := "message.name=" + strings.Join(names, ",")
-	filter = append(filter, nameFilter)
-	// If both issuing ems and resolving ems would come together in same poll, This index ordering would make sure that latest ems would process last. So, if resolving ems would be latest, it will resolve the issue.
-	// add filter as order by index in ascending order
-	orderByIndexFilter := "order_by=" + "index%20asc"
-	filter = append(filter, orderByIndexFilter)
+	f = append(f, nameFilter)
+	// Deliberately no order_by. The ordering the bookend logic needs is applied
+	// by sortRecords after collection instead - see there for why.
 
 	href := rest.NewHrefBuilder().
 		APIPath(e.Query).
 		Fields(e.Fields).
-		Filter(filter).
-		MaxRecords(collectors.DefaultBatchSize).
+		Filter(f).
+		MaxRecords(e.batchSize).
 		ReturnTimeout(e.ReturnTimeOut).
 		Build()
 	return href
@@ -481,6 +836,13 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 	)
 
 	var m = e.Matrix
+
+	// Resolving ems events that matched no cached issuing ems, counted by name.
+	unresolved := make(map[string]int)
+	unresolvedIssuers := make(map[string]string)
+
+	// Template labels the ONTAP response did not carry, counted per event+label.
+	missingLabels := make(map[missingLabelKey]*missingLabelCount)
 
 	for _, instanceData := range result {
 		var (
@@ -539,11 +901,18 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 
 			if !emsResolved {
-				e.Logger.Warn(
-					"Unable to find matching issue ems in cache",
-					slog.String("resolving ems", msgName),
-					slog.String("issuing ems", strings.Join(issuingEmsList.Slice(), ",")),
-				)
+				// Counted rather than logged per record. A resolving ems with
+				// no cached issuing ems is normal - the issuing event may
+				// predate this poller, or have fallen outside the window. These will be
+				// summarized after the loop.
+				unresolved[msgName]++
+				if _, ok := unresolvedIssuers[msgName]; !ok {
+					issuers := issuingEmsList.Slice()
+					// Set iteration order is random, so sort to keep the
+					// summary stable from poll to poll.
+					slices.Sort(issuers)
+					unresolvedIssuers[msgName] = strings.Join(issuers, ",")
+				}
 			}
 		} else {
 			existingEms := false
@@ -603,11 +972,16 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 							instanceLabelCountPs++
 						} else {
-							e.Logger.Warn(
-								"Missing label value",
-								slog.String("instanceKey", instanceKey),
-								slog.String("label", label),
-							)
+							// Counted rather than logged per record. A label the
+							// template asks for but the ONTAP release does not
+							// send is missing from every instance of that event,
+							// so one line per record says nothing extra.
+							k := missingLabelKey{ems: msgName, label: label}
+							if seen, ok := missingLabels[k]; ok {
+								seen.count++
+							} else {
+								missingLabels[k] = &missingLabelCount{count: 1, example: instanceKey}
+							}
 						}
 					}
 
@@ -678,6 +1052,29 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			}
 			count += instanceLabelCount
 		}
+	}
+
+	missingKeys := slices.SortedFunc(maps.Keys(missingLabels), func(a, b missingLabelKey) int {
+		return cmp.Or(cmp.Compare(a.ems, b.ems), cmp.Compare(a.label, b.label))
+	})
+	for _, k := range missingKeys {
+		m := missingLabels[k]
+		e.Logger.Warn(
+			"Missing label value",
+			slog.String("ems", k.ems),
+			slog.String("label", k.label),
+			slog.Int("count", m.count),
+			slog.String("exampleInstanceKey", m.example),
+		)
+	}
+
+	for _, name := range slices.Sorted(maps.Keys(unresolved)) {
+		e.Logger.Warn(
+			"Unable to find matching issue ems in cache",
+			slog.String("resolving ems", name),
+			slog.String("issuing ems", unresolvedIssuers[name]),
+			slog.Int("count", unresolved[name]),
+		)
 	}
 
 	for _, v := range e.Matrix {
