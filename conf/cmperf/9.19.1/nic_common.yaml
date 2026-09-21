@@ -6,7 +6,6 @@ object:                   nic
 counters:
   - ^^instance_name          => nic
   - ^^node_name              => node
-  - ^instance_uuid
   - ^link_current_state      => state
   - ^link_speed              => speed
   - ^nic_type                => type

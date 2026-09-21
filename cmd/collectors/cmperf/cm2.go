@@ -583,12 +583,15 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 				continue
 			}
 		} else {
-			// curMat comes from CloneMetricTemplate and holds no instances, so NewInstance
-			// returns ErrDuplicateInstanceKey when two CM2 instances resolve to the same key.
+			// populateMatrix runs once per CM2 batch, so curMat can already hold instances added
+			// by an earlier batch of this poll. A duplicate key therefore means the template's
+			// instance_keys do not uniquely identify an instance - for example an aggregated
+			// object keyed without node_name that more than one node reports. Skip it and log so
+			// the template gets fixed, rather than silently exporting one node's values.
 			var newErr error
 			matInst, newErr = curMat.NewInstance(instanceKey)
 			if newErr != nil {
-				c.Logger.Error("add instance", slogx.Err(newErr),
+				c.Logger.Error("duplicate instance key, check template instance_keys", slogx.Err(newErr),
 					slog.String("instanceKey", instanceKey),
 					slog.Any("templateKeys", c.Prop.InstanceKeys),
 					slog.String("name", inst.Name),

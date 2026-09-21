@@ -480,6 +480,9 @@ func TestPopulateArrayCounter_ShapeMismatchesAreSkippedAndCounted(t *testing.T) 
 	}
 }
 
+// Two nodes' batches from one CM2 file report the same instance key, which happens when an
+// aggregated object's template keys omit node_name (e.g. cifs:vserver, keyed only on svm).
+// First batch wins and the duplicate is logged, so the insufficient template key is visible.
 func TestPopulateMatrix_DuplicateInstanceKey(t *testing.T) {
 	c := newTestCmPerf(t)
 	c.Prop.InstanceKeys = []string{"instance_uuid"}

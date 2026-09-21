@@ -580,6 +580,9 @@ func workloadFilterFor(query string) []string {
 	case "workload_volume":
 		return []string{"workload_class=" + objWorkloadVolumeClass}
 	case "workload_queue_combined":
+		// Deliberately unconstrained by workload_class: this CM2 object reports queue counters
+		// for workloads of every class. qtree/lun/file=null keeps it to volume-level workloads,
+		// matching the qos_labels and export_options in workload_queue_combined.yaml.
 		return []string{"qtree=null", "lun=null", "file=null"}
 	default:
 		return []string{"workload_class=" + objWorkloadClass}

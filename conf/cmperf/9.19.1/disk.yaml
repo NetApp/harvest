@@ -6,7 +6,6 @@ counters:
   - ^^instance_name         => partition
   - ^^node_name             => node
   - ^^physical_disk_name    => disk
-  - ^instance_uuid
   - ^physical_disk_uuid     => disk_uuid
   - ^raid_group
   - ^raid_type
