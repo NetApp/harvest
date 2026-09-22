@@ -19,8 +19,8 @@ import (
 // Bookend EMS testing: Simulated bookend issuing ems "wafl.vvol.offline" and ems "hm.alert.raised" with alert_id value as "RaidLeftBehindAggrAlert"
 var issuingEmsNames = []string{"wafl.vvol.offline", "hm.alert.raised"}
 
-// Default labels per ems is 5, "hm.alert.raised" ems has 11 labels and "wafl.vvol.offline" has 4 labels, total instance labels would be 24
-const expectedInstanceLabelCount = 25
+// Default labels per ems is 4, "hm.alert.raised" ems has 11 labels and "wafl.vvol.offline" has 4 labels, so (4+11) + (4+4) = 23
+const expectedInstanceLabelCount = 23
 
 // Auto resolve EMS testing: Simulated bookend issuing ems "LUN.offline" and ems "monitor.fan.critical"
 var autoresolveEmsNames = []string{"LUN.offline", "monitor.fan.critical"}

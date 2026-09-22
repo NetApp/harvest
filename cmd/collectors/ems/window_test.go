@@ -292,16 +292,21 @@ func TestHrefQuota(t *testing.T) {
 		want                    int
 	}{
 		{name: "single href gets the whole cap", maxRecords: 20000, taken: 0, i: 0, n: 1, want: 20000},
-		{name: "first of three gets a third", maxRecords: 20000, taken: 0, i: 0, n: 3, want: 6666},
-		// An href that returned less than its share leaves the rest to those
-		// after it, so splitting the cap costs nothing when nothing is flooding.
-		{name: "unused allowance rolls forward", maxRecords: 20000, taken: 100, i: 1, n: 3, want: 9950},
-		{name: "last href gets all that remains", maxRecords: 20000, taken: 10000, i: 2, n: 3, want: 10000},
-		{name: "cap reached", maxRecords: 20000, taken: 20000, i: 1, n: 3, want: 0},
-		{name: "cap overshot", maxRecords: 20000, taken: 25000, i: 1, n: 3, want: 0},
-		// Never hand out a zero share while the cap has room left, or a tiny
-		// max_records would skip hrefs instead of under-serving them.
-		{name: "share floors at one", maxRecords: 2, taken: 1, i: 0, n: 5, want: 1},
+		// A href with many events is not capped at 1/N of the
+		// poll cap. Only a floor for the four hrefs after it is held back.
+		{name: "first of five keeps all but the reserved floors", maxRecords: 20000, taken: 0, i: 0, n: 5, want: 16000},
+		{name: "unused allowance rolls forward", maxRecords: 20000, taken: 500, i: 1, n: 5, want: 16500},
+		{name: "last href gets all that remains", maxRecords: 20000, taken: 16000, i: 4, n: 5, want: 4000},
+		// Too little left to honor the floor for everyone, so divide rather
+		// than clamp up to it - clamping would hand this href all 1000 and
+		// leave href 4 unqueried.
+		{name: "divides when the floor cannot be honored", maxRecords: 20000, taken: 19000, i: 3, n: 5, want: 500},
+		// More hrefs than the cap can floor (20000/1000 = 20). Equal shares
+		// keep every href queried.
+		{name: "many hrefs fall back to equal shares", maxRecords: 20000, taken: 0, i: 0, n: 25, want: 800},
+		{name: "never hands out more than remains", maxRecords: 20000, taken: 19700, i: 3, n: 5, want: 150},
+		{name: "cap reached", maxRecords: 20000, taken: 20000, i: 1, n: 5, want: 0},
+		{name: "cap overshot", maxRecords: 20000, taken: 25000, i: 1, n: 5, want: 0},
 	}
 
 	for _, tt := range tests {
@@ -311,33 +316,33 @@ func TestHrefQuota(t *testing.T) {
 	}
 }
 
-// The reason the cap is divided: the event names are split across hrefs in a
-// stable order, so a first-come allowance lets one flooding name consume
-// everything and leave the trailing names permanently unqueried.
+// The reason the cap is held back rather than offered first-come: the event
+// names are split across hrefs in a stable order, so a flooding name in an
+// early href would otherwise leave the trailing names permanently unqueried.
+//
+// Walks several href counts, including more hrefs than the cap can give a floor
+// to (20000/1000 = 20), which is where a naive floor silently starves the tail.
 func TestHrefQuotaDoesNotStarveLaterHrefs(t *testing.T) {
-	const (
-		maxRecords = 20000
-		hrefs      = 4
-	)
+	const maxRecords = 20000
 
-	taken := 0
-	quotas := make([]int, 0, hrefs)
-	for i := range hrefs {
-		q := hrefQuota(maxRecords, taken, i, hrefs)
-		quotas = append(quotas, q)
-		// Worst case: every href floods and takes its whole share.
-		taken += q
+	for _, hrefs := range []int{1, 2, 5, 19, 20, 21, 25, 40} {
+		t.Run(strconv.Itoa(hrefs)+" hrefs", func(t *testing.T) {
+			taken := 0
+			for i := range hrefs {
+				// Worst case: every href floods and takes its whole share.
+				q := hrefQuota(maxRecords, taken, i, hrefs)
+				if q <= 0 {
+					t.Fatalf("href %d of %d got quota %d, every href must be able to ask for records",
+						i, hrefs, q)
+				}
+				taken += q
+			}
+			assert.True(t, taken <= maxRecords)
+		})
 	}
-
-	for i, q := range quotas {
-		if q <= 0 {
-			t.Errorf("href %d got quota %d, every href must be able to ask for records", i, q)
-		}
-	}
-	assert.True(t, taken <= maxRecords)
 }
 
-// client_timeout defaults to 2m against a 3m data interval. A poller with a
+// client_timeout defaults to 1m against a 3m data interval. A poller with a
 // shorter interval must not end up reserving more than its whole budget, or
 // every page after the first is refused and every poll looks truncated.
 func TestPageReservation(t *testing.T) {
@@ -442,6 +447,89 @@ func TestTimeoutExceedsInterval(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, timeoutExceedsInterval(tt.clientTimeout, tt.interval), tt.want)
+		})
+	}
+}
+
+// The mid-page cap. A page can be far larger than the quota left - batch_size
+// is 10000 by default - so the cap has to stop inside the batch. Checking after
+// appending the whole page let a poll overshoot max_records by almost a full
+// page.
+func TestAppendInWindow(t *testing.T) {
+	const toTime = int64(1000)
+
+	at := func(secs int64) gjson.Result {
+		return gjson.Parse(`{"time":` + strconv.FormatInt(secs, 10) + `}`)
+	}
+	batchOf := func(n int, secs int64) []gjson.Result {
+		b := make([]gjson.Result, 0, n)
+		for range n {
+			b = append(b, at(secs))
+		}
+		return b
+	}
+
+	tests := []struct {
+		name     string
+		have     int
+		batch    []gjson.Result
+		quota    int
+		wantLen  int
+		wantFull bool
+	}{
+		{
+			// batch_size > quota: the case the bug produced. A 10000-record
+			// page against 50 of quota left must keep 50, not 10000.
+			name: "page far larger than the quota stops at the cap",
+			have: 0, batch: batchOf(10000, 900), quota: 50,
+			wantLen: 50, wantFull: true,
+		},
+		{
+			name: "partly consumed quota stops at the cap",
+			have: 40, batch: batchOf(100, 900), quota: 50,
+			wantLen: 50, wantFull: true,
+		},
+		{
+			name: "batch inside the quota is kept whole",
+			have: 0, batch: batchOf(30, 900), quota: 50,
+			wantLen: 30, wantFull: false,
+		},
+		{
+			// Exactly at the cap is not full: nothing was dropped.
+			name: "batch exactly filling the quota is not truncated",
+			have: 0, batch: batchOf(50, 900), quota: 50,
+			wantLen: 50, wantFull: false,
+		},
+		{
+			// Out-of-window records belong to the next poll and must not
+			// consume quota.
+			name:    "records past the window do not count against the quota",
+			have:    0,
+			batch:   append(append(batchOf(5, 900), batchOf(100, 1001)...), batchOf(5, 950)...),
+			quota:   50,
+			wantLen: 10, wantFull: false,
+		},
+		{
+			name: "no quota left keeps nothing",
+			have: 50, batch: batchOf(10, 900), quota: 50,
+			wantLen: 50, wantFull: true,
+		},
+		{
+			name: "empty batch",
+			have: 3, batch: nil, quota: 50,
+			wantLen: 3, wantFull: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			records := batchOf(tt.have, 900)
+
+			got, full := appendInWindow(records, tt.batch, toTime, tt.quota)
+
+			assert.Equal(t, len(got), tt.wantLen)
+			assert.Equal(t, full, tt.wantFull)
+			assert.True(t, len(got) <= tt.quota)
 		})
 	}
 }

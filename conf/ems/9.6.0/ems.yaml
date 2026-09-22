@@ -8,7 +8,6 @@ exports:
   - node.name                               => node
   - node.uuid                               => node_uuid
   - message.severity                        => severity
-  - index                                   => index
 
 events:
   - name: LUN.destroy

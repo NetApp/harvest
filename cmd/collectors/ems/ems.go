@@ -47,6 +47,16 @@ const emsVisibilityLag = 5 * time.Second
 // cost of this endpoint is per request, not per record.
 const defaultEmsBatchSize = "10000"
 
+// defaultMaxRecords caps the events one poll will collect, across every
+// event-name query it makes rather than per query.
+//
+// It has to be poll-wide because that is where the cost is: every record is
+// held in memory at once, sorted, and handed to HandleResults together, so a
+// per-query cap would let a poll hold hrefs x max_records. At the ~1.15KB per
+// record measured on a 32-node cluster, five queries each allowed 20000 would
+// be about 115MB of live records.
+//
+// hrefQuota divides it between the queries a poll makes.
 const defaultMaxRecords = 20_000
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
@@ -426,6 +436,23 @@ func sortRecords(records []gjson.Result) {
 	})
 }
 
+// appendInWindow adds the records in batch that fall inside the window ending
+// at toTime, stopping at quota.
+func appendInWindow(records, batch []gjson.Result, toTime int64, quota int) ([]gjson.Result, bool) {
+	for _, record := range batch {
+		// Client-side end bound. This endpoint rejects a two-sided filter on
+		// `time`, so the end of the window is enforced here - see timeWindow.
+		if !inWindow(record, toTime) {
+			continue
+		}
+		if len(records) >= quota {
+			return records, true
+		}
+		records = append(records, record)
+	}
+	return records, false
+}
+
 // inWindow reports whether a record falls inside the window ending at toTime.
 // A zero timestamp means the record's time could not be read; it is kept
 // rather than silently dropped over an unparseable field.
@@ -473,27 +500,18 @@ func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64, quota 
 	)
 
 	err := rest.FetchAllStream(e.Client, &e.RequestMetadata, href, func(batch []gjson.Result, _ int64) error {
-		for _, record := range batch {
-			// Client-side end bound. This endpoint rejects a two-sided filter
-			// on `time`, so the end of the window is enforced here - see
-			// timeWindow.
-			if !inWindow(record, toTime) {
-				continue
-			}
-			records = append(records, record)
+		var full bool
+		if records, full = appendInWindow(records, batch, toTime, quota); full {
+			truncated = true
+			return errWalkBudget
 		}
 
-		// quota is what is left of the poll-wide record cap, not a per-href
-		// allowance, so several hrefs cannot together collect a multiple of
-		// max_records.
-		//
-		// The time check refuses to *begin* a page unless a whole
-		// client_timeout still fits inside the budget. The REST client takes
-		// no context, so a request already in flight cannot be cut short;
-		// without this a page starting just before the deadline could overrun
-		// the poll interval by the full timeout, which is the pile-up the
-		// budget exists to prevent.
-		if len(records) >= quota || time.Until(deadline) < pageReservation(e.Client.GetTimeout(), e.walkBudget) {
+		// Refuse to *begin* a page unless a whole client_timeout still fits
+		// inside the budget. The REST client takes no context, so a request
+		// already in flight cannot be cut short; without this a page starting
+		// just before the deadline could overrun the poll interval by the full
+		// timeout, which is the pile-up the budget exists to prevent.
+		if time.Until(deadline) < pageReservation(e.Client.GetTimeout(), e.walkBudget) {
 			truncated = true
 			return errWalkBudget
 		}
@@ -537,25 +555,41 @@ func (e *Ems) buildHrefs(filter []string) ([]string, error) {
 	return hrefs, nil
 }
 
+// minHrefQuota is the allowance held back for each href still to be queried.
+// It is deliberately small: what it protects is a *rare* event name in a later
+// href, and rare events need few records.
+const minHrefQuota = 1000
+
 // hrefQuota returns how many records the href at index i may collect, given
 // what the poll has already taken.
 //
-// The record cap is divided between the remaining hrefs rather than offered to
-// each in turn. The event names are split across hrefs in a stable order, so a
-// first-come allowance lets one flooding event name consume the whole cap and
-// leave the trailing names unqueried - permanently, since the split does not
-// change between polls. A rare LUN.offline in the last chunk would go
-// uncollected because wafl.vol.autoSize.done is noisy in the first.
+// max_records is a poll-wide cap - every record is held in memory at once, so
+// the bound has to cover the whole poll rather than each href - but offering it
+// first-come lets one flooding event name consume all of it and leave the
+// trailing names unqueried. The event names are split across hrefs in a stable
+// order, so that starvation would be permanent.
 //
-// Unused allowance rolls forward: an href that returns less than its share
-// leaves the remainder to those after it, so dividing the cap costs nothing
-// when no href is flooding.
+// Rather than divide the cap equally, hold back minHrefQuota for each href
+// after this one. An early href can then use most of the cap when the others do
+// not need it, while every href is still guaranteed enough to surface its rare
+// events. Unused allowance rolls forward as each href reports what it took.
 func hrefQuota(maxRecords, taken, i, hrefs int) int {
 	remaining := maxRecords - taken
 	if remaining <= 0 {
 		return 0
 	}
-	return max(1, remaining/(hrefs-i))
+
+	// Hold back the floor for each href still to come, but only when there is
+	// enough left to honor it. Clamping up to the floor when there is not -
+	// which happens once hrefs exceeds maxRecords/minHrefQuota - would let this
+	// href take everything remaining and leave the ones after it unqueried,
+	// the exact starvation the hold-back exists to prevent. Divide what is left
+	// instead: smaller shares, but every href still gets asked.
+	later := hrefs - i - 1
+	if allowance := remaining - minHrefQuota*later; allowance >= minHrefQuota {
+		return allowance
+	}
+	return max(1, remaining/(later+1))
 }
 
 // timeoutExceedsInterval reports whether client_timeout leaves no room inside
