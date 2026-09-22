@@ -5,6 +5,8 @@ client_timeout: 1m
 
 schedule:
   - instance: 24h
+  # A poll holds every event in its window in memory at once. Shorten this on a
+  # cluster with a high event rate.
   - data:     3m
 
 # More information https://netapp.github.io/harvest/latest/configure-ems

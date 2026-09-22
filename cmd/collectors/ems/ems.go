@@ -47,17 +47,6 @@ const emsVisibilityLag = 5 * time.Second
 // cost of this endpoint is per request, not per record.
 const defaultEmsBatchSize = "10000"
 
-// defaultMaxRecords caps the events one poll will collect, across every
-// event-name query it makes rather than per query.
-//
-// It has to be poll-wide because that is where the cost is: every record is
-// held in memory at once, sorted, and handed to HandleResults together, so a
-// per-query cap would let a poll hold hrefs x max_records. At the ~1.15KB per
-// record measured on a 32-node cluster, five queries each allowed 20000 would
-// be about 115MB of live records.
-//
-// hrefQuota divides it between the queries a poll makes.
-const defaultMaxRecords = 20_000
 const MaxBookendInstances = 1000
 const DefaultBookendResolutionDuration = 28 * 24 * time.Hour // 28 days == 672 hours
 const Hyphen = "-"
@@ -79,7 +68,6 @@ type Ems struct {
 	bookendEmsMap  map[string]*set.Set      // This is reverse bookend ems map, [Resolving ems]:[Set of Issuing ems]. Using Set here to ensure that it has slice of unique issuing ems
 	resolveAfter   map[string]time.Duration // This is resolve after map, [Issuing ems]:[Duration]. After this duration, ems got auto resolved.
 	batchSize      string
-	maxRecords     int
 	walkBudget     time.Duration
 }
 
@@ -209,15 +197,6 @@ func (e *Ems) InitCache() error {
 	}
 
 	e.maxURLSize = e.LoadParam("max_url_size", e.maxURLSize)
-	e.maxRecords = e.LoadParam("max_records", defaultMaxRecords)
-	if e.maxRecords <= 0 {
-		e.Logger.Warn("max_records must be positive, using default",
-			slog.Int("max_records", e.maxRecords),
-			slog.Int("default", defaultMaxRecords),
-		)
-		e.maxRecords = defaultMaxRecords
-	}
-
 	// Ems overrides Rest.InitCache, so the batch_size handling there does not
 	// run for this collector and has to be repeated here.
 	e.batchSize = defaultEmsBatchSize
@@ -354,7 +333,6 @@ func (e *Ems) InitCache() error {
 	e.Logger.Info(
 		"EMS collector settings",
 		slog.String("batchSize", e.batchSize),
-		slog.Int("maxRecords", e.maxRecords),
 		slog.Duration("walkBudget", e.walkBudget),
 		slog.Int("eventsInTemplate", len(e.emsProp)),
 		slog.String("severityFilter", e.severityFilter),
@@ -436,30 +414,20 @@ func sortRecords(records []gjson.Result) {
 	})
 }
 
-// appendInWindow adds the records in batch that fall inside the window ending
-// at toTime, stopping at quota. It reports whether the quota has been reached,
-// which tells the caller to stop paging.
+// appendInWindow appends the records in batch that fall inside the window
+// ending at toTime.
 //
-// Two things have to hold at once. The cap is enforced mid-batch, because
-// appending a whole page and checking afterward let a poll overshoot by almost
-// a full batch_size - up to 10000 records at the default page size. And the cap
-// being reached is reported even when the batch ended exactly on it, because
-// otherwise the walk fetches one more page and discards every record in it.
-// That is not a corner case: max_records defaults to twice batch_size, so under
-// the shipped settings every truncated poll lands exactly on the cap.
-func appendInWindow(records, batch []gjson.Result, toTime int64, quota int) ([]gjson.Result, bool) {
+// The end of the window is enforced here rather than in the query because this
+// endpoint rejects a two-sided filter on `time` - see timeWindow. Records past
+// it belong to the next poll, which nextWatermark opens where this window
+// closed.
+func appendInWindow(records, batch []gjson.Result, toTime int64) []gjson.Result {
 	for _, record := range batch {
-		// Client-side end bound. This endpoint rejects a two-sided filter on
-		// `time`, so the end of the window is enforced here - see timeWindow.
-		if !inWindow(record, toTime) {
-			continue
+		if inWindow(record, toTime) {
+			records = append(records, record)
 		}
-		if len(records) >= quota {
-			return records, true
-		}
-		records = append(records, record)
 	}
-	return records, len(records) >= quota
+	return records
 }
 
 // inWindow reports whether a record falls inside the window ending at toTime.
@@ -494,26 +462,22 @@ func eventTime(record gjson.Result) int64 {
 	return int64(collectors.HandleTimestamp(t.ClonedString()))
 }
 
-// errWalkBudget stops the pagination walk once the record cap or the deadline
-// is reached. It never escapes fetchEMSData.
+// errWalkBudget stops the pagination walk once too little of the time budget
+// is left to begin another page. It never escapes fetchEMSData.
 var errWalkBudget = errors.New("ems walk budget exhausted")
 
 // fetchEMSData pages through href, dropping records past the end of the window
-// and stopping early once maxRecords or the deadline is reached.
+// and stopping once too little of the time budget is left to begin another
+// page. The bool reports that it stopped for that reason.
 //
-// Partial results are returned rather than discarded.
-func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64, quota int) ([]gjson.Result, bool, error) {
-	var (
-		records   []gjson.Result
-		truncated bool
-	)
+// Partial results are returned rather than discarded. The previous behavior
+// threw away every record already retrieved when a walk failed, so the most
+// expensive polls were also the ones that produced nothing.
+func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64) ([]gjson.Result, bool, error) {
+	var records []gjson.Result
 
 	err := rest.FetchAllStream(e.Client, &e.RequestMetadata, href, func(batch []gjson.Result, _ int64) error {
-		var full bool
-		if records, full = appendInWindow(records, batch, toTime, quota); full {
-			truncated = true
-			return errWalkBudget
-		}
+		records = appendInWindow(records, batch, toTime)
 
 		// Refuse to *begin* a page unless a whole client_timeout still fits
 		// inside the budget. The REST client takes no context, so a request
@@ -521,7 +485,6 @@ func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64, quota 
 		// just before the deadline could overrun the poll interval by the full
 		// timeout, which is the pile-up the budget exists to prevent.
 		if time.Until(deadline) < pageReservation(e.Client.GetTimeout(), e.walkBudget) {
-			truncated = true
 			return errWalkBudget
 		}
 		return nil
@@ -529,7 +492,9 @@ func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64, quota 
 
 	switch {
 	case errors.Is(err, errWalkBudget):
-		return records, truncated, nil
+		// errWalkBudget is returned from one place and never from outside this
+		// function, so this case is exactly "out of budget".
+		return records, true, nil
 	case errors.Is(err, errs.ErrNoInstance):
 		// no events in the window is normal, not a failure
 		return nil, false, nil
@@ -537,7 +502,7 @@ func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64, quota 
 		return nil, false, err
 	}
 
-	return records, truncated, nil
+	return records, false, nil
 }
 
 // buildHrefs splits the event-name list into as many queries as maxURLSize allows.
@@ -564,43 +529,6 @@ func (e *Ems) buildHrefs(filter []string) ([]string, error) {
 	return hrefs, nil
 }
 
-// minHrefQuota is the allowance held back for each href still to be queried.
-// It is deliberately small: what it protects is a *rare* event name in a later
-// href, and rare events need few records.
-const minHrefQuota = 1000
-
-// hrefQuota returns how many records the href at index i may collect, given
-// what the poll has already taken.
-//
-// max_records is a poll-wide cap - every record is held in memory at once, so
-// the bound has to cover the whole poll rather than each href - but offering it
-// first-come lets one flooding event name consume all of it and leave the
-// trailing names unqueried. The event names are split across hrefs in a stable
-// order, so that starvation would be permanent.
-//
-// Rather than divide the cap equally, hold back minHrefQuota for each href
-// after this one. An early href can then use most of the cap when the others do
-// not need it, while every href is still guaranteed enough to surface its rare
-// events. Unused allowance rolls forward as each href reports what it took.
-func hrefQuota(maxRecords, taken, i, hrefs int) int {
-	remaining := maxRecords - taken
-	if remaining <= 0 {
-		return 0
-	}
-
-	// Hold back the floor for each href still to come, but only when there is
-	// enough left to honor it. Clamping up to the floor when there is not -
-	// which happens once hrefs exceeds maxRecords/minHrefQuota - would let this
-	// href take everything remaining and leave the ones after it unqueried,
-	// the exact starvation the hold-back exists to prevent. Divide what is left
-	// instead: smaller shares, but every href still gets asked.
-	later := hrefs - i - 1
-	if allowance := remaining - minHrefQuota*later; allowance >= minHrefQuota {
-		return allowance
-	}
-	return max(1, remaining/(later+1))
-}
-
 // timeoutExceedsInterval reports whether client_timeout leaves no room inside
 // the poll interval, so a single request can outlive the poll it belongs to.
 // A zero timeout means no HTTP client is configured, which is the case under
@@ -625,7 +553,16 @@ func pageReservation(clientTimeout, budget time.Duration) time.Duration {
 	return clientTimeout
 }
 
-// collect walks every href within a shared record cap and time budget.
+// collect walks every href within one shared time budget.
+//
+// A poll accumulates every record it collects rather than processing pages as
+// they arrive the way rest.PollData does: sortRecords has to run over the whole
+// poll before HandleResults, so that a resolving ems is handled after the
+// issuing ems it clears. What bounds that accumulation is the budget - which is
+// poll-wide, not per href, so the pages a poll fetches do not multiply with the
+// number of hrefs - together with the width of the window, which is the `data`
+// interval. Shortening `data` is the lever on a cluster whose event rate makes
+// a poll too large.
 func (e *Ems) collect(hrefs []string, deadline time.Time, toTime int64) ([]gjson.Result, bool, error) {
 	var (
 		records   []gjson.Result
@@ -634,33 +571,19 @@ func (e *Ems) collect(hrefs []string, deadline time.Time, toTime int64) ([]gjson
 	)
 
 	for i, h := range hrefs {
-		quota := hrefQuota(e.maxRecords, len(records), i, len(hrefs))
-		if quota <= 0 {
-			// Cap reached. Remaining hrefs are not queried at all, so say how
-			// many rather than reporting only that something was dropped.
-			skipped = len(hrefs) - i
-			truncated = true
-			break
-		}
-
-		r, t, err := e.fetchEMSData(h, deadline, toTime, quota)
+		r, outOfBudget, err := e.fetchEMSData(h, deadline, toTime)
 		if err != nil {
 			return nil, false, err
 		}
 		records = append(records, r...)
 
-		reserve := pageReservation(e.Client.GetTimeout(), e.walkBudget)
-		if t && !time.Now().Before(deadline.Add(-reserve)) {
-			// Out of time, not just out of quota: there is no room to start a
-			// request for the hrefs after this one either.
+		if outOfBudget {
+			// The budget is poll-wide, and fetchEMSData only reports this once
+			// too little of it is left to begin another page - so there is no
+			// room to start a request for the hrefs after this one either.
 			skipped = len(hrefs) - i - 1
 			truncated = true
 			break
-		}
-		if t {
-			// This href hit its share of the cap. Keep going: the others are
-			// entitled to theirs, and time remains to ask for it.
-			truncated = true
 		}
 	}
 
@@ -814,7 +737,6 @@ func (e *Ems) PollData() (map[string]*matrix.Matrix, error) {
 		e.Logger.Warn(
 			"EMS collection hit its budget, some events in this window were not collected",
 			slog.Int("records", len(records)),
-			slog.Int("maxRecords", e.maxRecords),
 			slog.Duration("budget", e.walkBudget),
 			slog.Float64("recordsPerSec", recordsPerSec),
 			slog.Time("from", time.Unix(fromTime, 0)),

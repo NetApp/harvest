@@ -267,12 +267,6 @@ func TestInitCacheRejectsBadParams(t *testing.T) {
 			value: "2000",
 			check: func(t *testing.T, e *Ems) { assert.Equal(t, e.batchSize, "2000") },
 		},
-		{
-			name:  "negative max_records falls back to the default",
-			param: "max_records",
-			value: "-1",
-			check: func(t *testing.T, e *Ems) { assert.Equal(t, e.maxRecords, defaultMaxRecords) },
-		},
 	}
 
 	for _, tt := range tests {
@@ -281,63 +275,6 @@ func TestInitCacheRejectsBadParams(t *testing.T) {
 			e.Params.NewChildS(tt.param, tt.value)
 			assert.Nil(t, e.InitCache())
 			tt.check(t, e)
-		})
-	}
-}
-
-func TestHrefQuota(t *testing.T) {
-	tests := []struct {
-		name                    string
-		maxRecords, taken, i, n int
-		want                    int
-	}{
-		{name: "single href gets the whole cap", maxRecords: 20000, taken: 0, i: 0, n: 1, want: 20000},
-		// A href with many events is not capped at 1/N of the
-		// poll cap. Only a floor for the four hrefs after it is held back.
-		{name: "first of five keeps all but the reserved floors", maxRecords: 20000, taken: 0, i: 0, n: 5, want: 16000},
-		{name: "unused allowance rolls forward", maxRecords: 20000, taken: 500, i: 1, n: 5, want: 16500},
-		{name: "last href gets all that remains", maxRecords: 20000, taken: 16000, i: 4, n: 5, want: 4000},
-		// Too little left to honor the floor for everyone, so divide rather
-		// than clamp up to it - clamping would hand this href all 1000 and
-		// leave href 4 unqueried.
-		{name: "divides when the floor cannot be honored", maxRecords: 20000, taken: 19000, i: 3, n: 5, want: 500},
-		// More hrefs than the cap can floor (20000/1000 = 20). Equal shares
-		// keep every href queried.
-		{name: "many hrefs fall back to equal shares", maxRecords: 20000, taken: 0, i: 0, n: 25, want: 800},
-		{name: "never hands out more than remains", maxRecords: 20000, taken: 19700, i: 3, n: 5, want: 150},
-		{name: "cap reached", maxRecords: 20000, taken: 20000, i: 1, n: 5, want: 0},
-		{name: "cap overshot", maxRecords: 20000, taken: 25000, i: 1, n: 5, want: 0},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, hrefQuota(tt.maxRecords, tt.taken, tt.i, tt.n), tt.want)
-		})
-	}
-}
-
-// The reason the cap is held back rather than offered first-come: the event
-// names are split across hrefs in a stable order, so a flooding name in an
-// early href would otherwise leave the trailing names permanently unqueried.
-//
-// Walks several href counts, including more hrefs than the cap can give a floor
-// to (20000/1000 = 20), which is where a naive floor silently starves the tail.
-func TestHrefQuotaDoesNotStarveLaterHrefs(t *testing.T) {
-	const maxRecords = 20000
-
-	for _, hrefs := range []int{1, 2, 5, 19, 20, 21, 25, 40} {
-		t.Run(strconv.Itoa(hrefs)+" hrefs", func(t *testing.T) {
-			taken := 0
-			for i := range hrefs {
-				// Worst case: every href floods and takes its whole share.
-				q := hrefQuota(maxRecords, taken, i, hrefs)
-				if q <= 0 {
-					t.Fatalf("href %d of %d got quota %d, every href must be able to ask for records",
-						i, hrefs, q)
-				}
-				taken += q
-			}
-			assert.True(t, taken <= maxRecords)
 		})
 	}
 }
@@ -451,10 +388,9 @@ func TestTimeoutExceedsInterval(t *testing.T) {
 	}
 }
 
-// The mid-page cap. A page can be far larger than the quota left - batch_size
-// is 10000 by default - so the cap has to stop inside the batch. Checking after
-// appending the whole page let a poll overshoot max_records by almost a full
-// page.
+// The end of the window is enforced client-side: this endpoint rejects a
+// two-sided filter on `time`, so a page can carry events past toTime that
+// belong to the next poll.
 func TestAppendInWindow(t *testing.T) {
 	const toTime = int64(1000)
 
@@ -470,57 +406,35 @@ func TestAppendInWindow(t *testing.T) {
 	}
 
 	tests := []struct {
-		name     string
-		have     int
-		batch    []gjson.Result
-		quota    int
-		wantLen  int
-		wantFull bool
+		name    string
+		have    int
+		batch   []gjson.Result
+		wantLen int
 	}{
 		{
-			// batch_size > quota: the case the bug produced. A 10000-record
-			// page against 50 of quota left must keep 50, not 10000.
-			name: "page far larger than the quota stops at the cap",
-			have: 0, batch: batchOf(10000, 900), quota: 50,
-			wantLen: 50, wantFull: true,
+			name: "a batch inside the window is kept whole",
+			have: 0, batch: batchOf(30, 900),
+			wantLen: 30,
 		},
 		{
-			name: "partly consumed quota stops at the cap",
-			have: 40, batch: batchOf(100, 900), quota: 50,
-			wantLen: 50, wantFull: true,
-		},
-		{
-			name: "batch inside the quota is kept whole",
-			have: 0, batch: batchOf(30, 900), quota: 50,
-			wantLen: 30, wantFull: false,
-		},
-		{
-			// Landing exactly on the cap must still report full, or the walk
-			// fetches another page and discards every record in it. Under the
-			// shipped settings max_records is twice batch_size, so this is the
-			// normal truncation path rather than a coincidence.
-			name: "batch exactly filling the quota reports full",
-			have: 0, batch: batchOf(50, 900), quota: 50,
-			wantLen: 50, wantFull: true,
-		},
-		{
-			// Out-of-window records belong to the next poll and must not
-			// consume quota.
-			name:    "records past the window do not count against the quota",
+			// Events past the end of the window belong to the next poll, which
+			// nextWatermark opens where this one closed.
+			name:    "records past the window are dropped",
 			have:    0,
 			batch:   append(append(batchOf(5, 900), batchOf(100, 1001)...), batchOf(5, 950)...),
-			quota:   50,
-			wantLen: 10, wantFull: false,
+			wantLen: 10,
 		},
 		{
-			name: "no quota left keeps nothing",
-			have: 50, batch: batchOf(10, 900), quota: 50,
-			wantLen: 50, wantFull: true,
+			// Appends to what is already collected rather than replacing it:
+			// one href's pages accumulate through repeated calls.
+			name: "appends to the records already collected",
+			have: 3, batch: batchOf(4, 900),
+			wantLen: 7,
 		},
 		{
 			name: "empty batch",
-			have: 3, batch: nil, quota: 50,
-			wantLen: 3, wantFull: false,
+			have: 3, batch: nil,
+			wantLen: 3,
 		},
 	}
 
@@ -528,11 +442,12 @@ func TestAppendInWindow(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			records := batchOf(tt.have, 900)
 
-			got, full := appendInWindow(records, tt.batch, toTime, tt.quota)
+			got := appendInWindow(records, tt.batch, toTime)
 
 			assert.Equal(t, len(got), tt.wantLen)
-			assert.Equal(t, full, tt.wantFull)
-			assert.True(t, len(got) <= tt.quota)
+			for _, r := range got {
+				assert.True(t, inWindow(r, toTime))
+			}
 		})
 	}
 }
