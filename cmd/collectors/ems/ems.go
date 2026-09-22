@@ -437,7 +437,16 @@ func sortRecords(records []gjson.Result) {
 }
 
 // appendInWindow adds the records in batch that fall inside the window ending
-// at toTime, stopping at quota.
+// at toTime, stopping at quota. It reports whether the quota has been reached,
+// which tells the caller to stop paging.
+//
+// Two things have to hold at once. The cap is enforced mid-batch, because
+// appending a whole page and checking afterward let a poll overshoot by almost
+// a full batch_size - up to 10000 records at the default page size. And the cap
+// being reached is reported even when the batch ended exactly on it, because
+// otherwise the walk fetches one more page and discards every record in it.
+// That is not a corner case: max_records defaults to twice batch_size, so under
+// the shipped settings every truncated poll lands exactly on the cap.
 func appendInWindow(records, batch []gjson.Result, toTime int64, quota int) ([]gjson.Result, bool) {
 	for _, record := range batch {
 		// Client-side end bound. This endpoint rejects a two-sided filter on
@@ -450,7 +459,7 @@ func appendInWindow(records, batch []gjson.Result, toTime int64, quota int) ([]g
 		}
 		records = append(records, record)
 	}
-	return records, false
+	return records, len(records) >= quota
 }
 
 // inWindow reports whether a record falls inside the window ending at toTime.

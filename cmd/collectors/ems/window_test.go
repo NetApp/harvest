@@ -495,10 +495,13 @@ func TestAppendInWindow(t *testing.T) {
 			wantLen: 30, wantFull: false,
 		},
 		{
-			// Exactly at the cap is not full: nothing was dropped.
-			name: "batch exactly filling the quota is not truncated",
+			// Landing exactly on the cap must still report full, or the walk
+			// fetches another page and discards every record in it. Under the
+			// shipped settings max_records is twice batch_size, so this is the
+			// normal truncation path rather than a coincidence.
+			name: "batch exactly filling the quota reports full",
 			have: 0, batch: batchOf(50, 900), quota: 50,
-			wantLen: 50, wantFull: false,
+			wantLen: 50, wantFull: true,
 		},
 		{
 			// Out-of-window records belong to the next poll and must not
