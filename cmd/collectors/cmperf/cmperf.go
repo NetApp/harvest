@@ -568,12 +568,30 @@ func (c *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plug
 }
 
 func isWorkloadObject(query string) bool {
-	return query == "workload" || query == "workload_volume"
+	switch query {
+	case "workload", "workload_volume", "workload_queue_combined":
+		return true
+	}
+	return false
+}
+
+func workloadFilterFor(query string) []string {
+	switch query {
+	case "workload_volume":
+		return []string{"workload_class=" + objWorkloadVolumeClass}
+	case "workload_queue_combined":
+		// Deliberately unconstrained by workload_class: this CM2 object reports queue counters
+		// for workloads of every class. qtree/lun/file=null keeps it to volume-level workloads,
+		// matching the qos_labels and export_options in workload_queue_combined.yaml.
+		return []string{"qtree=null", "lun=null", "file=null"}
+	default:
+		return []string{"workload_class=" + objWorkloadClass}
+	}
 }
 
 // PollInstance fetches QoS workload metadata from ONTAP REST and populates
 // the matrix with instance labels (svm, volume, qtree, lun, file, policy_group, wid).
-// It is only active for workload and workload_volume objects.
+// It is only active for workload objects (see isWorkloadObject).
 func (c *CmPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	if !isWorkloadObject(c.Prop.Query) {
 		return nil, nil
@@ -585,15 +603,10 @@ func (c *CmPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		oldInstances.Add(key)
 	}
 
-	workloadClass := objWorkloadClass
-	if c.Prop.Query == "workload_volume" {
-		workloadClass = objWorkloadVolumeClass
-	}
-
 	href := rest.NewHrefBuilder().
 		APIPath(qosWorkloadQuery).
 		Fields([]string{"*"}).
-		Filter([]string{"workload_class=" + workloadClass}).
+		Filter(workloadFilterFor(c.Prop.Query)).
 		MaxRecords(c.BatchSize).
 		ReturnTimeout(c.Prop.ReturnTimeOut).
 		Build()

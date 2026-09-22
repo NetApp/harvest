@@ -7,8 +7,7 @@ global_labels:
   - nfsv: v4.2
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name            => node
+  - ^^node_name               => node
   - access_avg_latency
   - access_total
   - backchannel_ctl_avg_latency

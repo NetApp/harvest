@@ -919,7 +919,7 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	// Drop the CmPerf collectors and let the remaining collectors run.
 	manifestName := p.getCmManifestName()
 	if manifest := buildCmPerfManifest(cols, manifestName); manifest != nil {
-		if err := p.deleteAndPostCmManifest(manifestName, manifest); err != nil {
+		if err := p.deleteAndPostCmManifest(manifestName, manifest, p.cmManifestTimeout()); err != nil {
 			logger.Error(
 				"CmPerf manifest failed, disabling CmPerf collectors",
 				slogx.Err(err),
@@ -986,11 +986,34 @@ type cmPerfManifestJSON struct {
 	PresetDetails []cmPerfPresetDetail `json:"preset_details"`
 }
 
+const defaultCmManifestTimeout = 2 * time.Minute
+
+func (p *Poller) cmManifestTimeout() time.Duration {
+	raw := p.params.CmPerfManifestTimeout
+	if raw == "" {
+		return defaultCmManifestTimeout
+	}
+	timeout, err := time.ParseDuration(raw)
+	if err != nil {
+		logger.Warn("invalid cm_perf_manifest_timeout, using default",
+			slog.String("cm_perf_manifest_timeout", raw),
+			slog.String("default", defaultCmManifestTimeout.String()),
+			slogx.Err(err))
+		return defaultCmManifestTimeout
+	}
+	if timeout <= 0 {
+		logger.Warn("cm_perf_manifest_timeout must be positive, using default",
+			slog.String("cm_perf_manifest_timeout", raw),
+			slog.String("default", defaultCmManifestTimeout.String()))
+		return defaultCmManifestTimeout
+	}
+	return timeout
+}
+
 // deleteAndPostCmManifest deletes any existing CmPerf counter-cache manifest for name,
 // then posts the newly built manifest. ONTAP does not support updating a manifest in place,
 // so it must be deleted (if present) before the new one can be posted.
-func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte) error {
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+func (p *Poller) deleteAndPostCmManifest(name string, manifest []byte, timeout time.Duration) error {
 	connection, err := rest.New(p.params, timeout, p.auth)
 	if err != nil {
 		return err
@@ -1041,11 +1064,6 @@ func buildCmPerfManifest(cols []collector.Collector, manifestName string) []byte
 
 		query := params.GetChildContentS("query")
 		if query == "" {
-			continue
-		}
-
-		// TODO remove after CM2 works with aggregated objects
-		if strings.Contains(query, ":") {
 			continue
 		}
 

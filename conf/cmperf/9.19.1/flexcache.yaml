@@ -3,9 +3,8 @@ query:                    flexcache_per_volume
 object:                   flexcache
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name                                     => volume
-  - ^vserver_name                                      => svm
+  - ^^instance_name                                     => volume
+  - ^^vserver_name                                      => svm
   - blocks_requested_from_client
   - blocks_retrieved_from_origin
   - evict_rw_cache_skipped_reason_disconnected

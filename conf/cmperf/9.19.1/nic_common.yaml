@@ -4,12 +4,11 @@ query:                    nic_common
 object:                   nic
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name           => nic
+  - ^^instance_name          => nic
+  - ^^node_name              => node
   - ^link_current_state      => state
   - ^link_speed              => speed
   - ^nic_type                => type
-  - ^node_name               => node
   - link_up_to_downs
   - rx_alignment_errors
   - rx_bytes

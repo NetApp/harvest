@@ -3,9 +3,8 @@ query:                    resource_headroom_aggr
 object:                   headroom_aggr
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name           => aggr
-  - ^node_name               => node
+  - ^^instance_name           => aggr
+  - ^^node_name               => node
   - current_latency
   - current_ops
   - current_utilization

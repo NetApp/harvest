@@ -480,6 +480,87 @@ func TestPopulateArrayCounter_ShapeMismatchesAreSkippedAndCounted(t *testing.T) 
 	}
 }
 
+// Two nodes' batches from one CM2 file report the same instance key, which happens when an
+// aggregated object's template keys omit node_name (e.g. cifs:vserver, keyed only on svm).
+// First batch wins and the duplicate is logged, so the insufficient template key is visible.
+func TestPopulateMatrix_DuplicateInstanceKey(t *testing.T) {
+	c := newTestCmPerf(t)
+	c.Prop.InstanceKeys = []string{"instance_uuid"}
+	c.Prop.InstanceLabels["instance_uuid"] = "instance_uuid"
+	c.Prop.InstanceLabels["node_name"] = "node"
+	c.perfProp.schemaMap = map[uint32]cmmetrics.CounterSchema{}
+
+	curMat := matrix.New("test", "test", "test")
+	prevMat := matrix.New("test", "test", "test")
+	collectors.EnsureTimestampMetric(curMat, c.Logger)
+
+	ocA := &cmmetrics.ObjectCollection{
+		Node: "nodeA",
+		Data: cmmetrics.ObjectData{
+			Instances: []cmmetrics.ObjectInstance{
+				{Name: "nodeA", UUID: "2"},
+			},
+		},
+	}
+	ocB := &cmmetrics.ObjectCollection{
+		Node: "nodeB",
+		Data: cmmetrics.ObjectData{
+			Instances: []cmmetrics.ObjectInstance{
+				{Name: "nodeB", UUID: "2"},
+			},
+		},
+	}
+
+	c.populateMatrix(ocA, curMat, prevMat)
+	c.populateMatrix(ocB, curMat, prevMat)
+
+	instances := curMat.GetInstances()
+	if len(instances) != 1 {
+		t.Fatalf("expected 1 instance after duplicate key collision, got %d", len(instances))
+	}
+
+	inst := curMat.GetInstance("2")
+	if inst == nil {
+		t.Fatal(`expected instance with key "2" to exist`)
+	}
+	if got := inst.GetLabel("node"); got != "nodeA" {
+		t.Fatalf("expected first instance (nodeA) to survive the collision, got node label %q", got)
+	}
+}
+
+func TestPopulateMatrix_RecoversExportableAfterIncompleteCollection(t *testing.T) {
+	c := newTestCmPerf(t)
+	c.Prop.Query = "workload" // workload objects reuse instances created by PollInstance
+	c.perfProp.schemaMap = map[uint32]cmmetrics.CounterSchema{}
+
+	prevMat := matrix.New("test", "test", "test")
+	collectors.EnsureTimestampMetric(prevMat, c.Logger)
+	inst, err := prevMat.NewInstance("inst1")
+	assert.Nil(t, err)
+	// State left behind by a previous poll whose collection was incomplete.
+	inst.SetExportable(false)
+	inst.SetPartial(true)
+
+	curMat := prevMat.CloneForCollection()
+	curMat.Reset()
+
+	carried := curMat.GetInstance("inst1")
+	assert.NotNil(t, carried)
+	assert.False(t, carried.IsExportable()) // the latch: exportability survives the clone
+	assert.False(t, carried.IsPartial())    // partial does not
+
+	oc := &cmmetrics.ObjectCollection{
+		Timestamp: 2000,
+		Data: cmmetrics.ObjectData{
+			Instances: []cmmetrics.ObjectInstance{{UUID: "inst1"}},
+		},
+	}
+	c.populateMatrix(oc, curMat, prevMat)
+
+	assert.True(t, carried.IsExportable())
+	assert.False(t, carried.IsPartial())
+}
+
 func TestRetainCmperfFiles(t *testing.T) {
 	tests := []struct {
 		name string

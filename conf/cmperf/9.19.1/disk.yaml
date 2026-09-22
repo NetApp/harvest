@@ -3,11 +3,10 @@ query:                    disk:constituent
 object:                   disk
 
 counters:
-  - ^^instance_uuid
-  - ^instance_name         => partition
-  - ^node_name             => node
-  - ^physical_disk_name    => disk
-  - ^physical_disk_uuid    => disk_uuid
+  - ^^instance_name         => partition
+  - ^^node_name             => node
+  - ^^physical_disk_name    => disk
+  - ^physical_disk_uuid     => disk_uuid
   - ^raid_group
   - ^raid_type
   - cp_read_chain
