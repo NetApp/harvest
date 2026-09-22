@@ -1,0 +1,34 @@
+name:                       Lun
+query:                      api/private/cli/lun
+object:                     lun
+
+counters:
+  - ^^path                  => lun
+  - ^^qtree                 => qtree
+  - ^^volume                => volume
+  - ^^vserver               => svm
+  - ^node                   => node
+  - ^serial_hex             => serial_hex
+  - ^state                  => state
+  - ^uuid
+  - size                    => size
+  - size_used               => size_used
+
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - size_used_percent PERCENT size_used size
+  - LabelAgent:
+      value_to_num:
+        - new_status state online online `0`
+
+export_options:
+  instance_keys:
+    - lun
+    - node
+    - qtree
+    - svm
+    - volume
+  instance_labels:
+    - serial_hex
+    - state
