@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Sep-15
+Creation Date : 2026-Sep-23
 ONTAP Version: 9.16.1
 ```
 
@@ -2067,7 +2067,7 @@ Available space across the cluster.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/cluster` | `block_storage.available` | conf/rest/asar2/9.16.0/cluster.yaml |
+| REST | `api/storage/cluster` | `block_storage.available` | conf/rest/9.10.0/cluster.yaml |
 
 The `cluster_space_available` metric is visualized in the following Grafana dashboards:
     
@@ -6374,7 +6374,7 @@ Details of Igroups in the cluster.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/protocols/san/igroups` | `Harvest generated` | conf/rest/asar2/9.16.0/igroup.yaml |
+| REST | `api/protocols/san/igroups` | `Harvest generated` | conf/rest/9.12.0/igroup.yaml |
 
 The `igroup_labels` metric is visualized in the following Grafana dashboards:
     

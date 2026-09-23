@@ -2628,11 +2628,6 @@ counters:
   # ASAr2 cluster metrics
   - Name: cluster_space_available
     Description: Available space across the cluster.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/cluster
-        ONTAPCounter: block_storage.available
-        Template: conf/rest/asar2/9.16.0/cluster.yaml
   - Name: storage_unit_avg_latency
     Description: Performance metric aggregated over all types of I/O operations.
     APIs:
@@ -2727,11 +2722,6 @@ counters:
         Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
   - Name: igroup_labels
     Description: Details of Igroups in the cluster.
-    APIs:
-      - API: REST
-        Endpoint: api/protocols/san/igroups
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/asar2/9.16.0/igroup.yaml
 
   - Name: nvme_lif_read_data
     Description: Amount of data read from the storage system in bytes per second.
