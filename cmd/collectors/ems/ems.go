@@ -470,9 +470,10 @@ var errWalkBudget = errors.New("ems walk budget exhausted")
 // and stopping once too little of the time budget is left to begin another
 // page. The bool reports that it stopped for that reason.
 //
-// Partial results are returned rather than discarded. The previous behavior
-// threw away every record already retrieved when a walk failed, so the most
-// expensive polls were also the ones that produced nothing.
+// Stopping on budget is not a failure: the records already collected are
+// returned, since by then the walk has usually fetched most of the window. A
+// request that fails is different - the error is returned and this href's
+// records with it, so the poll fails and its window is retried.
 func (e *Ems) fetchEMSData(href string, deadline time.Time, toTime int64) ([]gjson.Result, bool, error) {
 	var records []gjson.Result
 
