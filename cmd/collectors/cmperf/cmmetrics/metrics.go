@@ -22,8 +22,9 @@ type ObjectCollection struct {
 }
 
 type ObjectSchema struct {
-	Name          string
-	CounterSchema []CounterSchema
+	Name            string
+	CounterSchema   []CounterSchema
+	AggregationType AggregationType
 }
 
 type CounterSchema struct {
@@ -85,6 +86,7 @@ const (
 	MetaMismatchError      = 7
 	CollectionTimeoutError = 8
 	NoAdditionalStatus     = 9
+	NullMetaLookupError    = 10
 )
 
 func (s StatusCodeEnum) String() string {
@@ -109,8 +111,29 @@ func (s StatusCodeEnum) String() string {
 		return "CollectionTimeoutError"
 	case NoAdditionalStatus:
 		return "NoAdditionalStatus"
+	case NullMetaLookupError:
+		return "NullMetaLookupError"
 	default:
 		return fmt.Sprintf("Unknown(%d)", uint8(s))
+	}
+}
+
+// AggregationType reports whether an object's values are a cluster-wide roll-up or scoped to a single node.
+type AggregationType uint8
+
+const (
+	NonAggregated AggregationType = 0
+	Aggregated    AggregationType = 1
+)
+
+func (a AggregationType) String() string {
+	switch a {
+	case NonAggregated:
+		return "NonAggregated"
+	case Aggregated:
+		return "Aggregated"
+	default:
+		return fmt.Sprintf("Unknown(%d)", uint8(a))
 	}
 }
 
@@ -536,6 +559,15 @@ func handleObjectSchema(data []byte) (ObjectSchema, error) {
 				return ObjectSchema{}, err
 			}
 			objectSchema.CounterSchema = append(objectSchema.CounterSchema, cs)
+		case 3:
+			val, ok := fc.Uint64()
+			if !ok {
+				return objectSchema, errors.New("failed to read object schema aggregation_type")
+			}
+			if val > math.MaxUint8 {
+				return objectSchema, fmt.Errorf("object schema aggregation_type %d exceeds uint8", val)
+			}
+			objectSchema.AggregationType = AggregationType(val)
 		}
 	}
 
