@@ -180,6 +180,29 @@ func TestHandleCounterSchemaLabels(t *testing.T) {
 	assert.Equal(t, schema.LabelsY, []string{"read", "write"})
 }
 
+func TestHandleObjectSchemaAggregationType(t *testing.T) {
+	t.Run("aggregated", func(t *testing.T) {
+		payload := appendStringField(nil, 1, "volume")
+		payload = appendVarintField(payload, 3, 1)
+
+		schema, err := handleObjectSchema(payload)
+		assert.Nil(t, err)
+		assert.Equal(t, schema.AggregationType, Aggregated)
+	})
+
+	t.Run("missing defaults to non-aggregated", func(t *testing.T) {
+		payload := appendStringField(nil, 1, "volume")
+
+		schema, err := handleObjectSchema(payload)
+		assert.Nil(t, err)
+		assert.Equal(t, schema.AggregationType, NonAggregated)
+	})
+}
+
+func TestStatusCodeNullMetaLookupError(t *testing.T) {
+	assert.Equal(t, StatusCodeEnum(NullMetaLookupError).String(), "NullMetaLookupError")
+}
+
 func BenchmarkCounterType(b *testing.B) {
 	b.Run("uint32", func(b *testing.B) {
 		b.ReportAllocs()
