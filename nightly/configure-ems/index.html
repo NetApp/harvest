@@ -1203,6 +1203,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#memory-and-the-collection-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      Memory and the collection window
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#ems-template-file" class="md-nav__link">
     <span class="md-ellipsis">
       EMS Template File
@@ -2215,6 +2224,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#memory-and-the-collection-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      Memory and the collection window
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#ems-template-file" class="md-nav__link">
     <span class="md-ellipsis">
       EMS Template File
@@ -2341,8 +2359,14 @@ These parameters can be defined in your <code>harvest.yml</code> or <code>conf/e
 <tr>
 <td><code>client_timeout</code></td>
 <td>Go duration</td>
-<td>how long to wait for server responses</td>
+<td>how long to wait for server responses. This must cover streaming a whole <code>batch_size</code> page of events, not just the time to first byte, and this endpoint's response time varies by more than 10x for an identical query. Keep it at or below the <code>data</code> interval</td>
 <td>1m</td>
+</tr>
+<tr>
+<td><code>batch_size</code></td>
+<td>int</td>
+<td>number of EMS events requested per page, sent as ONTAP's <code>max_records</code> query parameter. The cost of this endpoint is per request rather than per record - a request takes roughly the same time whether it returns 300 records or 3000 - so collection time tracks the number of requests, and a larger page is faster. Lowering it is rarely useful: on one 32-node cluster the same poll needed 2 requests and 22s at 10000, against 13-16 requests and 90-169s at 500</td>
+<td>10000</td>
 </tr>
 <tr>
 <td><code>schedule</code></td>
@@ -2364,6 +2388,14 @@ These parameters can be defined in your <code>harvest.yml</code> or <code>conf/e
 </tr>
 </tbody>
 </table>
+<h4 id="memory-and-the-collection-window">Memory and the collection window<a class="headerlink" href="#memory-and-the-collection-window" title="Permanent link">&para;</a></h4>
+<p>A poll holds every event it collects in memory until the poll finishes. The collector has to order events by time
+before processing them, so that a resolving event is handled after the event it clears, and nothing can be exported
+until the whole window has been collected. The width of that window is the <code>data</code> interval, so both the number of
+events in one poll and the memory it needs scale with <code>data</code> - on a cluster with a high event rate, shortening <code>data</code>
+is the lever. <code>data</code> is also the time budget for one poll, less the <code>client_timeout</code> held back so a request already in
+flight can finish, which bounds how many pages a poll fetches. The <code>bytesRx</code> and <code>numCalls</code> metadata metrics report
+what each poll actually downloaded.</p>
 <p>The EMS configuration file should contain the following section mapping the <code>Ems</code> object to the corresponding template
 file.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
