@@ -665,8 +665,23 @@ func ProcessExternalCounters(dir string, counters map[string]Counter, metricsPan
 	return counters
 }
 
+// modelDirs are model-specific subdirectories under a collector's conf directory,
+// e.g. conf/rest/asar2. Templates there only apply to that model of cluster.
+var modelDirs = []string{conf.ASAr2}
+
+// isModelTemplate reports whether path is under one of modelDirs relative to dir.
+func isModelTemplate(dir, path string) bool {
+	rel, err := filepath.Rel(dir, path)
+	if err != nil {
+		return false
+	}
+	top, _, _ := strings.Cut(rel, string(filepath.Separator))
+	return slices.Contains(modelDirs, top)
+}
+
 func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path string, client *rest.Client) map[string]Counter) map[string]Counter {
 	result := make(map[string]Counter)
+	modelResult := make(map[string]Counter)
 	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatal("failed to read directory:", err)
@@ -679,6 +694,10 @@ func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path stri
 			return nil
 		}
 		r := eachTemp(path, client)
+		if isModelTemplate(dir, path) {
+			maps.Copy(modelResult, r)
+			return nil
+		}
 		maps.Copy(result, r)
 		return nil
 	})
@@ -687,6 +706,25 @@ func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path stri
 		log.Fatal("failed to read template:", err)
 		return nil
 	}
+
+	// Model templates add new metrics, and for existing metrics, only append
+	// API entries whose endpoint/counter differ from the base.
+	for name, c := range modelResult {
+		base, ok := result[name]
+		if !ok {
+			result[name] = c
+			continue
+		}
+		for _, api := range c.APIs {
+			if !slices.ContainsFunc(base.APIs, func(b MetricDef) bool {
+				return b.Endpoint == api.Endpoint && b.ONTAPCounter == api.ONTAPCounter
+			}) {
+				base.APIs = append(base.APIs, api)
+			}
+		}
+		result[name] = base
+	}
+
 	return result
 }
 
