@@ -778,7 +778,7 @@ func processRestConfigCounters(path string, api string, metricsPanelMap map[stri
 
 	if templateCounters != nil {
 		metricLabels, labels, isInstanceLabels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
-		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters, metricLabels, api, metricsPanelMap)
+		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters, metricLabels, api, metricsPanelMap, false)
 		if isInstanceLabels {
 			// This is for object_labels metrics
 			harvestName := model.Object + "_" + "labels"
@@ -804,12 +804,16 @@ func processRestConfigCounters(path string, api string, metricsPanelMap map[stri
 	if endpoints != nil {
 		for _, endpoint := range endpoints.GetChildren() {
 			var query string
+			var isInstanceAdd bool
 			for _, line := range endpoint.GetChildren() {
 				if line.GetNameS() == "query" {
 					query = line.GetContentS()
 				}
+				if line.GetNameS() == "instance_add" {
+					isInstanceAdd = line.GetContentS() == "true"
+				}
 				if line.GetNameS() == "counters" {
-					processCounters(line.GetAllChildContentS(), &model, path, query, counters, metricLabels, api, metricsPanelMap)
+					processCounters(line.GetAllChildContentS(), &model, path, query, counters, metricLabels, api, metricsPanelMap, isInstanceAdd)
 				}
 			}
 		}
@@ -845,7 +849,7 @@ func processRestConfigCounters(path string, api string, metricsPanelMap map[stri
 	return counters
 }
 
-func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string, api string, metricsPanelMap map[string]PanelData) {
+func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string, api string, metricsPanelMap map[string]PanelData, isInstanceAdd bool) {
 	var (
 		staticCounterDef staticcounter.ObjectCounters
 		err              error
@@ -872,8 +876,13 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 		if _, ok := excludeCounters[name]; ok {
 			continue
 		}
-		description := searchDescriptionSwagger(model.Object, name)
 		harvestName := model.Object + "_" + display
+		if isInstanceAdd {
+			if _, ok := counters[harvestName]; ok {
+				continue
+			}
+		}
+		description := searchDescriptionSwagger(model.Object, name)
 		if m == "float" {
 			if api == keyPerfAPI {
 				var (
