@@ -57,9 +57,29 @@ endpoints:
     counters:
       - ^^uuid                                                     => uuid
       - ^aggregate                                                 => aggr
-      - ^node                                                      => node
+      - ^encrypt_with_aggr_key                                     => is_encrypted
+      - ^home_name                                                 => node
+      - ^raidtype                                                  => raid_type
       - ^root                                                      => is_root
       - ^state                                                     => state
+      - availsize                                                  => space_available
+      - composite_capacity_tier_used                               => space_capacity_tier_used
+      - data_compacted_count                                       => space_data_compacted_count
+      - data_compaction_space_saved                                => space_data_compaction_saved
+      - data_compaction_space_saved_percent                        => space_data_compaction_saved_percent
+      - diskcount                                                  => raid_disk_count
+      - hybrid_cache_size_total                                    => hybrid_cache_size_total
+      - maxraidsize                                                => raid_size
+      - percent_snapshot_space                                     => snapshot_reserve_percent
+      - percent_used                                               => space_used_percent
+      - physical_used                                              => space_physical_used
+      - physical_used_percent                                      => space_physical_used_percent
+      - sis_shared_count                                           => space_sis_shared_count
+      - sis_space_saved                                            => space_sis_saved
+      - sis_space_saved_percent                                    => space_sis_saved_percent
+      - size                                                       => space_total
+      - usedsize                                                   => space_used
+      - volcount                                                   => volume_count
       - filter:
           - root=true
 
