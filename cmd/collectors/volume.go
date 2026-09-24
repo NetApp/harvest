@@ -96,7 +96,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		}
 	}
 
-	logger.Debug("", slog.Int("flexgroup volume count", len(cache.GetInstances())))
+	logger.Debug("flexgroup volumes", slog.Int("count", len(cache.GetInstances())))
 
 	recordFGFalse := make(map[string]*set.Set)
 	// fgStateMap resolves each FlexGroup's "state" deterministically across its constituents:

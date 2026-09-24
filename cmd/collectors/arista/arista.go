@@ -171,7 +171,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector) (*rest.Client, error) {
 
 	opt := a.GetOptions()
 	if poller, err = conf.PollerNamed(opt.Poller); err != nil {
-		r.Logger.Error("", slogx.Err(err), slog.String("poller", opt.Poller))
+		r.Logger.Error("poller not found", slogx.Err(err), slog.String("poller", opt.Poller))
 		return nil, err
 	}
 	if poller.Addr == "" {

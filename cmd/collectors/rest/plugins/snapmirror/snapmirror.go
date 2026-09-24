@@ -258,7 +258,7 @@ func (m *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
 				cgVolumeInstanceKey := key + sourceVol + destinationVol
 
 				if cgVolumeInstance, err = m.data.NewInstance(cgVolumeInstanceKey); err != nil {
-					m.SLogger.Error("", slogx.Err(err), slog.String("key", cgVolumeInstanceKey))
+					m.SLogger.Error("failed to create consistency group volume instance", slogx.Err(err), slog.String("key", cgVolumeInstanceKey))
 					continue
 				}
 

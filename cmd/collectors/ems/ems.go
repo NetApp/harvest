@@ -659,10 +659,10 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	e.Logger.Info("", slog.Int("total instances", bookendCacheSize))
+	e.Logger.Info("bookend cache size", slog.Int("instances", bookendCacheSize))
 	// warning when total instance in cache > 1000 instance
 	if bookendCacheSize > MaxBookendInstances {
-		e.Logger.Warn("cache has more than 1000 instances", slog.Int("total instances", bookendCacheSize))
+		e.Logger.Warn("cache has more than 1000 instances", slog.Int("instances", bookendCacheSize))
 	}
 
 	// update metadata for collector logs
@@ -936,7 +936,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 
 					if instance == nil {
 						if instance, err = mx.NewInstance(instanceKey); err != nil {
-							e.Logger.Error("", slogx.Err(err), slog.String("instanceKey", instanceKey))
+							e.Logger.Error("failed to create ems instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
 							continue
 						}
 					}

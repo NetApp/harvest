@@ -172,7 +172,7 @@ func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	s.Logger.Debug("", slog.String("cliCommand", string(cliCommand)))
+	s.Logger.Debug("cli command", slog.String("cliCommand", string(cliCommand)))
 	if cliCommand == nil {
 		return nil, errs.New(errs.ErrConfig, "empty cliCommand")
 	}
@@ -434,7 +434,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		if err != nil {
 			return nil, err
 		}
-		s.Logger.Debug("", slog.String("cliCommand (batch)", string(cliCommand)))
+		s.Logger.Debug("cli command", slog.String("cliCommand", string(cliCommand)), slog.Bool("batch", true))
 		if cliCommand == nil {
 			return nil, errs.New(errs.ErrConfig, "empty cliCommand")
 		}
@@ -960,7 +960,7 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	s.Logger.Debug("", slog.String("cliCommand", string(cliCommand)))
+	s.Logger.Debug("cli command", slog.String("cliCommand", string(cliCommand)))
 	if cliCommand == nil {
 		return nil, errs.New(errs.ErrConfig, "empty cliCommand")
 	}

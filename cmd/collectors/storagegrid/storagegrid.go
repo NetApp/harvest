@@ -310,7 +310,7 @@ func (s *StorageGrid) pollRest() (map[string]*matrix.Matrix, error) {
 }
 
 func (s *StorageGrid) getRest(href string, result *[]gjson.Result) error {
-	s.Logger.Debug("", slog.String("href", href))
+	s.Logger.Debug("rest request", slog.String("href", href))
 	if href == "" {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
@@ -368,7 +368,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 
 		if instance == nil {
 			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				s.Logger.Error("", slogx.Err(err), slog.String("instanceKey", instanceKey))
+				s.Logger.Error("failed to create instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
 				continue
 			}
 		}

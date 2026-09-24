@@ -574,7 +574,7 @@ func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
 
 func (c *Client) printRequestAndResponse(req string, response []byte) {
 	if req != "" {
-		c.Logger.Info("", slog.String("Request", req), slog.String("Response", string(response)))
+		c.Logger.Info("zapi request", slog.String("Request", req), slog.String("Response", string(response)))
 	}
 }
 
