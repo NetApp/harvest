@@ -88,14 +88,14 @@ func LoadAuthConfig() Config {
 				slog.String("cert_file_set", strconv.FormatBool(config.CertFile != "")),
 				slog.String("key_file_set", strconv.FormatBool(config.KeyFile != "")))
 		} else {
-			if _, err := os.Stat(config.CertFile); os.IsNotExist(err) {
+			if _, err := os.Stat(config.CertFile); os.IsNotExist(err) { //nolint:gosec // operator-supplied path from HARVEST_TSDB_* env, only checked for existence
 				logger.Warn("certificate file does not exist", slog.String("cert_file", config.CertFile))
 			}
-			if _, err := os.Stat(config.KeyFile); os.IsNotExist(err) {
+			if _, err := os.Stat(config.KeyFile); os.IsNotExist(err) { //nolint:gosec // operator-supplied path from HARVEST_TSDB_* env, only checked for existence
 				logger.Warn("key file does not exist", slog.String("key_file", config.KeyFile))
 			}
 			if config.CAFile != "" {
-				if _, err := os.Stat(config.CAFile); os.IsNotExist(err) {
+				if _, err := os.Stat(config.CAFile); os.IsNotExist(err) { //nolint:gosec // operator-supplied path from HARVEST_TSDB_* env, only checked for existence
 					logger.Warn("CA file does not exist", slog.String("ca_file", config.CAFile))
 				}
 			}
