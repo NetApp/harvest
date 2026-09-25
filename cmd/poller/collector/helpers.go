@@ -8,6 +8,7 @@ AbstractCollector and collectors
 package collector
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -23,6 +24,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"log/slog"
+	"net"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -306,4 +308,32 @@ func ParseTemplateRef(v string) (string, string, bool) {
 	}
 
 	return collectorName, templateName, true
+}
+
+// pollErrorAttrs returns the structured fields of a failed poll's error, so
+// that whoever reads the log does not have to parse them back out of the
+// message text: the HTTP status and API from a RestError, the status from a
+// HarvestError, and whether the error chain reports a timeout.
+func pollErrorAttrs(err error) []any {
+	var attrs []any
+	status := 0
+	if restErr, ok := errors.AsType[*errs.RestError](err); ok {
+		status = restErr.StatusCode
+		if restErr.API != "" {
+			attrs = append(attrs, slog.String("api", restErr.API))
+		}
+	}
+	if status == 0 {
+		if harvestErr, ok := errors.AsType[errs.HarvestError](err); ok {
+			status = harvestErr.StatusCode
+		}
+	}
+	if status != 0 {
+		attrs = append(attrs, slog.Int("statusCode", status))
+	}
+	var netErr net.Error
+	if errors.Is(err, context.DeadlineExceeded) || (errors.As(err, &netErr) && netErr.Timeout()) {
+		attrs = append(attrs, slog.Bool("timeout", true))
+	}
+	return attrs
 }

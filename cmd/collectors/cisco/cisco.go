@@ -173,7 +173,7 @@ func (c *CiscoRest) getClient(a *collector.AbstractCollector) (*rest.Client, err
 
 	opt := a.GetOptions()
 	if poller, err = conf.PollerNamed(opt.Poller); err != nil {
-		c.Logger.Error("", slogx.Err(err), slog.String("poller", opt.Poller))
+		c.Logger.Error("poller not found", slogx.Err(err), slog.String("poller", opt.Poller))
 		return nil, err
 	}
 	if poller.Addr == "" {

@@ -65,7 +65,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 	if len(result) == 0 || result == nil {
 		return nil, nil, errs.New(errs.ErrNoInstance, "no records found")
 	}
-	f.SLogger.Info("", slog.Int("result", len(result)))
+	f.SLogger.Info("fcvi adapters", slog.Int("count", len(result)))
 
 	for _, adapterData := range result {
 		adapter := adapterData.GetChildContentS("adapter-name")

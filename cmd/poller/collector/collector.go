@@ -417,10 +417,13 @@ func (c *AbstractCollector) Start(
 						slog.String("task", task.Name),
 						slog.String("object", c.Object),
 					)
-				// Metro cluster is not configured, this is similar to no instance except with a larger delay and no logging
+				// Metro cluster is not configured, this is similar to no instance except with a larger delay.
+				// Logged at info on every retry: the collector counts as down in the poller's status, and
+				// without this line a log that starts after the first attempt never says which collector it is.
 				case errors.Is(err, errs.ErrMetroClusterNotConfigured):
 					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
 					c.SetStatus(1, errs.ErrNoInstance.Error())
+					c.Logger.Info("MetroCluster is not configured, entering standby", slog.String("task", task.Name))
 
 				case errors.Is(err, errs.ErrMetroClusterCheckInProgress):
 					// MCC checks in ONTAP run automatically every 15 minutes.
@@ -449,7 +452,12 @@ func (c *AbstractCollector) Start(
 							slog.String("task", task.Name),
 						)
 					default:
-						c.Logger.Error("", slogx.Err(err), slog.String("task", task.Name))
+						attrs := append([]any{
+							slogx.Err(err),
+							slog.String("task", task.Name),
+							slog.Int64("elapsedMs", taskTime.Milliseconds()),
+						}, pollErrorAttrs(err)...)
+						c.Logger.Error("poll failed", attrs...)
 					}
 
 					var herr errs.HarvestError
@@ -496,7 +504,7 @@ func (c *AbstractCollector) Start(
 							totals.add(pluginMetadata)
 
 							if err != nil {
-								c.Logger.Error("", slogx.Err(err), slog.String("plugin", plg.GetName()))
+								c.Logger.Error("plugin failed", slogx.Err(err), slog.String("plugin", plg.GetName()))
 								continue
 							}
 							if pluginData != nil {
@@ -629,6 +637,7 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 	case "data":
 		c.Logger.Info(
 			"Collected",
+			slog.String("task", "data"),
 			timeToMilli("api_time"),
 			int64Field("bytesRx"),
 			timeToMilli("calc_time"),

@@ -220,10 +220,10 @@ func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
 		}
 		slices.Sort(v)
 		s := strings.Join(v, "|")
-		r.Logger.Debug("", slog.String("name", name), slog.String("value", s))
+		r.Logger.Debug("param", slog.String("name", name), slog.String("value", s))
 		return s
 	}
-	r.Logger.Debug("", slog.String("name", name), slog.String("defaultValue", defaultValue))
+	r.Logger.Debug("param default", slog.String("name", name), slog.String("defaultValue", defaultValue))
 	return defaultValue
 }
 
@@ -238,7 +238,7 @@ func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		MaxRecords(r.BatchSize).
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
-	r.Logger.Debug("", slog.String("href", href))
+	r.Logger.Debug("rest request", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
@@ -754,7 +754,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			ReturnTimeout(r.Prop.ReturnTimeOut).
 			Build()
 
-		r.Logger.Debug("", slog.String("href", href))
+		r.Logger.Debug("rest request", slog.String("href", href))
 		if href == "" {
 			return nil, errs.New(errs.ErrConfig, "empty url")
 		}
@@ -1403,7 +1403,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug("", slog.String("href", href))
+	r.Logger.Debug("rest request", slog.String("href", href))
 	if href == "" {
 		return errs.New(errs.ErrConfig, "empty url")
 	}
@@ -1551,7 +1551,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		ReturnTimeout(r.Prop.ReturnTimeOut).
 		Build()
 
-	r.Logger.Debug("", slog.String("href", href))
+	r.Logger.Debug("rest request", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}

@@ -215,7 +215,7 @@ func (s *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 		return output, nil, err
 	}
 
-	s.SLogger.Debug("", slog.Int("Shelves instance count", len(data.GetInstances())))
+	s.SLogger.Debug("shelf instances", slog.Int("count", len(data.GetInstances())))
 	output = append(output, data)
 	return output, s.client.Metadata, nil
 }

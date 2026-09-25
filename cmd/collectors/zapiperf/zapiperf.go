@@ -239,19 +239,19 @@ func (z *ZapiPerf) loadFilter() string {
 func (z *ZapiPerf) loadParamArray(name, defaultValue string) []string {
 
 	if v := z.Params.GetChildContentS(name); v != "" {
-		z.Logger.Debug("", slog.String("name", name), slog.String("value", v))
+		z.Logger.Debug("param", slog.String("name", name), slog.String("value", v))
 		return []string{v}
 	}
 
 	p := z.Params.GetChildS(name)
 	if p != nil {
 		if v := p.GetAllChildContentS(); v != nil {
-			z.Logger.Debug("", slog.String("name", name), slog.Any("values", v))
+			z.Logger.Debug("param", slog.String("name", name), slog.Any("values", v))
 			return v
 		}
 	}
 
-	z.Logger.Debug("", slog.String("name", name), slog.String("defaultValue", defaultValue))
+	z.Logger.Debug("param default", slog.String("name", name), slog.String("defaultValue", defaultValue))
 	return []string{defaultValue}
 }
 
@@ -273,10 +273,10 @@ func (z *ZapiPerf) loadWorkloadClassQuery(defaultValue string) string {
 			return defaultValue
 		}
 		s := strings.Join(v, "|")
-		z.Logger.Debug("", slog.String("name", name), slog.String("value", s))
+		z.Logger.Debug("param", slog.String("name", name), slog.String("value", s))
 		return s
 	}
-	z.Logger.Debug("", slog.String("name", name), slog.String("defaultValue", defaultValue))
+	z.Logger.Debug("param default", slog.String("name", name), slog.String("defaultValue", defaultValue))
 	return defaultValue
 }
 
