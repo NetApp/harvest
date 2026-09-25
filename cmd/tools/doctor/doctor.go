@@ -521,12 +521,12 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 			}
 			pollerNames := make([]string, 0, len(exporterNames))
 			for _, exporterName := range exporterNames {
-				index := strings.LastIndex(exporterName, "-")
-				if index == -1 {
+				pollerName, _, found := strings.CutLast(exporterName, "-")
+				if !found {
 					pollerNames = append(pollerNames, exporterName)
 					continue
 				}
-				pollerNames = append(pollerNames, exporterName[:index])
+				pollerNames = append(pollerNames, pollerName)
 			}
 			names := strings.Join(pollerNames, ", ")
 			valid.invalid = append(valid.invalid, exporterNames...)

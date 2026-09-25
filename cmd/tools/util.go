@@ -1632,14 +1632,14 @@ func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix st
 
 	if metric.IsMax {
 		c.Name = metric.Name + "_" + noPrefix
-		c.Description = fmt.Sprintf("%s %s is the maximum of [%s](#%s) for label `%s`.",
+		c.Description = fmt.Sprintf("%s %s is the maximum of [%s](#%s) for label %#q.",
 			c.Description, c.Name, withPrefix, withPrefix, metric.Source)
 	} else {
 		c.Name = metric.Name + "_" + c.Name
 		if metric.HasCustomName {
 			c.Name = metric.Source + "_" + noPrefix
 		}
-		c.Description = fmt.Sprintf("%s %s is [%s](#%s) aggregated by `%s`.",
+		c.Description = fmt.Sprintf("%s %s is [%s](#%s) aggregated by %#q.",
 			c.Description, c.Name, withPrefix, withPrefix, metric.Name)
 	}
 	c.Panels = metricsPanelMap[c.Name].Panels
@@ -1988,25 +1988,25 @@ func (c Counter) HasPanels() bool {
 func (m MetricDef) TableRow() string {
 	switch {
 	case strings.Contains(m.Template, "eseries"):
-		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ESeriesCounter, m.Template)
+		return fmt.Sprintf("| %s | %#q | %#q | %s |", m.API, m.Endpoint, m.ESeriesCounter, m.Template)
 	case strings.Contains(m.Template, "perf"):
 		unitTypeBase := `<br><span class="key">Unit:</span> ` + m.Unit +
 			`<br><span class="key">Type:</span> ` + m.Type +
 			`<br><span class="key">Base:</span> ` + m.BaseCounter
-		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s |",
+		return fmt.Sprintf("| %s | %#q | %#q%s | %s |",
 			m.API, m.Endpoint, m.ONTAPCounter, unitTypeBase, m.Template)
 	case m.Unit != "":
 		unit := `<br><span class="key">Unit:</span> ` + m.Unit
-		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s | ",
+		return fmt.Sprintf("| %s | %#q | %#q%s | %s | ",
 			m.API, m.Endpoint, m.ONTAPCounter, unit, m.Template)
 	case strings.Contains(m.Template, "ciscorest"):
-		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.CiscoCounter, m.Template)
+		return fmt.Sprintf("| %s | %#q | %#q | %s |", m.API, m.Endpoint, m.CiscoCounter, m.Template)
 	case strings.Contains(m.Template, "aristarest"):
-		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.AristaCounter, m.Template)
+		return fmt.Sprintf("| %s | %#q | %#q | %s |", m.API, m.Endpoint, m.AristaCounter, m.Template)
 	case strings.Contains(m.Template, "storagegrid"):
-		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.SGCounter, m.Template)
+		return fmt.Sprintf("| %s | %#q | %#q | %s |", m.API, m.Endpoint, m.SGCounter, m.Template)
 	default:
-		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ONTAPCounter, m.Template)
+		return fmt.Sprintf("| %s | %#q | %#q | %s |", m.API, m.Endpoint, m.ONTAPCounter, m.Template)
 	}
 }
 

@@ -391,12 +391,11 @@ func toChainedVar(defStr string, label string, title string) string {
 
 	lastBracket := strings.LastIndex(defStr, "}")
 	if lastBracket == -1 {
-		lastParen := strings.LastIndex(defStr, ")")
-		if lastParen == -1 {
+		if !strings.Contains(defStr, ")") {
 			return ""
 		}
 
-		lastComma := strings.LastIndex(defStr, ",")
+		beforeComma, afterComma, hasComma := strings.CutLast(defStr, ",")
 		firstParen := strings.Index(defStr, "(")
 		if firstParen == -1 {
 			return ""
@@ -407,10 +406,10 @@ func toChainedVar(defStr string, label string, title string) string {
 		// 2. There is a single metric, e.g.,
 		// label_values(poller_status, datacenter) becomes label_values(poller_status{org=~"$org"}, datacenter)
 
-		if lastComma != -1 {
+		if hasComma {
 			// Case 2: There is a single metric
 			// label_values(poller_status, datacenter) becomes label_values(poller_status{org=~"$org"}, datacenter)
-			return defStr[0:lastComma] + "{" + label + `=~"$` + title + `"},` + defStr[lastComma+1:]
+			return beforeComma + "{" + label + `=~"$` + title + `"},` + afterComma
 		}
 		if firstParen+1 > len(defStr) {
 			return ""

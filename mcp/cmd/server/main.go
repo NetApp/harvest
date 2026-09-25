@@ -784,7 +784,7 @@ func checkClusterExists(config auth.TSDBConfig, cluster, clusterMatch string) (*
 	if cluster != "" {
 		msg = fmt.Sprintf("❌ **Cluster %q not found** in the connected TSDB.\n\nNo metrics with `cluster=%q` exist. Check the cluster name — it may differ from the poller name.%s", cluster, cluster, clusterList)
 	} else {
-		msg = fmt.Sprintf("❌ **No clusters matched pattern `%s`** in the connected TSDB.\n\nNo metrics with `cluster=~%q` exist.%s", clusterMatch, clusterMatch, clusterList)
+		msg = fmt.Sprintf("❌ **No clusters matched pattern %#q** in the connected TSDB.\n\nNo metrics with `cluster=~%q` exist.%s", clusterMatch, clusterMatch, clusterList)
 	}
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{&mcp.TextContent{Text: msg}},

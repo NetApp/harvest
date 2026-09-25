@@ -2179,7 +2179,7 @@ func applyFormatted(t *testing.T, d dashExprs, formatted map[string]string) {
 			t.Errorf("failed to update dashboard=%s panel=%q err=%v", d.shortPath, job.panelTitle, err)
 			continue
 		}
-		errorStr = append(errorStr, fmt.Sprintf("query not formatted in dashboard %s panel `%s`, it should be \n %s\n",
+		errorStr = append(errorStr, fmt.Sprintf("query not formatted in dashboard %s panel %#q, it should be \n %s\n",
 			d.shortPath, job.panelTitle, updatedExpr))
 	}
 
