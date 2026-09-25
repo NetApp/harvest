@@ -121,8 +121,8 @@ func (r *Rest) query(p *EndPoint) string {
 	return p.Prop.Query
 }
 
-func (r *Rest) isValidFormat(prop *prop) bool {
-	for _, str := range prop.Fields {
+func (r *Rest) isValidFormat(fields []string) bool {
+	for _, str := range fields {
 		if !validPropRegex.MatchString(str) {
 			return false
 		}
@@ -130,12 +130,59 @@ func (r *Rest) isValidFormat(prop *prop) bool {
 	return true
 }
 
+// requestFields converts template counters into fields ONTAP accepts.
+// ONTAP does not accept array indexes or gjson array expressions in fields, so
+// ha.partners.0.name is requested as ha.partners.name, volumes.#.name as volumes.name,
+// and {interfaces.#.name,interfaces.#.ip.address} as interfaces.name and interfaces.ip.address.
+// The original counter is still used when parsing the response.
+func requestFields(counters []string) []string {
+	fields := make([]string, 0, len(counters))
+	seen := make(map[string]bool, len(counters))
+	for _, counter := range counters {
+		paths := []string{counter}
+		if inner, ok := strings.CutPrefix(counter, "{"); ok {
+			if inner, ok = strings.CutSuffix(inner, "}"); ok {
+				paths = strings.Split(inner, ",")
+			}
+		}
+		for _, path := range paths {
+			field := arrayParentPath(path)
+			if !seen[field] {
+				seen[field] = true
+				fields = append(fields, field)
+			}
+		}
+	}
+	return fields
+}
+
+// arrayParentPath removes array index (0) and array (#) segments from a path.
+// A path made only of those segments is returned unchanged.
+func arrayParentPath(path string) string {
+	segments := strings.Split(path, ".")
+	kept := segments[:0]
+	for _, s := range segments {
+		if s == "" || (s != "#" && strings.Trim(s, "0123456789") != "") {
+			kept = append(kept, s)
+		}
+	}
+	if len(kept) == 0 {
+		return path
+	}
+	return strings.Join(kept, ".")
+}
+
 func (r *Rest) Fields(prop *prop) []string {
 	fields := prop.Fields
 	if prop.IsPublic {
 		// applicable for public API only
-		if !r.isIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
-			fields = []string{"*"}
+		if !r.isIgnoreUnknownFieldsEnabled {
+			return []string{"*"}
+		}
+		fields = requestFields(fields)
+		// Fields that are other gjson expressions, e.g. friends.#(last=="Murphy").first, can not be sent to ONTAP
+		if !r.isValidFormat(fields) {
+			return []string{"*"}
 		}
 	}
 	return fields
