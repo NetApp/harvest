@@ -121,8 +121,8 @@ func (r *Rest) query(p *EndPoint) string {
 	return p.Prop.Query
 }
 
-func (r *Rest) isValidFormat(prop *prop) bool {
-	for _, str := range prop.Fields {
+func (r *Rest) isValidFormat(fields []string) bool {
+	for _, str := range fields {
 		if !validPropRegex.MatchString(str) {
 			return false
 		}
@@ -130,12 +130,43 @@ func (r *Rest) isValidFormat(prop *prop) bool {
 	return true
 }
 
+// requestFields converts template counters into fields ONTAP accepts.
+// ONTAP does not accept array indexes in fields, so ha.partners.0.name is requested as ha.partners.name.
+// The index is still used when parsing the response.
+func requestFields(counters []string) []string {
+	fields := make([]string, 0, len(counters))
+	seen := make(map[string]bool, len(counters))
+	for _, counter := range counters {
+		segments := strings.Split(counter, ".")
+		kept := segments[:0]
+		for _, s := range segments {
+			if s == "" || strings.Trim(s, "0123456789") != "" {
+				kept = append(kept, s)
+			}
+		}
+		field := counter
+		if len(kept) > 0 {
+			field = strings.Join(kept, ".")
+		}
+		if !seen[field] {
+			seen[field] = true
+			fields = append(fields, field)
+		}
+	}
+	return fields
+}
+
 func (r *Rest) Fields(prop *prop) []string {
 	fields := prop.Fields
 	if prop.IsPublic {
 		// applicable for public API only
-		if !r.isIgnoreUnknownFieldsEnabled || !r.isValidFormat(prop) {
-			fields = []string{"*"}
+		if !r.isIgnoreUnknownFieldsEnabled {
+			return []string{"*"}
+		}
+		fields = requestFields(fields)
+		// Fields that are gjson expressions, e.g. interfaces.#.name, can not be sent to ONTAP
+		if !r.isValidFormat(fields) {
+			return []string{"*"}
 		}
 	}
 	return fields
