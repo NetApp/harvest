@@ -246,7 +246,7 @@ func TestFields(t *testing.T) {
 			},
 		},
 		{
-			name: "Test with invalid fields",
+			name: "Test with array fields",
 			r: &Rest{
 				isIgnoreUnknownFieldsEnabled: true,
 			},
@@ -254,6 +254,25 @@ func TestFields(t *testing.T) {
 				Fields: []string{
 					"uuid",
 					"cloud_storage.stores.#.cloud_store.name",
+					"block_storage.primary.raid_type",
+				},
+				IsPublic: true,
+			},
+			expectedResult: []string{
+				"uuid",
+				"cloud_storage.stores.cloud_store.name",
+				"block_storage.primary.raid_type",
+			},
+		},
+		{
+			name: "Test with invalid fields",
+			r: &Rest{
+				isIgnoreUnknownFieldsEnabled: true,
+			},
+			p: &prop{
+				Fields: []string{
+					"uuid",
+					"friends.#(last==\"Murphy\")#.first",
 					"block_storage.primary.raid_type",
 				},
 				IsPublic: true,
@@ -319,6 +338,18 @@ func TestRequestFields(t *testing.T) {
 		{name: "duplicates removed", fields: []string{"users.0.name", "users.1.name"}, want: []string{"users.name"}},
 		{name: "digits inside a name are kept", fields: []string{"counter_v2.value"}, want: []string{"counter_v2.value"}},
 		{name: "only an index is left alone", fields: []string{"0"}, want: []string{"0"}},
+		{name: "array", fields: []string{"volumes.#.name"}, want: []string{"volumes.name"}},
+		{name: "array count", fields: []string{"block_storage.plexes.#"}, want: []string{"block_storage.plexes"}},
+		{name: "array in array", fields: []string{"origins.#.svm.name"}, want: []string{"origins.svm.name"}},
+		{
+			name:   "multipath",
+			fields: []string{"{interfaces.#.name,interfaces.#.ip.address}"},
+			want:   []string{"interfaces.name", "interfaces.ip.address"},
+		},
+		{name: "only an array is left alone", fields: []string{"#"}, want: []string{"#"}},
+		{name: "query is left alone", fields: []string{"friends.#(last==\"Murphy\")#.first"}, want: []string{"friends.#(last==\"Murphy\")#.first"}},
+		{name: "modifier is left alone", fields: []string{"children|@case:upper"}, want: []string{"children|@case:upper"}},
+		{name: "unclosed multipath stays invalid", fields: []string{"{interfaces.#.name"}, want: []string{"{interfaces.name"}},
 	}
 
 	for _, tt := range tests {
@@ -328,9 +359,9 @@ func TestRequestFields(t *testing.T) {
 	}
 }
 
-// Templates with array index counters, e.g. ha.partners.0.name, used to request fields=*.
+// Templates with array counters, e.g. ha.partners.0.name or volumes.#.name, used to request fields=*.
 // On large AFX clusters fields=* on api/cluster/nodes includes controller.bezel, which is slow enough to time out.
-func TestTemplatesWithIndexesDoNotRequestAllFields(t *testing.T) {
+func TestTemplatesWithArraysDoNotRequestAllFields(t *testing.T) {
 	tests := []struct {
 		object string
 		path   string
@@ -338,6 +369,13 @@ func TestTemplatesWithIndexesDoNotRequestAllFields(t *testing.T) {
 	}{
 		{object: "Node", path: "node.yaml", want: []string{"ha.partners.name"}},
 		{object: "Quota", path: "quota.yaml", want: []string{"users.id", "users.name"}},
+		{object: "CIFSSession", path: "cifs_session.yaml", want: []string{"volumes.name"}},
+		{object: "EmsDestination", path: "ems_destination.yaml", want: []string{"filters.name"}},
+		{
+			object: "FlexCache",
+			path:   "flexcache.yaml",
+			want:   []string{"aggregates.name", "origins.cluster.name", "origins.svm.name", "origins.volume.name"},
+		},
 	}
 
 	for _, tt := range tests {
@@ -351,6 +389,7 @@ func TestTemplatesWithIndexesDoNotRequestAllFields(t *testing.T) {
 			}
 			for _, f := range fields {
 				assert.False(t, strings.Contains(f, ".0."))
+				assert.False(t, strings.Contains(f, "#"))
 			}
 		})
 	}
