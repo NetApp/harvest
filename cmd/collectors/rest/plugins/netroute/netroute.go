@@ -13,7 +13,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
-	"strconv"
 )
 
 type NetRoute struct {
@@ -52,7 +51,6 @@ func (n *NetRoute) Init(conf.Remote) error {
 		for _, label := range instanceLabels {
 			iLabels.NewChildS("", label)
 		}
-		iKeys.NewChildS("", "index")
 		iKeys.NewChildS("", "route_uuid")
 	}
 	n.data.SetExportOptions(exportOptions)
@@ -68,9 +66,7 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 
 	n.data.SetGlobalLabelsIfAbsent(data.GetGlobalLabels())
 
-	count := 0
 	for key, instance := range data.GetInstances() {
-		cluster := data.GetGlobalLabels()["cluster"]
 		routeID := instance.GetLabel("uuid")
 		interfaces := instance.GetLabel("interfaces")
 
@@ -80,21 +76,26 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 
 		if len(names) == len(address) {
 			for i, name := range names {
-				index := cluster + "_" + strconv.Itoa(count)
-				interfaceInstance, err := n.data.NewInstance(index)
+				// The key must be stable across polls, so it is derived from the route and interface,
+				// not from the iteration order of the instances map.
+				instanceKey := routeID + "_" + name.String()
+				interfaceInstance, err := n.data.NewInstance(instanceKey)
 				if err != nil {
-					n.SLogger.Error("add instance failed", slogx.Err(err), slog.String("key", key))
-					return nil, nil, err
+					n.SLogger.Warn(
+						"add instance failed",
+						slogx.Err(err),
+						slog.String("key", key),
+						slog.String("instanceKey", instanceKey),
+					)
+					continue
 				}
 
 				for _, l := range instanceLabels {
 					interfaceInstance.SetLabel(l, instance.GetLabel(l))
 				}
-				interfaceInstance.SetLabel("index", index)
 				interfaceInstance.SetLabel("address", address[i].ClonedString())
 				interfaceInstance.SetLabel("name", name.ClonedString())
 				interfaceInstance.SetLabel("route_uuid", routeID)
-				count++
 			}
 		}
 	}
