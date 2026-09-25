@@ -382,6 +382,10 @@ func (h *Health) collectNetworkFCPortAlerts() int {
 	var (
 		instance *matrix.Instance
 	)
+	// AFX does not serve block storage, so it has no FC ports.
+	if h.Remote.IsAFX() {
+		return 0
+	}
 	networkFcpPortAlertCount := 0
 	records, err := h.getFCPorts()
 	if err != nil {

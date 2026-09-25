@@ -6,6 +6,7 @@ import (
 
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 )
 
@@ -53,4 +54,17 @@ func TestEndPoll(t *testing.T) {
 		actualLabel := resInstance.GetLabel("label" + instanceKey)
 		assert.Equal(t, actualLabel, expectedLabel)
 	}
+}
+
+func TestAFXSkipsUnsupportedAlerts(t *testing.T) {
+	h := &Health{AbstractPlugin: plugin.New("health", nil, nil, nil, "health", nil)}
+	h.SLogger = slog.Default()
+	h.data = make(map[string]*matrix.Matrix)
+	_ = h.InitAllMatrix()
+	h.SetRemote(conf.Remote{IsDisaggregated: true})
+
+	// The client is nil, so any REST call would panic. AFX must return before querying.
+	assert.Equal(t, h.collectNetworkFCPortAlerts(), 0)
+	assert.Equal(t, h.collectVolumeMoveAlerts(), 0)
+	assert.Equal(t, len(h.data[networkFCPortHealthMatrix].GetInstances()), 0)
 }
