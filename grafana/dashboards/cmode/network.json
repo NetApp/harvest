@@ -626,7 +626,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "Displays a collection of ports (physical, VLAN and LAG) for an entire cluster.",
+          "description": "Inventory of ethernet ports (physical, VLAN, and LAG).\n\nStatus:\n- up (green): link is up\n- down (red): administratively enabled, but the link is down\n- degraded (red): ONTAP reports the port as degraded\n- admin down (grey): administratively disabled. Not an unexpected link failure.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -798,12 +798,17 @@
                             "index": 2,
                             "text": "degraded"
                           },
+                          "disabled": {
+                            "color": "rgb(128, 128, 128)",
+                            "index": 3,
+                            "text": "admin down"
+                          },
                           "down": {
                             "color": "red",
                             "index": 1,
                             "text": "down"
                           },
-                          "up ": {
+                          "up": {
                             "color": "green",
                             "index": 0,
                             "text": "up"
@@ -910,7 +915,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "net_port_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
+              "expr": "label_replace(\n  net_port_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"},\n  \"status\",\n  \"disabled\",\n  \"admin_up\",\n  \"false\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -925,7 +930,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "net_port_mtu{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
+              "expr": "label_replace(\n  net_port_mtu{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"},\n  \"status\",\n  \"disabled\",\n  \"admin_up\",\n  \"false\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1016,7 +1021,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "This table tracks hardware network traffic performance and errors for all supported network interface cards (NIC), such as Intel Niantic, Qlogic, and CNA.",
+          "description": "Physical NIC performance (not VLAN or LAG). VLAN/LAG traffic is already included in the underlying NIC counters.\n\nStatus:\n- up (green): NIC link is up\n- down (red): NIC link is down, but the physical ethernet port is still administratively enabled\n- admin down (grey): physical ethernet port is administratively disabled.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1258,6 +1263,10 @@
                         "options": {
                           "1": {
                             "text": "up"
+                          },
+                          "2": {
+                            "color": "rgb(128, 128, 128)",
+                            "text": "admin down"
                           }
                         },
                         "type": "value"
@@ -1456,7 +1465,7 @@
                 "type": "prometheus",
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "(\n      nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n    unless on (cluster, datacenter, node, nic)\n      label_replace(\n        net_port_status{admin_up=\"false\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"},\n        \"nic\",\n        \"$1\",\n        \"port\",\n        \"(.+)\"\n      )\n  )\nor\n  (\n      0 * nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"} + 2\n    and on (cluster, datacenter, node, nic)\n      label_replace(\n        net_port_status{admin_up=\"false\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"},\n        \"nic\",\n        \"$1\",\n        \"port\",\n        \"(.+)\"\n      )\n  )",
               "format": "table",
               "hide": false,
               "instant": true,
