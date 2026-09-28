@@ -1280,6 +1280,15 @@
                           "to": 0.999
                         },
                         "type": "range"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "color": "transparent"
+                          }
+                        },
+                        "type": "special"
                       }
                     ]
                   },

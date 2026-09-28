@@ -1189,7 +1189,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Ethernet port details.",
+          "description": "Ethernet port details.\n\nStatus:\n- up (green): NIC link is up\n- down (red): NIC link is down, but the physical ethernet port is still administratively enabled\n- admin down (grey): physical ethernet port is administratively disabled.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1304,6 +1304,11 @@
                           "1": {
                             "index": 0,
                             "text": "up"
+                          },
+                          "2": {
+                            "color": "rgb(128, 128, 128)",
+                            "index": 2,
+                            "text": "admin down"
                           }
                         },
                         "type": "value"
@@ -1318,6 +1323,16 @@
                           "to": 0.999
                         },
                         "type": "range"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "color": "transparent",
+                            "index": 3
+                          }
+                        },
+                        "type": "special"
                       }
                     ]
                   },
@@ -1339,7 +1354,7 @@
                   },
                   {
                     "id": "custom.displayMode",
-                    "value": "color-text"
+                    "value": "color-background"
                   }
                 ]
               },
@@ -1538,7 +1553,7 @@
             },
             {
               "exemplar": false,
-              "expr": "nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "(\n      nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n    unless on (cluster, datacenter, node, nic)\n      label_replace(\n        net_port_status{admin_up=\"false\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"},\n        \"nic\",\n        \"$1\",\n        \"port\",\n        \"(.+)\"\n      )\n  )\nor\n  (\n      0 * nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"} + 2\n    and on (cluster, datacenter, node, nic)\n      label_replace(\n        net_port_status{admin_up=\"false\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"},\n        \"nic\",\n        \"$1\",\n        \"port\",\n        \"(.+)\"\n      )\n  )",
               "format": "table",
               "hide": false,
               "instant": true,
