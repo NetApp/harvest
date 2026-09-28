@@ -25,6 +25,11 @@ var skipDuplicates = map[string]bool{
 	"aggr_physical_used_wo_snapshots_flexclones": true,
 	"aggr_total_logical_used":                    true,
 	"aggr_total_physical_used":                   true,
+	// EMS records stay distinct internally by their ONTAP index, but index is
+	// intentionally not exported as a label, so two different records (e.g. two
+	// occurrences of the same bookend event on the same node) can render with
+	// identical Prometheus labels. That's expected, not a collector bug.
+	"ems_events": true,
 }
 
 func TestPollerMetrics(t *testing.T) {
