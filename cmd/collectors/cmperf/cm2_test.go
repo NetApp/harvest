@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"github.com/netapp/harvest/v2/assert"
@@ -559,6 +560,283 @@ func TestPopulateMatrix_RecoversExportableAfterIncompleteCollection(t *testing.T
 
 	assert.True(t, carried.IsExportable())
 	assert.False(t, carried.IsPartial())
+}
+
+// TestOverrideStringBecomesLabel covers `override: <counter>: string`. It uses lport_hbo from
+// netstat.pb, a uint32 counter that netstat.yaml overrides to string in caret form
+// (`^lport_hbo => lport`) - the "caret label form" subtest below matches that real config.
+func TestOverrideStringBecomesLabel(t *testing.T) {
+	const counterName = "lport_hbo"
+
+	var (
+		schema *cmmetrics.ObjectSchema
+		batch  *cmmetrics.ObjectCollection
+	)
+	for rec, err := range cmmetrics.Messages("cmmetrics/testdata/netstat.pb") {
+		assert.Nil(t, err)
+		if rec.Schema != nil {
+			schema = rec.Schema
+		}
+		if rec.Batch != nil && len(rec.Batch.Data.Instances) > 0 && batch == nil {
+			batch = rec.Batch
+		}
+	}
+	if schema == nil || batch == nil {
+		t.Fatal("expected schema and a non-empty batch in netstat.pb")
+	}
+
+	var counterSchema cmmetrics.CounterSchema
+	found := false
+	for _, cs := range schema.CounterSchema {
+		if cs.Name == counterName {
+			counterSchema = cs
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("%s not found in netstat.pb schema", counterName)
+	}
+
+	inst0 := batch.Data.Instances[0]
+	var ct *cmmetrics.CounterType
+	for i := range inst0.Counters {
+		if inst0.Counters[i].Index == counterSchema.Index {
+			ct = &inst0.Counters[i]
+			break
+		}
+	}
+	if ct == nil {
+		t.Fatalf("%s not found in instance 0's counters", counterName)
+	}
+	wantVal, ok := ct.Uint32Value()
+	if !ok {
+		t.Fatalf("expected %s to be a uint32 in instance 0", counterName)
+	}
+	wantLabel := strconv.FormatUint(uint64(wantVal), 10)
+
+	tests := []struct {
+		name     string
+		override bool
+		setup    func(c *CmPerf)
+		check    func(t *testing.T, c *CmPerf, curMat *matrix.Matrix, inst *matrix.Instance)
+	}{
+		{
+			name:     "caret label form",
+			override: true,
+			setup: func(c *CmPerf) {
+				c.Prop.InstanceLabels[counterName] = "lbl"
+			},
+			check: func(t *testing.T, _ *CmPerf, curMat *matrix.Matrix, inst *matrix.Instance) {
+				assert.Equal(t, inst.GetLabel("lbl"), wantLabel)
+				if curMat.GetMetric(counterName) != nil {
+					t.Fatalf("did not expect a numeric %s metric", counterName)
+				}
+			},
+		},
+		{
+			name:     "plain counter form",
+			override: true,
+			setup: func(c *CmPerf) {
+				c.Prop.Metrics[counterName] = &rest2.Metric{Name: counterName, Label: "lbl", Exportable: true}
+			},
+			check: func(t *testing.T, c *CmPerf, curMat *matrix.Matrix, inst *matrix.Instance) {
+				assert.Equal(t, inst.GetLabel("lbl"), wantLabel)
+				// Unlike the caret form, InstanceLabels here is derived by buildCountersFromSchema
+				// itself (from propMetric.Label), not preset by the test - this is what pins that path.
+				assert.Equal(t, c.Prop.InstanceLabels[counterName], "lbl")
+				assert.False(t, c.Prop.Metrics[counterName].Exportable)
+				if curMat.GetMetric(counterName) != nil {
+					t.Fatalf("did not expect a numeric %s metric", counterName)
+				}
+			},
+		},
+		{
+			name:     "no override",
+			override: false,
+			setup: func(c *CmPerf) {
+				c.Prop.Metrics[counterName] = &rest2.Metric{Name: counterName, Label: counterName, Exportable: true}
+			},
+			check: func(t *testing.T, _ *CmPerf, curMat *matrix.Matrix, inst *matrix.Instance) {
+				// This case only exercises the numeric path if counterName's own schema type
+				// isn't string; make that assumption explicit rather than letting the wrong
+				// assertion fail below.
+				if counterSchema.Type == cmmetrics.CookString {
+					t.Fatalf("expected %s to have a non-string schema type in netstat.pb, got %v", counterName, counterSchema.Type)
+				}
+				m := curMat.GetMetric(counterName)
+				if m == nil {
+					t.Fatalf("expected a numeric %s metric", counterName)
+				}
+				if _, ok := m.GetValueFloat64(inst); !ok {
+					t.Fatalf("expected %s to have a value", counterName)
+				}
+				if got := inst.GetLabel(counterName); got != "" {
+					t.Fatalf("did not expect a label for %s, got %q", counterName, got)
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := newTestCmPerf(t)
+			if tt.override {
+				c.Params.NewChildS("override", "").NewChildS(counterName, "string")
+			}
+			tt.setup(c)
+
+			curMat := matrix.New("test", "test", "test")
+			prevMat := matrix.New("test", "test", "test")
+			collectors.EnsureTimestampMetric(curMat, c.Logger)
+			c.buildCountersFromSchema(*schema, curMat, prevMat)
+
+			if tt.override {
+				co := c.perfProp.counterInfo[counterName]
+				if co == nil || co.counterType != "string" {
+					t.Fatalf("expected counterInfo[%s].counterType == \"string\", got %+v", counterName, co)
+				}
+			}
+
+			batchCopy := *batch
+			batchCopy.Data.Instances = []cmmetrics.ObjectInstance{inst0}
+			c.populateMatrix(&batchCopy, curMat, prevMat)
+
+			instances := curMat.GetInstances()
+			if len(instances) != 1 {
+				t.Fatalf("expected 1 instance, got %d", len(instances))
+			}
+			var inst *matrix.Instance
+			for _, matInst := range instances {
+				inst = matInst
+			}
+
+			tt.check(t, c, curMat, inst)
+		})
+	}
+}
+
+// TestNativeStringCounterBecomesLabel covers a counter ONTAP types as CookString natively, with
+// no template override. It uses laddr from netstat.pb.
+//
+// "caret form" matches the real template (^laddr): the label is already registered.
+// "plain form" is the non-caret case: buildCountersFromSchema has to register the label itself.
+func TestNativeStringCounterBecomesLabel(t *testing.T) {
+	const counterName = "laddr"
+
+	var (
+		schema *cmmetrics.ObjectSchema
+		batch  *cmmetrics.ObjectCollection
+	)
+	for rec, err := range cmmetrics.Messages("cmmetrics/testdata/netstat.pb") {
+		assert.Nil(t, err)
+		if rec.Schema != nil {
+			schema = rec.Schema
+		}
+		if rec.Batch != nil && len(rec.Batch.Data.Instances) > 0 && batch == nil {
+			batch = rec.Batch
+		}
+	}
+	if schema == nil || batch == nil {
+		t.Fatal("expected schema and a non-empty batch in netstat.pb")
+	}
+
+	var counterSchema cmmetrics.CounterSchema
+	found := false
+	for _, cs := range schema.CounterSchema {
+		if cs.Name == counterName {
+			counterSchema = cs
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("%s not found in netstat.pb schema", counterName)
+	}
+	// Neither subtest sets an override, so this has to come from the schema type alone.
+	if counterSchema.Type != cmmetrics.CookString {
+		t.Fatalf("expected %s to be CookString in netstat.pb, got %v", counterName, counterSchema.Type)
+	}
+
+	inst0 := batch.Data.Instances[0]
+	var ct *cmmetrics.CounterType
+	for i := range inst0.Counters {
+		if inst0.Counters[i].Index == counterSchema.Index {
+			ct = &inst0.Counters[i]
+			break
+		}
+	}
+	if ct == nil {
+		t.Fatalf("%s not found in instance 0's counters", counterName)
+	}
+	wantLabel, ok := ct.StringValue()
+	if !ok {
+		t.Fatalf("expected %s to carry a string value in instance 0", counterName)
+	}
+
+	tests := []struct {
+		name  string
+		setup func(c *CmPerf)
+		check func(t *testing.T, c *CmPerf)
+	}{
+		{
+			name: "caret form",
+			setup: func(c *CmPerf) {
+				c.Prop.InstanceLabels[counterName] = "lbl"
+			},
+			check: func(t *testing.T, c *CmPerf) {
+				assert.Equal(t, c.Prop.InstanceLabels[counterName], "lbl")
+				if _, ok := c.Prop.Metrics[counterName]; ok {
+					t.Fatalf("did not expect %s in Prop.Metrics for the caret form", counterName)
+				}
+			},
+		},
+		{
+			name: "plain form",
+			setup: func(c *CmPerf) {
+				c.Prop.Metrics[counterName] = &rest2.Metric{Name: counterName, Label: "lbl", Exportable: true}
+			},
+			check: func(t *testing.T, c *CmPerf) {
+				assert.Equal(t, c.Prop.InstanceLabels[counterName], "lbl")
+				assert.False(t, c.Prop.Metrics[counterName].Exportable)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := newTestCmPerf(t)
+			tt.setup(c)
+
+			curMat := matrix.New("test", "test", "test")
+			prevMat := matrix.New("test", "test", "test")
+			collectors.EnsureTimestampMetric(curMat, c.Logger)
+			c.buildCountersFromSchema(*schema, curMat, prevMat)
+
+			co := c.perfProp.counterInfo[counterName]
+			if co == nil || co.counterType != "string" {
+				t.Fatalf("expected counterInfo[%s].counterType == \"string\", got %+v", counterName, co)
+			}
+			tt.check(t, c)
+
+			batchCopy := *batch
+			batchCopy.Data.Instances = []cmmetrics.ObjectInstance{inst0}
+			c.populateMatrix(&batchCopy, curMat, prevMat)
+
+			instances := curMat.GetInstances()
+			if len(instances) != 1 {
+				t.Fatalf("expected 1 instance, got %d", len(instances))
+			}
+			var inst *matrix.Instance
+			for _, matInst := range instances {
+				inst = matInst
+			}
+			assert.Equal(t, inst.GetLabel("lbl"), wantLabel)
+			if curMat.GetMetric(counterName) != nil {
+				t.Fatalf("did not expect a numeric %s metric", counterName)
+			}
+		})
+	}
 }
 
 func TestRetainCmperfFiles(t *testing.T) {

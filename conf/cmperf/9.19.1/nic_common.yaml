@@ -20,8 +20,6 @@ counters:
   - tx_errors
   - tx_hw_errors
   - tx_total_errors
-override:
-  - link_speed: string
 
 plugins:
   - Nic
