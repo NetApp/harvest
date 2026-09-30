@@ -124,6 +124,13 @@ func hasHistogramSuffix(name string) bool {
 		strings.HasSuffix(lower, "_histogram")
 }
 
+// isStringCounter reports whether counter name resolves to type "string", either from a
+// template override or from a CookString schema type.
+func (c *CmPerf) isStringCounter(name string) bool {
+	co := c.perfProp.counterInfo[name]
+	return co != nil && co.counterType == "string"
+}
+
 // buildCountersFromSchema populates counterInfo from the embedded schema and registers denominator metrics.
 func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, prevMat *matrix.Matrix) {
 	schemaMap := make(map[uint32]cmmetrics.CounterSchema, len(schema.CounterSchema))
@@ -152,6 +159,12 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, 
 					}
 				} else {
 					denominator = target.Name
+					if inTemplate && collectors.CounterOverride(c.Params, target.Name) == "string" {
+						c.Logger.Warn("base counter is overridden to string, counter will not be cooked",
+							slog.String("counter", name),
+							slog.String("base", target.Name),
+						)
+					}
 				}
 			} else if inTemplate {
 				c.Logger.Warn("base_counter_index does not resolve to a usable numeric counter",
@@ -165,6 +178,31 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, 
 		ov := collectors.CounterOverride(c.Params, name)
 		if ov != "" {
 			ctrType = ov
+		}
+		// ctrType is "string" both when the template overrides the counter and when ONTAP
+		// natively types it CookString. Both become an instance label rather than a numeric
+		// metric
+		if ctrType == "string" {
+			_, isLabel := c.Prop.InstanceLabels[name]
+			// A label holds one value, so an array-shaped string counter has no representation
+			// and every value is silently dropped in populateMatrix.
+			if len(cs.LabelsX) > 0 && (inTemplate || isLabel) {
+				c.Logger.Warn("counter is array-shaped but typed as string, values will be dropped",
+					slog.String("counter", name),
+					slog.Int("labels", len(cs.LabelsX)),
+				)
+			}
+			// Only the plain-counter form needs handling here. ParseRestCounters puts ^ and ^^
+			// counters in Prop.InstanceLabels and never in Prop.Metrics, so inTemplate is false
+			// for them and their label is already registered.
+			if inTemplate {
+				if !isLabel {
+					c.Prop.InstanceLabels[name] = propMetric.Label
+				}
+				propMetric.Exportable = false
+			}
+			c.perfProp.counterInfo[name] = &counter{counterType: ctrType}
+			continue
 		}
 		if baseIsArrayShaped {
 			// Per-label division isn't possible regardless of what the template overrides to.
@@ -560,6 +598,12 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 			}
 			if sv, strOK := ct.StringValue(); strOK {
 				stringVals[cs.Name] = sv
+			} else if c.isStringCounter(cs.Name) {
+				if v, ok := ct.Uint64Value(); ok {
+					stringVals[cs.Name] = strconv.FormatUint(v, 10)
+				} else if v32, ok := ct.Uint32Value(); ok {
+					stringVals[cs.Name] = strconv.FormatUint(uint64(v32), 10)
+				}
 			}
 		}
 
@@ -621,7 +665,7 @@ func (c *CmPerf) populateMatrix(oc *cmmetrics.ObjectCollection, curMat *matrix.M
 
 		for _, ct := range inst.Counters {
 			cs, ok := schemaMap[ct.Index]
-			if !ok || ct.IsString() {
+			if !ok || ct.IsString() || c.isStringCounter(cs.Name) {
 				continue
 			}
 			counterName := cs.Name
