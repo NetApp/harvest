@@ -3,7 +3,7 @@ query:                    resource_headroom_aggr
 object:                   headroom_aggr
 
 counters:
-  - ^^instance_name           => aggr
+  - ^^instance_name
   - ^^node_name               => node
   - current_latency
   - current_ops
