@@ -159,6 +159,12 @@ func (c *CmPerf) buildCountersFromSchema(schema cmmetrics.ObjectSchema, curMat, 
 					}
 				} else {
 					denominator = target.Name
+					if inTemplate && collectors.CounterOverride(c.Params, target.Name) == "string" {
+						c.Logger.Warn("base counter is overridden to string, counter will not be cooked",
+							slog.String("counter", name),
+							slog.String("base", target.Name),
+						)
+					}
 				}
 			} else if inTemplate {
 				c.Logger.Warn("base_counter_index does not resolve to a usable numeric counter",

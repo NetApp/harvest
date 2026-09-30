@@ -562,11 +562,10 @@ func TestPopulateMatrix_RecoversExportableAfterIncompleteCollection(t *testing.T
 	assert.False(t, carried.IsPartial())
 }
 
-// TestOverrideStringBecomesLabel covers `override: <counter>: string`. It uses lport_hbo from
-// netstat.pb, a uint32 counter that netstat.yaml overrides to string in caret form
-// (`^lport_hbo => lport`) - the "caret label form" subtest below matches that real config.
-func TestOverrideStringBecomesLabel(t *testing.T) {
-	const counterName = "lport_hbo"
+// loadNetstatCounter returns the netstat.pb schema, its first non-empty batch, and the schema
+// and instance-0 value of the named counter.
+func loadNetstatCounter(t *testing.T, name string) (*cmmetrics.ObjectSchema, *cmmetrics.ObjectCollection, cmmetrics.CounterSchema, *cmmetrics.CounterType) {
+	t.Helper()
 
 	var (
 		schema *cmmetrics.ObjectSchema
@@ -588,27 +587,34 @@ func TestOverrideStringBecomesLabel(t *testing.T) {
 	var counterSchema cmmetrics.CounterSchema
 	found := false
 	for _, cs := range schema.CounterSchema {
-		if cs.Name == counterName {
+		if cs.Name == name {
 			counterSchema = cs
 			found = true
 			break
 		}
 	}
 	if !found {
-		t.Fatalf("%s not found in netstat.pb schema", counterName)
+		t.Fatalf("%s not found in netstat.pb schema", name)
 	}
 
 	inst0 := batch.Data.Instances[0]
-	var ct *cmmetrics.CounterType
 	for i := range inst0.Counters {
 		if inst0.Counters[i].Index == counterSchema.Index {
-			ct = &inst0.Counters[i]
-			break
+			return schema, batch, counterSchema, &inst0.Counters[i]
 		}
 	}
-	if ct == nil {
-		t.Fatalf("%s not found in instance 0's counters", counterName)
-	}
+	t.Fatalf("%s not found in instance 0's counters", name)
+	return nil, nil, counterSchema, nil
+}
+
+// TestOverrideStringBecomesLabel covers `override: <counter>: string`. It uses lport_hbo from
+// netstat.pb, a uint32 counter that netstat.yaml overrides to string in caret form
+// (`^lport_hbo => lport`) - the "caret label form" subtest below matches that real config.
+func TestOverrideStringBecomesLabel(t *testing.T) {
+	const counterName = "lport_hbo"
+
+	schema, batch, counterSchema, ct := loadNetstatCounter(t, counterName)
+	inst0 := batch.Data.Instances[0]
 	wantVal, ok := ct.Uint32Value()
 	if !ok {
 		t.Fatalf("expected %s to be a uint32 in instance 0", counterName)
@@ -724,51 +730,13 @@ func TestOverrideStringBecomesLabel(t *testing.T) {
 func TestNativeStringCounterBecomesLabel(t *testing.T) {
 	const counterName = "laddr"
 
-	var (
-		schema *cmmetrics.ObjectSchema
-		batch  *cmmetrics.ObjectCollection
-	)
-	for rec, err := range cmmetrics.Messages("cmmetrics/testdata/netstat.pb") {
-		assert.Nil(t, err)
-		if rec.Schema != nil {
-			schema = rec.Schema
-		}
-		if rec.Batch != nil && len(rec.Batch.Data.Instances) > 0 && batch == nil {
-			batch = rec.Batch
-		}
-	}
-	if schema == nil || batch == nil {
-		t.Fatal("expected schema and a non-empty batch in netstat.pb")
-	}
-
-	var counterSchema cmmetrics.CounterSchema
-	found := false
-	for _, cs := range schema.CounterSchema {
-		if cs.Name == counterName {
-			counterSchema = cs
-			found = true
-			break
-		}
-	}
-	if !found {
-		t.Fatalf("%s not found in netstat.pb schema", counterName)
-	}
+	schema, batch, counterSchema, ct := loadNetstatCounter(t, counterName)
 	// Neither subtest sets an override, so this has to come from the schema type alone.
 	if counterSchema.Type != cmmetrics.CookString {
 		t.Fatalf("expected %s to be CookString in netstat.pb, got %v", counterName, counterSchema.Type)
 	}
 
 	inst0 := batch.Data.Instances[0]
-	var ct *cmmetrics.CounterType
-	for i := range inst0.Counters {
-		if inst0.Counters[i].Index == counterSchema.Index {
-			ct = &inst0.Counters[i]
-			break
-		}
-	}
-	if ct == nil {
-		t.Fatalf("%s not found in instance 0's counters", counterName)
-	}
 	wantLabel, ok := ct.StringValue()
 	if !ok {
 		t.Fatalf("expected %s to carry a string value in instance 0", counterName)
