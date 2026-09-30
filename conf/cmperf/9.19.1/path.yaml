@@ -5,7 +5,7 @@ object:                   path
 
 counters:
   - ^^instance_uuid
-  - ^instance_name
+  - ^instance_name         => path
   - ^node_name             => node
   - read_data
   - read_iops

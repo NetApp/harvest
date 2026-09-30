@@ -53,11 +53,10 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		instance.SetLabel("port", strings.TrimPrefix(instance.GetLabel("port"), "port."))
 
 		var speed int
-		var s string
 		var err error
 
 		if speed, err = strconv.Atoi(instance.GetLabel("speed")); err != nil {
-			f.SLogger.Debug("skip, can't convert speed to numeric", slog.String("speed", s))
+			f.SLogger.Debug("skip, can't convert speed to numeric", slog.String("speed", instance.GetLabel("speed")))
 		}
 
 		if speed != 0 {
@@ -65,12 +64,12 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 			var rxBytes, txBytes, rxPercent, txPercent float64
 			var rxOk, txOk bool
 
-			if rxBytes, rxOk = write.GetValueFloat64(instance); rxOk {
+			if rxBytes, rxOk = read.GetValueFloat64(instance); rxOk {
 				rxPercent = rxBytes / float64(speed)
 				rx.SetValueFloat64(instance, rxPercent)
 			}
 
-			if txBytes, txOk = read.GetValueFloat64(instance); txOk {
+			if txBytes, txOk = write.GetValueFloat64(instance); txOk {
 				txPercent = txBytes / float64(speed)
 				tx.SetValueFloat64(instance, txPercent)
 			}

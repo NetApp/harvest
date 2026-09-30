@@ -40,7 +40,15 @@ func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		}
 	}
 
-	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, "cloud_bin_op", f.includeConstituents, f.SLogger)
+	// GetFlexGroupFabricPoolMetrics looks the ops counter up by matrix key, which is the
+	// counter's ONTAP name. RestPerf's name is cloud_bin_op and only its display is renamed
+	// to cloud_bin_operation; CmPerf's counter is named cloud_bin_operation.
+	opName := "cloud_bin_op"
+	if f.IsCmPerfCollector() {
+		opName = "cloud_bin_operation"
+	}
+
+	cache, err := collectors.GetFlexGroupFabricPoolMetrics(dataMap, f.Object, opName, f.includeConstituents, f.SLogger)
 	if err != nil {
 		return nil, nil, err
 	}

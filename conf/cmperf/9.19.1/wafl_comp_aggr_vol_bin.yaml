@@ -7,7 +7,7 @@ counters:
   - ^^vol_name                => volume
   - ^^vserver_name            => svm
   - ^comp_aggr_name
-  - ^instance_name
+  - ^instance_name            => fabricpool
   - cloud_bin_op_latency_average
   - cloud_bin_operation
 plugins:

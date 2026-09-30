@@ -6,6 +6,7 @@ counters:
   - ^^instance_name         => partition
   - ^^node_name             => node
   - ^^physical_disk_name    => disk
+  - ^disk_speed             => speed
   - ^physical_disk_uuid     => disk_uuid
   - ^raid_group
   - ^raid_type
@@ -14,7 +15,6 @@ counters:
   - cp_reads
   - disk_busy
   - disk_capacity
-  - disk_speed
   - io_pending
   - io_queued
   - total_data
