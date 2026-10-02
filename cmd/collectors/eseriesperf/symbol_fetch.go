@@ -1,6 +1,7 @@
 package eseriesperf
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -47,6 +48,13 @@ func symbolSsdCacheFetch(ep *EseriesPerf, systemID string, headers map[string]st
 		return nil, errs.New(errs.ErrNoInstance, "flash cache missing flashCacheRef")
 	}
 
+	// The SYMbol request body is the ref as a JSON string; marshal it so quotes or
+	// backslashes in the ref cannot break out of the string.
+	body, err := json.Marshal(cacheRef)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode flashCacheRef: %w", err)
+	}
+
 	// Set global labels so the cache name and ref are available on all instances.
 	ep.Matrix[ep.Object].SetGlobalLabel("ssd_cache", cacheName)
 	ep.Matrix[ep.Object].SetGlobalLabel("ssd_cache_id", cacheRef)
@@ -59,7 +67,7 @@ func symbolSsdCacheFetch(ep *EseriesPerf, systemID string, headers map[string]st
 		postEndpoint := fmt.Sprintf("%s/storage-systems/%s/symbol/getFlashCacheStatistics?controller=%s&verboseErrorResponse=false",
 			ep.Client.APIPath, systemID, ctrl)
 
-		raw, postErr := ep.Client.Post(postEndpoint, []byte(`"`+cacheRef+`"`), headers)
+		raw, postErr := ep.Client.Post(postEndpoint, body, headers)
 		if postErr != nil {
 			ep.Logger.Warn("failed to fetch SYMbol flash cache stats",
 				slog.String("controller", ctrl), slogx.Err(postErr))
