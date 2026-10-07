@@ -1,0 +1,1804 @@
+# Harvest E-Series MEL alerts
+
+groups:
+  - name: Harvest E-Series MEL Alert
+    rules:
+      - alert: Synth Drv PFA
+        expr: last_over_time(eseries_mel_events{event_type="4126"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Synth Drv PFA on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#synth-drv-pfa"
+
+      - alert: PI Drive Locked Out
+        expr: last_over_time(eseries_mel_events{event_type="4128"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "PI Drive Locked Out on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#pi-drive-locked-out"
+
+      - alert: Excessive Reboots Detected
+        expr: last_over_time(eseries_mel_events{event_type="5123"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Excessive Reboots Detected on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#excessive-reboots-detected"
+
+      - alert: Channel Failover
+        expr: last_over_time(eseries_mel_events{event_type="5395"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Channel Failover on channel at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#channel-failover"
+
+      - alert: Controller Wide Port Has Gone To Failed State
+        expr: last_over_time(eseries_mel_events{event_type="5904"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Controller Wide Port Has Gone To Failed State on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#controller-wide-port-has-gone-to-failed-state"
+
+      - alert: Missing Drive Lockdown
+        expr: last_over_time(eseries_mel_events{event_type="6407"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Missing Drive Lockdown on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#missing-drive-lockdown"
+
+      - alert: Cache Battery Failure
+        expr: last_over_time(eseries_mel_events{event_type="8460"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Cache Battery Failure on battery pack at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#cache-battery-failure"
+
+      - alert: OCB Setting Conflict
+        expr: last_over_time(eseries_mel_events{event_type="8475"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "OCB Setting Conflict on battery pack at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#ocb-setting-conflict"
+
+      - alert: Write-back Caching Forcibly Disabled
+        expr: last_over_time(eseries_mel_events{event_type="8491"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Write-back Caching Forcibly Disabled on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#write-back-caching-forcibly-disabled"
+
+      - alert: Dirty Cache Not Flushed On The Only Active Controller
+        expr: last_over_time(eseries_mel_events{event_type="8497"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Dirty Cache Not Flushed On The Only Active Controller on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#dirty-cache-not-flushed-on-the-only-active-controller"
+
+      - alert: Wrong Sector Size
+        expr: last_over_time(eseries_mel_events{event_type="8778"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Wrong Sector Size on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#wrong-sector-size"
+
+      - alert: Drive No Response
+        expr: last_over_time(eseries_mel_events{event_type="8781"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive No Response on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-no-response"
+
+      - alert: LUN Down
+        expr: last_over_time(eseries_mel_events{event_type="8784"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "LUN Down on volume {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#lun-down"
+
+      - alert: Uncertified Drive
+        expr: last_over_time(eseries_mel_events{event_type="8800"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Uncertified Drive on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#uncertified-drive"
+
+      - alert: Configuration Wrong Drive Type
+        expr: last_over_time(eseries_mel_events{event_type="8802"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Configuration Wrong Drive Type on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#configuration-wrong-drive-type"
+
+      - alert: Reconfiguration Failed
+        expr: last_over_time(eseries_mel_events{event_type="8806"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Reconfiguration Failed on volume group or disk pool {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#reconfiguration-failed"
+
+      - alert: Incompatible Drive Due To Invalid Configuration
+        expr: last_over_time(eseries_mel_events{event_type="8807"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Incompatible Drive Due To Invalid Configuration on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#incompatible-drive-due-to-invalid-configuration"
+
+      - alert: Drive Failure
+        expr: last_over_time(eseries_mel_events{event_type="8812"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive Failure on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-failure"
+
+      - alert: Drive In Volume Group Or Hot Spare In Use Removed
+        expr: last_over_time(eseries_mel_events{event_type="8813"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive In Volume Group Or Hot Spare In Use Removed on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-in-volume-group-or-hot-spare-in-use-removed"
+
+      - alert: Physical Drive Has Unsupported Capacity
+        expr: last_over_time(eseries_mel_events{event_type="8817"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Physical Drive Has Unsupported Capacity on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#physical-drive-has-unsupported-capacity"
+
+      - alert: Volume Group Missing
+        expr: last_over_time(eseries_mel_events{event_type="8820"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Volume Group Missing on volume group or disk pool {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#volume-group-missing"
+
+      - alert: Volume Group Incomplete
+        expr: last_over_time(eseries_mel_events{event_type="8821"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Volume Group Incomplete on volume group or disk pool {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#volume-group-incomplete"
+
+      - alert: Incompatible Alignment for Emulation Drive
+        expr: last_over_time(eseries_mel_events{event_type="8824"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Incompatible Alignment for Emulation Drive on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#incompatible-alignment-for-emulation-drive"
+
+      - alert: Copy Then Fail No Spare
+        expr: last_over_time(eseries_mel_events{event_type="8828"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Copy Then Fail No Spare on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#copy-then-fail-no-spare"
+
+      - alert: Drive PFA 2
+        expr: last_over_time(eseries_mel_events{event_type="8837"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive PFA 2 on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-pfa-2"
+
+      - alert: Drive Fast Format Failure
+        expr: last_over_time(eseries_mel_events{event_type="8844"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive Fast Format Failure on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-fast-format-failure"
+
+      - alert: Drive Flash Technology Unsupported
+        expr: last_over_time(eseries_mel_events{event_type="8853"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive Flash Technology Unsupported on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-flash-technology-unsupported"
+
+      - alert: Controller Removed
+        expr: last_over_time(eseries_mel_events{event_type="9472"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Controller Removed on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#controller-removed"
+
+      - alert: Line Missing
+        expr: last_over_time(eseries_mel_events{event_type="10250"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Line Missing on enclosure at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#line-missing"
+
+      - alert: Line Failed
+        expr: last_over_time(eseries_mel_events{event_type="10251"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Line Failed on enclosure at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#line-failed"
+
+      - alert: Enclosure Fail
+        expr: last_over_time(eseries_mel_events{event_type="10253"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Enclosure Fail on enclosure at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#enclosure-fail"
+
+      - alert: Temperature Sensor Warning
+        expr: last_over_time(eseries_mel_events{event_type="10267"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Temperature Sensor Warning on enclosure at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#temperature-sensor-warning"
+
+      - alert: Temperature Sensor Failed
+        expr: last_over_time(eseries_mel_events{event_type="10268"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Temperature Sensor Failed on enclosure at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#temperature-sensor-failed"
+
+      - alert: Temperature Sensor Missing
+        expr: last_over_time(eseries_mel_events{event_type="10269"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Temperature Sensor Missing on enclosure at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#temperature-sensor-missing"
+
+      - alert: Bypass Generic
+        expr: last_over_time(eseries_mel_events{event_type="10275"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Bypass Generic on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#bypass-generic"
+
+      - alert: Cont Redundancy Loss
+        expr: last_over_time(eseries_mel_events{event_type="10281"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Cont Redundancy Loss on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#cont-redundancy-loss"
+
+      - alert: Tray Redundancy Loss
+        expr: last_over_time(eseries_mel_events{event_type="10283"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Tray Redundancy Loss on enclosure at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#tray-redundancy-loss"
+
+      - alert: Drive Redundancy Loss
+        expr: last_over_time(eseries_mel_events{event_type="10285"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive Redundancy Loss on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-redundancy-loss"
+
+      - alert: Power Supply Failure
+        expr: last_over_time(eseries_mel_events{event_type="10299"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Power Supply Failure on power supply at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#power-supply-failure"
+
+      - alert: ESM Drv Bypass
+        expr: last_over_time(eseries_mel_events{event_type="10324"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "ESM Drv Bypass on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#esm-drv-bypass"
+
+      - alert: Drawer Open Or Removed
+        expr: last_over_time(eseries_mel_events{event_type="10327"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drawer Open Or Removed on drawer at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drawer-open-or-removed"
+
+      - alert: Power Supply No Power Input
+        expr: last_over_time(eseries_mel_events{event_type="10345"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Power Supply No Power Input on power supply at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#power-supply-no-power-input"
+
+      - alert: SSD Cache Failed Cache Size Mismatch
+        expr: last_over_time(eseries_mel_events{event_type="13828"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SSD Cache Failed Cache Size Mismatch on SSD cache at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Performance"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#ssd-cache-failed-cache-size-mismatch"
+
+      - alert: SSD Cache Non-Optimal Drives
+        expr: last_over_time(eseries_mel_events{event_type="13829"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SSD Cache Non-Optimal Drives on SSD cache at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Performance"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#ssd-cache-non-optimal-drives"
+
+      - alert: Disk Pool Reconstruction Reserved Drive Count Below Threshold
+        expr: last_over_time(eseries_mel_events{event_type="14339"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Disk Pool Reconstruction Reserved Drive Count Below Threshold on disk pool {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Capacity"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#disk-pool-reconstruction-reserved-drive-count-below-threshold"
+
+      - alert: Disk pool utilization warning
+        expr: last_over_time(eseries_mel_events{event_type="14340"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Disk pool utilization warning on disk pool {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Capacity"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#disk-pool-utilization-warning"
+
+      - alert: Disk Pool Utilization Critical
+        expr: last_over_time(eseries_mel_events{event_type="14341"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Disk Pool Utilization Critical on disk pool {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Capacity"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#disk-pool-utilization-critical"
+
+      - alert: Disk Pool Capacity Depleted
+        expr: last_over_time(eseries_mel_events{event_type="14345"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Disk Pool Capacity Depleted on disk pool {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Capacity"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#disk-pool-capacity-depleted"
+
+      - alert: Disk Pool Insufficient Memory
+        expr: last_over_time(eseries_mel_events{event_type="14348"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Disk Pool Insufficient Memory on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Capacity"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#disk-pool-insufficient-memory"
+
+      - alert: Invalid Pool Version
+        expr: last_over_time(eseries_mel_events{event_type="14353"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Invalid Pool Version on volume group {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#invalid-pool-version"
+
+      - alert: Vol Xfer Alert
+        expr: last_over_time(eseries_mel_events{event_type="16401"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Vol Xfer Alert on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#vol-xfer-alert"
+
+      - alert: Set Controller Failed
+        expr: last_over_time(eseries_mel_events{event_type="20485"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Set Controller Failed on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#set-controller-failed"
+
+      - alert: SYMbol Cont Service Mode
+        expr: last_over_time(eseries_mel_events{event_type="20544"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "SYMbol Cont Service Mode on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#symbol-cont-service-mode"
+
+      - alert: DBM Hck Altctl Not Func
+        expr: last_over_time(eseries_mel_events{event_type="24839"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "DBM Hck Altctl Not Func on controller at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#dbm-hck-altctl-not-func"
+
+      - alert: BBU Overheated
+        expr: last_over_time(eseries_mel_events{event_type="29440"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "BBU Overheated on battery pack at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#bbu-overheated"
+
+      - alert: Insufficient Learned Capacity
+        expr: last_over_time(eseries_mel_events{event_type="29441"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Insufficient Learned Capacity on battery pack at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#insufficient-learned-capacity"
+
+      - alert: Battery Missing
+        expr: last_over_time(eseries_mel_events{event_type="29446"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Battery Missing on battery pack at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Protection"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#battery-missing"
+
+      - alert: Drive Firmware Unverified
+        expr: last_over_time(eseries_mel_events{event_type="32268"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Drive Firmware Unverified on drive at {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#drive-firmware-unverified"
+
+      - alert: Host Connection Redundancy Lost
+        expr: last_over_time(eseries_mel_events{event_type="37122"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Host Connection Redundancy Lost on host {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#host-connection-redundancy-lost"
+
+      - alert: Multipath Configuration Error
+        expr: last_over_time(eseries_mel_events{event_type="37123"}[5m]) > 0
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else if eq $labels.severity "debug" -}}
+            info
+            {{- else if eq $labels.severity "default" -}}
+            info
+            {{- else if eq $labels.severity "unknown" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "Multipath Configuration Error on host {{ $labels.location }} on array {{ $labels.array }} (chassis {{ $labels.chassis_serial }})."
+          impact: "Configuration"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/eseries-alert-runbook/#multipath-configuration-error"
