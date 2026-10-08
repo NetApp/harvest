@@ -1,0 +1,3014 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>Eseries alert runbook - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#synth-drv-pfa" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Eseries alert runbook
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/k8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gcnv-ontap-mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GCNV ONTAP Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-arista-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arista Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-arista-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AristaRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../arista-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arista Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#synth-drv-pfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Synth Drv PFA
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pi-drive-locked-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      PI Drive Locked Out
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excessive-reboots-detected" class="md-nav__link">
+    <span class="md-ellipsis">
+      Excessive Reboots Detected
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#channel-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      Channel Failover
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller-wide-port-has-gone-to-failed-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller Wide Port Has Gone To Failed State
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#missing-drive-lockdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      Missing Drive Lockdown
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cache-battery-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cache Battery Failure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ocb-setting-conflict" class="md-nav__link">
+    <span class="md-ellipsis">
+      OCB Setting Conflict
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write-back-caching-forcibly-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      Write-back Caching Forcibly Disabled
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dirty-cache-not-flushed-on-the-only-active-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dirty Cache Not Flushed On The Only Active Controller
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wrong-sector-size" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wrong Sector Size
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-no-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive No Response
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lun-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      LUN Down
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uncertified-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uncertified Drive
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-wrong-drive-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Wrong Drive Type
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reconfiguration-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reconfiguration Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#incompatible-drive-due-to-invalid-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Incompatible Drive Due To Invalid Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive Failure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-in-volume-group-or-hot-spare-in-use-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive In Volume Group Or Hot Spare In Use Removed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#physical-drive-has-unsupported-capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Physical Drive Has Unsupported Capacity
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-group-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Group Missing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volume-group-incomplete" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volume Group Incomplete
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#incompatible-alignment-for-emulation-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Incompatible Alignment for Emulation Drive
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#copy-then-fail-no-spare" class="md-nav__link">
+    <span class="md-ellipsis">
+      Copy Then Fail No Spare
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-pfa-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive PFA 2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-fast-format-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive Fast Format Failure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-flash-technology-unsupported" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive Flash Technology Unsupported
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller Removed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#line-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Line Missing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#line-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Line Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enclosure-fail" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enclosure Fail
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temperature-sensor-warning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Temperature Sensor Warning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temperature-sensor-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Temperature Sensor Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temperature-sensor-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Temperature Sensor Missing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bypass-generic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bypass Generic
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cont-redundancy-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cont Redundancy Loss
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tray-redundancy-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tray Redundancy Loss
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-redundancy-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive Redundancy Loss
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#power-supply-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Power Supply Failure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#esm-drv-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      ESM Drv Bypass
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drawer-open-or-removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drawer Open Or Removed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#power-supply-no-power-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      Power Supply No Power Input
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssd-cache-failed-cache-size-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      SSD Cache Failed Cache Size Mismatch
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssd-cache-non-optimal-drives" class="md-nav__link">
+    <span class="md-ellipsis">
+      SSD Cache Non-Optimal Drives
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-pool-reconstruction-reserved-drive-count-below-threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Pool Reconstruction Reserved Drive Count Below Threshold
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-pool-utilization-warning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk pool utilization warning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-pool-utilization-critical" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Pool Utilization Critical
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-pool-capacity-depleted" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Pool Capacity Depleted
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disk-pool-insufficient-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disk Pool Insufficient Memory
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#invalid-pool-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      Invalid Pool Version
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vol-xfer-alert" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vol Xfer Alert
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#set-controller-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Set Controller Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#symbol-cont-service-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      SYMbol Cont Service Mode
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dbm-hck-altctl-not-func" class="md-nav__link">
+    <span class="md-ellipsis">
+      DBM Hck Altctl Not Func
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bbu-overheated" class="md-nav__link">
+    <span class="md-ellipsis">
+      BBU Overheated
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#insufficient-learned-capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Insufficient Learned Capacity
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#battery-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Battery Missing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-firmware-unverified" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drive Firmware Unverified
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-connection-redundancy-lost" class="md-nav__link">
+    <span class="md-ellipsis">
+      Host Connection Redundancy Lost
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multipath-configuration-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multipath Configuration Error
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Eseries alert runbook</h1>
+
+<p>This document describes each E-Series major event log (MEL) event that Harvest collects and remediation steps.</p>
+<h3 id="synth-drv-pfa">Synth Drv PFA<a class="headerlink" href="#synth-drv-pfa" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_SYNTH_DRIVE_PFA</code> — 4126 (0x101E)</p>
+<p>Impending drive failure detected by controller</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="pi-drive-locked-out">PI Drive Locked Out<a class="headerlink" href="#pi-drive-locked-out" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_PI_DRIVE_LOCKED_OUT</code> — 4128 (0x1020)</p>
+<p>Data assurance drive has been locked out</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="excessive-reboots-detected">Excessive Reboots Detected<a class="headerlink" href="#excessive-reboots-detected" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_EXCESSIVE_REBOOTS_DETECTED</code> — 5123 (0x1403)</p>
+<p>Excessive reboots (exceptions) have occurred on the controller</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="channel-failover">Channel Failover<a class="headerlink" href="#channel-failover" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DFC_CHANNEL_FAILOVER</code> — 5395 (0x1513)</p>
+<p>Individual drive - Degraded path</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="controller-wide-port-has-gone-to-failed-state">Controller Wide Port Has Gone To Failed State<a class="headerlink" href="#controller-wide-port-has-gone-to-failed-state" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DSAS_WPORT_DEG_TO_FAIL_CTLR</code> — 5904 (0x1710)</p>
+<p>Controller wide port has gone to failed state</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="missing-drive-lockdown">Missing Drive Lockdown<a class="headerlink" href="#missing-drive-lockdown" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_MISSING_DRIVE_LOCKDOWN</code> — 6407 (0x1907)</p>
+<p>Controller is locked down due to too many missing drives</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="cache-battery-failure">Cache Battery Failure<a class="headerlink" href="#cache-battery-failure" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_CACHE_BATTERY_FAILURE</code> — 8460 (0x210C)</p>
+<p>Controller cache battery failed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="ocb-setting-conflict">OCB Setting Conflict<a class="headerlink" href="#ocb-setting-conflict" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_OCB_SETTING_CONFLICT</code> — 8475 (0x211B)</p>
+<p>Batteries present but NVSRAM file configured for no batteries</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="write-back-caching-forcibly-disabled">Write-back Caching Forcibly Disabled<a class="headerlink" href="#write-back-caching-forcibly-disabled" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_WB_CACHING_FORCIBLY_DISABLED</code> — 8491 (0x212B)</p>
+<p>Write-back caching forcibly disabled</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="dirty-cache-not-flushed-on-the-only-active-controller">Dirty Cache Not Flushed On The Only Active Controller<a class="headerlink" href="#dirty-cache-not-flushed-on-the-only-active-controller" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_CACHE_NOT_FLUSHED_ON_ONLY_CTLR</code> — 8497 (0x2131)</p>
+<p>Dirty cache not flushed on the only active controller</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="wrong-sector-size">Wrong Sector Size<a class="headerlink" href="#wrong-sector-size" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_WRONG_SECTOR_SIZE</code> — 8778 (0x224A)</p>
+<p>Drive has wrong block size</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-no-response">Drive No Response<a class="headerlink" href="#drive-no-response" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRV_NO_RESPONSE</code> — 8781 (0x224D)</p>
+<p>Drive failed - no response at start of day</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="lun-down">LUN Down<a class="headerlink" href="#lun-down" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_LUN_DOWN</code> — 8784 (0x2250)</p>
+<p>Volume failure</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="uncertified-drive">Uncertified Drive<a class="headerlink" href="#uncertified-drive" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_UNCERTIFIED_DRIVE</code> — 8800 (0x2260)</p>
+<p>Uncertified Drive Detected</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="configuration-wrong-drive-type">Configuration Wrong Drive Type<a class="headerlink" href="#configuration-wrong-drive-type" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_CFG_WRONG_DRIVE_TYPE</code> — 8802 (0x2262)</p>
+<p>Failed drive replaced with wrong drive type</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="reconfiguration-failed">Reconfiguration Failed<a class="headerlink" href="#reconfiguration-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_RECONFIGURATION_FAILED</code> — 8806 (0x2266)</p>
+<p>Volume modification operation failed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="incompatible-drive-due-to-invalid-configuration">Incompatible Drive Due To Invalid Configuration<a class="headerlink" href="#incompatible-drive-due-to-invalid-configuration" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_INCOMPAT_DRIVE_INVALID_CONFIG</code> — 8807 (0x2267)</p>
+<p>Incompatible drive due to invalid configuration on drive</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-failure">Drive Failure<a class="headerlink" href="#drive-failure" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_CFG_DRIVE_FAILURE</code> — 8812 (0x226C)</p>
+<p>Drive failure</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-in-volume-group-or-hot-spare-in-use-removed">Drive In Volume Group Or Hot Spare In Use Removed<a class="headerlink" href="#drive-in-volume-group-or-hot-spare-in-use-removed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRIVE_IN_VG_OR_HOT_SPARE_REMOVED</code> — 8813 (0x226D)</p>
+<p>Assigned drive or hot spare-in use drive removed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="physical-drive-has-unsupported-capacity">Physical Drive Has Unsupported Capacity<a class="headerlink" href="#physical-drive-has-unsupported-capacity" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRIVE_UNSUPPORTED_CAPACITY</code> — 8817 (0x2271)</p>
+<p>Physical drive has unsupported capacity</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="volume-group-missing">Volume Group Missing<a class="headerlink" href="#volume-group-missing" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_VOLUME_GROUP_MISSING</code> — 8820 (0x2274)</p>
+<p>Component is missing</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="volume-group-incomplete">Volume Group Incomplete<a class="headerlink" href="#volume-group-incomplete" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_VOLUME_GROUP_INCOMPLETE</code> — 8821 (0x2275)</p>
+<p>Component incomplete</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="incompatible-alignment-for-emulation-drive">Incompatible Alignment for Emulation Drive<a class="headerlink" href="#incompatible-alignment-for-emulation-drive" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_INCOMPATIBLE_ALIGNMENT_FOR_EMULATION_DRIVE</code> — 8824 (0x2278)</p>
+<p>Incompatible alignment for emulation drive</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="copy-then-fail-no-spare">Copy Then Fail No Spare<a class="headerlink" href="#copy-then-fail-no-spare" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_COPY_THEN_FAIL_NO_SPARE</code> — 8828 (0x227C)</p>
+<p>Waiting for eligible copy destination to start drive copy</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-pfa-2">Drive PFA 2<a class="headerlink" href="#drive-pfa-2" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRIVE_PFA2</code> — 8837 (0x2285)</p>
+<p>Impending drive failure detected by drive</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-fast-format-failure">Drive Fast Format Failure<a class="headerlink" href="#drive-fast-format-failure" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_FAST_FORMAT_FAILED</code> — 8844 (0x228C)</p>
+<p>Drive fast format failed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-flash-technology-unsupported">Drive Flash Technology Unsupported<a class="headerlink" href="#drive-flash-technology-unsupported" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRIVE_FLASH_TECHNOLOGY_UNSUPPORTED</code> — 8853 (0x2295)</p>
+<p>The drive's flash technology is not supported on this system. For example an NVMe QLC drive in a system that doesn't support QLC drives, or a non-QLC drive in a system that requires QLC drives</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="controller-removed">Controller Removed<a class="headerlink" href="#controller-removed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_CONTROLLER</code> — 9472 (0x2500)</p>
+<p>Controller removed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="line-missing">Line Missing<a class="headerlink" href="#line-missing" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_LINE_MISSING</code> — 10250 (0x280A)</p>
+<p>Controller tray component removed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="line-failed">Line Failed<a class="headerlink" href="#line-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_LINE_FAILED</code> — 10251 (0x280B)</p>
+<p>Controller tray component failed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="enclosure-fail">Enclosure Fail<a class="headerlink" href="#enclosure-fail" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_ENCL_FAIL</code> — 10253 (0x280D)</p>
+<p>Drive tray component failed or removed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="temperature-sensor-warning">Temperature Sensor Warning<a class="headerlink" href="#temperature-sensor-warning" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_TEMP_SENSOR_WARNING</code> — 10267 (0x281B)</p>
+<p>Nominal temperature exceeded</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="temperature-sensor-failed">Temperature Sensor Failed<a class="headerlink" href="#temperature-sensor-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_TEMP_SENSOR_FAIL</code> — 10268 (0x281C)</p>
+<p>Maximum temperature exceeded</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="temperature-sensor-missing">Temperature Sensor Missing<a class="headerlink" href="#temperature-sensor-missing" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_TEMP_SENSOR_MISSING</code> — 10269 (0x281D)</p>
+<p>Temperature sensor removed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="bypass-generic">Bypass Generic<a class="headerlink" href="#bypass-generic" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_BYPASS_GENERIC</code> — 10275 (0x2823)</p>
+<p>Drive by-passed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="cont-redundancy-loss">Cont Redundancy Loss<a class="headerlink" href="#cont-redundancy-loss" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_CONT_REDUNDANCY_LOSS</code> — 10281 (0x2829)</p>
+<p>Controller redundancy lost</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If a failed controller is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="tray-redundancy-loss">Tray Redundancy Loss<a class="headerlink" href="#tray-redundancy-loss" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_TRAY_REDUNDANCY_LOSS</code> — 10283 (0x282B)</p>
+<p>Drive tray path redundancy lost</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-redundancy-loss">Drive Redundancy Loss<a class="headerlink" href="#drive-redundancy-loss" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRIVE_REDUNDANCY_LOSS</code> — 10285 (0x282D)</p>
+<p>Drive path redundancy lost</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="power-supply-failure">Power Supply Failure<a class="headerlink" href="#power-supply-failure" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_POWER_SUPPLY_FAIL</code> — 10299 (0x283B)</p>
+<p>Power supply failed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="esm-drv-bypass">ESM Drv Bypass<a class="headerlink" href="#esm-drv-bypass" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_ESM_DRIVE_BYPASS</code> — 10324 (0x2854)</p>
+<p>Drive port bypassed - Error thresholds exceeded</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drawer-open-or-removed">Drawer Open Or Removed<a class="headerlink" href="#drawer-open-or-removed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRAWER_OPEN</code> — 10327 (0x2857)</p>
+<p>Drawer open or removed</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="power-supply-no-power-input">Power Supply No Power Input<a class="headerlink" href="#power-supply-no-power-input" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_POWER_SUPPLY_NO_INPUT</code> — 10345 (0x2869)</p>
+<p>Power supply has no power input</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="ssd-cache-failed-cache-size-mismatch">SSD Cache Failed Cache Size Mismatch<a class="headerlink" href="#ssd-cache-failed-cache-size-mismatch" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Performance</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_FLASH_CACHE_FAILED_CACHE_SIZE_MISMATCH</code> — 13828 (0x3604)</p>
+<p>SSD cache failed due to cache size mismatch on the two controllers</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="ssd-cache-non-optimal-drives">SSD Cache Non-Optimal Drives<a class="headerlink" href="#ssd-cache-non-optimal-drives" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Performance</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_FLASH_CACHE_NON_OPTIMAL_DRIVES</code> — 13829 (0x3605)</p>
+<p>SSD cache has associated non-optimal drives</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="disk-pool-reconstruction-reserved-drive-count-below-threshold">Disk Pool Reconstruction Reserved Drive Count Below Threshold<a class="headerlink" href="#disk-pool-reconstruction-reserved-drive-count-below-threshold" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DISK_POOL_REC_RDRVCNT_BEL_THRSHLD</code> — 14339 (0x3803)</p>
+<p>Disk pool reconstruction reserved drive count is below threshold</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="disk-pool-utilization-warning">Disk pool utilization warning<a class="headerlink" href="#disk-pool-utilization-warning" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DISK_POOL_UTILIZATION_WARNING</code> — 14340 (0x3804)</p>
+<p>Disk pool utilization exceeded the warning threshold</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="disk-pool-utilization-critical">Disk Pool Utilization Critical<a class="headerlink" href="#disk-pool-utilization-critical" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DISK_POOL_UTILIZATION_CRITICAL</code> — 14341 (0x3805)</p>
+<p>Disk pool utilization exceeded the critical threshold</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="disk-pool-capacity-depleted">Disk Pool Capacity Depleted<a class="headerlink" href="#disk-pool-capacity-depleted" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DISK_POOL_CAPACITY_DEPLETED</code> — 14345 (0x3809)</p>
+<p>All of the disk pool's free capacity has been used</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="disk-pool-insufficient-memory">Disk Pool Insufficient Memory<a class="headerlink" href="#disk-pool-insufficient-memory" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Capacity</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DISK_POOL_INSUFFICIENT_MEMORY</code> — 14348 (0x380C)</p>
+<p>Disk pool configuration has insufficient memory</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="invalid-pool-version">Invalid Pool Version<a class="headerlink" href="#invalid-pool-version" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DISK_POOL_INVALID_VERSION</code> — 14353 (0x3811)</p>
+<p>Lockdown due to invalid Disk Pool Version</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="vol-xfer-alert">Vol Xfer Alert<a class="headerlink" href="#vol-xfer-alert" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_VOL_XFER_ALERT</code> — 16401 (0x4011)</p>
+<p>Volume not on preferred path due to AVT/RDAC failover</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If the failure that took the volume off its preferred path is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="set-controller-failed">Set Controller Failed<a class="headerlink" href="#set-controller-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_SYMBOL_CONT_FAIL</code> — 20485 (0x5005)</p>
+<p>Place controller offline</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager. This command has already completed and records that the controller was placed offline. If the controller is still offline and should be online, bring it back online there.</p>
+<h3 id="symbol-cont-service-mode">SYMbol Cont Service Mode<a class="headerlink" href="#symbol-cont-service-mode" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_SYMBOL_CONT_SERVICE_MODE</code> — 20544 (0x5040)</p>
+<p>Place controller in service mode</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager. This command has already completed and records that the controller was placed in service mode. If the controller is still in service mode and should leave it, take it out of service mode there.</p>
+<h3 id="dbm-hck-altctl-not-func">DBM Hck Altctl Not Func<a class="headerlink" href="#dbm-hck-altctl-not-func" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DBM_HCK_ALTCTL_NOT_FUNC</code> — 24839 (0x6107)</p>
+<p>This controller's alternate is non-functional and is being held in reset</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="bbu-overheated">BBU Overheated<a class="headerlink" href="#bbu-overheated" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_BBU_OVERHEATED</code> — 29440 (0x7300)</p>
+<p>Battery backup unit overheated</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="insufficient-learned-capacity">Insufficient Learned Capacity<a class="headerlink" href="#insufficient-learned-capacity" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_INSUFFICIENT_LEARNED_CAPACITY</code> — 29441 (0x7301)</p>
+<p>Insufficient learned battery capacity</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="battery-missing">Battery Missing<a class="headerlink" href="#battery-missing" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Protection</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_BATTERY_MISSING</code> — 29446 (0x7306)</p>
+<p>Battery missing</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="drive-firmware-unverified">Drive Firmware Unverified<a class="headerlink" href="#drive-firmware-unverified" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_DRIVE_NEW_DRIVE_FW_UNVERIFIED</code> — 32268 (0x7E0C)</p>
+<p>Down revision drive firmware detected</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="host-connection-redundancy-lost">Host Connection Redundancy Lost<a class="headerlink" href="#host-connection-redundancy-lost" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_HOST_REDUNDANCY_LOST</code> — 37122 (0x9102)</p>
+<p>Loss of host-side connection redundancy detected</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+<h3 id="multipath-configuration-error">Multipath Configuration Error<a class="headerlink" href="#multipath-configuration-error" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Configuration</p>
+<p><strong>MEL Event</strong>: <code>MEL_EV_MULTIPATH_CONFIG_ERROR</code> — 37123 (0x9103)</p>
+<p>Host multipath driver configuration error detected</p>
+<p><strong>Remediation</strong></p>
+<p>Open SANtricity System Manager and go to the Recovery Guru. If this problem is listed, follow the steps shown there. If it is not listed, the condition has already cleared.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>
