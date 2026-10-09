@@ -23,21 +23,47 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 )
 
-func (p *Prometheus) startHTTPD(addr string, port int) {
-
+func (p *Prometheus) newMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", p.ServeInfo)
 	mux.HandleFunc("/health", p.checkHealth)
 	mux.HandleFunc("/metrics", p.ServeMetrics)
-	mux.HandleFunc("localhost/debug/pprof/", pprof.Index)
-	mux.HandleFunc("localhost/debug/pprof/cmdline", pprof.Cmdline)
-	mux.HandleFunc("localhost/debug/pprof/profile", pprof.Profile)
-	mux.HandleFunc("localhost/debug/pprof/symbol", pprof.Symbol)
-	mux.HandleFunc("localhost/debug/pprof/trace", pprof.Trace)
+
+	// pprof is only for clients on this machine. Check the connection's source address, not the
+	// Host header, since the client controls the Host header.
+	mux.Handle("/debug/pprof/", loopbackOnly(pprof.Index))
+	mux.Handle("/debug/pprof/cmdline", loopbackOnly(pprof.Cmdline))
+	mux.Handle("/debug/pprof/profile", loopbackOnly(pprof.Profile))
+	mux.Handle("/debug/pprof/symbol", loopbackOnly(pprof.Symbol))
+	mux.Handle("/debug/pprof/trace", loopbackOnly(pprof.Trace))
+	return mux
+}
+
+// loopbackOnly serves h to loopback clients and responds 404 to everyone else.
+func loopbackOnly(h http.HandlerFunc) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !isLoopback(r.RemoteAddr) {
+			http.NotFound(w, r)
+			return
+		}
+		h(w, r)
+	})
+}
+
+func isLoopback(remoteAddr string) bool {
+	host, _, err := net.SplitHostPort(remoteAddr)
+	if err != nil {
+		return false
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
+}
+
+func (p *Prometheus) startHTTPD(addr string, port int) {
 
 	server := &http.Server{
 		Addr:              addr + ":" + strconv.Itoa(port),
-		Handler:           mux,
+		Handler:           p.newMux(),
 		ReadHeaderTimeout: 60 * time.Second,
 	}
 
