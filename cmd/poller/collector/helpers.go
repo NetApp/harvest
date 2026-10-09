@@ -44,6 +44,25 @@ var ExcludeTemplates = map[string]map[string]struct{}{
 	},
 }
 
+// pollerOnlyKeys are poller parameters that only harvest.yml may set. Templates are often copied from someone
+// else, so a template must not be able to send the poller's credentials to a different host (addr), weaken TLS
+// (tls_min_version, use_insecure_tls), or record HTTP traffic to a path it chooses (recorder).
+var pollerOnlyKeys = []string{"addr", "tls_min_version", "use_insecure_tls", "recorder"}
+
+// removePollerOnlyKeys drops pollerOnlyKeys from the top level of a template, so the values from harvest.yml are
+// used instead.
+func removePollerOnlyKeys(template *node.Node, path string, logger *slog.Logger) {
+	for _, key := range pollerOnlyKeys {
+		for template.PopChildS(key) != nil {
+			logger.Warn(
+				"Ignoring template parameter that only harvest.yml may set",
+				slog.String("param", key),
+				slog.String("path", path),
+			)
+		}
+	}
+}
+
 // ImportTemplate looks for a collector's template by searching confPaths for the first template that exists in
 // confPath/collectorName/templateName
 func ImportTemplate(confPaths []string, templateName, collectorName string) (*node.Node, error) {
@@ -54,7 +73,12 @@ func ImportTemplate(confPaths []string, templateName, collectorName string) (*no
 		if errors.Is(err, os.ErrNotExist) {
 			continue
 		}
-		return tree.ImportYaml(fp)
+		template, err := tree.ImportYaml(fp)
+		if err != nil {
+			return nil, err
+		}
+		removePollerOnlyKeys(template, fp, slog.Default())
+		return template, nil
 	}
 	return nil, errors.New("template not found on confPath")
 }
@@ -122,6 +146,7 @@ nextFile:
 					finalTemplate, err = tree.ImportYaml(templatePath)
 					if err == nil {
 						finalTemplate.PreprocessTemplate()
+						removePollerOnlyKeys(finalTemplate, templatePath, c.Logger)
 						continue nextFile
 					}
 					importErrs = append(importErrs, fmt.Errorf("failed to import template: %s file: %w", templatePath, err))
@@ -136,6 +161,7 @@ nextFile:
 						continue
 					}
 					customTemplate.PreprocessTemplate()
+					removePollerOnlyKeys(customTemplate, templatePath, c.Logger)
 					finalTemplate.Merge(customTemplate, nil)
 					continue nextFile
 				}

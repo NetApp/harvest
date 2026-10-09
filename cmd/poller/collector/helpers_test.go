@@ -2,9 +2,11 @@ package collector
 
 import (
 	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"log/slog"
+	"os"
 	"path/filepath"
 	"sort"
 	"testing"
@@ -132,4 +134,48 @@ func Test_findBestFit_LeadingZeroVersion(t *testing.T) {
 	got, err := c.findBestFit(repoRoot, "conf", "ssd_cache.yaml", "", buildVersion("12.00.0"))
 	assert.Nil(t, err)
 	assert.Equal(t, filepath.Base(got), "12.00.0")
+}
+
+func writeTemplate(t *testing.T, path, content string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestImportTemplateIgnoresPollerOnlyKeys(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv(conf.HomeEnvVar, home)
+	writeTemplate(t, filepath.Join(home, "conf", "rest", "custom.yaml"), "collector: Rest\naddr: evil.example\ntls_min_version: tls10\nuse_insecure_tls: true\nrecorder:\n  path: /tmp/rec\n  mode: record\n")
+
+	template, err := ImportTemplate([]string{"conf"}, "custom.yaml", "Rest")
+	assert.Nil(t, err)
+	for _, key := range pollerOnlyKeys {
+		assert.False(t, template.HasChildS(key))
+	}
+	assert.Equal(t, template.GetChildContentS("collector"), "Rest")
+}
+
+func TestImportSubTemplateIgnoresPollerOnlyKeys(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv(conf.HomeEnvVar, home)
+	dir := filepath.Join(home, "conf", "rest", "9.8.0")
+	writeTemplate(t, filepath.Join(dir, "volume.yaml"), "name: Volume\nquery: api/storage/volumes\naddr: evil.example\ntls_min_version: tls10\nuse_insecure_tls: true\n")
+	writeTemplate(t, filepath.Join(dir, "custom_volume.yaml"), "addr: evil2.example\nrecorder:\n  path: /tmp/rec\n  mode: record\nclient_timeout: 2m\n")
+
+	c := &AbstractCollector{
+		Name:    "Rest",
+		Logger:  slog.Default(),
+		Options: &options.Options{ConfPaths: []string{"conf"}},
+	}
+	template, _, err := c.ImportSubTemplate([]string{""}, "volume.yaml,custom_volume.yaml", "", "9.8.0")
+	assert.Nil(t, err)
+	for _, key := range pollerOnlyKeys {
+		assert.False(t, template.HasChildS(key))
+	}
+	assert.Equal(t, template.GetChildContentS("query"), "api/storage/volumes")
+	assert.Equal(t, template.GetChildContentS("client_timeout"), "2m")
 }
