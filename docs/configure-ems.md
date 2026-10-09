@@ -49,7 +49,7 @@ The parameters of the collector are distributed across three files:
 - [EMS collector configuration](#ems-collector-configuration-file) file (default: `conf/ems/default.yaml`)
 - [EMS template file](#ems-template-file) (located in `conf/ems/9.6.0/ems.yaml`)
 
-Except for `addr`, `datacenter`, and `auth_style`, all other parameters of the EMS collector can be defined
+Except for `addr`, `datacenter`, `auth_style`, `tls_min_version`, `use_insecure_tls`, and `recorder`, all other parameters of the EMS collector can be defined
 in either of these three files.
 Parameters defined in the lower-level files, override parameters in the higher-level file.
 This allows you to configure each EMS event individually, or use the same parameters for all events.
