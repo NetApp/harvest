@@ -1,5 +1,8 @@
+# GO_VERSION should be overridden by the build script via --build-arg GO_VERSION=$value.
+# The fallback keeps a bare `docker build` working. Renovate bumps it together with
+# .harvest.env (see renovate.json); a manual Go bump must update both.
 ARG GO_VERSION
-FROM golang:${GO_VERSION} AS builder
+FROM golang:${GO_VERSION:-1.27.2} AS builder
 
 SHELL ["/bin/bash", "-c"]
 
