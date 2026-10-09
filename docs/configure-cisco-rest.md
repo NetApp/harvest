@@ -24,7 +24,7 @@ The parameters of the collector are distributed across three files:
 - CiscoRest configuration file (default: `conf/ciscorest/default.yaml`)
 - Each object has its own configuration file (located in `conf/ciscorest/nxos/$version/`)
 
-Except for `addr` and `datacenter`, all other parameters of the CiscoRest collector can be defined in any of these three files. Parameters defined in a lower-level file override those in higher-level files. This allows you to configure each object individually or use the same parameters for all objects.
+Except for `addr`, `datacenter`, `tls_min_version`, `use_insecure_tls`, and `recorder`, all other parameters of the CiscoRest collector can be defined in any of these three files. Parameters defined in a lower-level file override those in higher-level files. This allows you to configure each object individually or use the same parameters for all objects.
 
 The full set of parameters are described [below](#harvest-configuration-file).
 

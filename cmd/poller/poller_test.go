@@ -11,6 +11,8 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -50,6 +52,26 @@ func TestUnion2(t *testing.T) {
 
 	pp := n.GetChildContentS("prom_port")
 	assert.Equal(t, pp, "2000")
+}
+
+// A template must not be able to change the host the poller connects to, which would send the poller's
+// credentials to the template's author, weaken TLS, or turn on the HTTP recorder.
+func TestTemplateCannotOverridePollerOnlyParams(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv(conf.HomeEnvVar, home)
+	path := filepath.Join(home, "conf", "rest", "custom.yaml")
+	assert.Nil(t, os.MkdirAll(filepath.Dir(path), 0o750))
+	assert.Nil(t, os.WriteFile(path, []byte("collector: Rest\naddr: evil.example\ntls_min_version: tls10\nuse_insecure_tls: true\nrecorder:\n  path: /tmp/rec\n  mode: record\n"), 0o600))
+
+	template, err := collectorPkg.ImportTemplate([]string{"conf"}, "custom.yaml", "Rest")
+	assert.Nil(t, err)
+	assert.Nil(t, Union2(template, &conf.Poller{Addr: "10.0.0.1", TLSMinVersion: "tls13", UseInsecureTLS: new(false)}))
+	p := conf.ZapiPoller(template)
+	assert.Equal(t, p.Addr, "10.0.0.1")
+	assert.Equal(t, p.TLSMinVersion, "tls13")
+	assert.False(t, *p.UseInsecureTLS)
+	assert.Equal(t, p.Recorder.Path, "")
+	assert.False(t, p.IsRecording())
 }
 
 func TestPublishUrl(t *testing.T) {

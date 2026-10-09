@@ -49,7 +49,7 @@ The parameters of the collector are distributed across three files:
 - StorageGRID configuration file (default: `conf/storagegrid/default.yaml`)
 - Each object has its own configuration file (located in `conf/storagegrid/$version/`)
 
-Except for `addr` and `datacenter`, all other parameters of the StorageGRID collector can be
+Except for `addr`, `datacenter`, `tls_min_version`, `use_insecure_tls`, and `recorder`, all other parameters of the StorageGRID collector can be
 defined in either of these three files. Parameters defined in the lower-level file, override parameters in the
 higher-level ones. This allows you to configure each object individually, or use the same parameters for all
 objects.

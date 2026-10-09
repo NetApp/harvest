@@ -30,7 +30,7 @@ The parameters of the collector are distributed across three files:
 - Eseries configuration file (default: `conf/eseries/default.yaml`)
 - Each object has its own configuration file (located in `conf/eseries/$version/`)
 
-Except for `addr` and `datacenter`, all other parameters of the Eseries collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.
+Except for `addr`, `datacenter`, `tls_min_version`, `use_insecure_tls`, and `recorder`, all other parameters of the Eseries collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.
 
 The full set of parameters are described [below](#collector-configuration-file).
 
@@ -332,7 +332,7 @@ The parameters of the collector are distributed across three files:
 - EseriesMel configuration file (default: `conf/eseriesmel/default.yaml`)
 - Each object has its own configuration file (located in `conf/eseriesmel/$version/`)
 
-Except for `addr` and `datacenter`, all other parameters of the EseriesMel collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.
+Except for `addr`, `datacenter`, `tls_min_version`, `use_insecure_tls`, and `recorder`, all other parameters of the EseriesMel collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.
 
 The full set of parameters are described [below](#eseriesmel-collector-configuration-file).
 
