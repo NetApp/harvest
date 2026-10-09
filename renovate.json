@@ -30,7 +30,8 @@
       "managerFilePatterns": [
         "/^\\.harvest\\.env$/",
         "/^container/onePollerPerContainer/Dockerfile$/",
-        "/^mcp/Dockerfile$/"
+        "/^mcp/Dockerfile$/",
+        "/^\\.oss-scanner/Dockerfile$/"
       ],
       "matchStrings": [
         "(?:^|\\n)GO_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)",
