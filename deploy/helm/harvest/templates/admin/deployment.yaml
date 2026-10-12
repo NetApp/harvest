@@ -1,5 +1,5 @@
-{{- if .Values.monitoring.scrape.adminSD.enabled | default false -}}
-{{- include "harvest.validations.scrapeMode" $ -}}
+{{- include "harvest.validate" . -}}
+{{- if .Values.monitoring.scrape.adminSD.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,7 +20,7 @@ spec:
         {{- with .Values.admin.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        checksum/config: {{ include "harvest.configChecksum" $ }}
+        checksum/config: {{ include "harvest.adminChecksum" $ }}
       labels: {{- include "harvest.labels" $ | nindent 8 }}
         app.kubernetes.io/component: admin
     spec:
@@ -49,8 +49,9 @@ spec:
       {{- with .Values.admin.podSecurityContext }}
       securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.admin.terminationGracePeriodSeconds }}
-      terminationGracePeriodSeconds: {{ .Values.admin.terminationGracePeriodSeconds }}
+      {{- $tgps := .Values.admin.terminationGracePeriodSeconds -}}
+      {{- if not (kindIs "invalid" $tgps) }}
+      terminationGracePeriodSeconds: {{ $tgps }}
       {{- end }}
       containers:
         - name: admin

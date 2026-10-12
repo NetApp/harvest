@@ -3,18 +3,27 @@ fullnameOverride: ""
 
 config:
   # -- Mount an existing ConfigMap (with a `harvest.yml` key) instead of generating one.
-  # `harvestConfig` is then only used to enumerate pollers, not rendered. (string)
+  # `harvestConfig` is then only used to enumerate pollers, not rendered. With admin service
+  # discovery, your harvest.yml needs `Admin.httpsd.listen` and a `heart_beat_url` on each Prometheus
+  # exporter, otherwise pollers never register. (string)
   existingConfigMap: ""
+  # -- Extra value hashed into the pod `checksum/config` annotation. Helm cannot see the
+  # content of `existingConfigMap`, so change this (for example to the ConfigMap's
+  # resourceVersion or a content hash) to roll the pods after editing that ConfigMap. (string)
+  checksum: ""
 
 image:
   # -- Container registry hosting the image.
   registry: ghcr.io
   # -- Repository (image name) within the registry.
   repository: netapp/harvest
-  # -- Image tag to deploy. Pin to an explicit version to overwrite chart appVersion.
-  tag: "26.02.0-1"
-  # -- Image pull policy. One of: Always|IfNotPresent|Never.
-  pullPolicy: IfNotPresent
+  # -- Image tag to deploy. The default `latest` is the newest Harvest release.
+  # Set a release tag such as "26.08.0-1" to stay on one version, or "nightly" for development builds.
+  # An empty tag uses the chart's appVersion.
+  tag: latest
+  # -- Image pull policy. One of: Always|IfNotPresent|Never. Keep Always for moving tags (latest, nightly).
+  # Use IfNotPresent when you pin a release tag.
+  pullPolicy: Always
   # -- List of imagePullSecrets to use for private registries.
   # Example: ["my-regcred"]
   pullSecrets: []
@@ -36,50 +45,83 @@ harvestConfig:
     # -- Exporters enabled by default for all pollers. (string[])
     exporters:
       - prometheus
-  # Example (see the chart README "Adding a poller" for the full key reference):
+  # Example (see https://netapp.github.io/harvest/latest/install/k8/ for more):
   # Pollers:
   #   cluster-a:
   #     addr: cluster-a.example.com
   #     username: harvest
   #     password: ${CLUSTER_A_PW}        # from a Secret, not inline
-  #     prom_port: 13000
+  #     prom_port: 13000                  # optional, defaults to poller.defaultPromPort
   #     collectors: [Rest, RestPerf]
   #     extraEnvVars:                     # chart-only: this poller's pod
   #       - name: CLUSTER_A_PW
   #         valueFrom:
   #           secretKeyRef: {name: ontap-cluster-a, key: password}
   # -- (object) Map of poller name to config: native Harvest fields (written to harvest.yml)
-  # plus chart-only keys (extraEnvVars, collectorsExtensions, podMonitor). See the README
-  # "Adding a poller" section for the entry schema.
+  # plus chart-only keys that are removed before harvest.yml is written:
+  #   extraEnvVars         env for this poller's pod only
+  #   collectorsExtensions per-collector settings written to custom.yaml (the chart mounts custom.yaml,
+  #                        not the object template files it names, so the image must ship them)
+  #   podMonitor           per-poller PodMonitor overrides, for example `enabled: false`
+  #   extraVolumes, extraVolumeMounts  volumes for this poller, added to poller.extraVolumes
+  # Poller names may contain upper case letters and underscores, the chart derives a
+  # Kubernetes-safe name from them. See the K8 install guide linked above for examples.
   Pollers: {}
 
 monitoring:
+  # Both scrape modes set the Prometheus `instance` label to the poller name, so it stays the same when a
+  # pod restarts and gets a new IP. To change it, add your own entry to the poller's
+  # `podMonitor.relabelings`, which runs after the chart's.
   scrape:
     # -- Admin service-discovery endpoint scrape settings.
     adminSD:
-      # -- If true, enable scraping the admin SD endpoint (Prometheus target discovery). (bool)
+      # -- If true, deploy the admin pod and a ScrapeConfig so Prometheus discovers pollers through
+      # Harvest's HTTP service discovery. Mutually exclusive with `podMonitor.enabled`. (bool)
       enabled: false
       # -- Labels for the ScrapeConfig, used by the Prometheus Operator's scrapeConfigSelector to discover it. (map[string]string)
       labels:
-        release: prometheus-operator
-    # -- Prometheus Operator PodMonitor configuration for pollers/admin.
+        release: kube-prometheus-stack
+      # -- Extra fields merged into the ScrapeConfig httpSDConfigs entry, for example `basicAuth`
+      # when `harvestConfig.Admin.httpsd.auth_basic` is set, `tlsConfig` when it uses TLS, or `refreshInterval`. (object)
+      httpSDConfig: {}
+    # -- Prometheus Operator PodMonitor configuration for pollers. Mutually exclusive with `adminSD.enabled`.
+    # Disable both to scrape the pods yourself (plain Prometheus, vmagent, ...).
     podMonitor:
       # -- If true, create PodMonitor resources. Requires kube-prometheus-stack or prometheus-operator. (bool)
       enabled: true
+      # -- Annotations to attach to PodMonitors. (map[string]string)
+      annotations: {}
       # -- Default scrape interval for PodMonitors. (duration)
-      defaultInterval: 30s
+      defaultInterval: 1m
       # -- Default scrape timeout for PodMonitors. Must be < interval. (duration)
-      defaultScrapeTimeout: 20s
+      defaultScrapeTimeout: 50s
       # -- Extra labels to attach to PodMonitors for selector-based discovery. (map[string]string)
       labels:
-        release: prometheus-operator
+        release: kube-prometheus-stack
 
 # -- Deployment settings shared by every poller pod. Per-cluster Harvest config (addr,
 # credentials, collectors) lives under harvestConfig.Pollers, not here.
 # @default -- see the poller.* keys below
 poller:
-  # -- Number of poller replicas. Typically 1 per ONTAP cluster to avoid duplicate scraping. (int)
+  # -- Number of replicas of each poller. Must be 0 (paused) or 1: more replicas collect and publish duplicate metrics. (int)
   replicaCount: 1
+  # -- Metrics port used by pollers that do not set `prom_port`. Every poller runs in its own pod,
+  # so pollers can share a port. (int)
+  defaultPromPort: 12990
+  # Example — mount a Secret for credentials_file or certificate authentication in every poller:
+  # extraVolumes:
+  #   - name: ontap-certs
+  #     secret:
+  #       secretName: ontap-certs
+  # extraVolumeMounts:
+  #   - name: ontap-certs
+  #     mountPath: /opt/harvest/certs
+  #     readOnly: true
+  # -- Extra volumes added to every poller pod. Combined with the poller's own `extraVolumes`.
+  # The names `harvest-config` and `custom-<collector>` (for example `custom-rest`) are used by the chart. (corev1.Volume[])
+  extraVolumes: []
+  # -- Extra volume mounts added to every poller container. Combined with the poller's own `extraVolumeMounts`. (corev1.VolumeMount[])
+  extraVolumeMounts: []
   # -- Mount the ServiceAccount token. Harvest never calls the Kubernetes API, so it is off
   # by default (least privilege). Set true only for a sidecar that needs API access. (bool)
   automountServiceAccountToken: false
@@ -96,12 +138,13 @@ poller:
   # -- Liveness probe toggles. Disable if startup is slow and causes restarts. (bool)
   livenessProbe:
     enabled: false
-  # -- Startup probe checks readiness before liveness begins. Tune thresholds for large clusters.
+  # -- Startup probe checks the exporter is listening before liveness begins. Tune thresholds for large clusters.
+  # It is a TCP check on purpose: an HTTP GET of /metrics makes Harvest render the full metrics body, the kubelet
+  # closes the connection after the status line, and the poller logs thousands of "connection reset by peer"
+  # errors for every probe. This applies to `livenessProbe` too if you enable it with httpGet.
   startupProbe:
     enabled: true
-    httpGet:
-      # -- Metrics endpoint path exposed by the exporter. (string)
-      path: /metrics
+    tcpSocket:
       # -- Name of the container port that serves metrics (must match container port name). (string|int)
       port: http
     # -- Delay before probing starts. (int seconds)
@@ -134,8 +177,12 @@ poller:
   #   limits:
   #     cpu: 1
   #     memory: 1Gi
-  # -- Container resource requests and limits. Empty sets none — set these for production. (corev1.ResourceRequirements)
-  resources: {}
+  # -- Container resource requests and limits. Requests keep poller pods from being evicted first when a node is short
+  # on memory. No limits are set, so a large cluster is never OOM-killed. Add limits for production. (corev1.ResourceRequirements)
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
 
   # -- Pod-level security context. Leave empty ({}) to omit. Some exporters require root;
   # Known bug: poller status exporter may fail if not root.
@@ -199,8 +246,12 @@ poller:
 # monitoring.scrape.adminSD.enabled is true.
 # @default -- see the admin.* keys below
 admin:
-  # -- Number of admin (harvest admin SD) replicas.
+  # -- Number of admin (harvest admin SD) replicas. Must be 1: the registry of pollers is kept in memory. (int)
   replicaCount: 1
+  # -- Extra annotations for the admin pod. (map[string]string)
+  podAnnotations: {}
+  # -- Container lifecycle hooks (postStart/preStop). (corev1.Lifecycle)
+  lifecycleHooks: {}
   # -- Mount the ServiceAccount token. The admin node never calls the Kubernetes API, so it is
   # off by default (least privilege). (bool)
   automountServiceAccountToken: false
@@ -218,17 +269,13 @@ admin:
   livenessProbe:
     enabled: false
 
+  # -- Startup probe. A TCP check keeps working when `Admin.httpsd.auth_basic` is enabled,
+  # which would make an HTTP probe fail with 401.
   startupProbe:
     enabled: true
-    httpGet:
-      # -- Admin API health/SD endpoint.
-      path: /api/v1/sd
-      # -- Port name/number to hit. Must exist in containerPorts.
+    tcpSocket:
+      # -- Port name/number to check. Must exist in containerPorts.
       port: httpsd
-      # -- Optional headers for the probe request.
-      httpHeaders:
-        - name: Accept
-          value: application/json
     # -- Delay before probing starts.
     initialDelaySeconds: 3
     # -- Probe period.
@@ -239,12 +286,8 @@ admin:
   # -- Readiness probe to mark admin pod ready for traffic.
   readinessProbe:
     enabled: true
-    httpGet:
-      path: /api/v1/sd
+    tcpSocket:
       port: httpsd
-      httpHeaders:
-        - name: Accept
-          value: application/json
     # -- Delay before first readiness check.
     initialDelaySeconds: 5
     # -- Probe period.
@@ -274,9 +317,8 @@ admin:
   containerSecurityContext:
     readOnlyRootFilesystem: false
     capabilities:
+      # -- Admin only serves HTTP on a port above 1024 and never pings, so it needs no capabilities.
       drop: ["ALL"]
-      # -- Admin may need networking and port binding, keep minimal caps.
-      add: ["NET_RAW", "NET_BIND_SERVICE"]
     allowPrivilegeEscalation: false
     seccompProfile:
       type: RuntimeDefault

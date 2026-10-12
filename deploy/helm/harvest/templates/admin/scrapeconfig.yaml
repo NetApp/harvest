@@ -1,5 +1,5 @@
-{{- if .Values.monitoring.scrape.adminSD.enabled | default false -}}
-
+{{- include "harvest.validate" . -}}
+{{- if .Values.monitoring.scrape.adminSD.enabled -}}
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: ScrapeConfig
 metadata:
@@ -11,7 +11,13 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
+  # The instance label is the poller name, so it stays the same when the pod IP changes.
+  relabelings:
+    - sourceLabels: [__meta_poller]
+      targetLabel: instance
   httpSDConfigs:
-    - url: "http://{{ include "harvest.fullname" $ }}-admin-sd.{{ .Release.Namespace }}.svc:{{ .Values.admin.service.ports.httpsd }}/api/v1/sd"
-
-{{ end }}
+    - url: {{ include "harvest.adminSDURL" . | quote }}
+      {{- with .Values.monitoring.scrape.adminSD.httpSDConfig }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+{{- end }}

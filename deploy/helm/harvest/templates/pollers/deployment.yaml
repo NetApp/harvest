@@ -1,8 +1,12 @@
-{{- range $name, $poller := .Values.harvestConfig.Pollers }}
-{{- include "harvest.validations.scrapeMode" $ -}}
-{{- $fullDeploymentName := printf "%s-poller-%s" (include "harvest.fullname" $) $name -}}
-{{- include "harvest.validations.DNS1123" $fullDeploymentName -}}
-{{- $ctx := dict "root" $ "pollerName" $name "poller" $poller -}}
+{{- include "harvest.validate" . -}}
+{{- /* The effective config is the same for every poller, so compute it once and pass the shared checksum down. */ -}}
+{{- $cfg := dict -}}
+{{- if not .Values.config.existingConfigMap -}}
+{{- $cfg = include "harvest.config.effective" . | fromYaml -}}
+{{- end -}}
+{{- $shared := toYaml (omit $cfg "Pollers") | sha256sum -}}
+{{- range $name, $poller := (.Values.harvestConfig.Pollers | default dict) }}
+{{- $ctx := dict "root" $ "pollerName" $name "poller" $poller "cfg" $cfg "shared" $shared -}}
 {{ include "harvest.poller.deployment" $ctx }}
 ---
 {{ end }}

@@ -99,8 +99,7 @@ poller:
       effect: NoSchedule
   livenessProbe:
     enabled: true
-    httpGet:
-      path: /metrics
+    tcpSocket:
       port: http
     initialDelaySeconds: 30
     periodSeconds: 15
@@ -110,4 +109,4 @@ monitoring:
     podMonitor:
       enabled: true
       labels:
-        release: prometheus-operator
+        release: kube-prometheus-stack
