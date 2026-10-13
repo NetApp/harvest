@@ -2,6 +2,8 @@
 harvest.adminSDURL
 URL of the admin service-discovery endpoint inside the cluster. Used by pollers as
 heart_beat_url and by the ScrapeConfig. https when Admin.httpsd.tls.cert_file is set.
+A headless Service (clusterIP: None) resolves to the pod and does not translate ports, so the
+container port answers. Any other Service type answers on its own port.
 */}}
 {{- define "harvest.adminSDURL" -}}
 {{- $scheme := "http" -}}
@@ -10,7 +12,11 @@ heart_beat_url and by the ScrapeConfig. https when Admin.httpsd.tls.cert_file is
 {{- if $tls.cert_file -}}
 {{- $scheme = "https" -}}
 {{- end -}}
-{{- printf "%s://%s-admin-sd.%s.svc:%v/api/v1/sd" $scheme (include "harvest.fullname" .) .Release.Namespace .Values.admin.service.ports.httpsd -}}
+{{- $port := .Values.admin.service.ports.httpsd -}}
+{{- if eq (toString .Values.admin.service.clusterIP) "None" -}}
+{{- $port = .Values.admin.containerPorts.httpsd -}}
+{{- end -}}
+{{- printf "%s://%s-admin-sd.%s.svc:%v/api/v1/sd" $scheme (include "harvest.fullname" .) .Release.Namespace $port -}}
 {{- end -}}
 
 {{/*

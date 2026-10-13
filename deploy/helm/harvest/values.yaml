@@ -17,13 +17,13 @@ image:
   registry: ghcr.io
   # -- Repository (image name) within the registry.
   repository: netapp/harvest
-  # -- Image tag to deploy. The default `latest` is the newest Harvest release.
-  # Set a release tag such as "26.08.0-1" to stay on one version, or "nightly" for development builds.
-  # An empty tag uses the chart's appVersion.
-  tag: latest
-  # -- Image pull policy. One of: Always|IfNotPresent|Never. Keep Always for moving tags (latest, nightly).
-  # Use IfNotPresent when you pin a release tag.
-  pullPolicy: Always
+  # -- Image tag to deploy. An empty tag uses the chart's appVersion, so every pod runs the same
+  # Harvest version until you upgrade. Set a release tag such as "26.08.0-1" for another release.
+  # `latest` and `nightly` move, so also set `pullPolicy: Always` for them.
+  tag: ""
+  # -- Image pull policy. One of: Always|IfNotPresent|Never. IfNotPresent fits a release tag.
+  # Use Always with the moving tags `latest` and `nightly`.
+  pullPolicy: IfNotPresent
   # -- List of imagePullSecrets to use for private registries.
   # Example: ["my-regcred"]
   pullSecrets: []
@@ -261,6 +261,19 @@ admin:
   #     value: http://proxy:8080
   # -- Extra environment variables injected into the admin container. (corev1.EnvVar[])
   extraEnvVars: []
+  # Example — mount a Secret with the certificate for `Admin.httpsd.tls`:
+  # extraVolumes:
+  #   - name: sd-tls
+  #     secret:
+  #       secretName: sd-tls
+  # extraVolumeMounts:
+  #   - name: sd-tls
+  #     mountPath: /opt/harvest/sd-tls
+  #     readOnly: true
+  # -- Extra volumes added to the admin pod. The name `harvest-config` is used by the chart. (corev1.Volume[])
+  extraVolumes: []
+  # -- Extra volume mounts added to the admin container. (corev1.VolumeMount[])
+  extraVolumeMounts: []
   # -- Container ports exposed by the admin pod. Names must match probes and Service.
   containerPorts:
     httpsd: 8887
@@ -366,6 +379,8 @@ admin:
     type: ClusterIP
     # -- Set to 'None' for a headless service.
     clusterIP: None
-    # -- Service ports exposed. Names must match containerPorts.
+    # -- Service ports exposed. Names must match containerPorts. With the default headless Service
+    # (`clusterIP: None`) clients connect to the pod directly, so the pollers and the ScrapeConfig
+    # use `containerPorts.httpsd` and this port is not used.
     ports:
       httpsd: 8887

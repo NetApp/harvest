@@ -54,6 +54,11 @@ Usage:
 
 {{- /* Admin SD */ -}}
 {{- if $adminSD -}}
+{{- range $v := (.Values.admin.extraVolumes | default list) -}}
+{{- if eq (get $v "name") "harvest-config" -}}
+{{- fail "\n ERROR: admin.extraVolumes name \"harvest-config\" is used by the chart. Use another name." -}}
+{{- end -}}
+{{- end -}}
 {{- $port := .Values.admin.containerPorts.httpsd -}}
 {{- if not .Values.config.existingConfigMap -}}
 {{- $adminCfg := .Values.harvestConfig.Admin | default dict -}}

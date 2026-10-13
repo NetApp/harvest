@@ -93,8 +93,14 @@ spec:
             - name: harvest-config
               mountPath: /opt/harvest/harvest.yml
               subPath: harvest.yml
+            {{- with .Values.admin.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
         - name: harvest-config
           configMap:
             name: {{ include "harvest.configMapName" . }}
+        {{- with .Values.admin.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
 {{ end }}
