@@ -2226,7 +2226,7 @@ please refer to the <a href="../configure-zapi/#metrics_1">ZapiPerf Metrics Docu
 <li>StatPerf configuration file (default: <code>conf/statperf/default.yaml</code>)</li>
 <li>Object configuration file (located in <code>conf/statperf/$version/</code>)</li>
 </ul>
-<p>Except for <code>addr</code>, <code>datacenter</code> and <code>auth_style</code>, all other parameters of the StatPerf collector can be defined in either the Harvest configuration, the main StatPerf configuration file, or the object configuration files. Lower-level file definitions override higher-level ones. This enables configuring objects on an individual basis or applying common settings across all objects.</p>
+<p>Except for <code>addr</code>, <code>datacenter</code>, <code>auth_style</code>, <code>tls_min_version</code>, <code>use_insecure_tls</code>, and <code>recorder</code>, all other parameters of the StatPerf collector can be defined in either the Harvest configuration, the main StatPerf configuration file, or the object configuration files. Lower-level file definitions override higher-level ones. This enables configuring objects on an individual basis or applying common settings across all objects.</p>
 <hr />
 <h2 id="statperf-configuration-file">StatPerf Configuration File<a class="headerlink" href="#statperf-configuration-file" title="Permanent link">&para;</a></h2>
 <p>The StatPerf configuration file (also known as the "template") includes a list of objects to collect and their corresponding configuration file names. Additionally, it defines parameters applied as defaults to all objects. As with RestPerf, parameters defined in lower-level files (object or Harvest configuration files) will override the ones provided here.</p>
@@ -2240,12 +2240,6 @@ please refer to the <a href="../configure-zapi/#metrics_1">ZapiPerf Metrics Docu
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>use_insecure_tls</code></td>
-<td>bool, optional</td>
-<td>Skip verifying the TLS certificate of the target system.</td>
-<td style="text-align: right;">false</td>
-</tr>
 <tr>
 <td><code>client_timeout</code></td>
 <td>duration (Go-syntax)</td>

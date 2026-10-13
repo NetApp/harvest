@@ -2673,7 +2673,7 @@ Feedback and bug reports are welcome on <a href="https://github.com/NetApp/harve
 <li>Eseries configuration file (default: <code>conf/eseries/default.yaml</code>)</li>
 <li>Each object has its own configuration file (located in <code>conf/eseries/$version/</code>)</li>
 </ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the Eseries collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.</p>
+<p>Except for <code>addr</code>, <code>datacenter</code>, <code>tls_min_version</code>, <code>use_insecure_tls</code>, and <code>recorder</code>, all other parameters of the Eseries collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.</p>
 <p>The full set of parameters are described <a href="#collector-configuration-file">below</a>.</p>
 <h4 id="harvest-configuration-example">Harvest Configuration Example<a class="headerlink" href="#harvest-configuration-example" title="Permanent link">&para;</a></h4>
 <p>In your <code>harvest.yml</code>, configure a poller pointing to your E-Series storage array:</p>
@@ -2984,7 +2984,7 @@ At runtime, the collector will select the object configuration file that closest
 <li>EseriesMel configuration file (default: <code>conf/eseriesmel/default.yaml</code>)</li>
 <li>Each object has its own configuration file (located in <code>conf/eseriesmel/$version/</code>)</li>
 </ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the EseriesMel collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.</p>
+<p>Except for <code>addr</code>, <code>datacenter</code>, <code>tls_min_version</code>, <code>use_insecure_tls</code>, and <code>recorder</code>, all other parameters of the EseriesMel collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.</p>
 <p>The full set of parameters are described <a href="#eseriesmel-collector-configuration-file">below</a>.</p>
 <h4 id="eseriesmel-harvest-configuration-example">EseriesMel Harvest Configuration Example<a class="headerlink" href="#eseriesmel-harvest-configuration-example" title="Permanent link">&para;</a></h4>
 <p>In your <code>harvest.yml</code>, configure a poller pointing to your E-Series storage array:</p>

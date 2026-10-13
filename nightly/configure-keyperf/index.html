@@ -2370,7 +2370,7 @@
 <li>KeyPerf configuration file (default: <code>conf/keyperf/default.yaml</code>)</li>
 <li>Each object has its own configuration file (located in <code>conf/keyperf/$version/</code>)</li>
 </ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the KeyPerf collector can be defined in any of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones, allowing for individual object configuration or shared parameters across all objects.</p>
+<p>Except for <code>addr</code>, <code>datacenter</code>, <code>tls_min_version</code>, <code>use_insecure_tls</code>, and <code>recorder</code>, all other parameters of the KeyPerf collector can be defined in any of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones, allowing for individual object configuration or shared parameters across all objects.</p>
 <h3 id="collector-configuration-file">Collector Configuration File<a class="headerlink" href="#collector-configuration-file" title="Permanent link">&para;</a></h3>
 <p>This configuration file contains a list of objects that should be collected and the filenames of their templates (explained in the next section).</p>
 <p>Additionally, this file contains the parameters that are applied as defaults to all objects. As mentioned before, any of these parameters can be defined in the Harvest or object configuration files as well.</p>
@@ -2384,12 +2384,6 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>use_insecure_tls</code></td>
-<td>bool, optional</td>
-<td>skip verifying TLS certificate of the target system</td>
-<td style="text-align: right;">false</td>
-</tr>
 <tr>
 <td><code>client_timeout</code></td>
 <td>duration (Go-syntax)</td>

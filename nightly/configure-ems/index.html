@@ -2339,7 +2339,7 @@ Typically, these events share a common set of properties.</p>
 <li><a href="#ems-collector-configuration-file">EMS collector configuration</a> file (default: <code>conf/ems/default.yaml</code>)</li>
 <li><a href="#ems-template-file">EMS template file</a> (located in <code>conf/ems/9.6.0/ems.yaml</code>)</li>
 </ul>
-<p>Except for <code>addr</code>, <code>datacenter</code>, and <code>auth_style</code>, all other parameters of the EMS collector can be defined
+<p>Except for <code>addr</code>, <code>datacenter</code>, <code>auth_style</code>, <code>tls_min_version</code>, <code>use_insecure_tls</code>, and <code>recorder</code>, all other parameters of the EMS collector can be defined
 in either of these three files.
 Parameters defined in the lower-level files, override parameters in the higher-level file.
 This allows you to configure each EMS event individually, or use the same parameters for all events.</p>

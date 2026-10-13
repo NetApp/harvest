@@ -2321,7 +2321,7 @@ specify a short display name. See <a href="../configure-templates/#counters">cou
 <li>StorageGRID configuration file (default: <code>conf/storagegrid/default.yaml</code>)</li>
 <li>Each object has its own configuration file (located in <code>conf/storagegrid/$version/</code>)</li>
 </ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the StorageGRID collector can be
+<p>Except for <code>addr</code>, <code>datacenter</code>, <code>tls_min_version</code>, <code>use_insecure_tls</code>, and <code>recorder</code>, all other parameters of the StorageGRID collector can be
 defined in either of these three files. Parameters defined in the lower-level file, override parameters in the
 higher-level ones. This allows you to configure each object individually, or use the same parameters for all
 objects.</p>

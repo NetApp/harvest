@@ -2252,7 +2252,7 @@ Harvest collectors, the CiscoRest collector does not provide template customizat
 <li>CiscoRest configuration file (default: <code>conf/ciscorest/default.yaml</code>)</li>
 <li>Each object has its own configuration file (located in <code>conf/ciscorest/nxos/$version/</code>)</li>
 </ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the CiscoRest collector can be defined in any of these three files. Parameters defined in a lower-level file override those in higher-level files. This allows you to configure each object individually or use the same parameters for all objects.</p>
+<p>Except for <code>addr</code>, <code>datacenter</code>, <code>tls_min_version</code>, <code>use_insecure_tls</code>, and <code>recorder</code>, all other parameters of the CiscoRest collector can be defined in any of these three files. Parameters defined in a lower-level file override those in higher-level files. This allows you to configure each object individually or use the same parameters for all objects.</p>
 <p>The full set of parameters are described <a href="#harvest-configuration-file">below</a>.</p>
 <h3 id="harvest-configuration-file">Harvest configuration file<a class="headerlink" href="#harvest-configuration-file" title="Permanent link">&para;</a></h3>
 <p>Parameters in the poller section should define the following required parameters.</p>
