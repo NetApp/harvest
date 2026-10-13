@@ -32,7 +32,6 @@ import (
 )
 
 const (
-	latencyIoReqd          = 0
 	arrayKeyToken          = "#"
 	qosWorkloadQuery       = "api/storage/qos/workloads"
 	objWorkloadClass       = "user_defined|system_defined"
@@ -240,7 +239,7 @@ func (c *CmPerf) InitQOS() error {
 }
 
 func (c *CmPerf) InitMatrix() error {
-	c.perfProp.latencyIoReqd = c.LoadParam("latency_io_reqd", latencyIoReqd)
+	c.perfProp.latencyIoReqd = c.LoadParam("latency_io_reqd", collectors.DefaultLatencyIOReqd)
 	c.perfProp.isCacheEmpty = true
 	collectors.SetupPerfMatrix(c.Matrix[c.Object], c.Metadata, c.Params, c.Remote.Name, c.Prop.Object)
 	return nil

@@ -60,10 +60,9 @@ import (
 
 const (
 	// default parameter values
-	instanceKey   = "uuid"
-	batchSize     = 500
-	latencyIoReqd = 0
-	keyToken      = "?#"
+	instanceKey = "uuid"
+	batchSize   = 500
+	keyToken    = "?#"
 	// objects that need special handling
 	objWorkload             = "workload"
 	objWorkloadDetail       = "workload_detail"
@@ -184,7 +183,7 @@ func (z *ZapiPerf) InitCache() error {
 	z.instanceKeys = z.loadParamArray("instance_key", instanceKey)
 	z.filter = z.loadFilter()
 	z.batchSize = z.LoadParam("batch_size", batchSize)
-	z.latencyIoReqd = z.LoadParam("latency_io_reqd", latencyIoReqd)
+	z.latencyIoReqd = z.LoadParam("latency_io_reqd", collectors.DefaultLatencyIOReqd)
 	z.isCacheEmpty = true
 	z.object = z.LoadParam("object", "")
 	z.allowPartialAggregation = z.LoadParam("allow_partial_aggregation", false)

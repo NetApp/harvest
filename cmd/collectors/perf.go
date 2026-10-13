@@ -9,6 +9,8 @@ import (
 
 const TimestampMetricName = "timestamp"
 
+const DefaultLatencyIOReqd = 5
+
 // CounterOverride returns the configured property override for counter.
 func CounterOverride(params *node.Node, counter string) string {
 	if params == nil {
