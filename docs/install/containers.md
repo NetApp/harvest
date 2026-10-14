@@ -17,7 +17,7 @@ Harvest is container-ready and supports several deployment options:
   via [containerd and Rancher Desktop](containerd.md)? We got you
   covered.
 
-- [K8 Deployment](k8.md) via Kompose
+- [K8 Deployment](k8.md) via Helm
 
 ## Docker Compose
 

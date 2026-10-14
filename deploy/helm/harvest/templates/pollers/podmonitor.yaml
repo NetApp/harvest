@@ -1,9 +1,10 @@
+{{- include "harvest.validate" . -}}
 {{- $enabled := true -}}
 {{- if hasKey .Values.monitoring.scrape.podMonitor "enabled" -}}
 {{- $enabled = .Values.monitoring.scrape.podMonitor.enabled -}}
 {{- end -}}
 {{- if $enabled -}}
-{{- range $name, $poller := .Values.harvestConfig.Pollers }}
+{{- range $name, $poller := (.Values.harvestConfig.Pollers | default dict) }}
 {{- $ctx := dict "root" $ "pollerName" $name "poller" $poller -}}
 {{ include "harvest.poller.podmonitor" $ctx }}
 ---

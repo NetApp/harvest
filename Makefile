@@ -216,7 +216,3 @@ helm-lint: ## Lint Helm chart against all CI values files
 		echo "case: $$f"; \
 		helm lint --strict $(HELM_CHART_DIR) --values $$f || exit 1; \
 	done
-
-helm-docs: ## Generate Helm chart documentation
-	@echo "Generating Helm chart documentation"
-	helm-docs --chart-search-root $(HELM_CHART_DIR)

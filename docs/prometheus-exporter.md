@@ -344,6 +344,24 @@ HTTP service discovery (SD) is configured in the `Admin > httpsd` section of you
 | `heart_beat`                      | optional, [Go Duration format](https://pkg.go.dev/time#ParseDuration) | How frequently each poller sends a heartbeat message to the SD node                                                                                                                                                                                                                                                                                                       | 45s     |
 | `expire_after`                    | optional, [Go Duration format](https://pkg.go.dev/time#ParseDuration) | If a poller fails to send a heartbeat, the SD node removes the poller after this duration                                                                                                                                                                                                                                                                                 | 1m      |
 
+#### Pollers that run on a different host than the SD node (`heart_beat_url`)
+
+By default each poller sends its heartbeat to the address in `Admin > httpsd > listen`. A bare port such as `:8887` is
+treated as `127.0.0.1:8887`, which only works when the poller and the SD node run on the same host.
+
+When they run apart, for example in containers or in Kubernetes pods, set `heart_beat_url` on the Prometheus exporter to
+the address where the SD node can be reached from the poller. The poller reports its own address (the exporter's
+`local_http_addr`, or the host's IP when that is empty) as the scrape target.
+
+```yaml
+Exporters:
+  prometheus:
+    exporter: Prometheus
+    heart_beat_url: http://harvest-admin-sd.monitoring.svc:8887/api/v1/sd
+```
+
+The [Kubernetes Helm chart](install/k8.md) sets this for you when HTTP service discovery is enabled.
+
 #### Enable HTTP service discovery in Prometheus
 
 Edit your `prometheus.yml` and add the following section

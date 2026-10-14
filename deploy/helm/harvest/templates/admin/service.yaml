@@ -1,11 +1,11 @@
 {{- /* Headless ClusterIP fronting the admin SD endpoint — an internal scrape target
        for the ScrapeConfig, not meant to be exposed outside the cluster. */ -}}
+{{- include "harvest.validate" . -}}
 {{- if .Values.monitoring.scrape.adminSD.enabled | default false -}}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "harvest.fullname" $ }}-admin-sd
-  namespace: {{ .Release.Namespace | quote }}
   labels: {{- include "harvest.labels" $ | nindent 4 }}
     app.kubernetes.io/component: admin
 spec:

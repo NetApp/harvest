@@ -2,8 +2,8 @@ apiVersion: v2
 name: harvest
 description: NetApp Harvest exporter for NetApp ONTAP storage systems.
 type: application
-version: 0.1.0
-appVersion: 26.02.0
+version: 0.2.0
+appVersion: "26.08.0-1"
 icon: https://raw.githubusercontent.com/NetApp/harvest/refs/heads/main/docs/assets/harvest.svg
 keywords:
   - netapp
