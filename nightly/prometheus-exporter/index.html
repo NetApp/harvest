@@ -1074,6 +1074,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pollers-that-run-on-a-different-host-than-the-sd-node-heart_beat_url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pollers that run on a different host than the SD node (heart_beat_url)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enable-http-service-discovery-in-prometheus" class="md-nav__link">
     <span class="md-ellipsis">
       Enable HTTP service discovery in Prometheus
@@ -2437,6 +2446,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pollers-that-run-on-a-different-host-than-the-sd-node-heart_beat_url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pollers that run on a different host than the SD node (heart_beat_url)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enable-http-service-discovery-in-prometheus" class="md-nav__link">
     <span class="md-ellipsis">
       Enable HTTP service discovery in Prometheus
@@ -2991,6 +3009,18 @@ of running Harvest pollers.</p>
 </tr>
 </tbody>
 </table>
+<h4 id="pollers-that-run-on-a-different-host-than-the-sd-node-heart_beat_url">Pollers that run on a different host than the SD node (<code>heart_beat_url</code>)<a class="headerlink" href="#pollers-that-run-on-a-different-host-than-the-sd-node-heart_beat_url" title="Permanent link">&para;</a></h4>
+<p>By default each poller sends its heartbeat to the address in <code>Admin &gt; httpsd &gt; listen</code>. A bare port such as <code>:8887</code> is
+treated as <code>127.0.0.1:8887</code>, which only works when the poller and the SD node run on the same host.</p>
+<p>When they run apart, for example in containers or in Kubernetes pods, set <code>heart_beat_url</code> on the Prometheus exporter to
+the address where the SD node can be reached from the poller. The poller reports its own address (the exporter's
+<code>local_http_addr</code>, or the host's IP when that is empty) as the scrape target.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">heart_beat_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://harvest-admin-sd.monitoring.svc:8887/api/v1/sd</span>
+</code></pre></div>
+<p>The <a href="../install/k8/">Kubernetes Helm chart</a> sets this for you when HTTP service discovery is enabled.</p>
 <h4 id="enable-http-service-discovery-in-prometheus">Enable HTTP service discovery in Prometheus<a class="headerlink" href="#enable-http-service-discovery-in-prometheus" title="Permanent link">&para;</a></h4>
 <p>Edit your <code>prometheus.yml</code> and add the following section</p>
 <p><code>$ vim /etc/prometheus/prometheus.yml</code></p>
