@@ -30,7 +30,6 @@ import (
 )
 
 const (
-	latencyIoReqd    = 0
 	defaultBatchSize = 500
 	arrayKeyToken    = "#"
 	subLabelToken    = "."
@@ -140,7 +139,7 @@ func (s *StatPerf) loadFilter() string {
 }
 
 func (s *StatPerf) InitMatrix() error {
-	s.perfProp.latencyIoReqd = s.LoadParam("latency_io_reqd", latencyIoReqd)
+	s.perfProp.latencyIoReqd = s.LoadParam("latency_io_reqd", collectors.DefaultLatencyIOReqd)
 	s.perfProp.isCacheEmpty = true
 	collectors.SetupPerfMatrix(s.Matrix[s.Object], s.Metadata, s.Params, s.Remote.Name, s.Prop.Object)
 	return nil

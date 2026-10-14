@@ -24,10 +24,6 @@ import (
 	"time"
 )
 
-const (
-	latencyIoReqd = 0
-)
-
 type KeyPerf struct {
 	*rest.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	perfProp      *perfProp
@@ -111,7 +107,7 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 }
 
 func (kp *KeyPerf) InitMatrix() error {
-	kp.perfProp.latencyIoReqd = kp.LoadParam("latency_io_reqd", latencyIoReqd)
+	kp.perfProp.latencyIoReqd = kp.LoadParam("latency_io_reqd", collectors.DefaultLatencyIOReqd)
 	kp.perfProp.isCacheEmpty = true
 	collectors.SetupPerfMatrix(kp.Matrix[kp.Object], kp.Metadata, kp.Params, kp.Remote.Name, kp.Prop.Object)
 	return nil

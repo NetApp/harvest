@@ -8,6 +8,10 @@ import (
 	"testing"
 )
 
+func TestDefaultLatencyIOReqd(t *testing.T) {
+	assert.Equal(t, DefaultLatencyIOReqd, 5)
+}
+
 func TestCounterOverride(t *testing.T) {
 	assert.Equal(t, CounterOverride(nil, "ops"), "")
 

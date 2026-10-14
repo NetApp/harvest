@@ -39,7 +39,6 @@ import (
 )
 
 const (
-	latencyIoReqd          = 0
 	arrayKeyToken          = "#"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
@@ -195,7 +194,7 @@ func (r *RestPerf) InitQOS() error {
 }
 
 func (r *RestPerf) InitMatrix() error {
-	r.perfProp.latencyIoReqd = r.LoadParam("latency_io_reqd", latencyIoReqd)
+	r.perfProp.latencyIoReqd = r.LoadParam("latency_io_reqd", collectors.DefaultLatencyIOReqd)
 	r.perfProp.isCacheEmpty = true
 	collectors.SetupPerfMatrix(r.Matrix[r.Object], r.Metadata, r.Params, r.Remote.Name, r.Prop.Object)
 	return nil

@@ -23,11 +23,11 @@ func TestPprofLoopbackOnly(t *testing.T) {
 		{name: "remote heap", remoteAddr: "203.0.113.9:5555", host: "localhost", path: "/debug/pprof/heap", want: http.StatusNotFound},
 		{name: "remote goroutine", remoteAddr: "203.0.113.9:5555", host: "localhost", path: "/debug/pprof/goroutine", want: http.StatusNotFound},
 		{name: "remote health is unaffected", remoteAddr: "203.0.113.9:5555", host: "10.1.2.3:12990", path: "/health", want: http.StatusOK},
-		{name: "remote IPv6",remoteAddr: "[2001:db8::1]:5555", host: "localhost", path: "/debug/pprof/", want: http.StatusNotFound},
+		{name: "remote IPv6", remoteAddr: "[2001:db8::1]:5555", host: "localhost", path: "/debug/pprof/", want: http.StatusNotFound},
 		{name: "malformed remote addr", remoteAddr: "garbage", host: "localhost", path: "/debug/pprof/", want: http.StatusNotFound},
 		{name: "loopback IPv4", remoteAddr: "127.0.0.1:5555", host: "10.1.2.3:12990", path: "/debug/pprof/", want: http.StatusOK},
 		{name: "loopback heap", remoteAddr: "127.0.0.1:5555", host: "localhost", path: "/debug/pprof/heap", want: http.StatusOK},
-		{name: "loopback IPv6",remoteAddr: "[::1]:5555", host: "localhost", path: "/debug/pprof/cmdline", want: http.StatusOK},
+		{name: "loopback IPv6", remoteAddr: "[::1]:5555", host: "localhost", path: "/debug/pprof/cmdline", want: http.StatusOK},
 		{name: "IPv4-mapped loopback", remoteAddr: "[::ffff:127.0.0.1]:5555", host: "localhost", path: "/debug/pprof/", want: http.StatusOK},
 	}
 
