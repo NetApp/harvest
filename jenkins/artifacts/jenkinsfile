@@ -332,7 +332,7 @@ pipeline {
                         /opt/home/gh_2.8.0_linux_386/bin/gh auth login --with-token < mytoken.txt
                         /opt/home/gh_2.8.0_linux_386/bin/gh release view nightly && /opt/home/gh_2.8.0_linux_386/bin/gh release delete nightly || true
                         if [ $(git tag -l nightly) ]; then
-                            git push https://$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
+                            git push https://x-access-token:$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
                         fi
                         /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
                         # Reuse already built Docker images and tag them with 'nightly'
@@ -343,7 +343,7 @@ pipeline {
                         git config user.name harvest
                         git config user.email harvest
                         git fetch origin gh-pages:gh-pages
-                        mike deploy -r https://$GIT_TOKEN@github.com/NetApp/harvest.git --push --update-aliases nightly
+                        mike deploy -r https://x-access-token:$GIT_TOKEN@github.com/NetApp/harvest.git --push --update-aliases nightly
                         '''
                         withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
                             sh '''
