@@ -61,7 +61,7 @@ else
 fi
 
 if [ ! $? -eq 0 ]; then
-    error "     build failed"
+    echo "     build failed"
     exit 1
 fi
 
@@ -83,7 +83,7 @@ mkdir -p "$PACKAGE_DIR"
 rm -f "$PACKAGE_DIR/$PACKAGE_NAME"
 dpkg-deb --build -Zxz "$BUILD" "$PACKAGE_DIR/$PACKAGE_NAME"
 if [ ! $? -eq 0 ]; then
-    error "dpkg build failed"
+    echo "dpkg build failed"
     exit 1
 fi
 echo " --> created package: [$PACKAGE_DIR/$PACKAGE_NAME]"
