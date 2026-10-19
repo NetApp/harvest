@@ -139,6 +139,7 @@ var excludeCounters = []string{
 	"svm_read_total",
 	"svm_vscan",
 	"svm_write_total",
+	"volume_analytics",
 	"volume_top_clients_",
 	"volume_top_files_",
 	"volume_top_users_",

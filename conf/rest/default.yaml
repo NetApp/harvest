@@ -70,6 +70,6 @@ objects:
   SVM:                         svm.yaml
   Volume:                      volume.yaml
 #  VolumeEfficiency:            volume_efficiency.yaml
-  VolumeAnalytics:             volume_analytics.yaml
+#  VolumeAnalytics:             volume_analytics.yaml          # The VolumeAnalytics template makes an additional API call per FSA-enabled volume and may slow down data collection.
   VolumeSnaplock:              volume_snaplock.yaml
   Vscan:                       vscan.yaml

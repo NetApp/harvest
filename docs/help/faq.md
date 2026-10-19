@@ -205,7 +205,7 @@ NFS Clients dashboard is only available through Rest Collector. This information
 
 ### Answer
 
-This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Please enable the REST collector in your harvest config. To collect and display usage data such as capacity analytics, you need to enable File System Analytics on a volume. Please see https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details.
+This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Please enable the REST collector in your harvest config. The VolumeAnalytics template is disabled by default. Enable it by following the [VolumeAnalytics documentation](https://github.com/NetApp/harvest/discussions/4511). To collect and display usage data such as capacity analytics, you need to enable File System Analytics on a volume. Please see https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details.
 
 ## Why do I have Volume Sis Stat panel empty in Volume dashboard?
 
