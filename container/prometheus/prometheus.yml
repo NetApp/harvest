@@ -16,6 +16,7 @@ global:
 rule_files:
   - 'alert_rules.yml'
   - 'ems_alert_rules.yml'
+  - 'eseries_alert_rules.yml'
     
 scrape_configs:
 - job_name: 'prometheus'

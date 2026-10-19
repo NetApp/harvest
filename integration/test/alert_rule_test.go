@@ -7,6 +7,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/third_party/go-version"
+	"os"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -72,6 +74,103 @@ func TestEmsAlertRules(t *testing.T) {
 			}
 		}
 	}
+}
+
+// eseriesMelGlobalLabels: set by the collector via mat.SetGlobalLabel, not present in events.yaml.
+var eseriesMelGlobalLabels = []string{"array", "chassis_serial"}
+
+func TestEseriesAlertRules(t *testing.T) {
+	cmds.SkipIfMissing(t, cmds.Regression)
+
+	versionDir, err := latestVersionDir("../../conf/eseriesmel")
+	if err != nil {
+		t.Fatalf("unable to find eseriesmel template version: %s", err)
+	}
+	eventsTemplatePath := filepath.Join(versionDir, "events.yaml")
+
+	data, err := tree.ImportYaml(eventsTemplatePath)
+	if data == nil || err != nil {
+		t.Fatalf("unable to import template file %s: %s", eventsTemplatePath, err)
+	}
+
+	eventTypes := getEseriesMelEventTypes(data)
+	exportedLabels := getEseriesMelExportedLabels(data)
+
+	// isEms=true reuses FindEms, which assumes a single-label selector like {event_type="N"}.
+	eseriesAlertRules := GetAllAlertRules("../../container/prometheus/", "eseries_alert_rules.yml", true)
+	for _, alertRule := range eseriesAlertRules {
+		for _, eventType := range alertRule.exprs {
+			if !slices.Contains(eventTypes, eventType) {
+				t.Errorf("event_type %s used by alert %q is not defined in %s", eventType, alertRule.name, eventsTemplatePath)
+			}
+		}
+		for _, label := range alertRule.labels {
+			if !slices.Contains(exportedLabels, label) {
+				t.Errorf("%s is not an exported label for alert %q", label, alertRule.name)
+			}
+		}
+	}
+}
+
+func getEseriesMelEventTypes(data *node.Node) []string {
+	children := data.GetChildS("events").GetChildren()
+	eventTypes := make([]string, 0, len(children))
+	for _, e := range children {
+		eventTypes = append(eventTypes, e.GetChildContentS("event_type"))
+	}
+	return eventTypes
+}
+
+func getEseriesMelExportedLabels(data *node.Node) []string {
+	labels := slices.Clone(eseriesMelGlobalLabels)
+
+	if counters := data.GetChildS("counters"); counters != nil {
+		for _, counter := range counters.GetAllChildContentS() {
+			_, display, _, _ := template.ParseMetric(counter)
+			if display != "" {
+				labels = append(labels, display)
+			}
+		}
+	}
+
+	if exportOptions := data.GetChildS("export_options"); exportOptions != nil {
+		if instanceKeys := exportOptions.GetChildS("instance_keys"); instanceKeys != nil {
+			labels = append(labels, instanceKeys.GetAllChildContentS()...)
+		}
+	}
+
+	return labels
+}
+
+// latestVersionDir returns the subdirectory of baseDir with the highest version-numbered name,
+// so the test keeps covering the newest eseriesmel template instead of a hardcoded version.
+func latestVersionDir(baseDir string) (string, error) {
+	entries, err := os.ReadDir(baseDir)
+	if err != nil {
+		return "", err
+	}
+
+	var (
+		latestName string
+		latestVer  *version.Version
+	)
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		v, err := version.NewVersion(e.Name())
+		if err != nil {
+			continue
+		}
+		if latestVer == nil || v.GreaterThan(latestVer) {
+			latestVer = v
+			latestName = e.Name()
+		}
+	}
+	if latestVer == nil {
+		return "", fmt.Errorf("no version directories found in %s", baseDir)
+	}
+	return filepath.Join(baseDir, latestName), nil
 }
 
 func GetAllAlertRules(dir string, fileName string, isEms bool) []AlertRule {
