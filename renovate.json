@@ -74,6 +74,13 @@
       "matchFileNames": ["integration/go.mod", "mcp/go.mod"],
       "matchDepTypes": ["indirect"],
       "enabled": true
+    },
+    {
+      "description": "Update integration/ and mcp/ in their own branch, never alongside the root go.mod. Renovate runs the root's artifact step first, and gomodTidyAll makes it re-tidy the nested modules before their updated go.mod reaches disk. That stale go.mod then overwrites the updated one in the commit, while go.sum keeps the new versions, so tidy-check fails (PR 4510)",
+      "matchManagers": ["gomod"],
+      "matchFileNames": ["integration/go.mod", "mcp/go.mod"],
+      "groupName": "nested go modules",
+      "groupSlug": "nested-go-modules"
     }
   ],
   "separateMajorMinor": false
