@@ -480,7 +480,7 @@ func (kp *KeyPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = curMat.Delta(key, prevMat, cachedData, kp.AllowPartialAggregation, kp.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, cachedData, kp.perfProp.timestampMetricName, kp.AllowPartialAggregation, kp.Logger); err != nil {
 			kp.Logger.Error("Calculate delta", slogx.Err(err), slog.String("key", key))
 			continue
 		}

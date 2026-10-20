@@ -1205,7 +1205,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 
 	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta("timestamp", prevMat, cachedData, r.AllowPartialAggregation, r.Logger); err != nil {
+	if _, err = curMat.Delta(collectors.TimestampMetricName, prevMat, cachedData, collectors.TimestampMetricName, r.AllowPartialAggregation, r.Logger); err != nil {
 		r.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 	}
 
@@ -1235,7 +1235,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = curMat.Delta(key, prevMat, cachedData, r.AllowPartialAggregation, r.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, cachedData, collectors.TimestampMetricName, r.AllowPartialAggregation, r.Logger); err != nil {
 			r.Logger.Error("Calculate delta:", slogx.Err(err), slog.String("key", key))
 			continue
 		}
