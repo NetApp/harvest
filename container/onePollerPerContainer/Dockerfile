@@ -3,7 +3,7 @@
 # .harvest.env (see renovate.json); a manual Go bump must update both.
 ARG GO_VERSION
 ARG BUILDPLATFORM
-FROM --platform=$BUILDPLATFORM golang:${GO_VERSION:-1.27.2} AS builder
+FROM --platform=$BUILDPLATFORM golang:${GO_VERSION:-1.27.3} AS builder
 
 SHELL ["/bin/bash", "-c"]
 
