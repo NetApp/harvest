@@ -231,14 +231,15 @@ func FilterNonEmpty(input string) []string {
 	return lines
 }
 
-// getDividerWidth returns the number of '-' characters before the first space in the divider line.
-func getDividerWidth(line string) int {
-	trim := strings.TrimLeft(line, " ")
-	index := strings.Index(trim, " ")
+// getDividerEnd returns the column where the counter column's '-' run ends in the divider line.
+// It includes the leading indent so it can be compared with getIndent.
+func getDividerEnd(line string) int {
+	indent := getIndent(line)
+	index := strings.Index(line[indent:], " ")
 	if index == -1 {
-		return len(trim)
+		return len(line)
 	}
-	return index
+	return indent + index
 }
 
 // parseData processes an input string, extracts and groups rows (by instance),
@@ -267,7 +268,7 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 	currentGroup := make(map[string]any)
 	inTable := false
 	var tableLines []string
-	dividerWidth := 0
+	dividerEnd := 0
 
 	flushTable := func() {
 		if len(tableLines) == 0 {
@@ -303,26 +304,6 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 				continue
 			}
 
-			// Check if the counter is an array-like element
-			if s.perfProp != nil && s.perfProp.counterInfo != nil {
-				if c, exists := s.perfProp.counterInfo[counter]; exists {
-					if c.counterType == "array" {
-						arrayData := make(map[string]string)
-						for range c.labelCount {
-							nextLineRaw := preprocessArrayLine(tableLines[i+1])
-							nextTokens := strings.Fields(nextLineRaw)
-							if len(nextTokens) != 2 {
-								break
-							}
-							arrayData[nextTokens[0]] = nextTokens[1]
-							i++
-						}
-						currentGroup[counter] = arrayData
-						continue
-					}
-				}
-			}
-
 			// Check for continuation lines.
 			// For single-token lines: use indent to determine counter vs value continuation
 			// For multi-token lines: check if merging with counter creates a valid counter name
@@ -339,7 +320,7 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 
 				if len(nextTokens) == 1 {
 					// Single token: use indent to determine counter vs value continuation
-					if dividerWidth > 0 && indent < dividerWidth {
+					if dividerEnd > 0 && indent < dividerEnd {
 						cb.WriteString(nextTokens[0])
 					} else {
 						valueBuilder.WriteString(nextTokens[0])
@@ -348,9 +329,9 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 				} else {
 					// Multiple tokens: could be new row or continuation
 					leftPart := ""
-					if dividerWidth > 0 && len(nextLineRaw) > dividerWidth {
-						leftPart = strings.TrimSpace(nextLineRaw[:dividerWidth])
-					} else if indent < dividerWidth {
+					if dividerEnd > 0 && len(nextLineRaw) > dividerEnd {
+						leftPart = strings.TrimSpace(nextLineRaw[:dividerEnd])
+					} else if indent < dividerEnd {
 						leftPart = nextTokens[0]
 					}
 
@@ -363,8 +344,8 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 								// Valid counter continuation
 								cb.WriteString(leftPart)
 								// If there's also right part, add to value
-								if dividerWidth > 0 && len(nextLineRaw) > dividerWidth {
-									rightPart := strings.TrimSpace(nextLineRaw[dividerWidth:])
+								if dividerEnd > 0 && len(nextLineRaw) > dividerEnd {
+									rightPart := strings.TrimSpace(nextLineRaw[dividerEnd:])
 									if rightPart != "" {
 										valueBuilder.WriteString(rightPart)
 									}
@@ -376,7 +357,7 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 					}
 
 					// Not a counter continuation - check if it's a value continuation
-					if dividerWidth > 0 && indent >= dividerWidth {
+					if dividerEnd > 0 && indent >= dividerEnd {
 						valueBuilder.WriteString(strings.TrimSpace(nextLineRaw))
 						i++
 					} else {
@@ -387,6 +368,11 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			}
 			counter = cb.String()
 			value := valueBuilder.String()
+
+			if c, ok := s.arrayCounter(counter); ok {
+				currentGroup[counter], i = readArray(tableLines, i, c.labelCount)
+				continue
+			}
 
 			// Check for duplicate counters
 			// The objects `object_store_server` and `smb2` have a different table format where multiple node
@@ -469,7 +455,7 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			inTable = true
 			// Next nonempty line is assumed to be the divider.
 			if i+1 < len(lines) && dividedRegex.MatchString(strings.TrimSpace(lines[i+1])) {
-				dividerWidth = getDividerWidth(lines[i+1])
+				dividerEnd = getDividerEnd(lines[i+1])
 				i++ // Skip divider line.
 			}
 			continue
@@ -493,6 +479,36 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 		return nil, errors.New("no data found")
 	}
 	return data, nil
+}
+
+// arrayCounter returns the counter info when name is an array counter.
+func (s *StatPerf) arrayCounter(name string) (*counter, bool) {
+	if s.perfProp == nil || s.perfProp.counterInfo == nil {
+		return nil, false
+	}
+	c, exists := s.perfProp.counterInfo[name]
+	if !exists || c.counterType != "array" {
+		return nil, false
+	}
+	return c, true
+}
+
+// readArray reads up to labelCount array element lines after lines[i] and returns the elements
+// and the index of the last line consumed.
+func readArray(lines []string, i int, labelCount int) (map[string]string, int) {
+	arrayData := make(map[string]string)
+	for range labelCount {
+		if i+1 >= len(lines) {
+			break
+		}
+		nextTokens := strings.Fields(preprocessArrayLine(lines[i+1]))
+		if len(nextTokens) != 2 {
+			break
+		}
+		arrayData[nextTokens[0]] = nextTokens[1]
+		i++
+	}
+	return arrayData, i
 }
 
 func preprocessArrayLine(line string) string {

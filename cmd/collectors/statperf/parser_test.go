@@ -541,6 +541,139 @@ Scope: cluster-01
 	assert.Equal(t, val2, "12345")
 }
 
+func TestParseRows_WrappedArrayCounter(t *testing.T) {
+	input := `Object: workload_queue_combined
+Instance: fg-wid26474
+Start-time: 10/21/2026 15:33:33
+End-time: 10/21/2026 15:33:33
+Scope: cluster_1
+Number of Constituents: 2 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    cpu_dblade_background_service_                                  -
+    time
+                              direct                             1397
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    disk_ssd_background_service_time                                -
+                              direct                                5
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    iops_total                                              184097303
+3 entries were displayed.`
+
+	s := &StatPerf{
+		Rest: &rest2.Rest{AbstractCollector: &collector.AbstractCollector{}},
+	}
+	s.Logger = slog.Default()
+	s.perfProp = &perfProp{
+		counterInfo: map[string]*counter{
+			"cpu_dblade_background_service_time": {name: "cpu_dblade_background_service_time", counterType: "array", labelCount: 4},
+			"disk_ssd_background_service_time":   {name: "disk_ssd_background_service_time", counterType: "array", labelCount: 4},
+			"iops_total":                         {name: "iops_total"},
+		},
+	}
+
+	groups, err := s.parseRows(input)
+	assert.Nil(t, err)
+	assert.Equal(t, len(groups), 1)
+
+	want := map[string]map[string]string{
+		"cpu_dblade_background_service_time": {"direct": "1397", "wafl_cp": "0", "background_delete": "0", "readahead_x_stripe": "0"},
+		"disk_ssd_background_service_time":   {"direct": "5", "wafl_cp": "0", "background_delete": "0", "readahead_x_stripe": "0"},
+	}
+	for name, labels := range want {
+		got, ok := groups[0][name].(map[string]string)
+		assert.True(t, ok)
+		for label, value := range labels {
+			assert.Equal(t, got[label], value)
+		}
+	}
+	assert.Equal(t, groups[0]["iops_total"], "184097303")
+	_, stray := groups[0]["direct"]
+	assert.False(t, stray)
+}
+
+func TestParseRows_WrappedArrayCounterShortLabels(t *testing.T) {
+	input := `Object: wafl
+Instance: wafl
+Start-time: 10/21/2026 17:44:02
+End-time: 10/21/2026 17:44:02
+Scope: panaffa400x05
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    cps_multi_clean_duration_                                       -
+    histogram
+                                   0                                0
+                                   1                                4
+                                   2                               24
+                                   3                               18
+                                   4                                2
+                                   5                                0
+                                   6                                0
+                                   7                                0
+                                 <16                                0
+                                 <24                                0
+                                 <32                                0
+                                 <40                                0
+                                 <48                                0
+                                 <56                                0
+                                 <64                                0
+                                <128                                0
+                                <192                                0
+                                <256                                0
+                                <320                                0
+                                <384                                0
+                                <448                                0
+                                <512                                0
+                               <1024                                0
+                               <1536                                0
+                               <2048                                0
+                               <2560                                0
+                               <3072                             1317
+                               <3584                              808
+                               <4096                             2132
+                               <8192                                0
+                              <12288                              473
+                              <16384                              945
+                              <20480                                1
+                              <24576                                0
+                              <28672                                0
+                              <32768                                0
+                              <65536                                0
+                              <98304                                0
+                             <131072                                0
+                             <163840                                0
+                             <196608                                0
+                             <229376                                0
+                             <262144                                0
+                             >262144                                0`
+
+	s := &StatPerf{
+		Rest: &rest2.Rest{AbstractCollector: &collector.AbstractCollector{}},
+	}
+	s.Logger = slog.Default()
+	s.perfProp = &perfProp{
+		counterInfo: map[string]*counter{
+			"cps_multi_clean_duration_histogram": {name: "cps_multi_clean_duration_histogram", counterType: "array", labelCount: 44},
+		},
+	}
+
+	groups, err := s.parseRows(input)
+	assert.Nil(t, err)
+	assert.Equal(t, len(groups), 1)
+
+	got, ok := groups[0]["cps_multi_clean_duration_histogram"].(map[string]string)
+	assert.True(t, ok)
+	assert.Equal(t, len(got), 44)
+	want := map[string]string{"0": "0", "1": "4", "2": "24", "<512": "0", "<3072": "1317", ">262144": "0"}
+	for label, value := range want {
+		assert.Equal(t, got[label], value)
+	}
+}
+
 func TestParseRows_EntriesDisplayedLine(t *testing.T) {
 	input := `Object: volume
 Instance: test_volume
