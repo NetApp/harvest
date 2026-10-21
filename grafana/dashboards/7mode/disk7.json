@@ -226,7 +226,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count( count by(serial_number) (disk_labels{datacenter=~\"$Datacenter\",node=~\"$Node\",offline!=\"\"}) )",
+          "expr": "count( count by(node, disk) (disk_labels{datacenter=~\"$Datacenter\",node=~\"$Node\",offline!=\"\"}) )",
           "format": "time_series",
           "hide": false,
           "instant": false,
