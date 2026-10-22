@@ -4,7 +4,7 @@
 # The scanner does not pass --build-arg GO_VERSION, so the fallback is the version used. Renovate bumps it
 # together with .harvest.env (see renovate.json).
 ARG GO_VERSION
-FROM golang:${GO_VERSION:-1.27.2}
+FROM golang:${GO_VERSION:-1.27.3}
 
 ENV GOTOOLCHAIN=local
 
