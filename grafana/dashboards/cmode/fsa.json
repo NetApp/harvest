@@ -118,14 +118,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 4,
+        "h": 6,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 99,
       "options": {
-        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Two actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On your ONTAP cluster, enable File System Analytics (FSA) for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details. <br><br> Note: Prior to version 9.13.1, ONTAP requires you to enable FSA individually for each volume. Harvest only collects FSA metrics from FSA-enabled volumes on the cluster. By default, Harvest keeps track of the 20 largest volumes for FSA. If you wish to customize this, please see: https://github.com/NetApp/harvest/blob/main/conf/rest/9.12.0/volume_analytics.yaml.",
+        "content": "This dashboard requires ONTAP 9.8+ and the APIs are only available via REST. Three actions are required to use this dashboard: <br>1. On Harvest, enable the REST collector in your `harvest.yml` config<br>2. On Harvest, enable the VolumeAnalytics template. It is disabled by default. See the [VolumeAnalytics documentation](https://github.com/NetApp/harvest/discussions/4511)<br>3. On your ONTAP cluster, enable File System Analytics (FSA) for one or more volumes. See https://docs.netapp.com/us-en/ontap/task_nas_file_system_analytics_enable.html for more details. <br><br> Note: Prior to version 9.13.1, ONTAP requires you to enable FSA individually for each volume. Harvest only collects FSA metrics from FSA-enabled volumes on the cluster. By default, Harvest keeps track of the 20 largest volumes for FSA. If you wish to customize this, please see: https://github.com/NetApp/harvest/blob/main/conf/rest/9.12.0/volume_analytics.yaml.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -138,7 +138,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 7
       },
       "id": 20,
       "panels": [],
@@ -168,7 +168,7 @@
         "h": 4,
         "w": 8,
         "x": 0,
-        "y": 6
+        "y": 8
       },
       "id": 95,
       "options": {
@@ -236,7 +236,7 @@
         "h": 4,
         "w": 8,
         "x": 8,
-        "y": 6
+        "y": 8
       },
       "id": 96,
       "options": {
@@ -293,7 +293,7 @@
         "h": 4,
         "w": 8,
         "x": 16,
-        "y": 6
+        "y": 8
       },
       "id": 97,
       "options": {
@@ -360,7 +360,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 12
       },
       "id": 103,
       "options": {
@@ -415,7 +415,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 13
+        "y": 15
       },
       "id": 22,
       "options": {
@@ -506,7 +506,7 @@
         "h": 10,
         "w": 20,
         "x": 4,
-        "y": 13
+        "y": 15
       },
       "id": 86,
       "options": {
@@ -563,7 +563,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 18
+        "y": 20
       },
       "id": 23,
       "options": {
@@ -750,7 +750,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 25
       },
       "id": 25,
       "options": {
@@ -876,7 +876,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 35
       },
       "id": 90,
       "panels": [
@@ -944,7 +944,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 34
+            "y": 36
           },
           "id": 88,
           "options": {
@@ -1110,7 +1110,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 34
+            "y": 36
           },
           "id": 92,
           "options": {
@@ -1276,7 +1276,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 42
+            "y": 44
           },
           "id": 91,
           "options": {
@@ -1442,7 +1442,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 42
+            "y": 44
           },
           "id": 93,
           "options": {
