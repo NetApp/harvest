@@ -1,0 +1,11 @@
+
+
+This is your first recorded login.
+
+
+
+object·objectname·instance·outputName·instanceUUID·
+Object·Object·Instance Name·Instance Name·Instance UUID·
+wafl_flexlog·wafl_flexlog·flexlog·flexlog·panaffa400x05:kernel:flexlog·
+wafl_flexlog·wafl_flexlog·flexlog·flexlog·panaffa400x06:kernel:flexlog·
+

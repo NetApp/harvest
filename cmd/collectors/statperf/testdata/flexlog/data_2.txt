@@ -1,0 +1,60 @@
+
+
+This is your first recorded login.
+
+
+
+
+Object: wafl_flexlog
+Instance: flexlog
+Start-time: 10/22/2026 15:21:34
+End-time: 10/22/2026 15:21:34
+Scope: panaffa400x05
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_uuid                        panaffa400x05:kernel:flexlog
+    ldma_latency                                                    -
+                        NULL_MESSAGE                                0
+                          WAFL_WRITE                          1403206
+                   WAFL_SPINNP_WRITE                        398378644
+                    WAFL_SPINNP_READ                                0
+    logging_count                                                   -
+                        NULL_MESSAGE                                0
+                          WAFL_WRITE                           137922
+                   WAFL_SPINNP_WRITE                          9657624
+                    WAFL_SPINNP_READ                                0
+    node_name                                           panaffa400x05
+    rdma_latency                                                    -
+                        NULL_MESSAGE                                0
+                          WAFL_WRITE                          3178547
+                   WAFL_SPINNP_WRITE                        430235931
+                    WAFL_SPINNP_READ                                0
+
+Object: wafl_flexlog
+Instance: flexlog
+Start-time: 10/22/2026 15:21:34
+End-time: 10/22/2026 15:21:34
+Scope: panaffa400x06
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_uuid                        panaffa400x06:kernel:flexlog
+    ldma_latency                                                    -
+                        NULL_MESSAGE                                0
+                          WAFL_WRITE                           618289
+                   WAFL_SPINNP_WRITE                        144671347
+                    WAFL_SPINNP_READ                                0
+    logging_count                                                   -
+                        NULL_MESSAGE                                0
+                          WAFL_WRITE                            61982
+                   WAFL_SPINNP_WRITE                          3217968
+                    WAFL_SPINNP_READ                                0
+    node_name                                           panaffa400x06
+    rdma_latency                                                    -
+                        NULL_MESSAGE                                0
+                          WAFL_WRITE                          1509342
+                   WAFL_SPINNP_WRITE                        150005184
+                    WAFL_SPINNP_READ                                0
+12 entries were displayed.
+

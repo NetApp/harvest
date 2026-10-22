@@ -5,11 +5,14 @@ import (
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"math"
 	"os"
 	"sort"
 	"strings"
@@ -277,6 +280,129 @@ func processAndCookCounters(s *StatPerf, pollData []gjson.Result, prevMat *matri
 	metricCount, _, _ := s.processPerfRecords(pollData, curMat, prevMat)
 	got, err := s.cookCounters(curMat, prevMat)
 	return got, metricCount, err
+}
+
+func pollFlexlog(t *testing.T, s *StatPerf) *matrix.Matrix {
+	t.Helper()
+	counters, err := getDataJSON("testdata/flexlog/counters.txt")
+	assert.Nil(t, err)
+	assert.Nil(t, s.pollCounter(counters, 0))
+
+	instances, err := getDataJSON("testdata/flexlog/instances.txt")
+	assert.Nil(t, err)
+	_, err = s.pollInstance(s.Matrix[s.Object], instances, 0)
+	assert.Nil(t, err)
+
+	var got map[string]*matrix.Matrix
+	for _, path := range []string{"testdata/flexlog/data_1.txt", "testdata/flexlog/data_2.txt"} {
+		data, err := getDataJSON(path)
+		assert.Nil(t, err)
+		got, _, err = processAndCookCounters(s, data, s.Matrix[s.Object])
+		assert.Nil(t, err)
+	}
+	return got[s.Object]
+}
+
+func flexlogValue(t *testing.T, m *matrix.Matrix, key string, nodeName string) float64 {
+	t.Helper()
+	metric := m.GetMetric(key)
+	if metric == nil {
+		t.Fatalf("metric %s missing", key)
+	}
+	for _, instance := range m.GetInstances() {
+		if instance.GetLabel("node") == nodeName {
+			v, ok := metric.GetValueFloat64(instance)
+			assert.True(t, ok)
+			return v
+		}
+	}
+	t.Fatalf("instance for node %s missing", nodeName)
+	return 0
+}
+
+func TestCookCounters_ArrayBaseCounter(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	m := pollFlexlog(t, s)
+
+	tests := []struct {
+		key  string
+		node string
+		want float64
+	}{
+		{"ldma_latency#wafl_spinnp_write", "panaffa400x05", 4646045.0 / 113031},
+		{"rdma_latency#wafl_spinnp_write", "panaffa400x05", 5044872.0 / 113031},
+		{"ldma_latency#wafl_write", "panaffa400x05", 14639.0 / 1435},
+		{"ldma_latency#wafl_spinnp_write", "panaffa400x06", 1697122.0 / 37701},
+		{"ldma_latency#wafl_write", "panaffa400x06", 5045.0 / 497},
+		{"ldma_latency#null_message", "panaffa400x05", 0},
+		{"logging_count#wafl_spinnp_write", "panaffa400x05", 113031},
+	}
+	for _, tt := range tests {
+		got := flexlogValue(t, m, tt.key, tt.node)
+		assert.True(t, math.Abs(got-tt.want) < 1e-9)
+	}
+}
+
+func TestCookCounters_ArrayBaseLatencyThreshold(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	// 61 s between samples, so an element needs more than 610 logging_count ops
+	s.perfProp.latencyIoReqd = 10
+	m := pollFlexlog(t, s)
+
+	got := flexlogValue(t, m, "ldma_latency#wafl_write", "panaffa400x05")
+	assert.True(t, math.Abs(got-14639.0/1435) < 1e-9)
+
+	got = flexlogValue(t, m, "ldma_latency#wafl_write", "panaffa400x06")
+	assert.Equal(t, got, 0.0)
+}
+
+func TestCookCounters_ArrayBaseAggregator(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	m := pollFlexlog(t, s)
+	for _, instance := range m.GetInstances() {
+		instance.SetLabel("cluster", "cluster_1")
+	}
+
+	params := node.NewS("Aggregator")
+	params.NewChildS("", "cluster")
+	agg := &aggregator.Aggregator{AbstractPlugin: plugin.New("Test", nil, params, nil, m.Object, nil)}
+	assert.Nil(t, agg.Init(conf.Remote{}))
+
+	results, _, err := agg.Run(map[string]*matrix.Matrix{m.Object: m})
+	assert.Nil(t, err)
+	assert.Equal(t, len(results), 1)
+
+	cluster := results[0].GetInstance("cluster_1")
+	assert.NotNil(t, cluster)
+	got, ok := results[0].GetMetric("ldma_latency#wafl_spinnp_write").GetValueFloat64(cluster)
+	assert.True(t, ok)
+	// weighted by each node's logging_count delta
+	assert.True(t, math.Abs(got-(4646045.0+1697122.0)/(113031+37701)) < 1e-9)
+}
+
+func TestDenominatorKey(t *testing.T) {
+	m := matrix.New("uuid", "object", "object")
+	for _, key := range []string{"lat#a", "lat#b", "count#a", "ops", "scalar_lat"} {
+		metric, err := m.NewMetricFloat64(key)
+		assert.Nil(t, err)
+		metric.SetArray(strings.Contains(key, arrayKeyToken))
+	}
+
+	tests := []struct {
+		key         string
+		denominator string
+		want        string
+	}{
+		{"lat#a", "count", "count#a"},
+		{"lat#b", "count", "count"},
+		{"lat#a", "ops", "ops"},
+		{"scalar_lat", "ops", "ops"},
+		{"lat#a", "", ""},
+	}
+	for _, tt := range tests {
+		got := denominatorKey(m, m.GetMetric(tt.key), tt.key, &counter{denominator: tt.denominator})
+		assert.Equal(t, got, tt.want)
+	}
 }
 
 func TestParseRows_MultiLineInstanceUUID(t *testing.T) {

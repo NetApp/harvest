@@ -1,0 +1,12 @@
+
+
+object·objectname·counter·name·base-counter·label·description·desc·properties·type·is-deprecated·replaced-by·
+Object·Object·Counter·Counter·Denominator For Percent/Average·Labels for Array Counters·Description·Description·Counter Properties·Counter Type·Is Counter Deprecated·Replaced By Counter If Deprecated·
+wafl_flexlog·wafl_flexlog·instance_uuid·instance_uuid·-·-·"Instance UUID"·"Instance UUID"·string,no-display·-·false·-·
+wafl_flexlog·wafl_flexlog·ldma_actual_latency·ldma_actual_latency·logging_count·"NULL_MESSAGE,WAFL_WRITE,WAFL_SPINNP_READ,WAFL_SPINNP_WRITE"·"ldma latency per message without flexlog overhead"·"ldma latency per message without flexlog overhead"·average,no-zero-values·array·false·-·
+wafl_flexlog·wafl_flexlog·ldma_latency·ldma_latency·logging_count·"NULL_MESSAGE,WAFL_WRITE,WAFL_SPINNP_READ,WAFL_SPINNP_WRITE"·"ldma latency per message"·"ldma latency per message"·average,no-zero-values·array·false·-·
+wafl_flexlog·wafl_flexlog·logging_count·logging_count·-·"NULL_MESSAGE,WAFL_WRITE,WAFL_SPINNP_READ,WAFL_SPINNP_WRITE"·"Number of messages that logged"·"Number of messages that logged"·delta,no-zero-values·array·false·-·
+wafl_flexlog·wafl_flexlog·node_name·node_name·-·-·"System node name"·"System node name"·string·-·false·-·
+wafl_flexlog·wafl_flexlog·rdma_actual_latency·rdma_actual_latency·logging_count·"NULL_MESSAGE,WAFL_WRITE,WAFL_SPINNP_READ,WAFL_SPINNP_WRITE"·"rdma latency per message without flexlog overhead"·"rdma latency per message without flexlog overhead"·average,no-zero-values·array·false·-·
+wafl_flexlog·wafl_flexlog·rdma_latency·rdma_latency·logging_count·"NULL_MESSAGE,WAFL_WRITE,WAFL_SPINNP_READ,WAFL_SPINNP_WRITE"·"rdma latency per message"·"rdma latency per message"·average,no-zero-values·array·false·-·
+
