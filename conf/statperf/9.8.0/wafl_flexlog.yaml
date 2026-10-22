@@ -1,0 +1,15 @@
+name:                     WaflFlexlog
+query:                    wafl_flexlog
+object:                   wafl_flexlog
+
+counters:
+  - ^^instance_uuid
+  - ^node_name            =>    node
+  - ldma_actual_latency
+  - ldma_latency
+  - rdma_actual_latency
+  - rdma_latency
+
+export_options:
+  instance_keys:
+    - node

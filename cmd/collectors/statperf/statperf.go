@@ -709,6 +709,20 @@ func (s *StatPerf) counterLookup(metric *matrix.Metric, metricKey string) *count
 	return c
 }
 
+// denominatorKey returns the matrix key of the base counter for key. When an array counter's
+// base is also an array, each element is divided by the base element with the same label.
+func denominatorKey(curMat *matrix.Matrix, metric *matrix.Metric, key string, c *counter) string {
+	if c.denominator == "" || !metric.IsArray() {
+		return c.denominator
+	}
+	if _, label, ok := strings.Cut(key, arrayKeyToken); ok {
+		if elementKey := c.denominator + arrayKeyToken + label; curMat.GetMetric(elementKey) != nil {
+			return elementKey
+		}
+	}
+	return c.denominator
+}
+
 func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {
 	var (
 		err   error
@@ -780,10 +794,11 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 			continue
 		}
 		property := counter.property
+		denominator := denominatorKey(curMat, metric, key, counter)
 		// used in aggregator plugin
 		metric.SetProperty(property)
 		// used in volume.go plugin
-		metric.SetComment(counter.denominator)
+		metric.SetComment(denominator)
 
 		// raw/string - submit without post-processing
 		if property == "raw" || property == "string" {
@@ -813,12 +828,12 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 
 		// For the next two properties we need base counters
 		// We assume that delta of base counters is already calculated
-		if base = curMat.GetMetric(counter.denominator); base == nil {
+		if base = curMat.GetMetric(denominator); base == nil {
 			s.Logger.Warn(
 				"Base counter missing",
 				slog.String("key", key),
 				slog.String("property", property),
-				slog.String("denominator", counter.denominator),
+				slog.String("denominator", denominator),
 			)
 			continue
 		}
@@ -832,9 +847,9 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		if property == "average" || property == "percent" {
 
 			if strings.HasSuffix(metric.GetName(), "latency") {
-				skips, err = curMat.DivideWithThreshold(key, counter.denominator, s.perfProp.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, s.Logger)
+				skips, err = curMat.DivideWithThreshold(key, denominator, s.perfProp.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, s.Logger)
 			} else {
-				skips, err = curMat.Divide(key, counter.denominator)
+				skips, err = curMat.Divide(key, denominator)
 			}
 
 			if err != nil {
