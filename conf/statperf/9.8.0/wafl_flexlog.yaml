@@ -1,5 +1,6 @@
-# This template is disabled by default because it exports a high number of metrics.
-# Each counter has about 2,000 elements, one per WAFL message type, or about 16,000 metrics on a two-node cluster.
+# This template is disabled by default. Each counter is an array with about 2,000 elements, one per
+# WAFL message type; without array_labels that is about 16,000 metrics on a two-node cluster.
+# array_labels keeps only the listed message types.
 
 name:                     WaflFlexlog
 query:                    wafl_flexlog
@@ -12,6 +13,20 @@ counters:
   - ldma_latency
   - rdma_actual_latency
   - rdma_latency
+
+array_labels:
+  ldma_actual_latency:
+    include_equals:
+      - WAFL_SPINNP_WRITE
+  ldma_latency:
+    include_equals:
+      - WAFL_SPINNP_WRITE
+  rdma_actual_latency:
+    include_equals:
+      - WAFL_SPINNP_WRITE
+  rdma_latency:
+    include_equals:
+      - WAFL_SPINNP_WRITE
 
 export_options:
   instance_keys:

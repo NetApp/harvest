@@ -118,6 +118,39 @@ counters:
      - vserver_name=osc
 ```
 
+### Array Labels
+
+Some array counters have thousands of elements. For example, each `wafl_flexlog` counter has one element per WAFL message type.
+Use `array_labels` to keep only the listed elements of an array counter. Rules are per counter:
+
+```yaml
+counters:
+  - ^^instance_uuid
+  - ^node_name            =>    node
+  - ldma_latency
+  - rdma_latency
+
+array_labels:
+  ldma_latency:
+    include_equals:
+      - WAFL_WRITE
+      - WAFL_SPINNP_WRITE
+  rdma_latency:
+    include_equals:
+      - WAFL_SPINNP_WRITE
+```
+
+- Counters without a rule keep every element.
+- Labels are matched case-insensitively.
+- Write two-part labels as they are exported, `metric.submetric`. For example, `run.wafl_exempt` matches the element exported with `metric="run"` and `submetric="wafl_exempt"`.
+- Base counters are handled for you. An average divides a counter by its base counter (for example, `ldma_latency` by `logging_count`), so the base keeps every element that the counters using it need. If any counter that uses a base has no rule, the base keeps every element.
+- A base counter can have a rule only if it is also listed under `counters:`. The rule selects which of its elements are exported; elements that other counters need for their averages are still collected, but not exported.
+- Histograms can't be filtered, because a histogram is exported only when all its buckets are present.
+
+When the counter catalog is loaded, StatPerf logs an error and ignores a rule for a histogram or for a base counter that isn't collected. It logs a warning for a rule whose counter isn't an array counter in the template, and for a value that matches no label of the counter.
+
+ONTAP still returns every element; StatPerf drops the others before creating metrics.
+
 ## Partial Aggregation
 
 For more details about partial aggregation behavior and configuration, see [Partial Aggregation](partial-aggregation.md).

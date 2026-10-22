@@ -48,6 +48,8 @@ type StatPerf struct {
 	instanceNames     *set.Set // required for polldata
 	sortedCounters    []string
 	batchSize         int
+	arrayLabels       map[string][]string     // array_labels rules: counter -> lowercase include_equals values
+	arrayFilters      map[string]*arrayFilter // built from arrayLabels when the counter catalog is loaded
 }
 
 type counter struct {
@@ -57,6 +59,13 @@ type counter struct {
 	denominator string
 	description string
 	labelCount  int
+	labels      []string
+}
+
+// arrayFilter selects the elements of one array counter.
+type arrayFilter struct {
+	keep   *set.Set // labels to collect; nil collects every label
+	export *set.Set // labels to export; nil exports every collected label
 }
 
 type perfProp struct {
@@ -109,6 +118,7 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	s.filter = s.loadFilter()
+	s.arrayLabels = s.loadArrayLabels()
 	s.batchSize = s.LoadParam("batch_size", defaultBatchSize)
 
 	if err := s.InitMatrix(); err != nil {
@@ -136,6 +146,154 @@ func (s *StatPerf) loadFilter() string {
 		}
 	}
 	return ""
+}
+
+// loadArrayLabels reads the array_labels rules from the template:
+//
+//	array_labels:
+//	  ldma_latency:
+//	    include_equals:
+//	      - WAFL_SPINNP_WRITE
+//
+// Values are lowercased because the parser lowercases array labels.
+func (s *StatPerf) loadArrayLabels() map[string][]string {
+	arrayLabels := s.Params.GetChildS("array_labels")
+	if arrayLabels == nil {
+		return nil
+	}
+	rules := make(map[string][]string)
+	for _, rule := range arrayLabels.GetChildren() {
+		name := rule.GetNameS()
+		var values []string
+		if include := rule.GetChildS("include_equals"); include != nil {
+			for _, v := range include.GetAllChildContentS() {
+				values = append(values, strings.ToLower(v))
+			}
+		}
+		if len(values) == 0 {
+			s.Logger.Warn("array_labels rule has no include_equals values, ignoring it", slog.String("counter", name))
+			continue
+		}
+		rules[name] = values
+	}
+	return rules
+}
+
+// exportedArrayLabel returns an array label as it is exported, metric.submetric. The parser stores
+// two-part labels as submetric.metric.
+func exportedArrayLabel(label string) string {
+	if x := strings.Split(label, subLabelToken); len(x) == 2 {
+		return x[1] + subLabelToken + x[0]
+	}
+	return label
+}
+
+func isHistogramCounter(c *counter) bool {
+	// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
+	// if a counter is a histogram
+	return strings.Contains(strings.ToLower(c.description), "histogram")
+}
+
+// buildArrayFilters turns array_labels rules into per-counter filters. counters is the counter
+// catalog of the collected counters and their base counters; collected holds the counters listed
+// under `counters:` in the template. Base counters keep every element the counters that divide
+// by them need, so averages still work.
+func buildArrayFilters(rules map[string][]string, counters map[string]*counter, collected map[string]string, logger *slog.Logger) map[string]*arrayFilter {
+	if len(rules) == 0 {
+		return nil
+	}
+	bases := make(map[string][]*counter)
+	for _, c := range counters {
+		if c.denominator != "" {
+			bases[c.denominator] = append(bases[c.denominator], c)
+		}
+	}
+
+	ruleLabels := make(map[string]*set.Set) // labels each valid rule keeps
+	for name, values := range rules {
+		c := counters[name]
+		_, isCollected := collected[name]
+		switch {
+		case !isCollected && len(bases[name]) > 0:
+			logger.Error("array_labels rule for a base counter that is not collected, ignoring it", slog.String("counter", name))
+			continue
+		case !isCollected || c == nil || c.counterType != "array":
+			logger.Warn("array_labels rule for a counter that is not an array counter in the template, ignoring it", slog.String("counter", name))
+			continue
+		case isHistogramCounter(c):
+			logger.Error("array_labels rule for a histogram counter, ignoring it", slog.String("counter", name))
+			continue
+		}
+		byExported := make(map[string]string, len(c.labels))
+		for _, label := range c.labels {
+			byExported[exportedArrayLabel(label)] = label
+		}
+		keep := set.New()
+		for _, v := range values {
+			label, ok := byExported[v]
+			if !ok {
+				logger.Warn("array_labels value matches no label of the counter", slog.String("counter", name), slog.String("value", v))
+				continue
+			}
+			keep.Add(label)
+		}
+		ruleLabels[name] = keep
+	}
+
+	filters := make(map[string]*arrayFilter, len(ruleLabels))
+	for name, keep := range ruleLabels {
+		filters[name] = &arrayFilter{keep: keep}
+	}
+	for name, users := range bases {
+		if c := counters[name]; c == nil || c.counterType != "array" {
+			continue
+		}
+		own := ruleLabels[name]
+		needed := set.New()
+		keepAll := false
+		for _, u := range users {
+			keep, ok := ruleLabels[u.name]
+			if !ok {
+				keepAll = true
+				break
+			}
+			needed.AddValues(keep.Values())
+		}
+		_, isCollected := collected[name]
+		switch {
+		case own == nil && isCollected:
+			// a collected base without a rule keeps every element
+		case own == nil && keepAll:
+		case own == nil:
+			filters[name] = &arrayFilter{keep: needed}
+		case keepAll:
+			filters[name] = &arrayFilter{export: own}
+		default:
+			needed.AddValues(own.Values())
+			filters[name] = &arrayFilter{keep: needed, export: own}
+		}
+	}
+	return filters
+}
+
+// apply drops the array elements whose label the filter doesn't keep.
+func (f *arrayFilter) apply(labels, values []string) ([]string, []string) {
+	if f == nil || f.keep == nil {
+		return labels, values
+	}
+	keptLabels := make([]string, 0, f.keep.Size())
+	keptValues := make([]string, 0, f.keep.Size())
+	for i, label := range labels {
+		if f.keep.Has(label) {
+			keptLabels = append(keptLabels, label)
+			keptValues = append(keptValues, values[i])
+		}
+	}
+	return keptLabels, keptValues
+}
+
+func (f *arrayFilter) exports(label string) bool {
+	return f == nil || f.export == nil || f.export.Has(label)
 }
 
 func (s *StatPerf) InitMatrix() error {
@@ -287,6 +445,9 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 					description: c.Description,
 					labelCount:  c.LabelCount,
 				}
+				if c.Label != "" {
+					s.perfProp.counterInfo[name].labels = strings.Split(c.Label, ",")
+				}
 				if p := collectors.CounterOverride(s.Params, name); p != "" {
 					s.perfProp.counterInfo[name].property = p
 				}
@@ -302,6 +463,8 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 			delete(s.Prop.Metrics, name)
 		}
 	}
+
+	s.arrayFilters = buildArrayFilters(s.arrayLabels, s.perfProp.counterInfo, s.Prop.Counters, s.Logger)
 
 	// Create an artificial metric to hold timestamp of each instance data.
 	// The reason we don't keep a single timestamp for the whole data
@@ -589,11 +752,14 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 						return true
 					}
 
-					// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
-					// if a counter is a histogram
-					isHistogram = false
-					description := strings.ToLower(s.perfProp.counterInfo[metricName].description)
-					if strings.Contains(description, "histogram") {
+					filter := s.arrayFilters[metricName]
+					labels, values = filter.apply(labels, values)
+					if len(labels) == 0 {
+						return true
+					}
+
+					isHistogram = isHistogramCounter(counterInfo)
+					if isHistogram {
 						key := metricName + ".bucket"
 						histogramMetric, err = collectors.GetMetric(curMat, prevMat, key, metric.Label)
 						if err != nil {
@@ -607,7 +773,6 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 						histogramMetric.SetArray(true)
 						histogramMetric.SetExportable(metric.Exportable)
 						histogramMetric.SetBuckets(&labels)
-						isHistogram = true
 					}
 
 					for i, label := range labels {
@@ -631,7 +796,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 							}
 							// differentiate between array and normal counter
 							metr.SetArray(true)
-							metr.SetExportable(metric.Exportable)
+							metr.SetExportable(metric.Exportable && filter.exports(label))
 							if isHistogram {
 								// Save the index of this label so the labels can be exported in order
 								metr.SetLabel("comment", strconv.Itoa(i))
