@@ -24,7 +24,15 @@ REQUIRED_GO_VERSION := $(GO_VERSION)
 
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
-CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
+# Compare versions field by field as integers. expr falls back to a string comparison for
+# values like 1.26.10, which would wrongly sort before 1.26.3.
+CORRECT_GO_VERSION := $(shell awk -v found='${FOUND_GO_VERSION}' -v req='${REQUIRED_GO_VERSION}' 'BEGIN { \
+	n = split(found, f, "."); m = split(req, r, "."); \
+	for (i = 1; i <= (n > m ? n : m); i++) { \
+		if (f[i] + 0 > r[i] + 0) { print 1; exit } \
+		if (f[i] + 0 < r[i] + 0) { print 0; exit } \
+	} \
+	print 1 }')
 endif
 RELEASE      ?= 1
 VERSION      ?= $(shell expr `date +%Y.%m.%d | cut -c 3-`)
