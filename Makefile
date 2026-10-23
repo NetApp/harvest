@@ -24,7 +24,9 @@ REQUIRED_GO_VERSION := $(GO_VERSION)
 
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
-CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
+# Compare each dotted component numerically; expr would compare strings (1.26.10 < 1.26.3)
+# and sort -V is not available in the macOS sort
+CORRECT_GO_VERSION := $(shell [ "`printf '%s\n%s\n' ${REQUIRED_GO_VERSION} ${FOUND_GO_VERSION} | sort -t. -k1,1n -k2,2n -k3,3n | head -1`" = "${REQUIRED_GO_VERSION}" ] && echo 1 || echo 0)
 endif
 RELEASE      ?= 1
 VERSION      ?= $(shell expr `date +%Y.%m.%d | cut -c 3-`)
