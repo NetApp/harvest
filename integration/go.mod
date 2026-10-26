@@ -5,7 +5,7 @@ go 1.27
 replace github.com/netapp/harvest/v2 => ../
 
 require (
-	github.com/carlmjohnson/requests v0.26.1
+	github.com/carlmjohnson/requests v0.26.2
 	github.com/netapp/harvest/v2 v2.0.0-20260810113142-174afaf73702
 	golang.org/x/text v0.43.0
 )
@@ -16,7 +16,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/spf13/cobra v1.10.2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/net v0.61.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
