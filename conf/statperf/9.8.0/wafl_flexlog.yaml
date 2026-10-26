@@ -1,3 +1,6 @@
+# This template is disabled by default because it exports a high number of metrics.
+# Each counter has about 2,000 elements, one per WAFL message type, or about 16,000 metrics on a two-node cluster.
+
 name:                     WaflFlexlog
 query:                    wafl_flexlog
 object:                   wafl_flexlog
