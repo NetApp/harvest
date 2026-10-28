@@ -500,13 +500,15 @@ func TestArrayLabels_CollectedBase(t *testing.T) {
 
 func TestBuildArrayFilters(t *testing.T) {
 	counters := map[string]*counter{
-		"lat":    {name: "lat", counterType: "array", denominator: "count", labels: []string{"a", "b", "c"}},
-		"count":  {name: "count", counterType: "array", labels: []string{"a", "b", "c"}},
-		"hist":   {name: "hist", counterType: "array", description: "Latency histogram", labels: []string{"<1ms", "<2ms"}},
-		"scalar": {name: "scalar"},
-		"timing": {name: "timing", counterType: "array", labels: []string{"wafl_exempt.run", "wafl_hipri.run"}},
+		"lat":       {name: "lat", counterType: "array", denominator: "count", labels: []string{"a", "b", "c"}},
+		"count":     {name: "count", counterType: "array", labels: []string{"a", "b", "c"}},
+		"hist":      {name: "hist", counterType: "array", description: "Latency histogram", labels: []string{"<1ms", "<2ms"}},
+		"scalar":    {name: "scalar"},
+		"timing":    {name: "timing", counterType: "array", labels: []string{"wafl_exempt.run", "wafl_hipri.run"}},
+		"ops":       {name: "ops", counterType: "array", denominator: "ops_count", labels: []string{"a", "b"}},
+		"ops_count": {name: "ops_count", counterType: "array", labels: []string{"a", "b"}},
 	}
-	collected := map[string]string{"lat": "lat", "hist": "hist", "scalar": "scalar", "timing": "timing"}
+	collected := map[string]string{"lat": "lat", "hist": "hist", "scalar": "scalar", "timing": "timing", "ops": "ops"}
 	rules := map[string][]string{
 		"lat":     {"a", "typo"},
 		"count":   {"b"},
@@ -514,6 +516,7 @@ func TestBuildArrayFilters(t *testing.T) {
 		"scalar":  {"x"},
 		"missing": {"x"},
 		"timing":  {"run.wafl_exempt"},
+		"ops":     {"typo1", "typo2"},
 	}
 	var buf bytes.Buffer
 	filters := buildArrayFilters(rules, counters, collected, slog.New(slog.NewTextHandler(&buf, nil)))
@@ -532,6 +535,9 @@ func TestBuildArrayFilters(t *testing.T) {
 	// count isn't collected: its own rule is ignored and it keeps what lat needs
 	assert.Equal(t, keep("count"), []string{"a"})
 	assert.Equal(t, keep("timing"), []string{"wafl_exempt.run"})
+	// no value of ops's rule matches: the rule is ignored, so ops and its base keep every element
+	assert.Nil(t, keep("ops"))
+	assert.Nil(t, keep("ops_count"))
 
 	logs := buf.String()
 	for _, want := range []string{
@@ -540,9 +546,40 @@ func TestBuildArrayFilters(t *testing.T) {
 		`level=WARN msg="array_labels rule for a counter that is not an array counter in the template, ignoring it" counter=scalar`,
 		`level=WARN msg="array_labels rule for a counter that is not an array counter in the template, ignoring it" counter=missing`,
 		`level=WARN msg="array_labels value matches no label of the counter" counter=lat value=typo`,
+		`level=ERROR msg="array_labels rule matches no labels of the counter, ignoring it" counter=ops`,
 	} {
 		assert.True(t, strings.Contains(logs, want))
 	}
+}
+
+func TestArrayLabels_NormalizedValues(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	root, err := tree.LoadYaml([]byte(`
+array_labels:
+  cp_count:
+    include_equals:
+      - back-to-back CP
+      - WAFL_TIMER generated CP
+`))
+	assert.Nil(t, err)
+	s.Params = root
+	rules := s.loadArrayLabels()
+	assert.Equal(t, rules["cp_count"], []string{"back_to_back_cp", "wafl_timer_generated_cp"})
+
+	content, err := os.ReadFile("testdata/array/wafl_counters.txt")
+	assert.Nil(t, err)
+	catalog, err := s.ParseCounters(string(content))
+	assert.Nil(t, err)
+	counters := map[string]*counter{
+		"cp_count": {name: "cp_count", counterType: "array", labels: strings.Split(catalog["cp_count"].Label, ",")},
+	}
+	var buf bytes.Buffer
+	filters := buildArrayFilters(rules, counters, map[string]string{"cp_count": "cp_count"}, slog.New(slog.NewTextHandler(&buf, nil)))
+
+	v := filters["cp_count"].keep.Values()
+	sort.Strings(v)
+	assert.Equal(t, v, []string{"back_to_back_cp", "wafl_timer_generated_cp"})
+	assert.Equal(t, buf.String(), "")
 }
 
 func TestExportedArrayLabel(t *testing.T) {

@@ -141,13 +141,13 @@ array_labels:
 ```
 
 - Counters without a rule keep every element.
-- Labels are matched case-insensitively.
+- Labels are matched case-insensitively, and spaces and hyphens match underscores. For example, `back-to-back CP` matches the element exported as `back_to_back_cp`.
 - Write two-part labels as they are exported, `metric.submetric`. For example, `run.wafl_exempt` matches the element exported with `metric="run"` and `submetric="wafl_exempt"`.
 - Base counters are handled for you. An average divides a counter by its base counter (for example, `ldma_latency` by `logging_count`), so the base keeps every element that the counters using it need. If any counter that uses a base has no rule, the base keeps every element.
 - A base counter can have a rule only if it is also listed under `counters:`. The rule selects which of its elements are exported; elements that other counters need for their averages are still collected, but not exported.
 - Histograms can't be filtered, because a histogram is exported only when all its buckets are present.
 
-When the counter catalog is loaded, StatPerf logs an error and ignores a rule for a histogram or for a base counter that isn't collected. It logs a warning for a rule whose counter isn't an array counter in the template, and for a value that matches no label of the counter.
+When the counter catalog is loaded, StatPerf logs an error and ignores a rule for a histogram, for a base counter that isn't collected, or whose values match no label of the counter; the counter then keeps every element. It logs a warning for a rule whose counter isn't an array counter in the template, and for a value that matches no label of the counter.
 
 ONTAP still returns every element; StatPerf drops the others before creating metrics.
 

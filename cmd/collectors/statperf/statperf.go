@@ -20,6 +20,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"regexp"
@@ -155,7 +156,8 @@ func (s *StatPerf) loadFilter() string {
 //	    include_equals:
 //	      - WAFL_SPINNP_WRITE
 //
-// Values are lowercased because the parser lowercases array labels.
+// Values are normalized the way the parser normalizes array labels, so a label can be written as
+// ONTAP prints it (back-to-back CP) or as it is exported (back_to_back_cp).
 func (s *StatPerf) loadArrayLabels() map[string][]string {
 	arrayLabels := s.Params.GetChildS("array_labels")
 	if arrayLabels == nil {
@@ -167,7 +169,7 @@ func (s *StatPerf) loadArrayLabels() map[string][]string {
 		var values []string
 		if include := rule.GetChildS("include_equals"); include != nil {
 			for _, v := range include.GetAllChildContentS() {
-				values = append(values, strings.ToLower(v))
+				values = append(values, strings.ToLower(node.Normalize(v)))
 			}
 		}
 		if len(values) == 0 {
@@ -236,6 +238,10 @@ func buildArrayFilters(rules map[string][]string, counters map[string]*counter, 
 				continue
 			}
 			keep.Add(label)
+		}
+		if keep.IsEmpty() {
+			logger.Error("array_labels rule matches no labels of the counter, ignoring it", slog.String("counter", name))
+			continue
 		}
 		ruleLabels[name] = keep
 	}
