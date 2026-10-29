@@ -1,6 +1,7 @@
 package storagegrid
 
 import (
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/plugins/bucket"
@@ -161,6 +162,11 @@ func (s *StorageGrid) pollPrometheusMetrics() (map[string]*matrix.Matrix, error)
 	for _, metric := range s.Props.Metrics {
 		mat, err := s.GetMetric(metric.Name, metric.Label, nil)
 		if err != nil {
+			// Auth failures affect every metric. Return so the collector can enter standby
+			// instead of sending one failed login per metric on every poll.
+			if errors.Is(err, errs.ErrAuthFailed) {
+				return nil, err
+			}
 			s.Logger.Error("failed to get metric", slogx.Err(err), slog.String("metric", metric.Name))
 			continue
 		}
