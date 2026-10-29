@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"github.com/google/go-cmp/cmp"
@@ -11,6 +12,8 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"log/slog"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -1054,6 +1057,70 @@ func TestPoller_getCmManifestName(t *testing.T) {
 			if got := p.getCmManifestName(); got != tt.want {
 				t.Errorf("getCmManifestName() got [%v], want [%v]", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestPingTargetForms(t *testing.T) {
+	l4, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("failed to listen on IPv4 loopback: %v", err)
+	}
+	defer l4.Close()
+	_, port4, _ := net.SplitHostPort(l4.Addr().String())
+
+	// IPv6 may be unavailable, e.g. in some CI containers
+	port6 := ""
+	if l6, err := net.Listen("tcp", "[::1]:0"); err == nil {
+		defer l6.Close()
+		_, port6, _ = net.SplitHostPort(l6.Addr().String())
+	}
+
+	tests := []struct {
+		name     string
+		target   string
+		needsV6  bool
+		wantPing bool   // ping() must succeed
+		wantLog  string // substring ping() must log, if not empty
+	}{
+		{name: "ipv4 with port", target: "127.0.0.1:" + port4, wantPing: true},
+		{name: "ipv6 with port", target: "[::1]:" + port6, needsV6: true, wantPing: true},
+		{name: "ipv4 without port", target: "127.0.0.1"},
+		{name: "ipv6 without port", target: "[::1]"},
+		{name: "bare ipv6 without port", target: "::1"},
+		{name: "invalid port", target: "127.0.0.1:abc", wantLog: "invalid port in target"},
+	}
+
+	orig := logger
+	t.Cleanup(func() { logger = orig })
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.needsV6 && port6 == "" {
+				t.Skip("IPv6 loopback is not available")
+			}
+
+			var buf bytes.Buffer
+			logger = slog.New(slog.NewTextHandler(&buf, nil))
+
+			p := &Poller{
+				target:     tt.target,
+				params:     &conf.Poller{},
+				collectors: []collectorPkg.Collector{makeCmPerfCollector("Rest", "", "", nil)},
+			}
+			_, ok := p.ping()
+			logged := buf.String()
+
+			if tt.wantPing {
+				assert.True(t, ok)
+			}
+			if tt.wantLog != "" {
+				assert.False(t, ok)
+				assert.True(t, strings.Contains(logged, tt.wantLog))
+			}
+			// A doubly bracketed address or a missing port means the dial address was built incorrectly
+			assert.False(t, strings.Contains(logged, "[["))
+			assert.False(t, strings.Contains(logged, "missing port"))
 		})
 	}
 }

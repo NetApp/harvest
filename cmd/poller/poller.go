@@ -744,6 +744,9 @@ func (p *Poller) ping() (float32, bool) {
 			logger.Error("invalid port in target", slog.String("target", p.target), slog.String("port", port))
 			return 0, false
 		}
+	} else if strings.HasPrefix(target, "[") && strings.HasSuffix(target, "]") {
+		// Bracketed IPv6 without a port, e.g. [fd00::1]. Strip the brackets so JoinHostPort doesn't add a second pair.
+		target = target[1 : len(target)-1]
 	}
 
 	// Attempt to connect to each port, returning after the first successful connection
