@@ -749,6 +749,12 @@ func (p *Poller) ping() (float32, bool) {
 		target = target[1 : len(target)-1]
 	}
 
+	// An empty host would make JoinHostPort build ":port", which dials the local machine.
+	if target == "" {
+		logger.Error("empty host in target", slog.String("target", p.target))
+		return 0, false
+	}
+
 	// Attempt to connect to each port, returning after the first successful connection
 	for _, port := range portsToTry {
 		address := net.JoinHostPort(target, strconv.Itoa(port))

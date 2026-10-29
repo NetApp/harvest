@@ -1089,6 +1089,9 @@ func TestPingTargetForms(t *testing.T) {
 		{name: "ipv6 without port", target: "[::1]"},
 		{name: "bare ipv6 without port", target: "::1"},
 		{name: "invalid port", target: "127.0.0.1:abc", wantLog: "invalid port in target"},
+		{name: "empty brackets", target: "[]", wantLog: "empty host in target"},
+		{name: "empty brackets with port", target: "[]:443", wantLog: "empty host in target"},
+		{name: "empty host with port", target: ":443", wantLog: "empty host in target"},
 	}
 
 	orig := logger
