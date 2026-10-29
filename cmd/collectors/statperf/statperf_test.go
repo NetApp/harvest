@@ -1,8 +1,10 @@
 package statperf
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/netapp/harvest/v2/assert"
+	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -12,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"log/slog"
 	"math"
 	"os"
 	"sort"
@@ -322,6 +325,7 @@ func flexlogValue(t *testing.T, m *matrix.Matrix, key string, nodeName string) f
 
 func TestCookCounters_ArrayBaseCounter(t *testing.T) {
 	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	s.arrayLabels = nil
 	m := pollFlexlog(t, s)
 
 	tests := []struct {
@@ -345,6 +349,7 @@ func TestCookCounters_ArrayBaseCounter(t *testing.T) {
 
 func TestCookCounters_ArrayBaseLatencyThreshold(t *testing.T) {
 	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	s.arrayLabels = nil
 	// 61 s between samples, so an element needs more than 610 logging_count ops
 	s.perfProp.latencyIoReqd = 10
 	m := pollFlexlog(t, s)
@@ -403,6 +408,183 @@ func TestDenominatorKey(t *testing.T) {
 		got := denominatorKey(m, m.GetMetric(tt.key), tt.key, &counter{denominator: tt.denominator})
 		assert.Equal(t, got, tt.want)
 	}
+}
+
+func arrayKeys(m *matrix.Matrix) []string {
+	var keys []string
+	for key := range m.GetMetrics() {
+		if strings.Contains(key, arrayKeyToken) {
+			keys = append(keys, key)
+		}
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func TestArrayLabels_Template(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	assert.Equal(t, s.arrayLabels["ldma_latency"], []string{"wafl_spinnp_write"})
+	m := pollFlexlog(t, s)
+
+	assert.Equal(t, arrayKeys(m), []string{
+		"ldma_latency#wafl_spinnp_write",
+		"logging_count#wafl_spinnp_write",
+		"rdma_latency#wafl_spinnp_write",
+	})
+	got := flexlogValue(t, m, "ldma_latency#wafl_spinnp_write", "panaffa400x05")
+	assert.True(t, math.Abs(got-4646045.0/113031) < 1e-9)
+}
+
+func TestArrayLabels_BaseKeepsEveryNeededLabel(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	s.arrayLabels = map[string][]string{
+		"ldma_latency":        {"wafl_write"},
+		"ldma_actual_latency": {"wafl_write"},
+		"rdma_latency":        {"wafl_spinnp_write"},
+		"rdma_actual_latency": {"wafl_spinnp_write"},
+	}
+	m := pollFlexlog(t, s)
+
+	assert.Equal(t, arrayKeys(m), []string{
+		"ldma_latency#wafl_write",
+		"logging_count#wafl_spinnp_write",
+		"logging_count#wafl_write",
+		"rdma_latency#wafl_spinnp_write",
+	})
+	got := flexlogValue(t, m, "ldma_latency#wafl_write", "panaffa400x05")
+	assert.True(t, math.Abs(got-14639.0/1435) < 1e-9)
+	got = flexlogValue(t, m, "rdma_latency#wafl_spinnp_write", "panaffa400x05")
+	assert.True(t, math.Abs(got-5044872.0/113031) < 1e-9)
+}
+
+func TestArrayLabels_UnlistedCounterUnchanged(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	s.arrayLabels = map[string][]string{"ldma_latency": {"wafl_spinnp_write"}}
+	m := pollFlexlog(t, s)
+
+	var rdma, base int
+	for _, key := range arrayKeys(m) {
+		switch {
+		case strings.HasPrefix(key, "ldma_latency#"):
+			assert.Equal(t, key, "ldma_latency#wafl_spinnp_write")
+		case strings.HasPrefix(key, "rdma_latency#"):
+			rdma++
+		case strings.HasPrefix(key, "logging_count#"):
+			base++
+		}
+	}
+	// rdma_latency has no rule, so it and its base logging_count keep all four labels
+	assert.Equal(t, rdma, 4)
+	assert.Equal(t, base, 4)
+}
+
+func TestArrayLabels_CollectedBase(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	s.Prop.Counters["logging_count"] = "logging_count"
+	s.Prop.Metrics["logging_count"] = &rest2.Metric{Name: "logging_count", Label: "logging_count", Exportable: true}
+	s.arrayLabels["logging_count"] = []string{"null_message"}
+	m := pollFlexlog(t, s)
+
+	assert.Equal(t, arrayKeys(m), []string{
+		"ldma_latency#wafl_spinnp_write",
+		"logging_count#null_message",
+		"logging_count#wafl_spinnp_write",
+		"rdma_latency#wafl_spinnp_write",
+	})
+	assert.True(t, m.GetMetric("logging_count#null_message").IsExportable())
+	// kept for the ldma_latency and rdma_latency averages, but not exported
+	assert.False(t, m.GetMetric("logging_count#wafl_spinnp_write").IsExportable())
+	got := flexlogValue(t, m, "ldma_latency#wafl_spinnp_write", "panaffa400x05")
+	assert.True(t, math.Abs(got-4646045.0/113031) < 1e-9)
+}
+
+func TestBuildArrayFilters(t *testing.T) {
+	counters := map[string]*counter{
+		"lat":       {name: "lat", counterType: "array", denominator: "count", labels: []string{"a", "b", "c"}},
+		"count":     {name: "count", counterType: "array", labels: []string{"a", "b", "c"}},
+		"hist":      {name: "hist", counterType: "array", description: "Latency histogram", labels: []string{"<1ms", "<2ms"}},
+		"scalar":    {name: "scalar"},
+		"timing":    {name: "timing", counterType: "array", labels: []string{"wafl_exempt.run", "wafl_hipri.run"}},
+		"ops":       {name: "ops", counterType: "array", denominator: "ops_count", labels: []string{"a", "b"}},
+		"ops_count": {name: "ops_count", counterType: "array", labels: []string{"a", "b"}},
+	}
+	collected := map[string]string{"lat": "lat", "hist": "hist", "scalar": "scalar", "timing": "timing", "ops": "ops"}
+	rules := map[string][]string{
+		"lat":     {"a", "typo"},
+		"count":   {"b"},
+		"hist":    {"<1ms"},
+		"scalar":  {"x"},
+		"missing": {"x"},
+		"timing":  {"run.wafl_exempt"},
+		"ops":     {"typo1", "typo2"},
+	}
+	var buf bytes.Buffer
+	filters := buildArrayFilters(rules, counters, collected, slog.New(slog.NewTextHandler(&buf, nil)))
+
+	keep := func(name string) []string {
+		f := filters[name]
+		if f == nil {
+			return nil
+		}
+		v := f.keep.Values()
+		sort.Strings(v)
+		return v
+	}
+	assert.Equal(t, len(filters), 3)
+	assert.Equal(t, keep("lat"), []string{"a"})
+	// count isn't collected: its own rule is ignored and it keeps what lat needs
+	assert.Equal(t, keep("count"), []string{"a"})
+	assert.Equal(t, keep("timing"), []string{"wafl_exempt.run"})
+	// no value of ops's rule matches: the rule is ignored, so ops and its base keep every element
+	assert.Nil(t, keep("ops"))
+	assert.Nil(t, keep("ops_count"))
+
+	logs := buf.String()
+	for _, want := range []string{
+		`level=ERROR msg="array_labels rule for a base counter that is not collected, ignoring it" counter=count`,
+		`level=ERROR msg="array_labels rule for a histogram counter, ignoring it" counter=hist`,
+		`level=WARN msg="array_labels rule for a counter that is not an array counter in the template, ignoring it" counter=scalar`,
+		`level=WARN msg="array_labels rule for a counter that is not an array counter in the template, ignoring it" counter=missing`,
+		`level=WARN msg="array_labels value matches no label of the counter" counter=lat value=typo`,
+		`level=ERROR msg="array_labels rule matches no labels of the counter, ignoring it" counter=ops`,
+	} {
+		assert.True(t, strings.Contains(logs, want))
+	}
+}
+
+func TestArrayLabels_NormalizedValues(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	root, err := tree.LoadYaml([]byte(`
+array_labels:
+  cp_count:
+    include_equals:
+      - back-to-back CP
+      - WAFL_TIMER generated CP
+`))
+	assert.Nil(t, err)
+	s.Params = root
+	rules := s.loadArrayLabels()
+	assert.Equal(t, rules["cp_count"], []string{"back_to_back_cp", "wafl_timer_generated_cp"})
+
+	content, err := os.ReadFile("testdata/array/wafl_counters.txt")
+	assert.Nil(t, err)
+	catalog, err := s.ParseCounters(string(content))
+	assert.Nil(t, err)
+	counters := map[string]*counter{
+		"cp_count": {name: "cp_count", counterType: "array", labels: strings.Split(catalog["cp_count"].Label, ",")},
+	}
+	var buf bytes.Buffer
+	filters := buildArrayFilters(rules, counters, map[string]string{"cp_count": "cp_count"}, slog.New(slog.NewTextHandler(&buf, nil)))
+
+	v := filters["cp_count"].keep.Values()
+	sort.Strings(v)
+	assert.Equal(t, v, []string{"back_to_back_cp", "wafl_timer_generated_cp"})
+	assert.Equal(t, buf.String(), "")
+}
+
+func TestExportedArrayLabel(t *testing.T) {
+	assert.Equal(t, exportedArrayLabel("wafl_spinnp_write"), "wafl_spinnp_write")
+	assert.Equal(t, exportedArrayLabel("wafl_exempt.run"), "run.wafl_exempt")
 }
 
 func TestParseRows_MultiLineInstanceUUID(t *testing.T) {
