@@ -3,6 +3,7 @@ package collector
 import (
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/cmd/poller/schedule"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"log/slog"
@@ -10,6 +11,7 @@ import (
 	"path/filepath"
 	"sort"
 	"testing"
+	"time"
 )
 
 func setupVersions(availableVersions []string) []*version.Version {
@@ -178,4 +180,17 @@ func TestImportSubTemplateIgnoresPollerOnlyKeys(t *testing.T) {
 	}
 	assert.Equal(t, template.GetChildContentS("query"), "api/storage/volumes")
 	assert.Equal(t, template.GetChildContentS("client_timeout"), "2m")
+}
+
+// A permission-denied error on a 24h counter task retries in an hour, not a day.
+func TestStandByOnPermissionDenied(t *testing.T) {
+	s := schedule.New()
+	err := s.NewTaskString("counter", "24h", 0, nil, false, "")
+	assert.Nil(t, err)
+	task := s.GetTask("counter")
+
+	delay := standByOnPermissionDenied(s, task)
+	assert.True(t, s.IsStandBy())
+	assert.Equal(t, delay, 1*time.Hour)
+	assert.Equal(t, task.GetInterval(), 1*time.Hour)
 }

@@ -17,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/maxplugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
+	"github.com/netapp/harvest/v2/cmd/poller/schedule"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -31,6 +32,7 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"time"
 )
 
 var ExcludeTemplates = map[string]map[string]struct{}{
@@ -362,4 +364,15 @@ func pollErrorAttrs(err error) []any {
 		attrs = append(attrs, slog.Bool("timeout", true))
 	}
 	return attrs
+}
+
+// standByOnPermissionDenied puts s in standby after task fails with a permission-denied error
+// and returns how long until the task is retried.
+// Use SetStandByMode, not SetStandByModeMax. Standby pauses every task in the collector,
+// so a permission error on a 24h counter task would otherwise stop the data task for a day.
+// Retry every hour so collection resumes soon after the role is fixed.
+func standByOnPermissionDenied(s *schedule.Schedule, task *schedule.Task) time.Duration {
+	standbyDelay := 1 * time.Hour
+	s.SetStandByMode(task, standbyDelay)
+	return standbyDelay
 }
