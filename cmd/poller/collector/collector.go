@@ -448,11 +448,12 @@ func (c *AbstractCollector) Start(
 				default:
 					switch {
 					case errors.Is(err, errs.ErrPermissionDenied):
-						c.Schedule.SetStandByMode(task, 1*time.Hour)
+						standbyDelay := standByOnPermissionDenied(c.Schedule, task)
 						c.Logger.Error(
 							"Entering standby mode",
 							slogx.Err(err),
 							slog.String("task", task.Name),
+							slog.Int("retryDelaySecs", int(standbyDelay.Seconds())),
 						)
 					case errors.Is(err, errs.ErrAPIRequestRejected):
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
