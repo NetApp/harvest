@@ -448,7 +448,7 @@ func (c *AbstractCollector) Start(
 				default:
 					switch {
 					case errors.Is(err, errs.ErrPermissionDenied):
-						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
+						c.Schedule.SetStandByMode(task, 1*time.Hour)
 						c.Logger.Error(
 							"Entering standby mode",
 							slogx.Err(err),
