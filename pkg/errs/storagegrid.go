@@ -32,15 +32,17 @@ func (s StorageGridError) Is(target error) bool {
 func NewStorageGridErr(statusCode int, jsonText []byte) error {
 	var e StorageGridError
 	err := json.Unmarshal(jsonText, &e)
-	if err != nil {
-		truncated := string(jsonText)
-		truncated = truncated[:min(100, len(jsonText))]
-		return New(err, "failed to unmarshal storage grid err because text was "+truncated)
-	}
+	truncated := string(jsonText[:min(100, len(jsonText))])
+	// Check for 401 first so an empty or non-JSON body (e.g., an HTML page from a proxy)
+	// is still recognized as an auth failure.
 	if statusCode == 401 {
 		e.Code = 401
 		e.Message.Text = ErrAuthFailed.Error()
-		e.Status = string(jsonText)
+		e.Status = truncated
+		return e
+	}
+	if err != nil {
+		return New(err, "failed to unmarshal storage grid err because text was "+truncated)
 	}
 	return e
 }

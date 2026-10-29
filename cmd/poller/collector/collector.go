@@ -436,22 +436,13 @@ func (c *AbstractCollector) Start(
 				// Credentials were rejected, e.g., the password changed. Retrying at the normal poll interval
 				// produces many failed logins so back off and retry every 5 minutes.
 				case errors.Is(err, errs.ErrAuthFailed):
-					if !c.Schedule.IsStandBy() {
-						c.Logger.Error(
-							"auth failed, entering standby mode. Check the credentials for this poller",
-							slogx.Err(err),
-							slog.String("task", task.Name),
-							slog.Duration("retryAfter", 5*time.Minute),
-						)
-					} else {
-						c.Logger.Debug(
-							"auth still failing, staying in standby",
-							slogx.Err(err),
-							slog.String("task", task.Name),
-						)
-					}
-					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
+					c.Schedule.SetStandByMode(task, 5*time.Minute)
 					c.SetStatus(1, errs.ErrAuthFailed.Error())
+					c.Logger.Error(
+						"auth failed, entering standby mode. Check the credentials for this poller",
+						slogx.Err(err),
+						slog.String("task", task.Name),
+					)
 
 				// not an error we are expecting, so enter failed or standby state
 				default:
