@@ -23,6 +23,12 @@ func (s StorageGridError) IsAuthErr() bool {
 	return s.Code == 401
 }
 
+// Is lets errors.Is(err, ErrAuthFailed) match a StorageGRID 401,
+// so callers can treat auth failures the same way across collectors.
+func (s StorageGridError) Is(target error) bool {
+	return target == ErrAuthFailed && s.IsAuthErr()
+}
+
 func NewStorageGridErr(statusCode int, jsonText []byte) error {
 	var e StorageGridError
 	err := json.Unmarshal(jsonText, &e)
