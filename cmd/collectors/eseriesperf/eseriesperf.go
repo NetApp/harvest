@@ -564,6 +564,7 @@ func (ep *EseriesPerf) pollData(curMat *matrix.Matrix, results []gjson.Result, o
 				if isPartial {
 					instance.SetPartial(true)
 					instance.SetExportable(false)
+					prevMat.ForgetHighs(instKey)
 					numPartials++
 				}
 			}
