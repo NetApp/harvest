@@ -15,6 +15,7 @@ import (
 	"log/slog"
 	"maps"
 	"slices"
+	"time"
 
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -33,6 +34,10 @@ type Matrix struct {
 	displayMetrics map[string]string  // display name of metric to => metric name (in templates, this is right side)
 	exportOptions  *node.Node
 	exportable     bool
+	// heldBaselines tracks cumulative counters whose cached raw value is a held high-water mark
+	// instead of the most recent reading. metric key => instance key => timestamp of the held reading.
+	// See Delta.
+	heldBaselines map[string]map[string]float64
 }
 
 func New(uuid, object string, identifier string) *Matrix {
@@ -156,6 +161,13 @@ func (m *Matrix) clone(options cloneOptions) *Matrix {
 		}
 	} else {
 		clone.metrics = make(map[string]*Metric)
+	}
+
+	if options.copyData && len(m.heldBaselines) > 0 {
+		clone.heldBaselines = make(map[string]map[string]float64, len(m.heldBaselines))
+		for key, held := range m.heldBaselines {
+			clone.heldBaselines[key] = maps.Clone(held)
+		}
 	}
 
 	return clone
@@ -518,8 +530,29 @@ func NewExportOptionsWithLabels(keys []string, labels []string) *node.Node {
 	return exportOptions
 }
 
-// Delta vector arithmetics
-func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, allowPartialAggregation bool, logger *slog.Logger) (int, error) {
+// maxHeldBaselineAge is how long Delta keeps a cumulative counter's last good reading as its baseline
+// while the counter reads lower than that reading. ONTAP sometimes reports a counter that drops by a
+// constant amount for several minutes and then recovers (see #4496). Holding the high-water mark
+// avoids the spike the recovery poll would otherwise export. A counter that stays lower for longer
+// than this is accepted as a genuine counter reset.
+const maxHeldBaselineAge = 15 * time.Minute
+
+// minHeldFraction is the lowest fraction of the last good reading that Delta treats as a temporary drop.
+// In #4496 the counter dropped by a small fraction of its value. A genuine counter reset falls far below
+// the last good reading and is accepted at once.
+const minHeldFraction = 0.5
+
+// Delta replaces the raw values of metricKey with the difference between the current and the previous poll.
+// cachedData holds the current raw values and becomes prevMat on the next poll.
+//
+// timestampKey names the raw per-instance timestamp metric, in seconds, or is empty when there is none.
+// When it is set and a counter reads lower than its previous value, but at least minHeldFraction of it,
+// the cache keeps the previous (last good) reading and its timestamp instead of the lower reading, and
+// polls are skipped until the counter returns to or above that reading. The delta exported then covers
+// the whole gap and is scaled to the current poll interval, so dividing it by the timestamp delta gives
+// the average rate over the gap. A counter that falls further is treated as reset: this poll and the
+// next are skipped, and the next reading becomes the baseline.
+func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, timestampKey string, allowPartialAggregation bool, logger *slog.Logger) (int, error) {
 	var skips int
 	prevMetric := prevMat.GetMetric(metricKey)
 	curMetric := m.GetMetric(metricKey)
@@ -529,63 +562,176 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, al
 	}
 	prevRaw := prevMetric.values
 	prevRecord := prevMetric.record
+
+	// Holding a baseline requires the raw timestamps of both polls and a cache that is separate from the cooked matrix.
+	// The timestamp itself is never held.
+	var prevTs, curTs *Metric
+	if timestampKey != "" && metricKey != timestampKey && cachedMetric != nil && cachedData != m {
+		prevTs = prevMat.GetMetric(timestampKey)
+		curTs = cachedData.GetMetric(timestampKey)
+	}
+	maxHeldAge := maxHeldBaselineAge.Seconds()
+
 	for key, currInstance := range m.GetInstances() {
 		// check if this instance key exists in previous matrix
 		prevInstance := prevMat.GetInstance(key)
 		currIndex := currInstance.index
 		curRaw := curMetric.values[currIndex]
-		if prevInstance != nil {
-			prevIndex := prevInstance.index
-			if curMetric.record[currIndex] && prevRecord[prevIndex] {
-				curMetric.values[currIndex] -= prevRaw[prevIndex]
-				curCooked := curMetric.values[currIndex]
-				// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
-				// Detect these cases and don't publish them, otherwise the subsequent poll will have large spikes.
-				// Ensure that the current cooked metric (curCooked) is not zero when either the current raw metric (curRaw) or the previous raw metric (prevRaw[prevIndex]) is zero.
-				// A non-zero curCooked under these conditions indicates an issue with the current or previous poll.
-				isInvalidZero := (curRaw == 0 || prevRaw[prevIndex] == 0) && curCooked != 0
-				isNegative := curCooked < 0
+		curRecorded := curMetric.record[currIndex]
 
-				// Check for partial Aggregation
-				var ppaOk, cpaOk bool
-				if !allowPartialAggregation {
-					ppaOk = prevInstance.IsPartial()
-					cpaOk = currInstance.IsPartial()
-				}
+		// heldTs is the timestamp of the last good reading when the previous poll held it as the baseline
+		heldTs, isHeld := prevMat.heldBaseline(metricKey, key)
+		cachedData.releaseBaseline(metricKey, key)
 
-				if isInvalidZero || isNegative || ppaOk || cpaOk {
-					curMetric.record[currIndex] = false
-					skips++
-				}
+		if prevInstance == nil {
+			curMetric.record[currIndex] = false
+			skips++
+			continue
+		}
 
-				if isInvalidZero || isNegative {
-					if cachedMetric != nil {
-						cachedMetric.record[currIndex] = false
-					}
-				}
+		prevIndex := prevInstance.index
+		prevVal := prevRaw[prevIndex]
 
-				if ppaOk || cpaOk {
-					logger.Debug(
-						"Partial Aggregation",
-						slog.String("metric", curMetric.GetName()),
-						slog.Float64("currentRaw", curRaw),
-						slog.Float64("previousRaw", prevRaw[prevIndex]),
-						slog.Bool("prevPartial", ppaOk),
-						slog.Bool("curPartial", cpaOk),
-						slog.Any("instanceLabels", currInstance.GetLabels()),
-						slog.String("instKey", key),
-					)
-				}
-			} else {
-				curMetric.record[currIndex] = false
-				skips++
+		// curTime is the current raw timestamp and baseTime is the timestamp of the reading this delta is calculated from
+		var curTime, prevTime, baseTime float64
+		hasTimes := prevTs != nil && curTs != nil && curTs.record[currIndex] && prevTs.record[prevIndex]
+		if hasTimes {
+			curTime = curTs.values[currIndex]
+			prevTime = prevTs.values[prevIndex]
+			baseTime = prevTime
+			if isHeld {
+				baseTime = heldTs
 			}
-		} else {
+		}
+
+		if !curRecorded || !prevRecord[prevIndex] {
+			curMetric.record[currIndex] = false
+			skips++
+			// Keep holding the last good reading across a missing reading
+			if isHeld && !curRecorded && prevRecord[prevIndex] && hasTimes && curTime-baseTime < maxHeldAge {
+				cachedMetric.values[currIndex] = prevVal
+				cachedMetric.record[currIndex] = true
+				cachedData.holdBaseline(metricKey, key, baseTime)
+			}
+			continue
+		}
+
+		curMetric.values[currIndex] -= prevVal
+		curCooked := curMetric.values[currIndex]
+		// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
+		// Detect these cases and don't publish them, otherwise the subsequent poll will have large spikes.
+		// Ensure that the current cooked metric (curCooked) is not zero when either the current raw metric (curRaw) or the previous raw metric (prevRaw[prevIndex]) is zero.
+		// A non-zero curCooked under these conditions indicates an issue with the current or previous poll.
+		isInvalidZero := (curRaw == 0 || prevVal == 0) && curCooked != 0
+		isNegative := curCooked < 0
+
+		// Check for partial Aggregation
+		var ppaOk, cpaOk bool
+		if !allowPartialAggregation {
+			ppaOk = prevInstance.IsPartial()
+			cpaOk = currInstance.IsPartial()
+		}
+
+		if isInvalidZero || isNegative || ppaOk || cpaOk {
 			curMetric.record[currIndex] = false
 			skips++
 		}
+
+		// A counter that falls below minHeldFraction of the last good reading was reset, not temporarily lowered
+		isReset := isNegative && curRaw < prevVal*minHeldFraction
+
+		switch {
+		case isInvalidZero || isReset || (isNegative && !hasTimes):
+			if cachedMetric != nil {
+				cachedMetric.record[currIndex] = false
+			}
+		case isNegative:
+			if curTime-baseTime < maxHeldAge {
+				// Keep the last good reading as the baseline until the counter returns to or above it
+				cachedMetric.values[currIndex] = prevVal
+				cachedData.holdBaseline(metricKey, key, baseTime)
+			} else {
+				// The counter stayed lower for too long. Accept the current reading as the new baseline.
+				logger.Debug(
+					"Accept counter reset",
+					slog.String("metric", curMetric.GetName()),
+					slog.Float64("currentRaw", curRaw),
+					slog.Float64("heldRaw", prevVal),
+					slog.Float64("heldSeconds", curTime-baseTime),
+					slog.String("instKey", key),
+				)
+			}
+		case isHeld:
+			// The counter recovered. The delta covers the time since the last good reading.
+			// Scale it to the current poll interval so rates and averages stay comparable with other polls.
+			elapsed := curTime - baseTime
+			if hasTimes && elapsed > 0 {
+				curMetric.values[currIndex] *= (curTime - prevTime) / elapsed
+				logger.Debug(
+					"Counter recovered from held baseline",
+					slog.String("metric", curMetric.GetName()),
+					slog.Float64("currentRaw", curRaw),
+					slog.Float64("heldRaw", prevVal),
+					slog.Float64("heldSeconds", elapsed),
+					slog.String("instKey", key),
+				)
+			} else if curMetric.record[currIndex] {
+				curMetric.record[currIndex] = false
+				skips++
+			}
+		}
+
+		if ppaOk || cpaOk {
+			logger.Debug(
+				"Partial Aggregation",
+				slog.String("metric", curMetric.GetName()),
+				slog.Float64("currentRaw", curRaw),
+				slog.Float64("previousRaw", prevVal),
+				slog.Bool("prevPartial", ppaOk),
+				slog.Bool("curPartial", cpaOk),
+				slog.Any("instanceLabels", currInstance.GetLabels()),
+				slog.String("instKey", key),
+			)
+		}
 	}
 	return skips, nil
+}
+
+// heldBaseline returns the timestamp of the held last good reading of metricKey for instanceKey, if any
+func (m *Matrix) heldBaseline(metricKey, instanceKey string) (float64, bool) {
+	ts, ok := m.heldBaselines[metricKey][instanceKey]
+	return ts, ok
+}
+
+func (m *Matrix) holdBaseline(metricKey, instanceKey string, ts float64) {
+	if m.heldBaselines == nil {
+		m.heldBaselines = make(map[string]map[string]float64)
+	}
+	held, ok := m.heldBaselines[metricKey]
+	if !ok {
+		held = make(map[string]float64)
+		m.heldBaselines[metricKey] = held
+	}
+	held[instanceKey] = ts
+}
+
+func (m *Matrix) releaseBaseline(metricKey, instanceKey string) {
+	held, ok := m.heldBaselines[metricKey]
+	if !ok {
+		return
+	}
+	delete(held, instanceKey)
+	if len(held) == 0 {
+		delete(m.heldBaselines, metricKey)
+	}
+}
+
+// sameBaseline reports whether this poll's deltas of both metrics were calculated from readings of the same poll.
+// m is the previous raw matrix.
+func (m *Matrix) sameBaseline(metricKey, otherKey, instanceKey string) bool {
+	ts, held := m.heldBaseline(metricKey, instanceKey)
+	otherTs, otherHeld := m.heldBaseline(otherKey, instanceKey)
+	return held == otherHeld && ts == otherTs
 }
 
 func (m *Matrix) Divide(metricKey string, baseKey string) (int, error) {
@@ -647,10 +793,10 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 	if base == nil {
 		return 0, errs.New(errs.ErrMissingMetric, baseKey)
 	}
-	time := m.GetMetric(timestampMetricName)
+	tsMetric := m.GetMetric(timestampMetricName)
 	var tValues []float64
-	if time != nil {
-		tValues = time.values
+	if tsMetric != nil {
+		tValues = tsMetric.values
 	}
 	sValues := base.values
 	sRecord := base.record
@@ -664,6 +810,11 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 		// It is important to check sValues[i] < 0 and allow a zero so pass=true and m.values[i] remains unchanged
 		switch {
 		case metric.values[i] < 0 || sValues[i] < 0:
+			metric.record[i] = false
+			skips++
+		case !prevRawMat.sameBaseline(metricKey, baseKey, key):
+			// Delta calculated the numerator and denominator from readings of different polls, after at least one
+			// of them recovered from a held baseline. Their ratio would mix different intervals.
 			metric.record[i] = false
 			skips++
 		case metric.record[i] && sRecord[i]:

@@ -133,7 +133,7 @@ func TestMetricFloat64_Delta(t *testing.T) {
 	for _, tt := range tests2 {
 		t.Run(tt.name, func(t *testing.T) {
 			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, addInstance)
-			skips, err := current.Delta("speed", previous, current, false, slog.Default())
+			skips, err := current.Delta("speed", previous, current, "", false, slog.Default())
 			matrixTest(t, tt, current, skips, err)
 		})
 	}
@@ -149,7 +149,7 @@ func TestMetricFloat64_Delta(t *testing.T) {
 	for _, tt := range tests3 {
 		t.Run(tt.name, func(t *testing.T) {
 			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, addDeleteInstance)
-			skips, err := current.Delta("speed", previous, current, false, slog.Default())
+			skips, err := current.Delta("speed", previous, current, "", false, slog.Default())
 			matrixTest(t, tt, current, skips, err)
 		})
 	}
@@ -173,7 +173,7 @@ func TestMetricFloat64_Delta_PartialAggregation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			previous, current := setupMatrixForPartialAggregation(tt.prevRaw, tt.curRaw, tt.prevPartialAggregation, tt.currPartialAggregation)
-			skips, err := current.Delta("speed", previous, current, false, slog.Default())
+			skips, err := current.Delta("speed", previous, current, "", false, slog.Default())
 			assert.Nil(t, err)
 			assert.Equal(t, skips, tt.expectedSkips)
 		})
@@ -215,7 +215,7 @@ func testDelta(t *testing.T, op matrixOp) {
 	for _, tt := range tests {
 		t.Run(tt.name+"_"+string(op), func(t *testing.T) {
 			previous, current := setupMatrix(tt.prevRaw, tt.curRaw, op)
-			skips, err := current.Delta("speed", previous, current, false, slog.Default())
+			skips, err := current.Delta("speed", previous, current, "", false, slog.Default())
 			matrixTest(t, tt, current, skips, err)
 		})
 	}
@@ -240,7 +240,7 @@ func TestMetricFloat64_Divide(t *testing.T) {
 			}
 			prevMat, curMat := setupMatrixAdv(latency, tt.prevRaw, tt.curRaw, tt.matrixOp)
 			for k := range curMat.GetMetrics() {
-				_, err := curMat.Delta(k, prevMat, curMat, false, slog.Default())
+				_, err := curMat.Delta(k, prevMat, curMat, "timestamp", false, slog.Default())
 				assert.Nil(t, err)
 			}
 			skips, err := curMat.Divide(latency, "total_ops")
@@ -272,7 +272,7 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 			cachedData := curMat.Clone()
 
 			for k := range curMat.GetMetrics() {
-				_, err := curMat.Delta(k, prevMat, curMat, false, slog.Default())
+				_, err := curMat.Delta(k, prevMat, curMat, "timestamp", false, slog.Default())
 				assert.Nil(t, err)
 			}
 
