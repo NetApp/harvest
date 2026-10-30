@@ -42,6 +42,15 @@ You will need a root or admin account to create a new user.
 
 ![StorageGRID create user](assets/prepare-storagegrid/create_user.png)
 
+!!! note "Changing the Harvest user's credentials"
+
+    StorageGRID keeps accepting an issued token for up to 16 hours ([token lifetime](https://docs.netapp.com/us-en/storagegrid/admin/grid-management-api-operations.html)).
+    Changes to a user, including a new password, only take effect when the user signs in again ([Manage users](https://docs.netapp.com/us-en/storagegrid/admin/managing-users.html)).
+    In testing, tokens also kept working after the user was deleted ([#4542](https://github.com/NetApp/harvest/issues/4542)).
+
+    Harvest continues collecting after a credential change, and only fails authentication when the token expires, up to 16 hours later.
+    Restart the poller after changing its StorageGRID credentials, both to confirm the new credentials work and to stop using the old token.
+
 ## Reference
 
 See [group permissions](https://docs.netapp.com/us-en/storagegrid-116/admin/managing-admin-groups.html#group-permissions)
