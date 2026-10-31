@@ -2196,6 +2196,14 @@ documented <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing
 <li>Select Create user and select Finish.</li>
 </ol>
 <p><img alt="StorageGRID create user" src="../assets/prepare-storagegrid/create_user.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Changing the Harvest user's credentials</p>
+<p>StorageGRID keeps accepting an issued token for up to 16 hours (<a href="https://docs.netapp.com/us-en/storagegrid/admin/grid-management-api-operations.html">token lifetime</a>).
+Changes to a user, including a new password, only take effect when the user signs in again (<a href="https://docs.netapp.com/us-en/storagegrid/admin/managing-users.html">Manage users</a>).
+In testing, tokens also kept working after the user was deleted (<a href="https://github.com/NetApp/harvest/issues/4542">#4542</a>).</p>
+<p>Harvest continues collecting after a credential change, and only fails authentication when the token expires, up to 16 hours later.
+Restart the poller after changing its StorageGRID credentials, both to confirm the new credentials work and to stop using the old token.</p>
+</div>
 <h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <p>See <a href="https://docs.netapp.com/us-en/storagegrid-116/admin/managing-admin-groups.html#group-permissions">group permissions</a>
 for more information on StorageGRID permissions.</p>
