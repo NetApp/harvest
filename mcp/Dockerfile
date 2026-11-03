@@ -33,7 +33,7 @@ RUN cp -a $BUILD_DIR/mcp/metadata/*.json $INSTALL_DIR/metadata/ 2>/dev/null || t
 RUN mkdir -p $INSTALL_DIR/prompts
 RUN cp -a $BUILD_DIR/mcp/prompts/* $INSTALL_DIR/prompts/ 2>/dev/null || true
 
-FROM gcr.io/distroless/static-debian12:debug
+FROM gcr.io/distroless/static-debian13:debug
 
 ARG INSTALL_DIR=/opt/harvest-mcp
 
