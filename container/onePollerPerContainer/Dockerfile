@@ -33,7 +33,7 @@ RUN cp -a $BUILD_DIR/harvest.yml $INSTALL_DIR/harvest.yml.example \
     && cp -a $BUILD_DIR/container/onePollerPerContainer/docker-compose.tmpl $INSTALL_DIR/container/onePollerPerContainer \
     && cp -aR $BUILD_DIR/container/prometheus $INSTALL_DIR/container/
 
-FROM gcr.io/distroless/static-debian12:debug
+FROM gcr.io/distroless/static-debian13:debug
 
 ARG INSTALL_DIR=/opt/harvest
 ENV HARVEST_DOCKER=yes
