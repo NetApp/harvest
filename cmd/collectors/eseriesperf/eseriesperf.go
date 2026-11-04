@@ -701,7 +701,7 @@ func (ep *EseriesPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matri
 			continue
 		}
 
-		if skips, err = curMat.Delta(key, prevMat, cachedData, false, ep.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, cachedData, ep.perfProp.timestampMetricName, false, ep.Logger); err != nil {
 			ep.Logger.Error("Calculate delta", slogx.Err(err), slog.String("key", key))
 			continue
 		}

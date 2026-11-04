@@ -781,7 +781,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta(collectors.TimestampMetricName, prevMat, cachedData, z.allowPartialAggregation, z.Logger); err != nil {
+	if _, err = curMat.Delta(collectors.TimestampMetricName, prevMat, cachedData, collectors.TimestampMetricName, z.allowPartialAggregation, z.Logger); err != nil {
 		z.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -800,7 +800,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = curMat.Delta(key, prevMat, cachedData, z.allowPartialAggregation, z.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, cachedData, collectors.TimestampMetricName, z.allowPartialAggregation, z.Logger); err != nil {
 			z.Logger.Error("Calculate delta", slogx.Err(err), slog.String("key", key))
 			continue
 		}
