@@ -28,6 +28,12 @@ label: [string]: string
 	key_file:  string
 }
 
+#PromTLS: {
+	#TLS
+	client_ca_file?:   string
+	client_auth_type?: "RequireAndVerifyClientCert" | "VerifyClientCertIfGiven"
+}
+
 #Admin: {
 	addr?:   string
 	httpsd?: #HTTPSD
@@ -42,7 +48,7 @@ label: [string]: string
 	port?:            int
 	port_range?:      string
 	sort_labels?:     bool
-	tls?:             #TLS
+	tls?:             #PromTLS
 	disk_cache?:      #DiskCache
 }
 

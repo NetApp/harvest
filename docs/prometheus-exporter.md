@@ -67,6 +67,8 @@ An overview of all parameters:
 | `sort_labels`                             | bool, optional                                 | emit metric labels in a deterministic order. [VictoriaMetrics](https://github.com/NetApp/harvest/issues/756) requires this, since it treats a change in label order as a new series and marks the old one stale. Prometheus normalizes label order itself, so it is unaffected. Enabled by default starting with Harvest 26.11; set to `false` for the pre-26.11 behavior.                    | `true` (since 26.11; `false` before)                                                                                                          |
 | `tls`                                     | `tls`                                          | optional                                                                                                                                                                                                                      | If present, enables TLS transport. If running in a container, see [note](https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589) |         
 | tls `cert_file`, `key_file`               | **required** child of `tls`                    | Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with `bin/harvest admin tls create server`, `openssl`, `mkcert`, etc. |                                                                                                                                                |
+| tls `client_ca_file`                      | string, optional child of `tls`                | Path to a PEM bundle of CA certificates used to verify client certificates. Setting it enables [mutual TLS](#prometheus-exporter-and-mutual-tls). |
+| tls `client_auth_type`                    | string, optional child of `tls`                | `RequireAndVerifyClientCert` (default when `client_ca_file` is set) rejects clients without a certificate signed by `client_ca_file`. `VerifyClientCertIfGiven` verifies a certificate if the client sends one. |
 
 ### Per-poller prom_port
 
@@ -582,6 +584,49 @@ Start Prometheus and visit http://localhost:9090/targets with your browser.
 You should see https://localhost:16001/metrics in the list of targets. 
 
 ![Prometheus Targets](assets/prometheus/PrometheusTLS.png)
+
+### Prometheus Exporter and Mutual TLS
+
+With mutual TLS (mTLS), the exporter also checks the client's certificate, so only Prometheus servers holding a
+certificate signed by your CA can scrape metrics. Add `client_ca_file` to the exporter's `tls` section:
+
+```yaml
+Exporters:
+  my-exporter:
+    exporter: Prometheus
+    port: 16001
+    tls:
+      cert_file: cert/prom-cert.pem
+      key_file: cert/prom-key.pem
+      client_ca_file: cert/client-ca.pem
+      # client_auth_type: RequireAndVerifyClientCert   # default
+```
+
+`client_ca_file` is a PEM file with one or more CA certificates. When it is set, the exporter requires TLS 1.2 or later
+and rejects connections from clients that do not present a certificate signed by one of those CAs.
+Set `client_auth_type: VerifyClientCertIfGiven` to accept clients without a certificate while still rejecting
+untrusted ones, which can help while rolling out client certificates.
+
+Configure Prometheus to present its client certificate:
+
+```yaml
+scrape_configs:
+  - job_name: 'harvest-mtls'
+    scheme: https
+    tls_config:
+      ca_file: /path/to/prom-cert.pem
+      cert_file: /path/to/prometheus-client-cert.pem
+      key_file: /path/to/prometheus-client-key.pem
+    static_configs:
+    - targets:
+        - 'localhost:16001'
+```
+
+You can check the setup with curl. With a trusted client certificate, curl prints the metrics. Without `--cert` and `--key`, the TLS handshake fails:
+
+```bash
+curl --cacert cert/prom-cert.pem --cert prometheus-client-cert.pem --key prometheus-client-key.pem https://localhost:16001/metrics
+```
 
 ## Prometheus Alerts
 

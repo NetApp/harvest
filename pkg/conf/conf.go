@@ -551,6 +551,9 @@ Tools:
 type TLS struct {
 	CertFile string `yaml:"cert_file,omitempty"`
 	KeyFile  string `yaml:"key_file,omitempty"`
+	// ClientCAFile and ClientAuthType enable mutual TLS. Only the Prometheus exporter uses them.
+	ClientCAFile   string `yaml:"client_ca_file,omitempty"`
+	ClientAuthType string `yaml:"client_auth_type,omitempty"`
 }
 
 type Httpsd struct {

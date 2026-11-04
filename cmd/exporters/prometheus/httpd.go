@@ -59,13 +59,18 @@ func isLoopback(remoteAddr string) bool {
 	return ip != nil && ip.IsLoopback()
 }
 
-func (p *Prometheus) startHTTPD(addr string, port int) {
-
-	server := &http.Server{
+func (p *Prometheus) newServer(addr string, port int) *http.Server {
+	return &http.Server{
 		Addr:              addr + ":" + strconv.Itoa(port),
 		Handler:           p.newMux(),
 		ReadHeaderTimeout: 60 * time.Second,
+		TLSConfig:         p.tlsConfig,
 	}
+}
+
+func (p *Prometheus) startHTTPD(addr string, port int) {
+
+	server := p.newServer(addr, port)
 
 	var url string
 	if p.Params.TLS.KeyFile != "" {
@@ -74,7 +79,16 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 		url = fmt.Sprintf("%s://%s/metrics", "http", net.JoinHostPort(addr, strconv.Itoa(port)))
 	}
 
-	p.Logger.Info("server listen", slog.String("url", url))
+	if p.tlsConfig != nil {
+		p.Logger.Info(
+			"server listen",
+			slog.String("url", url),
+			slog.String("client_auth_type", p.tlsConfig.ClientAuth.String()),
+			slog.String("client_ca_file", p.Params.TLS.ClientCAFile),
+		)
+	} else {
+		p.Logger.Info("server listen", slog.String("url", url))
+	}
 
 	if p.Params.TLS.KeyFile != "" {
 		if err := server.ListenAndServeTLS(p.Params.TLS.CertFile, p.Params.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
