@@ -33,6 +33,16 @@ type Matrix struct {
 	displayMetrics map[string]string  // display name of metric to => metric name (in templates, this is right side)
 	exportOptions  *node.Node
 	exportable     bool
+	// highs holds the raw value a counter had before it dropped without a reset flag (#4496).
+	// When the counter climbs back to it, Delta skips that poll so the jump isn't exported as a spike.
+	// metric key => instance key => raw value. Entries exist only while a counter is in a drop.
+	//
+	// Known limits:
+	//   - If the counter never comes back (e.g. an unflagged reset), one valid poll is skipped
+	//     when it finally climbs past the value.
+	//   - A second drop during a dip replaces the value, so the final restore can spike which is not the case in #4496
+	//   - An instance missing from a poll loses its value.
+	highs map[string]map[string]float64
 }
 
 func New(uuid, object string, identifier string) *Matrix {
@@ -158,7 +168,35 @@ func (m *Matrix) clone(options cloneOptions) *Matrix {
 		clone.metrics = make(map[string]*Metric)
 	}
 
+	if options.copyData && len(m.highs) > 0 {
+		clone.highs = make(map[string]map[string]float64, len(m.highs))
+		for k, h := range m.highs {
+			clone.highs[k] = maps.Clone(h)
+		}
+	}
+
 	return clone
+}
+
+func (m *Matrix) setHigh(metricKey, instanceKey string, v float64) {
+	if m.highs == nil {
+		m.highs = make(map[string]map[string]float64)
+	}
+	if m.highs[metricKey] == nil {
+		m.highs[metricKey] = make(map[string]float64)
+	}
+	m.highs[metricKey][instanceKey] = v
+}
+
+// ForgetHighs clears the remembered highs for an instance. Call it on the previous matrix when the
+// instance's counters were really reset, such as E-Series lastResetTimeInMS changing.
+//
+// Don't call it for incomplete samples like ONTAP partial aggregation. Those counters come back to
+// their full value, so the high is still needed to skip the restore.
+func (m *Matrix) ForgetHighs(instanceKey string) {
+	for _, h := range m.highs {
+		delete(h, instanceKey)
+	}
 }
 
 // Reset all data
@@ -529,14 +567,17 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, al
 	}
 	prevRaw := prevMetric.values
 	prevRecord := prevMetric.record
+	prevHighs := prevMat.highs[metricKey]
 	for key, currInstance := range m.GetInstances() {
 		// check if this instance key exists in previous matrix
 		prevInstance := prevMat.GetInstance(key)
 		currIndex := currInstance.index
 		curRaw := curMetric.values[currIndex]
+		curRecorded := curMetric.record[currIndex]
+		high, hasHigh := prevHighs[key]
 		if prevInstance != nil {
 			prevIndex := prevInstance.index
-			if curMetric.record[currIndex] && prevRecord[prevIndex] {
+			if curRecorded && prevRecord[prevIndex] {
 				curMetric.values[currIndex] -= prevRaw[prevIndex]
 				curCooked := curMetric.values[currIndex]
 				// Sometimes ONTAP sends spurious zeroes or values less than the previous poll.
@@ -553,7 +594,10 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, al
 					cpaOk = currInstance.IsPartial()
 				}
 
-				if isInvalidZero || isNegative || ppaOk || cpaOk {
+				// The counter is back from a drop. Skip it, or the jump is exported as a spike (#4496).
+				isRestore := hasHigh && !isNegative && curRaw >= high
+
+				if isInvalidZero || isNegative || ppaOk || cpaOk || isRestore {
 					curMetric.record[currIndex] = false
 					skips++
 				}
@@ -562,6 +606,31 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, al
 					if cachedMetric != nil {
 						cachedMetric.record[currIndex] = false
 					}
+				}
+
+				switch {
+				case isRestore:
+					logger.Debug(
+						"Counter recovered from drop",
+						slog.String("metric", curMetric.GetName()),
+						slog.Float64("currentRaw", curRaw),
+						slog.Float64("high", high),
+						slog.String("instKey", key),
+					)
+					hasHigh = false
+				case isNegative && !isInvalidZero && !ppaOk && !cpaOk:
+					// Unflagged drop: remember the value before it. A new drop replaces an older value,
+					// which may be one the counter never returns to.
+					// Partial polls are left out: the partial flag already skips them, and on E-Series
+					// a partial means a real reset. An existing value is kept across them.
+					high, hasHigh = prevRaw[prevIndex], true
+					logger.Debug(
+						"Remember counter high before drop",
+						slog.String("metric", curMetric.GetName()),
+						slog.Float64("currentRaw", curRaw),
+						slog.Float64("high", high),
+						slog.String("instKey", key),
+					)
 				}
 
 				if ppaOk || cpaOk {
@@ -579,10 +648,18 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, al
 			} else {
 				curMetric.record[currIndex] = false
 				skips++
+				if hasHigh && curRecorded && curRaw >= high {
+					// back from the drop on a poll that is skipped anyway
+					hasHigh = false
+				}
 			}
 		} else {
 			curMetric.record[currIndex] = false
 			skips++
+			hasHigh = false
+		}
+		if hasHigh && cachedData != m {
+			cachedData.setHigh(metricKey, key, high)
 		}
 	}
 	return skips, nil
