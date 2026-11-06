@@ -40,7 +40,10 @@ jobs:
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
+          # The release branch sets Chart.yaml version and appVersion to the Harvest release, and Jenkins
+          # checks them before publishing, so pull requests to main do not bump the chart version.
           ct lint \
             --chart-dirs deploy/helm \
             --validate-maintainers=false \
+            --check-version-increment=false \
             --target-branch "$DEFAULT_BRANCH"
