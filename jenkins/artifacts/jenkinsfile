@@ -2,11 +2,11 @@ pipeline {
     agent {label 'buildserver'}
 
     parameters {
-        string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
-        string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default) See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
+        string(name: 'VERSION', defaultValue: '', description: '[Optional] RPM Version should match Harvest version with rc or nightly stripped. If not filled default is YY.mm.ddHH. Required to publish a release (DOCKER_PUBLISH=true, RELEASE=1, ASUP_MAKE_TARGET=production). See https://github.com/NetApp/harvest/wiki/Release-Checklist#version-names for details')
+        string(name: 'RELEASE', defaultValue: 'nightly', description: '[Optional] Example: nightly (default). Must be 1 for a production build when DOCKER_PUBLISH is true; ship a rebuild as the next point release instead. See https://github.com/NetApp/harvest-private/wiki/Release-Checklist#rpm-and-debian-names for details ')
         string(name: 'BRANCH', defaultValue: 'main', description: '[Optional] Branch name to clone. Default (main) ')
 		string(name: 'ASUP_MAKE_TARGET', defaultValue: 'production', description: 'make target for AutoSupport binary build|production')
-		string(name: 'DOCKER_PUBLISH', defaultValue: 'false', description: 'true to publish to dockerhub')
+		string(name: 'DOCKER_PUBLISH', defaultValue: 'false', description: 'true to publish to dockerhub and ghcr.io. A final or point release (RELEASE=1, ASUP_MAKE_TARGET=production) also publishes the Helm chart to oci://ghcr.io/netapp/charts')
 		string(name: 'RUN_TEST', defaultValue: 'true', description: 'false to skip test')
 		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if DOCKER_PUBLISH is true')
     }
@@ -34,6 +34,7 @@ pipeline {
         imageName = "rahulguptajss/harvest"
         ghcrImage = "ghcr.io/netapp/harvest"
         ghcrMcpImage = "ghcr.io/netapp/harvest-mcp"
+        ghcrChartRepo = "oci://ghcr.io/netapp/charts"
         DOCKERHUB_USERNAME = "rahulguptajss"
         COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
     }
@@ -55,6 +56,17 @@ pipeline {
                 buildName "${BUILD_NUMBER}_$BRANCH"
                 script {
                     currentStage = 'Initialization'
+                    // Production builds that are published also publish a Helm chart whose version is VERSION.
+                    // Stop before anything is published if that chart version would be wrong.
+                    def productionPublish = env.DOCKER_PUBLISH == 'true' && env.ASUP_MAKE_TARGET == 'production'
+                    // A rebuild with RELEASE > 1 would have no chart version of its own.
+                    if (productionPublish && env.RELEASE ==~ /^\d+$/ && env.RELEASE != '1') {
+                        error("RELEASE=${env.RELEASE} cannot be published: the Helm chart version must match the Harvest version. Ship the rebuild as the next point release with RELEASE=1.")
+                    }
+                    // Without VERSION the chart version would be the date, for example 26.11.06.
+                    if (productionPublish && env.RELEASE == '1' && !params.VERSION?.trim()) {
+                        error("VERSION must be set to publish a release: it is the Helm chart version, for example 26.11.0.")
+                    }
                 }
             }
         }
@@ -114,6 +126,62 @@ pipeline {
                         env."${key}" = "${value}"
                     }
                 }
+            }
+        }
+
+        stage('Check Helm Chart') {
+            when {
+                expression {
+                    return env.DOCKER_PUBLISH == 'true' && env.RELEASE == '1' && env.ASUP_MAKE_TARGET == 'production'
+                }
+            }
+            steps {
+                script {
+                    currentStage = 'Check Helm Chart'
+                }
+                // The release branch's Chart.yaml must already name this release, so a clone of the release tag
+                // installs the same Harvest version as the published chart, and the Kubernetes docs must pin this
+                // chart version. Download Helm and lint the chart here too, so a bad chart or a failed download
+                // stops the build before any image is published.
+                sh '''
+                chart=deploy/helm/harvest/Chart.yaml
+                if [ ! -f "$chart" ]; then
+                    echo "$chart does not exist on $BRANCH, so no Helm chart will be published"
+                    exit 0
+                fi
+                gotVersion=$(grep '^version:' "$chart" | cut -d: -f2- | tr -d "\\"' ")
+                gotAppVersion=$(grep '^appVersion:' "$chart" | cut -d: -f2- | tr -d "\\"' ")
+                if [ "$gotVersion" != "$VERSION" ] || [ "$gotAppVersion" != "$VERSION-$RELEASE" ]; then
+                    echo "ERROR: $chart on $BRANCH has version $gotVersion and appVersion $gotAppVersion."
+                    echo "Set version: $VERSION and appVersion: \\"$VERSION-$RELEASE\\" on $BRANCH before publishing."
+                    echo "See the Helm chart step in .github/ISSUE_TEMPLATE/release-template.md"
+                    exit 1
+                fi
+
+                # Every chart version the docs pin must be this release
+                docs="docs/install/k8.md deploy/helm/harvest/README.md"
+                stale=$(grep -noE -e '--version [0-9][0-9A-Za-z.+-]*' -e 'targetRevision: [0-9][0-9A-Za-z.+-]*' $docs |
+                    awk -v v="$VERSION" '$NF != v')
+                if [ -n "$stale" ]; then
+                    echo "ERROR: these chart versions on $BRANCH are not $VERSION:"
+                    echo "$stale"
+                    echo "See the Helm chart step in .github/ISSUE_TEMPLATE/release-template.md"
+                    exit 1
+                fi
+
+                # Use a pinned, checksum-verified Helm instead of whatever the build server has installed.
+                # Keep it outside the workspace, which is the Docker build context.
+                helmDir="${WORKSPACE_TMP:-${WORKSPACE}@tmp}/helm-bin"
+                rm -rf "$helmDir" && mkdir -p "$helmDir"
+                HELM_VERSION=v3.20.0
+                HELM_TGZ=helm-${HELM_VERSION}-linux-amd64.tar.gz
+                curl -fsSL -o "$helmDir/$HELM_TGZ" https://get.helm.sh/$HELM_TGZ
+                curl -fsSL -o "$helmDir/$HELM_TGZ.sha256sum" https://get.helm.sh/$HELM_TGZ.sha256sum
+                (cd "$helmDir" && sha256sum -c $HELM_TGZ.sha256sum)
+                tar -xzf "$helmDir/$HELM_TGZ" -C "$helmDir" --strip-components=1 linux-amd64/helm
+
+                "$helmDir/helm" lint --strict deploy/helm/harvest
+                '''
             }
         }
 
@@ -307,6 +375,31 @@ pipeline {
                         '''
                     }
                 }
+            }
+        }
+
+        stage('Publish Helm Chart') {
+            when {
+                expression {
+                    return env.DOCKER_PUBLISH == 'true' && env.RELEASE == '1' && env.ASUP_MAKE_TARGET == 'production' &&
+                        fileExists('deploy/helm/harvest/Chart.yaml')
+                }
+            }
+            steps {
+                script {
+                    currentStage = 'Publish Helm Chart'
+                }
+                sh '''
+                set -e
+                # Downloaded and checked by the Check Helm Chart stage
+                HELM="${WORKSPACE_TMP:-${WORKSPACE}@tmp}/helm-bin/helm"
+                rm -rf chart-dist && mkdir chart-dist
+
+                "$HELM" package deploy/helm/harvest --version "$VERSION" --app-version "$VERSION-$RELEASE" --destination chart-dist
+                echo $GIT_TOKEN | "$HELM" registry login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
+                "$HELM" push chart-dist/harvest-"$VERSION".tgz ${ghcrChartRepo}
+                "$HELM" show chart ${ghcrChartRepo}/harvest --version "$VERSION"
+                '''
             }
         }
 
