@@ -553,6 +553,14 @@ type TLS struct {
 	KeyFile  string `yaml:"key_file,omitempty"`
 }
 
+// PromTLS is the Prometheus exporter TLS configuration. ClientCAFile and ClientAuthType enable
+// mutual TLS. They are kept out of TLS because Admin.httpsd.tls does not support them.
+type PromTLS struct {
+	TLS            `yaml:",inline"`
+	ClientCAFile   string `yaml:"client_ca_file,omitempty"`
+	ClientAuthType string `yaml:"client_auth_type,omitempty"`
+}
+
 type Httpsd struct {
 	Listen    string `yaml:"listen,omitempty"`
 	AuthBasic struct {
@@ -809,8 +817,8 @@ type Exporter struct {
 	SortLabels        *bool     `yaml:"sort_labels,omitempty"`
 
 	// Prometheus specific
-	HeartBeatURL string `yaml:"heart_beat_url,omitempty"`
-	TLS          TLS    `yaml:"tls,omitempty"`
+	HeartBeatURL string  `yaml:"heart_beat_url,omitempty"`
+	TLS          PromTLS `yaml:"tls,omitempty"`
 
 	// InfluxDB specific
 	Bucket        *string          `yaml:"bucket,omitempty"`

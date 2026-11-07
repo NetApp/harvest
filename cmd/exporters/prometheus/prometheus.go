@@ -22,6 +22,7 @@ Package Description:
 package prometheus
 
 import (
+	"crypto/tls"
 	"github.com/netapp/harvest/v2/cmd/exporters"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -54,6 +55,7 @@ type Prometheus struct {
 	sortLabels      bool
 	globalPrefix    string
 	replacer        *strings.Replacer
+	tlsConfig       *tls.Config
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
@@ -172,6 +174,14 @@ func (p *Prometheus) Init() error {
 	if p.checkAddrs {
 		p.cacheAddrs = make(map[string]bool)
 	}
+
+	// optional mutual TLS: verify client certificates against client_ca_file
+	tlsConfig, err := newTLSConfig(p.Params.TLS)
+	if err != nil {
+		p.Logger.Error("invalid tls configuration", slogx.Err(err))
+		return errs.New(errs.ErrInvalidParam, "tls")
+	}
+	p.tlsConfig = tlsConfig
 
 	// Finally, the most important and only required parameter: port
 	// can be passed to us either as an option or as a parameter

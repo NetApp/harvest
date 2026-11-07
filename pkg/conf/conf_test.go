@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/goccy/go-yaml"
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -559,4 +560,41 @@ func TestShouldSortLabels(t *testing.T) {
 	assert.True(t, Exporter{}.ShouldSortLabels())
 	assert.True(t, Exporter{SortLabels: &trueVal}.ShouldSortLabels())
 	assert.False(t, Exporter{SortLabels: &falseVal}.ShouldSortLabels())
+}
+
+func TestPromTLS(t *testing.T) {
+	in := `
+Admin:
+  httpsd:
+    listen: :8887
+    tls:
+      cert_file: admin-cert.pem
+      key_file: admin-key.pem
+Exporters:
+  prom:
+    exporter: Prometheus
+    tls:
+      cert_file: cert.pem
+      key_file: key.pem
+      client_ca_file: ca.pem
+      client_auth_type: VerifyClientCertIfGiven
+`
+	var cfg HarvestConfig
+	assert.Nil(t, yaml.Unmarshal([]byte(in), &cfg))
+
+	want := PromTLS{
+		TLS:            TLS{CertFile: "cert.pem", KeyFile: "key.pem"},
+		ClientCAFile:   "ca.pem",
+		ClientAuthType: "VerifyClientCertIfGiven",
+	}
+	if diff := cmp.Diff(want, cfg.Exporters["prom"].TLS); diff != "" {
+		t.Errorf("Mismatch (-want +got):\n%s", diff)
+	}
+	assert.Equal(t, cfg.Admin.Httpsd.TLS, TLS{CertFile: "admin-cert.pem", KeyFile: "admin-key.pem"})
+
+	out, err := yaml.Marshal(cfg.Exporters["prom"].TLS)
+	assert.Nil(t, err)
+	var roundTrip PromTLS
+	assert.Nil(t, yaml.Unmarshal(out, &roundTrip))
+	assert.Equal(t, roundTrip, want)
 }
