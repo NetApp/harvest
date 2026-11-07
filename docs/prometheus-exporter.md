@@ -67,8 +67,8 @@ An overview of all parameters:
 | `sort_labels`                             | bool, optional                                 | emit metric labels in a deterministic order. [VictoriaMetrics](https://github.com/NetApp/harvest/issues/756) requires this, since it treats a change in label order as a new series and marks the old one stale. Prometheus normalizes label order itself, so it is unaffected. Enabled by default starting with Harvest 26.11; set to `false` for the pre-26.11 behavior.                    | `true` (since 26.11; `false` before)                                                                                                          |
 | `tls`                                     | `tls`                                          | optional                                                                                                                                                                                                                      | If present, enables TLS transport. If running in a container, see [note](https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589) |         
 | tls `cert_file`, `key_file`               | **required** child of `tls`                    | Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with `bin/harvest admin tls create server`, `openssl`, `mkcert`, etc. |                                                                                                                                                |
-| tls `client_ca_file`                      | string, optional child of `tls`                | Path to a PEM bundle of CA certificates used to verify client certificates. Setting it enables [mutual TLS](#prometheus-exporter-and-mutual-tls). |
-| tls `client_auth_type`                    | string, optional child of `tls`                | `RequireAndVerifyClientCert` (default when `client_ca_file` is set) rejects clients without a certificate signed by `client_ca_file`. `VerifyClientCertIfGiven` verifies a certificate if the client sends one. |
+| tls `client_ca_file`                      | string, optional child of `tls`                | Path to a PEM bundle of CA certificates used to verify client certificates. Setting it enables [mutual TLS](#prometheus-exporter-and-mutual-tls). | |
+| tls `client_auth_type`                    | string, optional child of `tls`                | Only used when `client_ca_file` is set. `RequireAndVerifyClientCert` rejects clients without a certificate signed by `client_ca_file`. `VerifyClientCertIfGiven` verifies a certificate if the client sends one. | `RequireAndVerifyClientCert` |
 
 ### Per-poller prom_port
 
@@ -602,10 +602,18 @@ Exporters:
       # client_auth_type: RequireAndVerifyClientCert   # default
 ```
 
-`client_ca_file` is a PEM file with one or more CA certificates. When it is set, the exporter requires TLS 1.2 or later
-and rejects connections from clients that do not present a certificate signed by one of those CAs.
+`client_ca_file` is a PEM file with one or more CA certificates. When it is set, the exporter
+rejects connections from clients that do not present a certificate signed by one of those CAs.
 Set `client_auth_type: VerifyClientCertIfGiven` to accept clients without a certificate while still rejecting
 untrusted ones, which can help while rolling out client certificates.
+
+!!! note "Health checks"
+
+    The client certificate check applies to every endpoint the exporter serves, including `/health`.
+    With the default `RequireAndVerifyClientCert`, health checks that do not present a client certificate
+    (for example, a container or load balancer probe) will start failing once mTLS is turned on.
+    Either give the health checker a client certificate signed by `client_ca_file`, or use
+    `client_auth_type: VerifyClientCertIfGiven`.
 
 Configure Prometheus to present its client certificate:
 

@@ -24,7 +24,7 @@ const defaultClientAuthType = "RequireAndVerifyClientCert"
 // newTLSConfig returns the server TLS configuration for mutual TLS, or nil when client
 // certificate authentication is not configured. The server certificate itself is loaded
 // from cert_file and key_file by ListenAndServeTLS.
-func newTLSConfig(t conf.TLS) (*tls.Config, error) {
+func newTLSConfig(t conf.PromTLS) (*tls.Config, error) {
 	if t.ClientCAFile == "" && t.ClientAuthType == "" {
 		return nil, nil
 	}

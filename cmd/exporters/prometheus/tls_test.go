@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
 	"io"
 	"math/big"
 	"net"
@@ -22,6 +23,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 )
 
 type testCert struct {
@@ -113,7 +115,8 @@ func newMTLSFixture(t *testing.T) mtlsFixture {
 }
 
 // startTestServer serves the exporter's real HTTP server over TLS on a random loopback port.
-func startTestServer(t *testing.T, tlsConf conf.TLS) string {
+// The test fails if the server stops for any reason other than being closed at cleanup.
+func startTestServer(t *testing.T, tlsConf conf.PromTLS) string {
 	t.Helper()
 	absExp := exporter.New("Prometheus", "prom-mtls", &options.Options{PromPort: 1},
 		conf.Exporter{IsTest: true, TLS: tlsConf}, nil)
@@ -127,10 +130,16 @@ func startTestServer(t *testing.T, tlsConf conf.TLS) string {
 		t.Fatal(err)
 	}
 	server := p.newServer("127.0.0.1", 0)
+	serveErr := make(chan error, 1)
 	go func() {
-		_ = server.ServeTLS(ln, tlsConf.CertFile, tlsConf.KeyFile)
+		serveErr <- server.ServeTLS(ln, tlsConf.CertFile, tlsConf.KeyFile)
 	}()
-	t.Cleanup(func() { _ = server.Close() })
+	t.Cleanup(func() {
+		_ = server.Close()
+		if err := <-serveErr; !errors.Is(err, http.ErrServerClosed) {
+			t.Errorf("ServeTLS failed: %v", err)
+		}
+	})
 	return "https://" + ln.Addr().String() + "/health"
 }
 
@@ -163,6 +172,12 @@ func get(client *http.Client, url string) (int, error) {
 	return resp.StatusCode, nil
 }
 
+// TLS alerts sent by the server when it rejects a client certificate during the handshake.
+const (
+	certRequired = "remote error: tls: certificate required"
+	unknownCA    = "remote error: tls: unknown certificate authority"
+)
+
 func TestMutualTLS(t *testing.T) {
 	f := newMTLSFixture(t)
 
@@ -170,30 +185,36 @@ func TestMutualTLS(t *testing.T) {
 		name       string
 		authType   string
 		clientCert func() *testCert
-		wantOK     bool
+		// wantErr is empty when the request should succeed, otherwise the TLS alert the server
+		// sends when it rejects the client during the handshake.
+		wantErr string
 	}{
-		{name: "default requires a client cert, trusted cert", clientCert: func() *testCert { return f.client }, wantOK: true},
-		{name: "default requires a client cert, no cert", clientCert: func() *testCert { return nil }, wantOK: false},
-		{name: "default requires a client cert, untrusted cert", clientCert: func() *testCert { return f.rogueClient }, wantOK: false},
-		{name: "verify if given, no cert", authType: "VerifyClientCertIfGiven", clientCert: func() *testCert { return nil }, wantOK: true},
-		{name: "verify if given, trusted cert", authType: "VerifyClientCertIfGiven", clientCert: func() *testCert { return f.client }, wantOK: true},
-		{name: "verify if given, untrusted cert", authType: "VerifyClientCertIfGiven", clientCert: func() *testCert { return f.rogueClient }, wantOK: false},
+		{name: "default requires a client cert, trusted cert", clientCert: func() *testCert { return f.client }},
+		{name: "default requires a client cert, no cert", clientCert: func() *testCert { return nil }, wantErr: certRequired},
+		{name: "default requires a client cert, untrusted cert", clientCert: func() *testCert { return f.rogueClient }, wantErr: unknownCA},
+		{name: "verify if given, no cert", authType: "VerifyClientCertIfGiven", clientCert: func() *testCert { return nil }},
+		{name: "verify if given, trusted cert", authType: "VerifyClientCertIfGiven", clientCert: func() *testCert { return f.client }},
+		{name: "verify if given, untrusted cert", authType: "VerifyClientCertIfGiven", clientCert: func() *testCert { return f.rogueClient }, wantErr: unknownCA},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			url := startTestServer(t, conf.TLS{
-				CertFile:       f.server.certFile,
-				KeyFile:        f.server.keyFile,
+			url := startTestServer(t, conf.PromTLS{
+				TLS:            conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile},
 				ClientCAFile:   f.ca.certFile,
 				ClientAuthType: tt.authType,
 			})
 			code, err := get(newTestClient(t, f, tt.clientCert()), url)
-			if tt.wantOK {
+			if tt.wantErr == "" {
 				assert.Nil(t, err)
 				assert.Equal(t, code, http.StatusOK)
-			} else {
-				assert.NotNil(t, err)
+				return
+			}
+			if err == nil {
+				t.Fatalf("expected the server to reject the client with %q, got status %d", tt.wantErr, code)
+			}
+			if !strings.Contains(err.Error(), tt.wantErr) {
+				t.Fatalf("expected the server to reject the client with %q, got %v", tt.wantErr, err)
 			}
 		})
 	}
@@ -201,7 +222,7 @@ func TestMutualTLS(t *testing.T) {
 
 func TestTLSWithoutClientCAIsUnchanged(t *testing.T) {
 	f := newMTLSFixture(t)
-	url := startTestServer(t, conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile})
+	url := startTestServer(t, conf.PromTLS{TLS: conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile}})
 
 	code, err := get(newTestClient(t, f, nil), url)
 	assert.Nil(t, err)
@@ -214,25 +235,28 @@ func TestNewTLSConfig(t *testing.T) {
 	if err := os.WriteFile(notPEM, []byte("hello"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	server := conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile}
-	withCA := func(t conf.TLS, ca string, auth string) conf.TLS {
+	server := conf.PromTLS{TLS: conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile}}
+	withCA := func(t conf.PromTLS, ca string, auth string) conf.PromTLS {
 		t.ClientCAFile = ca
 		t.ClientAuthType = auth
 		return t
 	}
 
+	wantCAs := x509.NewCertPool()
+	wantCAs.AddCert(f.ca.cert)
+
 	tests := []struct {
 		name     string
-		tls      conf.TLS
+		tls      conf.PromTLS
 		wantNil  bool
 		wantAuth tls.ClientAuthType
 		wantErr  string
 	}{
-		{name: "no tls", tls: conf.TLS{}, wantNil: true},
+		{name: "no tls", tls: conf.PromTLS{}, wantNil: true},
 		{name: "server tls only", tls: server, wantNil: true},
 		{name: "client ca defaults to require and verify", tls: withCA(server, f.ca.certFile, ""), wantAuth: tls.RequireAndVerifyClientCert},
 		{name: "verify if given", tls: withCA(server, f.ca.certFile, "VerifyClientCertIfGiven"), wantAuth: tls.VerifyClientCertIfGiven},
-		{name: "client ca without server cert", tls: withCA(conf.TLS{}, f.ca.certFile, ""), wantErr: "require cert_file and key_file"},
+		{name: "client ca without server cert", tls: withCA(conf.PromTLS{}, f.ca.certFile, ""), wantErr: "require cert_file and key_file"},
 		{name: "auth type without client ca", tls: withCA(server, "", "RequireAndVerifyClientCert"), wantErr: "requires client_ca_file"},
 		{name: "unknown auth type", tls: withCA(server, f.ca.certFile, "RequestClientCert"), wantErr: "invalid client_auth_type"},
 		{name: "missing ca file", tls: withCA(server, filepath.Join(f.dir, "missing.pem"), ""), wantErr: "failed to read client_ca_file"},
@@ -254,15 +278,17 @@ func TestNewTLSConfig(t *testing.T) {
 			}
 			assert.Equal(t, got.ClientAuth, tt.wantAuth)
 			assert.Equal(t, got.MinVersion, uint16(tls.VersionTLS12))
-			assert.True(t, got.ClientCAs != nil)
+			assert.True(t, got.ClientCAs.Equal(wantCAs))
 		})
 	}
 }
 
 func TestInitRejectsInvalidTLS(t *testing.T) {
 	absExp := exporter.New("Prometheus", "prom-bad-tls", &options.Options{PromPort: 1},
-		conf.Exporter{IsTest: true, TLS: conf.TLS{ClientCAFile: "ca.pem"}}, nil)
+		conf.Exporter{IsTest: true, TLS: conf.PromTLS{ClientCAFile: "ca.pem"}}, nil)
 	err := New(absExp).Init()
-	assert.NotNil(t, err)
-	assert.True(t, strings.Contains(err.Error(), "tls"))
+	assert.True(t, errors.Is(err, errs.ErrInvalidParam))
+	var harvestErr errs.HarvestError
+	assert.True(t, errors.As(err, &harvestErr))
+	assert.Equal(t, harvestErr.Message, "tls")
 }
