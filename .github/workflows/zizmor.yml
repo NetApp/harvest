@@ -17,7 +17,7 @@ jobs:
       actions: read
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
         with:
           egress-policy: audit
 
@@ -27,7 +27,7 @@ jobs:
           persist-credentials: false
 
       - name: Install the latest version of uv
-        uses: step-security/setup-uv@74a4e3db95d70115a82e33151924944cfac643cb # v10.2.0
+        uses: step-security/setup-uv@7e018fee7f2f085a7d0e76b2ae75727698cd887e # v10.3.0
 
       - name: Run zizmor 🌈
         run: uvx zizmor --format sarif . > results.sarif
