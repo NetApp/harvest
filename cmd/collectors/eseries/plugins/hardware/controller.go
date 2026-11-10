@@ -93,12 +93,13 @@ func cleanConfigType(configType string) string {
 }
 
 // ipvxAddress extracts the address and normalized type from an IpVxAddress entry.
+// IPv6 addresses in 32-character hex form are converted to standard notation.
 func ipvxAddress(server gjson.Result) (string, string) {
 	switch strings.ToLower(server.Get("addressType").ClonedString()) {
 	case "ipv4":
 		return server.Get("ipv4Address").ClonedString(), "ipv4"
 	case "ipv6":
-		return server.Get("ipv6Address").ClonedString(), "ipv6"
+		return formatIPv6Address(server.Get("ipv6Address").ClonedString()), "ipv6"
 	default:
 		return "", ""
 	}

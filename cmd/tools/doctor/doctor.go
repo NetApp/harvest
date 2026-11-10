@@ -303,6 +303,17 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 	return valid
 }
 
+// misplacedObjects reports whether a custom.yaml without an "objects" key has top-level entries
+// that look like object templates: an "Objects" key with the wrong case, or a value naming a .yaml file.
+func misplacedObjects(template *node.Node) bool {
+	for _, child := range template.GetChildren() {
+		if strings.EqualFold(child.GetNameS(), "objects") || strings.HasSuffix(strings.TrimSpace(child.GetContentS()), ".yaml") {
+			return true
+		}
+	}
+	return false
+}
+
 func checkConfTemplates(confPaths []string) validation {
 	valid := validation{isValid: true}
 
@@ -329,9 +340,13 @@ func checkConfTemplates(confPaths []string) validation {
 			}
 			s := template.GetChildS("objects")
 			if s == nil {
-				valid.isValid = false
-				msg := custom + ` should have a top-level "objects" key`
-				valid.invalid = append(valid.invalid, msg)
+				// A custom.yaml may only change collector parameters, e.g. schedule or jitter.
+				// Flag it when it looks like objects were written without the "objects" key.
+				if misplacedObjects(template) {
+					valid.isValid = false
+					msg := custom + ` should have a top-level "objects" key`
+					valid.invalid = append(valid.invalid, msg)
+				}
 				continue
 			}
 			if s.Children == nil {

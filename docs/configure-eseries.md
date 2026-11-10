@@ -292,6 +292,9 @@ objects:
 
 The EseriesMel collector uses the REST protocol to collect Major Event Log (MEL) events from NetApp E-Series storage systems, via the `storage-systems/{array_id}/mel-events` endpoint. Events that occur while the collector is not running are not captured.
 
+Harvest includes [alert rules](https://github.com/NetApp/harvest/blob/main/container/prometheus/eseries_alert_rules.yml) for the MEL events it collects.
+The [E-Series alert runbook](resources/eseries-alert-runbook.md) includes descriptions and remediation steps for each of them.
+
 ### EseriesMel Requirements
 
 - E-Series storage array with REST API support

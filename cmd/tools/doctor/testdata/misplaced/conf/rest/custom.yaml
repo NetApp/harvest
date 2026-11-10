@@ -1,0 +1,4 @@
+# fails because the object is not under the "objects" key
+schedule:
+  - data: 5m
+ClusterInfo: clusterinfo.yaml
