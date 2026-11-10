@@ -1,2 +1,0 @@
-# Intentionally empty: once ci/*-values.yaml files exist, ct lint only lints with them,
-# so this file keeps the chart's default values covered.
