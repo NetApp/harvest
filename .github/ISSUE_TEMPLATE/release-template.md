@@ -16,6 +16,16 @@ git checkout origin/HEAD
 git switch --create release/$RELEASE
 git push origin release/$RELEASE
 ```
+- [ ] Set the Helm chart version on the release branch. The chart version is the Harvest version, and the Kubernetes docs pin it in every `helm` command. On the day of the release, Jenkins fails before publishing anything if `Chart.yaml` or the docs name another version.
+```bash
+OLD=$(grep -m1 -oE -e '--version [0-9][0-9A-Za-z.+-]*' docs/install/k8.md | cut -d' ' -f2)
+: "${OLD:?no chart --version pin found in docs/install/k8.md}"
+perl -pi -e "s/^version:.*/version: $RELEASE/; s/^appVersion:.*/appVersion: \"$RELEASE-1\"/" deploy/helm/harvest/Chart.yaml
+perl -pi -e "s/\Q$OLD\E/$RELEASE/g" docs/install/k8.md deploy/helm/harvest/README.md
+git diff
+git commit -am "chore: set Helm chart version to $RELEASE"
+git push origin release/$RELEASE
+```
 - [ ] If any changes are made in the [harvest autosupport](https://github.com/NetApp/harvest-private/tree/main/harvest-asup) repository, please update the harvest-metrics repository `main` branch with the latest `asup_linux_amd64` binary. This binary can be generated using Jenkins with the following parameters:
 
 | Field                       | Value           |
