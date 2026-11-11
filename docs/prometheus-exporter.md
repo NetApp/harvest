@@ -68,7 +68,7 @@ An overview of all parameters:
 | `tls`                                     | `tls`                                          | optional                                                                                                                                                                                                                      | If present, enables TLS transport. If running in a container, see [note](https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589) |         
 | tls `cert_file`, `key_file`               | **required** child of `tls`                    | Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with `bin/harvest admin tls create server`, `openssl`, `mkcert`, etc. |                                                                                                                                                |
 | tls `client_ca_file`                      | string, optional child of `tls`                | Path to a PEM bundle of CA certificates used to verify client certificates. Setting it enables [mutual TLS](#prometheus-exporter-and-mutual-tls). | |
-| tls `client_auth_type`                    | string, optional child of `tls`                | Only used when `client_ca_file` is set. `RequireAndVerifyClientCert` rejects clients without a certificate signed by `client_ca_file`. `VerifyClientCertIfGiven` verifies a certificate if the client sends one. | `RequireAndVerifyClientCert` |
+| tls `client_auth_type`                    | string, optional child of `tls`                | Requires `client_ca_file`; setting it without `client_ca_file` is a configuration error. `RequireAndVerifyClientCert` rejects clients without a certificate signed by `client_ca_file`. `VerifyClientCertIfGiven` verifies a certificate if the client sends one. | `RequireAndVerifyClientCert` |
 
 ### Per-poller prom_port
 
@@ -606,6 +606,12 @@ Exporters:
 rejects connections from clients that do not present a certificate signed by one of those CAs.
 Set `client_auth_type: VerifyClientCertIfGiven` to accept clients without a certificate while still rejecting
 untrusted ones, which can help while rolling out client certificates.
+
+The exporter accepts any client certificate signed by `client_ca_file` and does not check the certificate's name.
+Use a CA that only issues certificates to your Prometheus servers, not a shared or corporate CA. Otherwise, every
+host with a certificate from that CA can scrape metrics.
+
+The exporter reads `client_ca_file` when the poller starts. After you change or rotate the CA, restart the poller.
 
 !!! note "Health checks"
 

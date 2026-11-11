@@ -200,7 +200,8 @@ func TestMutualTLS(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			url := startTestServer(t, conf.PromTLS{
-				TLS:            conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile},
+				CertFile:       f.server.certFile,
+				KeyFile:        f.server.keyFile,
 				ClientCAFile:   f.ca.certFile,
 				ClientAuthType: tt.authType,
 			})
@@ -222,7 +223,7 @@ func TestMutualTLS(t *testing.T) {
 
 func TestTLSWithoutClientCAIsUnchanged(t *testing.T) {
 	f := newMTLSFixture(t)
-	url := startTestServer(t, conf.PromTLS{TLS: conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile}})
+	url := startTestServer(t, conf.PromTLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile})
 
 	code, err := get(newTestClient(t, f, nil), url)
 	assert.Nil(t, err)
@@ -235,7 +236,7 @@ func TestNewTLSConfig(t *testing.T) {
 	if err := os.WriteFile(notPEM, []byte("hello"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	server := conf.PromTLS{TLS: conf.TLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile}}
+	server := conf.PromTLS{CertFile: f.server.certFile, KeyFile: f.server.keyFile}
 	withCA := func(t conf.PromTLS, ca string, auth string) conf.PromTLS {
 		t.ClientCAFile = ca
 		t.ClientAuthType = auth

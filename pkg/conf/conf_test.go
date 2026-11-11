@@ -583,7 +583,8 @@ Exporters:
 	assert.Nil(t, yaml.Unmarshal([]byte(in), &cfg))
 
 	want := PromTLS{
-		TLS:            TLS{CertFile: "cert.pem", KeyFile: "key.pem"},
+		CertFile:       "cert.pem",
+		KeyFile:        "key.pem",
 		ClientCAFile:   "ca.pem",
 		ClientAuthType: "VerifyClientCertIfGiven",
 	}
