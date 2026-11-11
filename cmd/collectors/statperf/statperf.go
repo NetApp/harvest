@@ -156,8 +156,8 @@ func (s *StatPerf) loadFilter() string {
 //	    include_equals:
 //	      - WAFL_SPINNP_WRITE
 //
-// Values are normalized the way the parser normalizes array labels, so a label can be written as
-// ONTAP prints it (back-to-back CP) or as it is exported (back_to_back_cp).
+// Values are trimmed and normalized the way the parser normalizes array labels, so a label can be
+// written as ONTAP prints it (back-to-back CP) or as it is exported (back_to_back_cp).
 func (s *StatPerf) loadArrayLabels() map[string][]string {
 	arrayLabels := s.Params.GetChildS("array_labels")
 	if arrayLabels == nil {
@@ -168,8 +168,14 @@ func (s *StatPerf) loadArrayLabels() map[string][]string {
 		name := rule.GetNameS()
 		var values []string
 		if include := rule.GetChildS("include_equals"); include != nil {
+			if len(include.GetChildren()) == 0 && include.GetContentS() != "" {
+				s.Logger.Warn("array_labels include_equals must be a list, ignoring it", slog.String("counter", name))
+				continue
+			}
 			for _, v := range include.GetAllChildContentS() {
-				values = append(values, strings.ToLower(node.Normalize(v)))
+				if v = strings.TrimSpace(v); v != "" {
+					values = append(values, strings.ToLower(node.Normalize(v)))
+				}
 			}
 		}
 		if len(values) == 0 {

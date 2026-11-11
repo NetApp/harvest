@@ -126,6 +126,15 @@ func TestCustomYamlIsValid(t *testing.T) {
 			numInvalid:  1,
 			msgContains: "does not exist",
 		},
+		{
+			path:    "testdata/params/conf",
+			isValid: true,
+		},
+		{
+			path:        "testdata/misplaced/conf",
+			numInvalid:  1,
+			msgContains: "top-level",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {

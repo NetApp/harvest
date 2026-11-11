@@ -582,6 +582,39 @@ array_labels:
 	assert.Equal(t, buf.String(), "")
 }
 
+func TestArrayLabels_PaddedValues(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	root, err := tree.LoadYaml([]byte(`
+array_labels:
+  rdma_latency:
+    include_equals:
+      - " WAFL_SPINNP_READ "
+      - "  "
+`))
+	assert.Nil(t, err)
+	s.Params = root
+	rules := s.loadArrayLabels()
+	assert.Equal(t, rules["rdma_latency"], []string{"wafl_spinnp_read"})
+}
+
+func TestArrayLabels_ScalarIncludeEquals(t *testing.T) {
+	s := newStatPerf("wafl_flexlog", "wafl_flexlog.yaml")
+	var buf bytes.Buffer
+	s.Logger = slog.New(slog.NewTextHandler(&buf, nil))
+	root, err := tree.LoadYaml([]byte(`
+array_labels:
+  ldma_latency:
+    include_equals: WAFL_WRITE
+`))
+	assert.Nil(t, err)
+	s.Params = root
+	rules := s.loadArrayLabels()
+	_, ok := rules["ldma_latency"]
+	assert.False(t, ok)
+	assert.True(t, strings.Contains(buf.String(), "include_equals must be a list"))
+	assert.True(t, strings.Contains(buf.String(), "counter=ldma_latency"))
+}
+
 func TestExportedArrayLabel(t *testing.T) {
 	assert.Equal(t, exportedArrayLabel("wafl_spinnp_write"), "wafl_spinnp_write")
 	assert.Equal(t, exportedArrayLabel("wafl_exempt.run"), "run.wafl_exempt")

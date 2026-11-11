@@ -1,0 +1,4 @@
+# valid: a custom.yaml that only changes collector parameters does not need an "objects" key
+jitter: 1m
+schedule:
+  - data: 5m

@@ -740,6 +740,7 @@ func TestIpvxAddress(t *testing.T) {
 		{"lowercase ipv4", `{"addressType":"ipv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1", "ipv4"},
 		{"mixed-case IPv4 is matched case-insensitively and normalized on output", `{"addressType":"IPv4","ipv4Address":"10.0.0.1"}`, "10.0.0.1", "ipv4"},
 		{"uppercase IPV6 is matched case-insensitively and normalized on output", `{"addressType":"IPV6","ipv6Address":"::1"}`, "::1", "ipv6"},
+		{"hex IPv6 is converted to standard notation", `{"addressType":"ipv6","ipv6Address":"20010DB8000000000000000000000001"}`, "2001:db8::1", "ipv6"},
 		{"unrecognized addressType returns empty", `{"addressType":"bogus"}`, "", ""},
 	}
 	for _, tt := range tests {
