@@ -521,26 +521,20 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#get-the-example-chart" class="md-nav__link">
+  <a href="#chart-versions" class="md-nav__link">
     <span class="md-ellipsis">
-      Get the example chart
+      Chart versions
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Get the example chart">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-prometheus-skip-if-you-already-have-one" class="md-nav__link">
     <span class="md-ellipsis">
       Install Prometheus (skip if you already have one)
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -676,6 +670,24 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argo-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argo CD
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install from source
+    </span>
+  </a>
   
 </li>
       
@@ -2275,26 +2287,20 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#get-the-example-chart" class="md-nav__link">
+  <a href="#chart-versions" class="md-nav__link">
     <span class="md-ellipsis">
-      Get the example chart
+      Chart versions
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Get the example chart">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-prometheus-skip-if-you-already-have-one" class="md-nav__link">
     <span class="md-ellipsis">
       Install Prometheus (skip if you already have one)
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2434,6 +2440,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#argo-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argo CD
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install from source
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       Troubleshooting
@@ -2472,11 +2496,12 @@
 <p>The Helm chart below is a reference. Use it as is, change it to fit your environment, or deploy Harvest on
 Kubernetes any other way you prefer.</p>
 </div>
-<p>This page walks through one way to run Harvest on Kubernetes, using an
-<a href="https://github.com/NetApp/harvest/tree/main/deploy/helm/harvest">example Helm chart</a> from the Harvest repository.
-You can use the chart as it is, adjust it for your environment, or use it as a guide and write your own
-manifests. The chart's <a href="https://github.com/NetApp/harvest/blob/main/deploy/helm/harvest/values.yaml">values.yaml</a>
-describes every value you can set.</p>
+<p>This page walks through one way to run Harvest on Kubernetes, using the Harvest Helm chart. Each Harvest release
+publishes the chart to <code>oci://ghcr.io/netapp/charts/harvest</code>, see <a href="#chart-versions">Chart versions</a>. You can use the
+chart as it is, adjust it for your environment, or use its
+<a href="https://github.com/NetApp/harvest/tree/main/deploy/helm/harvest">source</a> as a guide and write your own manifests.
+The chart's <a href="https://github.com/NetApp/harvest/blob/main/deploy/helm/harvest/values.yaml">values.yaml</a> describes every
+value you can set.</p>
 <p>Each cluster you list runs in its own pod. The pod reads its password from a Kubernetes Secret, so the password is
 never in your values file.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
@@ -2488,11 +2513,22 @@ never in your values file.</p>
   <a href="https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack">kube-prometheus-stack</a>.
   No Prometheus yet? See <a href="#install-prometheus-skip-if-you-already-have-one">Install Prometheus</a>.</li>
 </ul>
-<h2 id="get-the-example-chart">Get the example chart<a class="headerlink" href="#get-the-example-chart" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/NetApp/harvest.git
-<span class="nb">cd</span><span class="w"> </span>harvest
+<h2 id="chart-versions">Chart versions<a class="headerlink" href="#chart-versions" title="Permanent link">&para;</a></h2>
+<p>The chart is published to <code>oci://ghcr.io/netapp/charts/harvest</code>. It is public, so you do not need to log in to pull it.</p>
+<ul>
+<li>The chart version is the Harvest version. Chart <code>26.11.0</code> runs the Harvest image <code>26.11.0-1</code>, so the version you pin
+  is the Harvest version you run.</li>
+<li>Every Harvest release and point release publishes a chart. Release candidates and nightly builds do not, see
+  <a href="#install-from-source">Install from source</a>.</li>
+<li>Each Harvest release publishes its chart once. A rebuild of a release, for example for an updated base image, is
+  published as the next point release, not under the same version.</li>
+</ul>
+<p>The commands on this page use chart <code>26.11.0</code>. Pass <code>--version</code> on every <code>helm install</code> and <code>helm upgrade</code>, so an
+upgrade that only changes your values does not also change the Harvest version.</p>
+<p>To see the values a chart version accepts, with their defaults and descriptions:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0
 </code></pre></div>
-<h3 id="install-prometheus-skip-if-you-already-have-one">Install Prometheus (skip if you already have one)<a class="headerlink" href="#install-prometheus-skip-if-you-already-have-one" title="Permanent link">&para;</a></h3>
+<h2 id="install-prometheus-skip-if-you-already-have-one">Install Prometheus (skip if you already have one)<a class="headerlink" href="#install-prometheus-skip-if-you-already-have-one" title="Permanent link">&para;</a></h2>
 <p>Skip this if you already run the Prometheus Operator. This installs kube-prometheus-stack into the namespace
 <code>monitoring</code>. It keeps data for one year or until it reaches 45GiB, whichever comes first. The data is stored on a
 50Gi persistent volume from the cluster's default StorageClass, so it survives a pod restart. There are no memory
@@ -2566,20 +2602,13 @@ kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="
 <code>no-operator.yaml</code> from "No Prometheus Operator" under <a href="#prometheus-integration">Prometheus integration</a>, then add
 <code>--values no-operator.yaml</code> to the install command.</p>
 <p><strong>3. Install</strong></p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
 </code></pre></div>
-<p>This runs the Harvest release the chart was built for (the chart's <code>appVersion</code>), so every pod runs the same version.
+<p>This runs Harvest 26.11.0, the release in the chart's <code>appVersion</code> (<code>26.11.0-1</code>), so every pod runs the same version.
 Because the release is named <code>harvest</code>, the pod's name starts with <code>harvest-harvest-poller-cluster-a</code>. Use another
 release name such as <code>ontap</code> to get shorter names.</p>
-<p>To run another Harvest release, add its tag. Release tags end in <code>-1</code>, for example <code>26.08.0-1</code>:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--set<span class="w"> </span>image.tag<span class="o">=</span>&lt;release-tag&gt;
-</code></pre></div>
-<p>For the newest release or a nightly build, use a moving tag and pull it every time a pod starts:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--set<span class="w"> </span>image.tag<span class="o">=</span>latest<span class="w"> </span>--set<span class="w"> </span>image.pullPolicy<span class="o">=</span>Always
-</code></pre></div>
-<p>Use <code>--set image.tag=nightly</code> for a nightly build.</p>
+<p>To run another Harvest release, install the chart with that release's version. For a nightly build, see
+<a href="#install-from-source">Install from source</a>.</p>
 <p><strong>4. Verify</strong></p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>harvest
 </code></pre></div>
@@ -2635,7 +2664,8 @@ the first command with your own:</p>
 <span class="s">          readOnly: true</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>certs.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>certs.yaml
 </code></pre></div>
 <p>Helm merges the files in order, so <code>certs.yaml</code> only adds to <code>cluster-a</code> and <code>values.yaml</code> stays as it is.</p>
 </details>
@@ -2650,7 +2680,8 @@ using more memory. Adjust the requests to your clusters and add limits for produ
 <span class="s">    limits: {memory: 1Gi}</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>resources.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>resources.yaml
 </code></pre></div>
 </details>
 <details class="note">
@@ -2672,7 +2703,8 @@ helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w
 <span class="s">            Qtree: qtree.yaml</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>collectors.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>collectors.yaml
 </code></pre></div>
 </details>
 <details class="note">
@@ -2685,7 +2717,8 @@ helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w
 <span class="s">  pullSecrets: [my-regcred]</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>registry.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>registry.yaml
 </code></pre></div>
 </details>
 <h2 id="prometheus-integration">Prometheus integration<a class="headerlink" href="#prometheus-integration" title="Permanent link">&para;</a></h2>
@@ -2714,7 +2747,8 @@ Prometheus expects:</p>
 <span class="s">        release: &lt;your-prometheus-release&gt;</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>prometheus-label.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>prometheus-label.yaml
 </code></pre></div>
 <p>Or tell kube-prometheus-stack to select every PodMonitor:</p>
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>kube-prometheus-stack<span class="w"> </span>prometheus-community/kube-prometheus-stack<span class="w"> </span>--namespace<span class="w"> </span>monitoring<span class="w"> </span>--reuse-values<span class="w"> </span><span class="se">\</span>
@@ -2734,7 +2768,8 @@ picked up without touching Prometheus. Enable one or the other, not both.</p>
 <span class="s">      enabled: false</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>admin-sd.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>admin-sd.yaml
 kubectl<span class="w"> </span>get<span class="w"> </span>pods,svc<span class="w"> </span>--namespace<span class="w"> </span>harvest
 </code></pre></div>
 <p>The chart creates the <code>admin</code> pod, a headless Service and a <code>ScrapeConfig</code>. It also adds the settings pollers need to
@@ -2785,7 +2820,7 @@ every poller, and Prometheus. The Secret must be in the <code>harvest</code> nam
 <span class="s">          password: {name: sd-credentials, key: password}</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>admin-sd.yaml<span class="w"> </span>--values<span class="w"> </span>admin-auth.yaml
 </code></pre></div>
 <p>Check the list with the same username and password. Start a port-forward to the admin Service:</p>
@@ -2850,7 +2885,7 @@ kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="
 <span class="s">            secret: {name: sd-tls, key: tls.crt}</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>admin-sd.yaml<span class="w"> </span>--values<span class="w"> </span>admin-tls.yaml
 </code></pre></div>
 <p>The chart switches the heartbeat URL and the ScrapeConfig URL to <code>https</code> when <code>cert_file</code> is set. Add <code>admin-auth.yaml</code>
@@ -2874,7 +2909,8 @@ to the command if you also use basic authentication. Check the list. Start a por
 <span class="s">      enabled: false</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>no-operator.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>no-operator.yaml
 </code></pre></div>
 <p>Every pod serves metrics on its container port named <code>http</code> (default 12990) at <code>/metrics</code>. In plain Prometheus, discover
 them with <code>kubernetes_sd_configs</code> of role <code>pod</code> and keep the ones labeled <code>app.kubernetes.io/name: harvest</code>.</p>
@@ -2915,7 +2951,8 @@ the release goes back to the chart defaults and your pollers are removed. See wh
 <span class="s">              key: password</span>
 <span class="s">EOF</span>
 
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>cluster-b.yaml
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>cluster-b.yaml
 kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>harvest
 </code></pre></div>
 <p>The pod of <code>cluster-b</code> is created, and the pod of <code>cluster-a</code> is not restarted. E-Series, StorageGRID and other systems
@@ -2923,7 +2960,7 @@ are added the same way. Set <code>collectors</code> as described in the <a href=
 for example <code>[Eseries, EseriesPerf]</code> for E-Series.</p>
 <h3 id="change-a-cluster">Change a cluster<a class="headerlink" href="#change-a-cluster" title="Permanent link">&para;</a></h3>
 <p>Edit the cluster's entry, for example change <code>datacenter</code> in <code>values.yaml</code>, then upgrade:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
 </code></pre></div>
 <p>Add a <code>--values</code> flag for every other file you use, such as <code>--values cluster-b.yaml</code>.</p>
 <p>Only the pod of the cluster you changed restarts. Changing a shared section (<code>Exporters</code>, <code>Defaults</code>, <code>Admin</code>)
@@ -2931,7 +2968,7 @@ restarts all pollers.</p>
 <h3 id="remove-a-cluster">Remove a cluster<a class="headerlink" href="#remove-a-cluster" title="Permanent link">&para;</a></h3>
 <p>Leave the cluster's file out of the next upgrade. The pod and PodMonitor are deleted. The Secret is not managed by the
 chart, so delete it yourself:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
 
 kubectl<span class="w"> </span>delete<span class="w"> </span>secret<span class="w"> </span>cluster-b-credentials<span class="w"> </span>--namespace<span class="w"> </span>harvest
 </code></pre></div>
@@ -2945,18 +2982,18 @@ kubectl<span class="w"> </span>delete<span class="w"> </span>secret<span class="
 <li><code>prom_port</code> is optional. Each poller is in its own pod, so they can all use <code>poller.defaultPromPort</code> (12990).</li>
 </ul>
 <h2 id="upgrades">Upgrades<a class="headerlink" href="#upgrades" title="Permanent link">&para;</a></h2>
-<p>Run <code>helm upgrade</code> with the same <code>--values</code> files whenever you change your values or want a newer chart:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>pull
-helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+<p>To upgrade Harvest, run <code>helm upgrade</code> with the newer release's chart version and the same <code>--values</code> files. Replace
+<code>&lt;version&gt;</code> with the release you are upgrading to:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span>&lt;version&gt;<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
 helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest
 </code></pre></div>
 <p>Each poller uses the <code>Recreate</code> strategy, so the old pod stops before the new one starts and a poller is never running
 twice, which would duplicate metrics. Expect a short gap in metrics when a poller restarts.</p>
 <h3 id="update-the-harvest-image">Update the Harvest image<a class="headerlink" href="#update-the-harvest-image" title="Permanent link">&para;</a></h3>
-<p>By default the chart runs the Harvest release in its <code>appVersion</code>, and the pods stay on that version until you upgrade.
-Running <code>git pull</code> and then <code>helm upgrade</code> moves them to the version of the newer chart. To run another release, upgrade
-with its tag. Release tags end in <code>-1</code>, for example <code>26.08.0-1</code>:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span><span class="se">\</span>
+<p>By default the chart runs the Harvest release in its <code>appVersion</code>, and the pods stay on that version until you upgrade
+to a newer chart. To run another image with the same chart, set its tag. Release tags end in <code>-1</code>, for example
+<code>26.08.0-1</code>:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--set<span class="w"> </span>image.tag<span class="o">=</span>&lt;release-tag&gt;
 </code></pre></div>
 <p>To see the image the pods run:</p>
@@ -2973,8 +3010,60 @@ every time they start, so they can run different versions. To move all of them t
 helm<span class="w"> </span>rollback<span class="w"> </span>harvest<span class="w"> </span><span class="m">1</span><span class="w"> </span>--namespace<span class="w"> </span>harvest
 </code></pre></div>
 <p>A rollback restores your values, including the image tag. The exception is a moving tag such as <code>latest</code> or <code>nightly</code>: a
-rollback keeps the tag but not the image behind it. To run an older version, run <code>helm upgrade</code> with
-<code>--set image.tag=&lt;version&gt;</code> as shown above.</p>
+rollback keeps the tag but not the image behind it. To run an older version, run <code>helm upgrade</code> with that release's
+<code>--version</code>.</p>
+<h2 id="argo-cd">Argo CD<a class="headerlink" href="#argo-cd" title="Permanent link">&para;</a></h2>
+<p>Argo CD can install the chart straight from the registry. Register the registry once as an OCI Helm repository:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">netapp-charts</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">argocd</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">argocd.argoproj.io/secret-type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">repository</span>
+<span class="nt">stringData</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">helm</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">netapp-charts</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/netapp/charts</span>
+<span class="w">  </span><span class="nt">enableOCI</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+</code></pre></div>
+<p>Then create an Application for Harvest. Put the contents of your <code>values.yaml</code> under <code>values</code>. The pods read their
+passwords from Secrets, so first create the <code>harvest</code> namespace and the Secrets as in the <a href="#quick-start">quick start</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">argoproj.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Application</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">argocd</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">source</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">repoURL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/netapp/charts</span>
+<span class="w">    </span><span class="nt">chart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">    </span><span class="nt">targetRevision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">26.11.0</span><span class="w">             </span><span class="c1"># &lt;====== the Harvest release to run</span>
+<span class="w">    </span><span class="nt">helm</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">releaseName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">      </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">harvestConfig:</span>
+<span class="w">          </span><span class="no">Pollers:</span>
+<span class="w">            </span><span class="no">cluster-a:</span>
+<span class="w">              </span><span class="no">...</span>
+<span class="w">  </span><span class="nt">destination</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://kubernetes.default.svc</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+</code></pre></div>
+<p>To upgrade Harvest, change <code>targetRevision</code> to the newer release.</p>
+<h2 id="install-from-source">Install from source<a class="headerlink" href="#install-from-source" title="Permanent link">&para;</a></h2>
+<p>Release candidates and nightly builds do not publish a chart. To try one, or to change the chart, install it from the
+Harvest repository. <code>main</code> has the newest chart. Use it with the <code>nightly</code> image, and pull the image every time a pod
+starts:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/NetApp/harvest.git
+<span class="nb">cd</span><span class="w"> </span>harvest
+helm<span class="w"> </span>install<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>image.tag<span class="o">=</span>nightly<span class="w"> </span>--set<span class="w"> </span>image.pullPolicy<span class="o">=</span>Always
+</code></pre></div>
+<p>The chart on <code>main</code> can change before the next release, so use a published chart for production. To start from the
+chart of a release instead, clone its tag, for example <code>--branch v26.11.0</code>, and leave out both <code>--set</code> flags. The
+chart at a release tag runs that release's image.</p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <p>Start with the pods and their logs. Harvest logs to the container's standard error.</p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>harvest
@@ -3005,6 +3094,10 @@ kubectl<span class="w"> </span>logs<span class="w"> </span>--namespace<span clas
 <td><code>prom_port</code> is not a number from 1 to 65535</td>
 </tr>
 <tr>
+<td><code>helm install</code> cannot pull the chart: <code>unauthorized</code> or <code>denied</code></td>
+<td>The chart is public, so this is usually an old ghcr.io login. Run <code>helm registry logout ghcr.io</code> and try again. Check the chart version with <code>helm show chart</code></td>
+</tr>
+<tr>
 <td>Pod <code>CrashLoopBackOff</code>, log shows an authentication error</td>
 <td>Wrong user or password, or the Secret or key does not exist. Check <code>kubectl describe pod</code> for <code>secret ... not found</code></td>
 </tr>
@@ -3014,7 +3107,7 @@ kubectl<span class="w"> </span>logs<span class="w"> </span>--namespace<span clas
 </tr>
 <tr>
 <td>Pod <code>ImagePullBackOff</code> or <code>ErrImagePull</code></td>
-<td>The tag does not exist (release tags end in <code>-1</code>, for example <code>26.08.0-1</code>), or the registry needs <code>image.pullSecrets</code>. Check <code>kubectl describe pod</code></td>
+<td>The tag does not exist (release tags end in <code>-1</code>, for example <code>26.11.0-1</code>), or the registry needs <code>image.pullSecrets</code>. Check <code>kubectl describe pod</code></td>
 </tr>
 <tr>
 <td>Pod is <code>Running</code> but not <code>Ready</code></td>

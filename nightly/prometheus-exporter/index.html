@@ -1156,6 +1156,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#prometheus-exporter-and-mutual-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Exporter and Mutual TLS
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2549,6 +2558,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#prometheus-exporter-and-mutual-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus Exporter and Mutual TLS
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2761,6 +2779,18 @@ You need to keep that order consistent otherwise it will appear that you have lo
 <td><strong>required</strong> child of <code>tls</code></td>
 <td>Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with <code>bin/harvest admin tls create server</code>, <code>openssl</code>, <code>mkcert</code>, etc.</td>
 <td></td>
+</tr>
+<tr>
+<td>tls <code>client_ca_file</code></td>
+<td>string, optional child of <code>tls</code></td>
+<td>Path to a PEM bundle of CA certificates used to verify client certificates. Setting it enables <a href="#prometheus-exporter-and-mutual-tls">mutual TLS</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td>tls <code>client_auth_type</code></td>
+<td>string, optional child of <code>tls</code></td>
+<td>Requires <code>client_ca_file</code>; setting it without <code>client_ca_file</code> is a configuration error. <code>RequireAndVerifyClientCert</code> rejects clients without a certificate signed by <code>client_ca_file</code>. <code>VerifyClientCertIfGiven</code> verifies a certificate if the client sends one.</td>
+<td><code>RequireAndVerifyClientCert</code></td>
 </tr>
 </tbody>
 </table>
@@ -3205,14 +3235,61 @@ block to point to the earlier created <code>prom-cert.pem</code> like so:</p>
 <p>Start Prometheus and visit http://localhost:9090/targets with your browser. 
 You should see https://localhost:16001/metrics in the list of targets. </p>
 <p><img alt="Prometheus Targets" src="../assets/prometheus/PrometheusTLS.png" /></p>
+<h3 id="prometheus-exporter-and-mutual-tls">Prometheus Exporter and Mutual TLS<a class="headerlink" href="#prometheus-exporter-and-mutual-tls" title="Permanent link">&para;</a></h3>
+<p>With mutual TLS (mTLS), the exporter also checks the client's certificate, so only Prometheus servers holding a
+certificate signed by your CA can scrape metrics. Add <code>client_ca_file</code> to the exporter's <code>tls</code> section:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my-exporter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16001</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cert_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert/prom-cert.pem</span>
+<span class="w">      </span><span class="nt">key_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert/prom-key.pem</span>
+<span class="w">      </span><span class="nt">client_ca_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cert/client-ca.pem</span>
+<span class="w">      </span><span class="c1"># client_auth_type: RequireAndVerifyClientCert   # default</span>
+</code></pre></div>
+<p><code>client_ca_file</code> is a PEM file with one or more CA certificates. When it is set, the exporter
+rejects connections from clients that do not present a certificate signed by one of those CAs.
+Set <code>client_auth_type: VerifyClientCertIfGiven</code> to accept clients without a certificate while still rejecting
+untrusted ones, which can help while rolling out client certificates.</p>
+<p>The exporter accepts any client certificate signed by <code>client_ca_file</code> and does not check the certificate's name.
+Use a CA that only issues certificates to your Prometheus servers, not a shared or corporate CA. Otherwise, every
+host with a certificate from that CA can scrape metrics.</p>
+<p>The exporter reads <code>client_ca_file</code> when the poller starts. After you change or rotate the CA, restart the poller.</p>
+<div class="admonition note">
+<p class="admonition-title">Health checks</p>
+<p>The client certificate check applies to every endpoint the exporter serves, including <code>/health</code>.
+With the default <code>RequireAndVerifyClientCert</code>, health checks that do not present a client certificate
+(for example, a container or load balancer probe) will start failing once mTLS is turned on.
+Either give the health checker a client certificate signed by <code>client_ca_file</code>, or use
+<code>client_auth_type: VerifyClientCertIfGiven</code>.</p>
+</div>
+<p>Configure Prometheus to present its client certificate:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">scrape_configs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;harvest-mtls&#39;</span>
+<span class="w">    </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span>
+<span class="w">    </span><span class="nt">tls_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ca_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/prom-cert.pem</span>
+<span class="w">      </span><span class="nt">cert_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/prometheus-client-cert.pem</span>
+<span class="w">      </span><span class="nt">key_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/prometheus-client-key.pem</span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;localhost:16001&#39;</span>
+</code></pre></div>
+<p>You can check the setup with curl. With a trusted client certificate, curl prints the metrics. Without <code>--cert</code> and <code>--key</code>, the TLS handshake fails:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>--cacert<span class="w"> </span>cert/prom-cert.pem<span class="w"> </span>--cert<span class="w"> </span>prometheus-client-cert.pem<span class="w"> </span>--key<span class="w"> </span>prometheus-client-key.pem<span class="w"> </span>https://localhost:16001/metrics
+</code></pre></div>
 <h2 id="prometheus-alerts">Prometheus Alerts<a class="headerlink" href="#prometheus-alerts" title="Permanent link">&para;</a></h2>
 <p>Prometheus includes out-of-the-box support for simple alerting. Alert rules are configured in your <code>prometheus.yml</code>
 file. Setup and details can be found in the Prometheus
 guide on <a href="https://prometheus.io/docs/practices/alerting/">alerting</a>.</p>
-<p>Harvest also includes <a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/ems_alert_rules.yml">EMS</a>
+<p>Harvest also includes <a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/ems_alert_rules.yml">EMS</a>,
+<a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/eseries_alert_rules.yml">E-Series MEL</a>,
 and <a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/alert_rules.yml">sample</a> alerts for reference. 
 Refer to the <a href="../configure-ems/">EMS Collector</a> for more details about EMS events.
-Refer to the <a href="../resources/ems-alert-runbook/">EMS alert runbook</a> for descriptions and remediation steps.</p>
+Refer to the <a href="../resources/ems-alert-runbook/">EMS alert runbook</a> for descriptions and remediation steps.
+Refer to the <a href="../configure-eseries/#eseriesmel-collector">EseriesMel Collector</a> for more details about E-Series MEL events,
+and the <a href="../resources/eseries-alert-runbook/">E-Series alert runbook</a> for their descriptions and remediation steps.</p>
 <h3 id="alertmanager">Alertmanager<a class="headerlink" href="#alertmanager" title="Permanent link">&para;</a></h3>
 <p>Prometheus's builtin alerts are good for simple workflows. They do a nice job telling you what's happening at the
 moment.

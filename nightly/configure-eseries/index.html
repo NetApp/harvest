@@ -2973,6 +2973,8 @@ At runtime, the collector will select the object configuration file that closest
 <hr />
 <h2 id="eseriesmel-collector">EseriesMel Collector<a class="headerlink" href="#eseriesmel-collector" title="Permanent link">&para;</a></h2>
 <p>The EseriesMel collector uses the REST protocol to collect Major Event Log (MEL) events from NetApp E-Series storage systems, via the <code>storage-systems/{array_id}/mel-events</code> endpoint. Events that occur while the collector is not running are not captured.</p>
+<p>Harvest includes <a href="https://github.com/NetApp/harvest/blob/main/container/prometheus/eseries_alert_rules.yml">alert rules</a> for the MEL events it collects.
+The <a href="../resources/eseries-alert-runbook/">E-Series alert runbook</a> includes descriptions and remediation steps for each of them.</p>
 <h3 id="eseriesmel-requirements">EseriesMel Requirements<a class="headerlink" href="#eseriesmel-requirements" title="Permanent link">&para;</a></h3>
 <ul>
 <li>E-Series storage array with REST API support</li>

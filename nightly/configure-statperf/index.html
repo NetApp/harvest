@@ -2403,13 +2403,14 @@ Use <code>array_labels</code> to keep only the listed elements of an array count
 </code></pre></div>
 <ul>
 <li>Counters without a rule keep every element.</li>
+<li>Name each rule after the ONTAP counter, not its exported name. For <code>ldma_latency =&gt; flexlog_ldma</code>, the rule is <code>ldma_latency</code>.</li>
 <li>Labels are matched case-insensitively, and spaces and hyphens match underscores. For example, <code>back-to-back CP</code> matches the element exported as <code>back_to_back_cp</code>.</li>
 <li>Write two-part labels as they are exported, <code>metric.submetric</code>. For example, <code>run.wafl_exempt</code> matches the element exported with <code>metric="run"</code> and <code>submetric="wafl_exempt"</code>.</li>
 <li>Base counters are handled for you. An average divides a counter by its base counter (for example, <code>ldma_latency</code> by <code>logging_count</code>), so the base keeps every element that the counters using it need. If any counter that uses a base has no rule, the base keeps every element.</li>
 <li>A base counter can have a rule only if it is also listed under <code>counters:</code>. The rule selects which of its elements are exported; elements that other counters need for their averages are still collected, but not exported.</li>
 <li>Histograms can't be filtered, because a histogram is exported only when all its buckets are present.</li>
 </ul>
-<p>When the counter catalog is loaded, StatPerf logs an error and ignores a rule for a histogram, for a base counter that isn't collected, or whose values match no label of the counter; the counter then keeps every element. It logs a warning for a rule whose counter isn't an array counter in the template, and for a value that matches no label of the counter.</p>
+<p>When the counter catalog is loaded, StatPerf logs an error and ignores a rule for a histogram, for a base counter that isn't collected, or whose values match no label of the counter. A histogram or a counter whose rule matches nothing then keeps every element; a base counter that isn't collected keeps the elements that the counters using it need. It logs a warning for a rule whose counter isn't an array counter in the template, and for a value that matches no label of the counter.</p>
 <p>ONTAP still returns every element; StatPerf drops the others before creating metrics.</p>
 <h2 id="partial-aggregation">Partial Aggregation<a class="headerlink" href="#partial-aggregation" title="Permanent link">&para;</a></h2>
 <p>For more details about partial aggregation behavior and configuration, see <a href="../partial-aggregation/">Partial Aggregation</a>.</p>
