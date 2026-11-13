@@ -5,25 +5,29 @@
 :pushpin: Highlights of this release include:
 ## :star: New Features
 
-- :medal_sports: **E-Series MEL collector** — added the E-Series MEL collector and dashboard, login banner support, NTP/DNS server details collection, and improved alert/runbook coverage. Detail: [#MEL Collector](https://netapp.github.io/harvest/26.11/configure-eseries/#eseriesmel-collector), [Alert Runbook](https://netapp.github.io/harvest/26.11/resources/eseries-alert-runbook/),
+- :medal_sports: **E-Series MEL collector** — added the E-Series MEL collector and dashboard, and improved alert/runbook coverage. Detail: [MEL Collector](https://netapp.github.io/harvest/26.11/configure-eseries/#eseriesmel-collector), [Alert Runbook](https://netapp.github.io/harvest/26.11/resources/eseries-alert-runbook/)
+
+- :rocket: **E-Series enhancements** —  login banner support, and NTP/DNS server details collection
 
 - :lock: **Prometheus exporter mTLS support** — the exporter can now accept mutual TLS configuration and its settings are documented for secure scrape setups. Doc: https://netapp.github.io/harvest/26.11/prometheus-exporter/#prometheus-exporter-and-mutual-tls
 
 - :package: **Helm chart published to GHCR** — the release pipeline now publishes the Harvest Helm chart to `ghcr.io` with each release, and a production-grade deployment guide is included.
 
-- :bar_chart: **CMPerf enhancements** — added 1D/2D array handling, `workload_queue_combined` support, override string handling, and safer collection for partner volumes and array labels.
+- :bar_chart: **CMPerf enhancements** — added 1D/2D array handling, `workload_queue_combined` support, override string handling, and array labels.
 
 - :rocket: **Metadata and state collection improvements** — added admin-down port state, route metadata improvements, and better handling of collector and plugin instance counts.
 
 ## :closed_book: Documentation
 
-- Added a Helm deployment guide and clarified Prometheus exporter mTLS settings. ([#4506](https://github.com/NetApp/harvest/pull/4506), [#4547](https://github.com/NetApp/harvest/pull/4547))
+- Added a Helm deployment guide and clarified Prometheus exporter mTLS settings. [#4506](https://github.com/NetApp/harvest/pull/4506), [#4556](https://github.com/NetApp/harvest/pull/4556)
 
-- Documented E-Series MEL alert rules and runbooks, and explained why the `StatPerf wafl_flexlog` template remains disabled. ([#4498](https://github.com/NetApp/harvest/pull/4498), [#4538](https://github.com/NetApp/harvest/pull/4538), [#4535](https://github.com/NetApp/harvest/pull/4535))
+- Documented E-Series MEL alert rules and runbooks, and explained why the `StatPerf wafl_flexlog` template remains disabled. [#4498](https://github.com/NetApp/harvest/pull/4498), [#4514](https://github.com/NetApp/harvest/pull/4514), [#4534](https://github.com/NetApp/harvest/pull/4534)
+
+- Documented StorageGRID token behaviour [#4538](https://github.com/NetApp/harvest/pull/4538)
 
 ## Breaking Changes & Deprecations
 
-- No breaking changes or deprecations in this release.
+- Disable FSA collection by default [#4513](https://github.com/NetApp/harvest/pull/4513), So `ONTAP File System Analytics` dashboard won't populated after upgrade. Follow steps here to [Enable VolumeAnalytics template in Harvest](https://github.com/NetApp/harvest/discussions/4511)
 
 ## Announcements
 
@@ -33,15 +37,19 @@
 
 :bulb: The Helm chart is now published to GHCR on each release; use the deployment guide for new installations and upgrades.
 
+:bulb: Default value of `latency_io_reqd` parameter is set to 5.
+
+:bulb: Limiting pprof on the Prometheus port only to loopback clients.
+
 ## Known Issues
 
 ## Thanks to all the awesome contributors
 
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
 this release:
-@ioaiaaii, @buller7929, @seolson, @avsmith3, @mamoep, @Sandeep, @madboss89, @drailing_55, @ebruening, @gregguyles, @furtber, @neil-mahajan, @Mohith26, @MechMaster95
+@ioaiaaii, @seolson, @avsmith3, @mamoep, @madboss89, @ebruening, @gregguyles, @furtber, @neil-mahajan, @Mohith26, @MechMaster95, buller7929 on Discord, Sandeep on Discord, drailing_55 on Discord
 
-:seedling: This release includes 19 features, 29 bug fixes, 7 documentation, 1 performace, 3 testing, 7 refactoring, 21 miscellaneous, and 16 ci pull requests.
+:seedling: This release includes 19 features, 28 bug fixes, 7 documentation, 1 performance, 3 testing, 7 refactoring, 24 miscellaneous, and 16 ci pull requests.
 
 <details>
 
@@ -53,7 +61,7 @@ this release:
 - Add E-Series MEL collector ([#4439](https://github.com/NetApp/harvest/pull/4439)). Thanks @seolson for raising.
 - Add E-Series MEL dashboard ([#4453](https://github.com/NetApp/harvest/pull/4453)). Thanks @seolson for raising.
 - Eseries login banner ([#4457](https://github.com/NetApp/harvest/pull/4457)). Thanks @avsmith3 for reporting.
-- Enable sort labels for exporters ([#4463](https://github.com/NetApp/harvest/pull/4463)). Thanks @Sandeep for reporting.
+- Enable sort labels for exporters ([#4463](https://github.com/NetApp/harvest/pull/4463)). Thanks Sandeep for reporting on Discord.
 - Add ntp/dns server details for eseries ([#4469](https://github.com/NetApp/harvest/pull/4469)). Thanks @avsmith3 for raising.
 - Add workload_queue_combined support in cmperf ([#4473](https://github.com/NetApp/harvest/pull/4473))
 - Parse aggregation_type and NULL_META_LOOKUP_ERROR in cm2 metrics ([#4478](https://github.com/NetApp/harvest/pull/4478))
@@ -69,8 +77,7 @@ this release:
 - Support mutual TLS in the Prometheus exporter ([#4547](https://github.com/NetApp/harvest/pull/4547)). Thanks @Mohith26 for contributing.
 
 ### :bug: Bug Fixes
-- KeyPerf collector should not export partner volumes ([#4419](https://github.com/NetApp/harvest/pull/4419))
-- Ssdcache drive,volume should parse arrays ([#4433](https://github.com/NetApp/harvest/pull/4433). Thanks @buller7929 for reporting.
+- Ssdcache drive,volume should parse arrays ([#4433](https://github.com/NetApp/harvest/pull/4433)). Thanks buller7929 on Discord for reporting.
 - Cmperf templates key ([#4435](https://github.com/NetApp/harvest/pull/4435))
 - Collector should sum pluginInstances across all plugins ([#4447](https://github.com/NetApp/harvest/pull/4447))
 - Handle metadata for eseries plugins ([#4442](https://github.com/NetApp/harvest/pull/4442))
@@ -90,7 +97,7 @@ this release:
 - JSON-encode flashCacheRef in SYMbol flash-cache request ([#4493](https://github.com/NetApp/harvest/pull/4493))
 - Serve pprof on the Prometheus port only to loopback clients ([#4502](https://github.com/NetApp/harvest/pull/4502))
 - Ignore connection and TLS settings in collector templates ([#4504](https://github.com/NetApp/harvest/pull/4504))
-- Update latency_io_reqd default to 5 ([#4507](https://github.com/NetApp/harvest/pull/4507)). Thanks @drailing_55 for reporting.
+- Update latency_io_reqd default to 5 ([#4507](https://github.com/NetApp/harvest/pull/4507)). Thanks drailing_55 on Discord for reporting.
 - Failed disk panels undercount disks without serial numbers ([#4521](https://github.com/NetApp/harvest/pull/4521)). Thanks @ebruening for reporting.
 - Parse StatPerf array counters whose names wrap ([#4524](https://github.com/NetApp/harvest/pull/4524)). Thanks @gregguyles for contributing.
 - Makefile Go version check rejects newer patch releases ([#4529](https://github.com/NetApp/harvest/pull/4529)). Thanks @furtber for reporting.
@@ -108,13 +115,13 @@ this release:
 - StorageGRID keeps accepting a token after the user's credentials change ([#4538](https://github.com/NetApp/harvest/pull/4538)). Thanks @neil-mahajan for contributing.
 - Clarify Prometheus exporter mTLS settings ([#4556](https://github.com/NetApp/harvest/pull/4556))
 
-### Performace
+### :zap: Performance
 - CM collector should report DELETE and POST durations ([#4450](https://github.com/NetApp/harvest/pull/4450))
 
 ### :wrench: Testing
 - Volumemapping test cases ([#4434](https://github.com/NetApp/harvest/pull/4434))
 - PromQL formatting should be faster and not gated ([#4436](https://github.com/NetApp/harvest/pull/4436))
-- Guard the hourly permission-denied retry and log its delay ([#4541](https://github.com/NetApp/harvest/pull/4541)))
+- Guard the hourly permission-denied retry and log its delay ([#4541](https://github.com/NetApp/harvest/pull/4541))
 
 ### Refactoring
 - Share typed LoadParam for collector and plugin config ([#4437](https://github.com/NetApp/harvest/pull/4437))
@@ -126,6 +133,9 @@ this release:
 - GlobalLabels method ([#4459](https://github.com/NetApp/harvest/pull/4459))
 
 ### Miscellaneous
+- Update all dependencies ([#4409](https://github.com/NetApp/harvest/pull/4409))
+- Update all dependencies ([#4424](https://github.com/NetApp/harvest/pull/4423))
+- Apply security best practices ([#4430](https://github.com/NetApp/harvest/pull/4430))
 - Update all dependencies ([#4438](https://github.com/NetApp/harvest/pull/4438))
 - Track upstream shirou/gopsutil v4.26.8 changes ([#4443](https://github.com/NetApp/harvest/pull/4443))
 - Update all dependencies ([#4454](https://github.com/NetApp/harvest/pull/4454))
