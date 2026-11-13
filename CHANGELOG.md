@@ -1,6 +1,185 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 26.11.0 / 2026-11-12 Release
+:pushpin: Highlights of this release include:
+## :star: New Features
+
+- :medal_sports: **E-Series MEL collector** — added the E-Series MEL collector and dashboard, and improved alert/runbook coverage. Detail: [MEL Collector](https://netapp.github.io/harvest/26.11/configure-eseries/#eseriesmel-collector), [Alert Runbook](https://netapp.github.io/harvest/26.11/resources/eseries-alert-runbook/)
+
+- :rocket: **E-Series enhancements** — login banner support and NTP/DNS server details collection
+
+- :lock: **Prometheus exporter mTLS support** — the exporter can now accept mutual TLS configuration and its settings are documented for secure scrape setups. Doc: https://netapp.github.io/harvest/26.11/prometheus-exporter/#prometheus-exporter-and-mutual-tls
+
+- :package: **Helm chart published to GHCR** — the release pipeline now publishes the Harvest Helm chart to `ghcr.io` with each release, and a production-grade deployment guide is included.
+
+- :bar_chart: **CMPerf enhancements** — added 1D/2D array handling, `workload_queue_combined` support, and override string handling.
+
+- :rocket: **Metadata and state collection improvements** — added admin-down port state, route metadata improvements, and better handling of collector and plugin instance counts.
+
+## :closed_book: Documentation
+
+- Added a Helm deployment guide and clarified Prometheus exporter mTLS settings. ([#4506](https://github.com/NetApp/harvest/pull/4506), [#4556](https://github.com/NetApp/harvest/pull/4556))
+
+- Documented E-Series MEL alert rules and runbooks, and explained why the `StatPerf wafl_flexlog` template remains disabled. ([#4498](https://github.com/NetApp/harvest/pull/4498), [#4514](https://github.com/NetApp/harvest/pull/4514), [#4534](https://github.com/NetApp/harvest/pull/4534))
+
+- Documented StorageGRID token behavior. ([#4538](https://github.com/NetApp/harvest/pull/4538))
+
+## Breaking Changes & Deprecations
+
+- FSA collection is disabled by default ([#4513](https://github.com/NetApp/harvest/pull/4513)), so the `ONTAP: File System Analytics (FSA)` dashboard won't be populated after upgrade. To re-enable it, follow [Enable VolumeAnalytics template in Harvest](https://github.com/NetApp/harvest/discussions/4511).
+
+## Announcements
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+:bulb: E-Series MEL collector and dashboards are now available in this release.
+
+:bulb: The Helm chart is now published to GHCR on each release; use the deployment guide for new installations and upgrades.
+
+:bulb: Default value of `latency_io_reqd` parameter is set to 5.
+
+:bulb: Limiting pprof on the Prometheus port only to loopback clients.
+
+## Known Issues
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
+this release:
+@ioaiaaii, @seolson, @avsmith3, @mamoep, @madboss89, @ebruening, @gregguyles, @furtber, @neil-mahajan, @Mohith26, @MechMaster95, buller7929 on Discord, Sandeep on Discord, drailing_55 on Discord
+
+:seedling: This release includes 19 features, 28 bug fixes, 7 documentation, 1 performance, 3 testing, 7 refactoring, 24 miscellaneous, and 18 ci pull requests.
+
+<details>
+
+<summary>Expand for full list of pull requests</summary>
+
+### :rocket: Features
+- Add production-grade Helm chart for Kubernetes deployment ([#4375](https://github.com/NetApp/harvest/pull/4375)). Thanks @ioaiaaii for the contribution.
+- Support 1D and 2D arrays in cmperf ([#4431](https://github.com/NetApp/harvest/pull/4431))
+- Add E-Series MEL collector ([#4439](https://github.com/NetApp/harvest/pull/4439)). Thanks @seolson for raising.
+- Add E-Series MEL dashboard ([#4453](https://github.com/NetApp/harvest/pull/4453)). Thanks @seolson for raising.
+- Eseries login banner ([#4457](https://github.com/NetApp/harvest/pull/4457)). Thanks @avsmith3 for reporting.
+- Enable sort labels for exporters ([#4463](https://github.com/NetApp/harvest/pull/4463)). Thanks Sandeep for reporting on Discord.
+- Add ntp/dns server details for eseries ([#4469](https://github.com/NetApp/harvest/pull/4469)). Thanks @avsmith3 for raising.
+- Add workload_queue_combined support in cmperf ([#4473](https://github.com/NetApp/harvest/pull/4473))
+- Parse aggregation_type and NULL_META_LOOKUP_ERROR in cm2 metrics ([#4478](https://github.com/NetApp/harvest/pull/4478))
+- Make poller logs easier to analyze ([#4480](https://github.com/NetApp/harvest/pull/4480))
+- Add admin-down state for ports ([#4488](https://github.com/NetApp/harvest/pull/4488))
+- Add override string support to cmperf ([#4489](https://github.com/NetApp/harvest/pull/4489))
+- E-Series initial MEL alert rules and runbook ([#4498](https://github.com/NetApp/harvest/pull/4498)). Thanks @seolson for contributing.
+- Add helm deployment guide ([#4506](https://github.com/NetApp/harvest/pull/4506)). Thanks @ioaiaaii for raising.
+- Disable FSA collection by default ([#4513](https://github.com/NetApp/harvest/pull/4513))
+- StatPerf array_labels keeps only selected array elements ([#4535](https://github.com/NetApp/harvest/pull/4535)). Thanks @gregguyles for contributing.
+- Add standby mode for auth errors ([#4536](https://github.com/NetApp/harvest/pull/4536))
+- Publish Helm chart to ghcr.io with each release ([#4549](https://github.com/NetApp/harvest/pull/4549))
+- Support mutual TLS in the Prometheus exporter ([#4547](https://github.com/NetApp/harvest/pull/4547)). Thanks @Mohith26 for contributing.
+
+### :bug: Bug Fixes
+- Ssdcache drive,volume should parse arrays ([#4433](https://github.com/NetApp/harvest/pull/4433)). Thanks buller7929 on Discord for reporting.
+- Cmperf templates key ([#4435](https://github.com/NetApp/harvest/pull/4435))
+- Collector should sum pluginInstances across all plugins ([#4447](https://github.com/NetApp/harvest/pull/4447))
+- Handle metadata for eseries plugins ([#4442](https://github.com/NetApp/harvest/pull/4442))
+- Zizmor cache poisoning false positive ([#4455](https://github.com/NetApp/harvest/pull/4455))
+- Grafana import should import dashboards into folders ([#4461](https://github.com/NetApp/harvest/pull/4461)). Thanks @mamoep for reporting.
+- 7mode dashboards should have a stable uid ([#4464](https://github.com/NetApp/harvest/pull/4464))
+- StorageGrid should use a versioned authorize URL ([#4467](https://github.com/NetApp/harvest/pull/4467))
+- ZapiPerf should propagate instance poll errors ([#4471](https://github.com/NetApp/harvest/pull/4471))
+- EMS should bound its collection window ([#4474](https://github.com/NetApp/harvest/pull/4474))
+- ASAr2 lun name is incorrect for lun_labels ([#4476](https://github.com/NetApp/harvest/pull/4476))
+- Root Aggregates metrics are missing in Rest collector ([#4479](https://github.com/NetApp/harvest/pull/4479)). Thanks @madboss89 for reporting.
+- Request explicit fields for templates with array indexes ([#4483](https://github.com/NetApp/harvest/pull/4483))
+- Skip FC port health check on AFX clusters ([#4482](https://github.com/NetApp/harvest/pull/4482))
+- Stabilize net_route_interface_labels series across polls ([#4485](https://github.com/NetApp/harvest/pull/4485))
+- Cmperf plugin and template issues ([#4490](https://github.com/NetApp/harvest/pull/4490))
+- Cmperf plugin and template issues ([#4491](https://github.com/NetApp/harvest/pull/4491))
+- JSON-encode flashCacheRef in SYMbol flash-cache request ([#4493](https://github.com/NetApp/harvest/pull/4493))
+- Serve pprof on the Prometheus port only to loopback clients ([#4502](https://github.com/NetApp/harvest/pull/4502))
+- Ignore connection and TLS settings in collector templates ([#4504](https://github.com/NetApp/harvest/pull/4504))
+- Update latency_io_reqd default to 5 ([#4507](https://github.com/NetApp/harvest/pull/4507)). Thanks drailing_55 on Discord for reporting.
+- Failed disk panels undercount disks without serial numbers ([#4521](https://github.com/NetApp/harvest/pull/4521)). Thanks @ebruening for reporting.
+- Parse StatPerf array counters whose names wrap ([#4524](https://github.com/NetApp/harvest/pull/4524)). Thanks @gregguyles for contributing.
+- Makefile Go version check rejects newer patch releases ([#4529](https://github.com/NetApp/harvest/pull/4529)). Thanks @furtber for reporting.
+- StatPerf averages array counters over array base counters ([#4531](https://github.com/NetApp/harvest/pull/4531)). Thanks @gregguyles for contributing.
+- A permission-denied error retries every hour instead of pausing a collector for a day ([#4537](https://github.com/NetApp/harvest/pull/4537))
+- Follow-ups from validating the 26.11 testme issues ([#4553](https://github.com/NetApp/harvest/pull/4553))
+- Ipv6 metadata_target_status reports 1 even if ip is pingable ([#4539](https://github.com/NetApp/harvest/pull/4539))
+
+### :closed_book: Documentation
+- Poller_concurrent_collectors unit is scalar, not bytes ([#4448](https://github.com/NetApp/harvest/pull/4448))
+- Eseries mel collector doc ([#4452](https://github.com/NetApp/harvest/pull/4452))
+- Clarify EMS walking behavior ([#4477](https://github.com/NetApp/harvest/pull/4477))
+- Eseries mel alert/runbook ([#4514](https://github.com/NetApp/harvest/pull/4514))
+- Explain why the StatPerf wafl_flexlog template is disabled ([#4534](https://github.com/NetApp/harvest/pull/4534))
+- StorageGRID keeps accepting a token after the user's credentials change ([#4538](https://github.com/NetApp/harvest/pull/4538)). Thanks @neil-mahajan for contributing.
+- Clarify Prometheus exporter mTLS settings ([#4556](https://github.com/NetApp/harvest/pull/4556))
+
+### :zap: Performance
+- CM collector should report DELETE and POST durations ([#4450](https://github.com/NetApp/harvest/pull/4450))
+
+### :wrench: Testing
+- Volumemapping test cases ([#4434](https://github.com/NetApp/harvest/pull/4434))
+- PromQL formatting should be faster and not gated ([#4436](https://github.com/NetApp/harvest/pull/4436))
+- Guard the hourly permission-denied retry and log its delay ([#4541](https://github.com/NetApp/harvest/pull/4541))
+
+### Refactoring
+- Share typed LoadParam for collector and plugin config ([#4437](https://github.com/NetApp/harvest/pull/4437))
+- Consolidate duplicated collector helpers and plugins ([#4440](https://github.com/NetApp/harvest/pull/4440))
+- Enable nolintlint and fix issues ([#4444](https://github.com/NetApp/harvest/pull/4444))
+- Enable nolintlint and fix issues ([#4446](https://github.com/NetApp/harvest/pull/4446))
+- Poller should set concurrent_collectors, not add it ([#4449](https://github.com/NetApp/harvest/pull/4449))
+- GlobalLabels method ([#4458](https://github.com/NetApp/harvest/pull/4458))
+- GlobalLabels method ([#4459](https://github.com/NetApp/harvest/pull/4459))
+
+### Miscellaneous
+- Update all dependencies ([#4409](https://github.com/NetApp/harvest/pull/4409))
+- Update all dependencies ([#4423](https://github.com/NetApp/harvest/pull/4423))
+- Apply security best practices ([#4430](https://github.com/NetApp/harvest/pull/4430))
+- Update all dependencies ([#4438](https://github.com/NetApp/harvest/pull/4438))
+- Track upstream shirou/gopsutil v4.26.8 changes ([#4443](https://github.com/NetApp/harvest/pull/4443))
+- Update all dependencies ([#4454](https://github.com/NetApp/harvest/pull/4454))
+- Update module golang.org/x/sys to v0.48.0 ([#4465](https://github.com/NetApp/harvest/pull/4465))
+- Update all dependencies ([#4472](https://github.com/NetApp/harvest/pull/4472))
+- Bump golangci-lint to v2.14.0 and fix new lint findings ([#4481](https://github.com/NetApp/harvest/pull/4481))
+- Update all dependencies ([#4486](https://github.com/NetApp/harvest/pull/4486))
+- Track upstream shirou/gopsutil v4.26.9 changes ([#4492](https://github.com/NetApp/harvest/pull/4492))
+- Update github/codeql-action action to v4.38.2 ([#4494](https://github.com/NetApp/harvest/pull/4494))
+- Update module github.com/prometheus/prometheus to v0.315.0 ([#4495](https://github.com/NetApp/harvest/pull/4495))
+- Update all dependencies ([#4505](https://github.com/NetApp/harvest/pull/4505))
+- Update all dependencies ([#4510](https://github.com/NetApp/harvest/pull/4510))
+- Update dependency go to v1.27.3 ([#4517](https://github.com/NetApp/harvest/pull/4517))
+- Update nested go modules ([#4532](https://github.com/NetApp/harvest/pull/4532))
+- Update github/codeql-action action to v4.39.0 ([#4533](https://github.com/NetApp/harvest/pull/4533))
+- Update all dependencies ([#4544](https://github.com/NetApp/harvest/pull/4544))
+- Update module github.com/prometheus/prometheus to v0.315.1 ([#4543](https://github.com/NetApp/harvest/pull/4543))
+- Track upstream shirou/gopsutil v4.26.10 changes ([#4545](https://github.com/NetApp/harvest/pull/4545))
+- Update static-debian12 to static-debian13 ([#4546](https://github.com/NetApp/harvest/pull/4546))
+- Update module golang.org/x/net to v0.62.0 ([#4551](https://github.com/NetApp/harvest/pull/4551))
+- Update all dependencies ([#4550](https://github.com/NetApp/harvest/pull/4550))
+
+### :hammer: CI
+- Bump go ([#4405](https://github.com/NetApp/harvest/pull/4405))
+- Bump go ([#4415](https://github.com/NetApp/harvest/pull/4415))
+- Bump go ([#4451](https://github.com/NetApp/harvest/pull/4451))
+- Stop nested module go.mod files from going stale ([#4468](https://github.com/NetApp/harvest/pull/4468))
+- Fix mcp build ([#4470](https://github.com/NetApp/harvest/pull/4470))
+- Handle ems_events duplicates ([#4487](https://github.com/NetApp/harvest/pull/4487))
+- Seolson has signed the CCLA ([#4499](https://github.com/NetApp/harvest/pull/4499))
+- Bump go ([#4500](https://github.com/NetApp/harvest/pull/4500))
+- Default GO_VERSION in Dockerfiles and let Renovate bump Go ([#4501](https://github.com/NetApp/harvest/pull/4501))
+- Add a build Dockerfile for Anthropic's OSS Scanner ([#4503](https://github.com/NetApp/harvest/pull/4503))
+- Fix canonicalheader lint issue ([#4509](https://github.com/NetApp/harvest/pull/4509))
+- Fix ci ([#4512](https://github.com/NetApp/harvest/pull/4512))
+- Update nested Go modules in their own Renovate branch ([#4515](https://github.com/NetApp/harvest/pull/4515))
+- Pinguinfuss has signed the CCLA ([#4519](https://github.com/NetApp/harvest/pull/4519))
+- Gregguyles has signed the CCLA ([#4523](https://github.com/NetApp/harvest/pull/4523))
+- Neil-mahajan has signed the CCLA ([#4540](https://github.com/NetApp/harvest/pull/4540))
+- Mohith26 has signed the CCLA ([#4548](https://github.com/NetApp/harvest/pull/4548))
+- Bump go ([#4554](https://github.com/NetApp/harvest/pull/4554))
+
+</details>
+
 ## 26.08.0 / 2026-08-10 Release
 :pushpin: Highlights of this major release include:
 ## :star: New Features
