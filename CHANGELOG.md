@@ -51,7 +51,7 @@
 this release:
 @ioaiaaii, @seolson, @avsmith3, @mamoep, @madboss89, @ebruening, @gregguyles, @furtber, @neil-mahajan, @Mohith26, @MechMaster95, buller7929 on Discord, Sandeep on Discord, drailing_55 on Discord
 
-:seedling: This release includes 19 features, 28 bug fixes, 7 documentation, 1 performance, 3 testing, 7 refactoring, 24 miscellaneous, and 18 ci pull requests.
+:seedling: This release includes 19 features, 28 bug fixes, 7 documentation, 1 performance, 3 testing, 7 refactoring, 27 miscellaneous, and 19 ci pull requests.
 
 <details>
 
@@ -161,6 +161,7 @@ this release:
 - Update all dependencies ([#4550](https://github.com/NetApp/harvest/pull/4550))
 - Update all dependencies ([#4561](https://github.com/NetApp/harvest/pull/4561))
 - Update module github.com/prometheus/prometheus to v0.316.0 ([#4562](https://github.com/NetApp/harvest/pull/4562))
+- Track upstream tidwall changes ([#4564](https://github.com/NetApp/harvest/pull/4564))
 
 ### :hammer: CI
 - Bump go ([#4405](https://github.com/NetApp/harvest/pull/4405))
@@ -181,6 +182,7 @@ this release:
 - Neil-mahajan has signed the CCLA ([#4540](https://github.com/NetApp/harvest/pull/4540))
 - Mohith26 has signed the CCLA ([#4548](https://github.com/NetApp/harvest/pull/4548))
 - Bump go ([#4554](https://github.com/NetApp/harvest/pull/4554))
+- Update metrics docs for 26.11 ([#4565](https://github.com/NetApp/harvest/pull/4565))
 
 </details>
 
