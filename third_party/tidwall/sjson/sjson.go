@@ -191,8 +191,13 @@ func atoui(r pathResult) (n int, ok bool) {
 		return 0, false
 	}
 	if len(r.part) > 8 {
+		// Harvest: bound-check before converting to int so code scanning
+		// does not flag the narrowing conversion (go/incorrect-integer-conversion).
 		n, err := strconv.ParseUint(r.part, 10, 64)
-		return int(n), err == nil && n <= math.MaxInt
+		if err != nil || n > math.MaxInt {
+			return 0, false
+		}
+		return int(n), true
 	}
 	for i := 0; i < len(r.part); i++ {
 		if r.part[i] < '0' || r.part[i] > '9' {
