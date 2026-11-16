@@ -7,13 +7,13 @@
 
 - :medal_sports: **E-Series MEL collector** — added the E-Series MEL collector and dashboard, and improved alert/runbook coverage. Detail: [MEL Collector](https://netapp.github.io/harvest/26.11/configure-eseries/#eseriesmel-collector), [Alert Runbook](https://netapp.github.io/harvest/26.11/resources/eseries-alert-runbook/)
 
+- :medal_sports: **StatPerf collector improvement** — Parse wrapped array counter names, Match array counters to their base elements, Limit collected array elements
+
 - :rocket: **E-Series enhancements** —  login banner support, and NTP/DNS server details collection
 
 - :lock: **Prometheus exporter mTLS support** — the exporter can now accept mutual TLS configuration and its settings are documented for secure scrape setups. Doc: https://netapp.github.io/harvest/26.11/prometheus-exporter/#prometheus-exporter-and-mutual-tls
 
 - :package: **Helm chart published to GHCR** — the release pipeline now publishes the Harvest Helm chart to `ghcr.io` with each release, and a production-grade deployment guide is included.
-
-- :bar_chart: **CMPerf enhancements** — added 1D/2D array handling, `workload_queue_combined` support, override string handling, and array labels.
 
 - :rocket: **Metadata and state collection improvements** — added admin-down port state, route metadata improvements, and better handling of collector and plugin instance counts.
 
@@ -24,6 +24,8 @@
 - Documented E-Series MEL alert rules and runbooks, and explained why the `StatPerf wafl_flexlog` template remains disabled. [#4498](https://github.com/NetApp/harvest/pull/4498), [#4514](https://github.com/NetApp/harvest/pull/4514), [#4534](https://github.com/NetApp/harvest/pull/4534)
 
 - Documented StorageGRID token behaviour [#4538](https://github.com/NetApp/harvest/pull/4538)
+
+- Documented why the StatPerf `wafl_flexlog` template is disabled [#4534](https://github.com/NetApp/harvest/pull/4534)
 
 ## Breaking Changes & Deprecations
 
@@ -157,6 +159,8 @@ this release:
 - Update static-debian12 to static-debian13 ([#4546](https://github.com/NetApp/harvest/pull/4546))
 - Update module golang.org/x/net to v0.62.0 ([#4551](https://github.com/NetApp/harvest/pull/4551))
 - Update all dependencies ([#4550](https://github.com/NetApp/harvest/pull/4550))
+- Update all dependencies ([#4561](https://github.com/NetApp/harvest/pull/4561))
+- Update module github.com/prometheus/prometheus to v0.316.0 ([#4562](https://github.com/NetApp/harvest/pull/4562))
 
 ### :hammer: CI
 - Bump go ([#4451](https://github.com/NetApp/harvest/pull/4451))
