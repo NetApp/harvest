@@ -970,20 +970,20 @@ events:
 
   - name: wafl.vvol.offline
     exports:
-      - ^^parameters.volident => vol_ident
+      - ^^parameters.instuuid => inst_uuid
       - parameters.app        => app
-      - parameters.instuuid   => inst_uuid
       - parameters.name       => volume
+      - parameters.volident   => vol_ident
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
 
   - name: wafl.vvol.restrict
     exports:
-      - ^^parameters.volident => vol_ident
+      - ^^parameters.instuuid => inst_uuid
       - parameters.app        => app
-      - parameters.instuuid   => inst_uuid
       - parameters.vol        => volume
+      - parameters.volident   => vol_ident
     resolve_when_ems:
       - name: wafl.vvol.online
         resolve_after: 672h
