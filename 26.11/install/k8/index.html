@@ -1,0 +1,3229 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../containers/">
+      
+      
+        <link rel="next" href="../podman/">
+      
+      
+      <link rel="icon" href="../../assets/harvest.svg">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>K8 - Harvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#k8-deployment" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Harvest
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              K8
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+      
+  <img src="../../assets/harvest.svg" alt="logo">
+
+    </a>
+    Harvest
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NetApp/harvest" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NetApp/harvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is Harvest?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../package-managers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package Managers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Containers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    K8
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chart-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chart versions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-prometheus-skip-if-you-already-have-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Prometheus (skip if you already have one)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional settings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus integration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#podmonitor-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      PodMonitor (default)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dashboards
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#managing-clusters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Managing clusters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Managing clusters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add a cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Change a cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remove a cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poller-names-and-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      Poller names and ports
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrades" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrades
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-the-harvest-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update the Harvest image
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roll-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roll back
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argo-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argo CD
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install from source
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uninstall" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uninstall
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../podman/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadlet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quadlet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../containerd/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containerd
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../native/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Prepare Monitored Systems
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Prepare Monitored Systems
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP cDOT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asar2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASA r2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gcnv-ontap-mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GCNV ONTAP Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon FSx for ONTAP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP 7mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prepare-arista-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arista Switches
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (basic)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Exporters
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Exporters
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prometheus-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../influxdb-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configure Collectors
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configure Collectors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-zapi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-keyperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KeyPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-statperf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-ems/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-storagegrid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-unix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-arista-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AristaRest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manage-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Harvest Pollers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-harvest-advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure Harvest (advanced)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monitor-harvest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor Harvest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model Context Protocol (MCP) Server
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            Model Context Protocol (MCP) Server
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp/examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/log-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/config-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config Collection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" >
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/ems-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EMS Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/eseries-alert-runbook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Alert Runbook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ontap-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ONTAP Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../arista-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Arista Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eseries-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/power-algorithm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Power Algorithm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/rest-perf-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Perf Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/rest-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    REST Strategy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/templates-and-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/zapi-and-rest-gap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ZAPI and REST gaps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chart-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chart versions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-prometheus-skip-if-you-already-have-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Prometheus (skip if you already have one)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional settings
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus integration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#podmonitor-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      PodMonitor (default)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dashboards
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#managing-clusters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Managing clusters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Managing clusters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add a cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Change a cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-a-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remove a cluster
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poller-names-and-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      Poller names and ports
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrades" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrades
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-the-harvest-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update the Harvest image
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roll-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roll back
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#argo-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argo CD
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install from source
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uninstall" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uninstall
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="k8-deployment">K8 Deployment<a class="headerlink" href="#k8-deployment" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">The Helm chart is a reference</p>
+<p>The Helm chart below is a reference. Use it as is, change it to fit your environment, or deploy Harvest on
+Kubernetes any other way you prefer.</p>
+</div>
+<p>This page walks through one way to run Harvest on Kubernetes, using the Harvest Helm chart. Each Harvest release
+publishes the chart to <code>oci://ghcr.io/netapp/charts/harvest</code>, see <a href="#chart-versions">Chart versions</a>. You can use the
+chart as it is, adjust it for your environment, or use its
+<a href="https://github.com/NetApp/harvest/tree/main/deploy/helm/harvest">source</a> as a guide and write your own manifests.
+The chart's <a href="https://github.com/NetApp/harvest/blob/main/deploy/helm/harvest/values.yaml">values.yaml</a> describes every
+value you can set.</p>
+<p>Each cluster you list runs in its own pod. The pod reads its password from a Kubernetes Secret, so the password is
+never in your values file.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Kubernetes 1.21 or later and <a href="https://helm.sh/docs/intro/install/">Helm</a> 3.10 or later</li>
+<li>Network access from the pods to the management address of each monitored system</li>
+<li>A user on each system with the permissions Harvest needs, see <a href="../../prepare-cdot-clusters/">Prepare monitored systems</a></li>
+<li>To use the default Prometheus integration, the Prometheus Operator, for example
+  <a href="https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack">kube-prometheus-stack</a>.
+  No Prometheus yet? See <a href="#install-prometheus-skip-if-you-already-have-one">Install Prometheus</a>.</li>
+</ul>
+<h2 id="chart-versions">Chart versions<a class="headerlink" href="#chart-versions" title="Permanent link">&para;</a></h2>
+<p>The chart is published to <code>oci://ghcr.io/netapp/charts/harvest</code>. It is public, so you do not need to log in to pull it.</p>
+<ul>
+<li>The chart version is the Harvest version. Chart <code>26.11.0</code> runs the Harvest image <code>26.11.0-1</code>, so the version you pin
+  is the Harvest version you run.</li>
+<li>Every Harvest release and point release publishes a chart. Release candidates and nightly builds do not, see
+  <a href="#install-from-source">Install from source</a>.</li>
+<li>Each Harvest release publishes its chart once. A rebuild of a release, for example for an updated base image, is
+  published as the next point release, not under the same version.</li>
+</ul>
+<p>The commands on this page use chart <code>26.11.0</code>. Pass <code>--version</code> on every <code>helm install</code> and <code>helm upgrade</code>, so an
+upgrade that only changes your values does not also change the Harvest version.</p>
+<p>To see the values a chart version accepts, with their defaults and descriptions:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0
+</code></pre></div>
+<h2 id="install-prometheus-skip-if-you-already-have-one">Install Prometheus (skip if you already have one)<a class="headerlink" href="#install-prometheus-skip-if-you-already-have-one" title="Permanent link">&para;</a></h2>
+<p>Skip this if you already run the Prometheus Operator. This installs kube-prometheus-stack into the namespace
+<code>monitoring</code>. It keeps data for one year or until it reaches 45GiB, whichever comes first. The data is stored on a
+50Gi persistent volume from the cluster's default StorageClass, so it survives a pod restart. There are no memory
+limits. Grow <code>storage</code> and <code>retentionSize</code> together to fit your clusters. The volume can be expanded later if the
+StorageClass allows it.</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>prometheus.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">prometheus:</span>
+<span class="s">  prometheusSpec:</span>
+<span class="s">    retention: 1y                 # keep one year of data</span>
+<span class="s">    retentionSize: 45GiB          # stop before the volume is full</span>
+<span class="s">    resources:</span>
+<span class="s">      requests:</span>
+<span class="s">        memory: 400Mi             # no limits</span>
+<span class="s">    storageSpec:                  # keep data when the pod restarts</span>
+<span class="s">      volumeClaimTemplate:</span>
+<span class="s">        spec:</span>
+<span class="s">          accessModes: ["ReadWriteOnce"]</span>
+<span class="s">          resources:</span>
+<span class="s">            requests:</span>
+<span class="s">              storage: 50Gi       # &lt;====== adjust to your clusters</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>prometheus-community<span class="w"> </span>https://prometheus-community.github.io/helm-charts
+helm<span class="w"> </span>repo<span class="w"> </span>update
+
+helm<span class="w"> </span>install<span class="w"> </span>kube-prometheus-stack<span class="w"> </span>prometheus-community/kube-prometheus-stack<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="w"> </span>monitoring<span class="w"> </span>--create-namespace<span class="w"> </span>--values<span class="w"> </span>prometheus.yaml
+</code></pre></div>
+<p>The volume comes from the default StorageClass of your cluster. If <code>kubectl get storageclass</code> shows none marked
+<code>(default)</code>, add <code>storageClassName: &lt;name&gt;</code> under <code>spec</code>.</p>
+<p>Wait until the pod <code>prometheus-kube-prometheus-stack-prometheus-0</code> is <code>Running</code>:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>monitoring
+</code></pre></div>
+<p>The chart labels its PodMonitors <code>release: kube-prometheus-stack</code>, which is what this Prometheus selects. If your
+Prometheus was installed with another release name, see <a href="#podmonitor-default">PodMonitor</a>.</p>
+<h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<p>This installs Harvest for one ONTAP cluster into the namespace <code>harvest</code>.</p>
+<p><strong>1. Create the namespace and a Secret with the password</strong></p>
+<p>Replace <code>&lt;ontap-password&gt;</code> with the password of the user Harvest logs in with.</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>harvest
+
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>cluster-a-credentials<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'&lt;ontap-password&gt;'</span>
+</code></pre></div>
+<p><strong>2. Write a values file</strong></p>
+<p>Change the lines marked <code>&lt;======</code>: the cluster address and the username. Then paste the whole block. It creates
+<code>values.yaml</code>.</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>values.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">harvestConfig:</span>
+<span class="s">  Defaults:</span>
+<span class="s">    use_insecure_tls: true              # &lt;====== adjust as needed to enable/disable TLS checks</span>
+<span class="s">  Pollers:</span>
+<span class="s">    cluster-a:</span>
+<span class="s">      datacenter: DC-01</span>
+<span class="s">      addr: cluster-a.example.com       # &lt;====== your cluster address</span>
+<span class="s">      username: harvest                 # &lt;====== your username</span>
+<span class="s">      password: ${CLUSTER_A_PASSWORD}   # placeholder, not the password</span>
+<span class="s">      collectors:</span>
+<span class="s">        - Rest</span>
+<span class="s">        - RestPerf</span>
+<span class="s">      extraEnvVars:                     # fills the placeholder from the Secret</span>
+<span class="s">        - name: CLUSTER_A_PASSWORD</span>
+<span class="s">          valueFrom:</span>
+<span class="s">            secretKeyRef:</span>
+<span class="s">              name: cluster-a-credentials</span>
+<span class="s">              key: password</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>No Prometheus Operator? The install in the next step fails because the <code>PodMonitor</code> type does not exist. First create
+<code>no-operator.yaml</code> from "No Prometheus Operator" under <a href="#prometheus-integration">Prometheus integration</a>, then add
+<code>--values no-operator.yaml</code> to the install command.</p>
+<p><strong>3. Install</strong></p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+</code></pre></div>
+<p>This runs Harvest 26.11.0, the release in the chart's <code>appVersion</code> (<code>26.11.0-1</code>), so every pod runs the same version.
+Because the release is named <code>harvest</code>, the pod's name starts with <code>harvest-harvest-poller-cluster-a</code>. Use another
+release name such as <code>ontap</code> to get shorter names.</p>
+<p>To run another Harvest release, install the chart with that release's version. For a nightly build, see
+<a href="#install-from-source">Install from source</a>.</p>
+<p><strong>4. Verify</strong></p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>harvest
+</code></pre></div>
+<p>Wait until the pod is <code>Running</code> and <code>1/1</code>. Then look at the metrics:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>deploy/harvest-harvest-poller-cluster-a<span class="w"> </span><span class="m">12990</span>:12990
+</code></pre></div>
+<p>In another terminal:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:12990/metrics
+</code></pre></div>
+<p>Metrics appear after the first collection finishes, usually within a minute.</p>
+<p>Check that Prometheus has the data. Start a port-forward to Prometheus:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--namespace<span class="w"> </span>monitoring<span class="w"> </span>svc/kube-prometheus-stack-prometheus<span class="w"> </span><span class="m">9090</span>:9090
+</code></pre></div>
+<p>In another terminal, ask Prometheus whether the scrape works (<code>1</code> means up):</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span><span class="s1">'http://localhost:9090/api/v1/query'</span><span class="w"> </span>--data-urlencode<span class="w"> </span><span class="s1">'query=up{namespace="harvest"}'</span>
+</code></pre></div>
+<p>Then ask for Harvest data from your cluster. A number above zero means the data is there:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span><span class="s1">'http://localhost:9090/api/v1/query'</span><span class="w"> </span>--data-urlencode<span class="w"> </span><span class="s1">'query=count({datacenter="DC-01"})'</span>
+</code></pre></div>
+<p>The queries need a minute or two after the pod starts: the first collection plus one scrape.</p>
+<p>You can also open <code>http://localhost:9090</code>, run the same queries on the Query page, or open Status &gt; Targets and look
+for <code>podMonitor/harvest/...</code> with state <code>UP</code>.</p>
+<h2 id="optional-settings">Optional settings<a class="headerlink" href="#optional-settings" title="Permanent link">&para;</a></h2>
+<p>None of these are needed for the quick start.</p>
+<details class="note">
+<summary>Credentials from files (optional)</summary>
+<p>Harvest expands <code>${VAR}</code> in <code>harvest.yml</code> from the environment when it starts
+(<a href="../../configure-harvest-advanced/#variable-expansion">variable expansion</a>). The quick start uses this to keep the
+password in a Secret. Create the Secret any way you like: <code>kubectl</code>, <a href="https://external-secrets.io">External Secrets</a>,
+Vault, or sealed-secrets. The chart only references it by name.</p>
+<p>Certificates, a CA bundle and a <a href="../../configure-harvest-basic/#credentials-file">credentials file</a> are files. Mount
+them from a Secret with <code>extraVolumes</code> and <code>extraVolumeMounts</code>, then point the poller setting at the mounted path.
+This example switches <code>cluster-a</code> to
+<a href="../../prepare-cdot-clusters/#using-certificate-authentication">certificate authentication</a>. Replace the file names in
+the first command with your own:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>cluster-a-tls<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>tls.crt<span class="o">=</span>cluster-a.crt<span class="w"> </span>--from-file<span class="o">=</span>tls.key<span class="o">=</span>cluster-a.key
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>certs.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">harvestConfig:</span>
+<span class="s">  Pollers:</span>
+<span class="s">    cluster-a:</span>
+<span class="s">      auth_style: certificate_auth</span>
+<span class="s">      ssl_cert: /opt/harvest/certs/tls.crt</span>
+<span class="s">      ssl_key: /opt/harvest/certs/tls.key</span>
+<span class="s">      extraVolumes:</span>
+<span class="s">        - name: certs</span>
+<span class="s">          secret:</span>
+<span class="s">            secretName: cluster-a-tls</span>
+<span class="s">      extraVolumeMounts:</span>
+<span class="s">        - name: certs</span>
+<span class="s">          mountPath: /opt/harvest/certs</span>
+<span class="s">          readOnly: true</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>certs.yaml
+</code></pre></div>
+<p>Helm merges the files in order, so <code>certs.yaml</code> only adds to <code>cluster-a</code> and <code>values.yaml</code> stays as it is.</p>
+</details>
+<details class="note">
+<summary>Resources (optional)</summary>
+<p>Each poller requests 100m CPU and 256Mi memory by default and has no limits, so a large cluster is never killed for
+using more memory. Adjust the requests to your clusters and add limits for production. They apply to every poller:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>resources.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">poller:</span>
+<span class="s">  resources:</span>
+<span class="s">    requests: {cpu: 200m, memory: 512Mi}</span>
+<span class="s">    limits: {memory: 1Gi}</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>resources.yaml
+</code></pre></div>
+</details>
+<details class="note">
+<summary>Collectors and templates (optional)</summary>
+<p>Choose collectors per poller with <code>collectors</code>. To change a collector's schedule or enable more objects, add
+<code>collectorsExtensions</code> to the poller, see
+<a href="../../configure-templates/#extend-an-existing-object-template">extend an existing object</a>:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>collectors.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">harvestConfig:</span>
+<span class="s">  Pollers:</span>
+<span class="s">    cluster-a:</span>
+<span class="s">      collectorsExtensions:</span>
+<span class="s">        Rest:</span>
+<span class="s">          jitter: 1m</span>
+<span class="s">          schedule:</span>
+<span class="s">            - data: 5m</span>
+<span class="s">        RestPerf:</span>
+<span class="s">          objects:</span>
+<span class="s">            Qtree: qtree.yaml</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>collectors.yaml
+</code></pre></div>
+</details>
+<details class="note">
+<summary>Private registry (optional)</summary>
+<p>To use a mirror or private registry, name a <code>docker-registry</code> Secret that exists in the <code>harvest</code> namespace:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>registry.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">image:</span>
+<span class="s">  registry: registry.example.com</span>
+<span class="s">  repository: team/harvest</span>
+<span class="s">  pullSecrets: [my-regcred]</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>registry.yaml
+</code></pre></div>
+</details>
+<h2 id="prometheus-integration">Prometheus integration<a class="headerlink" href="#prometheus-integration" title="Permanent link">&para;</a></h2>
+<p>The default needs nothing more than the quick start. The sections below are alternatives, use at most one of them.</p>
+<p>The chart creates one PodMonitor for each cluster, so ten clusters give ten PodMonitors. A PodMonitor is a small
+Prometheus Operator object that tells Prometheus which pod to scrape. It does not run anything itself. If you do not
+run the Prometheus Operator, turn the PodMonitors off and scrape the pods yourself.</p>
+<p>The commands in each section below start from the quick start <code>values.yaml</code>.</p>
+<h3 id="podmonitor-default">PodMonitor (default)<a class="headerlink" href="#podmonitor-default" title="Permanent link">&para;</a></h3>
+<p>Nothing to add, this is what the quick start installed. Each PodMonitor scrapes its poller's container port <code>http</code> on
+<code>/metrics</code> every minute. Change the interval, labels and more under <code>monitoring.scrape.podMonitor</code>, or per poller with
+the <code>podMonitor</code> key. Set <code>podMonitor.enabled: false</code> on a poller to skip its PodMonitor.</p>
+<p>The PodMonitor sets the Prometheus <code>instance</code> label to the poller name, for example <code>cluster-a</code>. This keeps <code>instance</code>
+the same when a pod restarts and gets a new IP address, so your graphs and queries keep working. To change it, add your
+own entry under <code>relabelings</code>, which runs after the chart's.</p>
+<p>Your Prometheus must select the PodMonitors. The chart labels them <code>release: kube-prometheus-stack</code>. Find the label your
+Prometheus expects:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>prometheus<span class="w"> </span>--all-namespaces<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A3<span class="w"> </span>podMonitorSelector
+</code></pre></div>
+<p>If it shows another value, set the label to match:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>prometheus-label.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">monitoring:</span>
+<span class="s">  scrape:</span>
+<span class="s">    podMonitor:</span>
+<span class="s">      labels:</span>
+<span class="s">        release: &lt;your-prometheus-release&gt;</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>prometheus-label.yaml
+</code></pre></div>
+<p>Or tell kube-prometheus-stack to select every PodMonitor:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>kube-prometheus-stack<span class="w"> </span>prometheus-community/kube-prometheus-stack<span class="w"> </span>--namespace<span class="w"> </span>monitoring<span class="w"> </span>--reuse-values<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues<span class="o">=</span><span class="nb">false</span>
+</code></pre></div>
+<details class="note">
+<summary>Admin service discovery (optional)</summary>
+<p>Instead of PodMonitors, you can let pollers register with a small <code>admin</code> pod that Prometheus reads using
+<a href="../../prometheus-exporter/#prometheus-http-service-discovery">HTTP service discovery</a>. New and removed pollers are
+picked up without touching Prometheus. Enable one or the other, not both.</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>admin-sd.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">monitoring:</span>
+<span class="s">  scrape:</span>
+<span class="s">    adminSD:</span>
+<span class="s">      enabled: true</span>
+<span class="s">    podMonitor:</span>
+<span class="s">      enabled: false</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>admin-sd.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>pods,svc<span class="w"> </span>--namespace<span class="w"> </span>harvest
+</code></pre></div>
+<p>The chart creates the <code>admin</code> pod, a headless Service and a <code>ScrapeConfig</code>. It also adds the settings pollers need to
+find the admin pod to the generated <code>harvest.yml</code>, see
+<a href="../../prometheus-exporter/#pollers-that-run-on-a-different-host-than-the-sd-node-heart_beat_url"><code>heart_beat_url</code></a>.
+The ScrapeConfig is labeled <code>release: kube-prometheus-stack</code>, change it with <code>monitoring.scrape.adminSD.labels</code> in the
+same way as above. It also sets the <code>instance</code> label to the poller name, the same as the PodMonitor does.</p>
+<p>Check which pollers registered. Prometheus refreshes the list about once a minute, so allow a few minutes after an
+install or restart:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>svc/harvest-harvest-admin-sd<span class="w"> </span><span class="m">8887</span>:8887
+</code></pre></div>
+<p>In another terminal:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8887/api/v1/sd
+</code></pre></div>
+<p>To go back to PodMonitors, upgrade without <code>admin-sd.yaml</code>.</p>
+</details>
+<details class="note">
+<summary>Basic authentication for admin service discovery (optional)</summary>
+<p>To protect the list with basic authentication, set <code>Admin.httpsd.auth_basic</code> and give the password to the admin pod,
+every poller, and Prometheus. The Secret must be in the <code>harvest</code> namespace:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>sd-credentials<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">username</span><span class="o">=</span>sd<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'&lt;sd-password&gt;'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>admin-auth.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">harvestConfig:</span>
+<span class="s">  Admin:</span>
+<span class="s">    httpsd:</span>
+<span class="s">      listen: :8887</span>
+<span class="s">      auth_basic:</span>
+<span class="s">        username: sd</span>
+<span class="s">        password: ${SD_PASSWORD}</span>
+<span class="s">poller:</span>
+<span class="s">  extraEnvVars:               # every poller pod</span>
+<span class="s">    - name: SD_PASSWORD</span>
+<span class="s">      valueFrom:</span>
+<span class="s">        secretKeyRef: {name: sd-credentials, key: password}</span>
+<span class="s">admin:</span>
+<span class="s">  extraEnvVars:               # the admin pod</span>
+<span class="s">    - name: SD_PASSWORD</span>
+<span class="s">      valueFrom:</span>
+<span class="s">        secretKeyRef: {name: sd-credentials, key: password}</span>
+<span class="s">monitoring:</span>
+<span class="s">  scrape:</span>
+<span class="s">    adminSD:</span>
+<span class="s">      httpSDConfig:           # Prometheus</span>
+<span class="s">        basicAuth:</span>
+<span class="s">          username: {name: sd-credentials, key: username}</span>
+<span class="s">          password: {name: sd-credentials, key: password}</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>admin-sd.yaml<span class="w"> </span>--values<span class="w"> </span>admin-auth.yaml
+</code></pre></div>
+<p>Check the list with the same username and password. Start a port-forward to the admin Service:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>svc/harvest-harvest-admin-sd<span class="w"> </span><span class="m">8887</span>:8887
+</code></pre></div>
+<p>In another terminal:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>-u<span class="w"> </span>sd:&lt;sd-password&gt;<span class="w"> </span>http://localhost:8887/api/v1/sd
+</code></pre></div>
+<p>Without <code>-u</code> the admin pod returns <code>401</code>.</p>
+<p>A poller without the password sends its heartbeat with empty credentials, so the admin pod rejects it and the poller is
+missing from the list.</p>
+</details>
+<details class="note">
+<summary>TLS for admin service discovery (optional)</summary>
+<p>To serve the list over https, the admin pod needs a certificate and key. Every poller needs the certificate too: it
+trusts the admin pod with it, and a poller exits at startup if the file is missing. Prometheus needs the certificate
+as its CA. The certificate must name the admin Service, <code>&lt;release&gt;-harvest-admin-sd.&lt;namespace&gt;.svc</code>, in its
+subject alternative names. With the release <code>harvest</code> in the namespace <code>harvest</code> that is
+<code>harvest-harvest-admin-sd.harvest.svc</code>. Harvest needs a <a href="../../prometheus-exporter/#harvest-http-service-discovery-options">TLS 1.3 certificate</a>.
+This creates a self-signed one and stores it in a Secret:</p>
+<div class="highlight"><pre><span></span><code>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-newkey<span class="w"> </span>ec<span class="w"> </span>-pkeyopt<span class="w"> </span>ec_paramgen_curve:prime256v1<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span><span class="m">365</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-keyout<span class="w"> </span>tls.key<span class="w"> </span>-out<span class="w"> </span>tls.crt<span class="w"> </span>-subj<span class="w"> </span><span class="s2">"/CN=harvest-harvest-admin-sd"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-addext<span class="w"> </span><span class="s2">"subjectAltName=DNS:harvest-harvest-admin-sd.harvest.svc"</span>
+
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>sd-tls<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>tls.crt<span class="o">=</span>tls.crt<span class="w"> </span>--from-file<span class="o">=</span>tls.key<span class="o">=</span>tls.key
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>admin-tls.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">harvestConfig:</span>
+<span class="s">  Admin:</span>
+<span class="s">    httpsd:</span>
+<span class="s">      tls:</span>
+<span class="s">        cert_file: /opt/harvest/sd-tls/tls.crt</span>
+<span class="s">        key_file: /opt/harvest/sd-tls/tls.key</span>
+<span class="s">admin:</span>
+<span class="s">  extraVolumes:               # the admin pod gets the certificate and the key</span>
+<span class="s">    - name: sd-tls</span>
+<span class="s">      secret:</span>
+<span class="s">        secretName: sd-tls</span>
+<span class="s">  extraVolumeMounts:</span>
+<span class="s">    - name: sd-tls</span>
+<span class="s">      mountPath: /opt/harvest/sd-tls</span>
+<span class="s">      readOnly: true</span>
+<span class="s">poller:</span>
+<span class="s">  extraVolumes:               # every poller gets the certificate only</span>
+<span class="s">    - name: sd-tls</span>
+<span class="s">      secret:</span>
+<span class="s">        secretName: sd-tls</span>
+<span class="s">        items:</span>
+<span class="s">          - key: tls.crt</span>
+<span class="s">            path: tls.crt</span>
+<span class="s">  extraVolumeMounts:</span>
+<span class="s">    - name: sd-tls</span>
+<span class="s">      mountPath: /opt/harvest/sd-tls</span>
+<span class="s">      readOnly: true</span>
+<span class="s">monitoring:</span>
+<span class="s">  scrape:</span>
+<span class="s">    adminSD:</span>
+<span class="s">      httpSDConfig:           # Prometheus</span>
+<span class="s">        tlsConfig:</span>
+<span class="s">          ca:</span>
+<span class="s">            secret: {name: sd-tls, key: tls.crt}</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>admin-sd.yaml<span class="w"> </span>--values<span class="w"> </span>admin-tls.yaml
+</code></pre></div>
+<p>The chart switches the heartbeat URL and the ScrapeConfig URL to <code>https</code> when <code>cert_file</code> is set. Add <code>admin-auth.yaml</code>
+to the command if you also use basic authentication. Check the list. Start a port-forward to the admin Service:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>svc/harvest-harvest-admin-sd<span class="w"> </span><span class="m">8887</span>:8887
+</code></pre></div>
+<p>In another terminal:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>--cacert<span class="w"> </span>tls.crt<span class="w"> </span>--resolve<span class="w"> </span>harvest-harvest-admin-sd.harvest.svc:8887:127.0.0.1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://harvest-harvest-admin-sd.harvest.svc:8887/api/v1/sd
+</code></pre></div>
+</details>
+<details class="note">
+<summary>No Prometheus Operator (optional)</summary>
+<p>Turn both off. The chart then creates only the pollers, and you point Prometheus at the pods yourself.</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>no-operator.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">monitoring:</span>
+<span class="s">  scrape:</span>
+<span class="s">    podMonitor:</span>
+<span class="s">      enabled: false</span>
+<span class="s">    adminSD:</span>
+<span class="s">      enabled: false</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>no-operator.yaml
+</code></pre></div>
+<p>Every pod serves metrics on its container port named <code>http</code> (default 12990) at <code>/metrics</code>. In plain Prometheus, discover
+them with <code>kubernetes_sd_configs</code> of role <code>pod</code> and keep the ones labeled <code>app.kubernetes.io/name: harvest</code>.</p>
+</details>
+<h3 id="dashboards">Dashboards<a class="headerlink" href="#dashboards" title="Permanent link">&para;</a></h3>
+<p>The chart does not install Grafana dashboards. Import the dashboards from the <code>grafana/dashboards</code> directory of the
+Harvest release, see <a href="../../quickstart/#11-import-grafana-dashboards">Import Grafana dashboards</a>.</p>
+<h2 id="managing-clusters">Managing clusters<a class="headerlink" href="#managing-clusters" title="Permanent link">&para;</a></h2>
+<p>Everything is declarative: describe the clusters you want, then run <code>helm upgrade</code>. Helm creates, updates or deletes
+the pollers to match.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Helm does not remember which <code>--values</code> files you used. Pass the same ones on every <code>helm upgrade</code>. Without them
+the release goes back to the chart defaults and your pollers are removed. See what is applied with
+<code>helm get values harvest --namespace harvest</code>.</p>
+</div>
+<h3 id="add-a-cluster">Add a cluster<a class="headerlink" href="#add-a-cluster" title="Permanent link">&para;</a></h3>
+<p>Create its Secret, describe the cluster in a new file, and upgrade. Replace the password and the two marked values:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>cluster-b-credentials<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'&lt;ontap-password&gt;'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>cluster-b.yaml<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">harvestConfig:</span>
+<span class="s">  Pollers:</span>
+<span class="s">    cluster-b:</span>
+<span class="s">      datacenter: DC-02</span>
+<span class="s">      addr: cluster-b.example.com       # &lt;====== your cluster address</span>
+<span class="s">      username: harvest                 # &lt;====== your username</span>
+<span class="s">      password: ${CLUSTER_B_PASSWORD}</span>
+<span class="s">      collectors:</span>
+<span class="s">        - Rest</span>
+<span class="s">        - RestPerf</span>
+<span class="s">      extraEnvVars:</span>
+<span class="s">        - name: CLUSTER_B_PASSWORD</span>
+<span class="s">          valueFrom:</span>
+<span class="s">            secretKeyRef:</span>
+<span class="s">              name: cluster-b-credentials</span>
+<span class="s">              key: password</span>
+<span class="s">EOF</span>
+
+helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--values<span class="w"> </span>values.yaml<span class="w"> </span>--values<span class="w"> </span>cluster-b.yaml
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>harvest
+</code></pre></div>
+<p>The pod of <code>cluster-b</code> is created, and the pod of <code>cluster-a</code> is not restarted. E-Series, StorageGRID and other systems
+are added the same way. Set <code>collectors</code> as described in the <a href="../../configure-harvest-basic/">Harvest configuration</a>,
+for example <code>[Eseries, EseriesPerf]</code> for E-Series.</p>
+<h3 id="change-a-cluster">Change a cluster<a class="headerlink" href="#change-a-cluster" title="Permanent link">&para;</a></h3>
+<p>Edit the cluster's entry, for example change <code>datacenter</code> in <code>values.yaml</code>, then upgrade:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+</code></pre></div>
+<p>Add a <code>--values</code> flag for every other file you use, such as <code>--values cluster-b.yaml</code>.</p>
+<p>Only the pod of the cluster you changed restarts. Changing a shared section (<code>Exporters</code>, <code>Defaults</code>, <code>Admin</code>)
+restarts all pollers.</p>
+<h3 id="remove-a-cluster">Remove a cluster<a class="headerlink" href="#remove-a-cluster" title="Permanent link">&para;</a></h3>
+<p>Leave the cluster's file out of the next upgrade. The pod and PodMonitor are deleted. The Secret is not managed by the
+chart, so delete it yourself:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+
+kubectl<span class="w"> </span>delete<span class="w"> </span>secret<span class="w"> </span>cluster-b-credentials<span class="w"> </span>--namespace<span class="w"> </span>harvest
+</code></pre></div>
+<p>If the cluster is in <code>values.yaml</code>, delete its entry there instead.</p>
+<h3 id="poller-names-and-ports">Poller names and ports<a class="headerlink" href="#poller-names-and-ports" title="Permanent link">&para;</a></h3>
+<ul>
+<li>A poller name may contain upper case letters and underscores (<code>AFF250</code>, <code>Dc_1</code>). Kubernetes object names use a lower
+  case form (<code>dc-1</code>), <code>--poller</code> and <code>harvest.yml</code> keep the name you wrote.</li>
+<li>Two names that become the same Kubernetes name (<code>Dc_1</code> and <code>dc-1</code>), or a name that makes the object name longer than
+  63 characters, fail <code>helm install</code> with a message that names the poller.</li>
+<li><code>prom_port</code> is optional. Each poller is in its own pod, so they can all use <code>poller.defaultPromPort</code> (12990).</li>
+</ul>
+<h2 id="upgrades">Upgrades<a class="headerlink" href="#upgrades" title="Permanent link">&para;</a></h2>
+<p>To upgrade Harvest, run <code>helm upgrade</code> with the newer release's chart version and the same <code>--values</code> files. Replace
+<code>&lt;version&gt;</code> with the release you are upgrading to:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span>&lt;version&gt;<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml
+helm<span class="w"> </span><span class="nb">history</span><span class="w"> </span>harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest
+</code></pre></div>
+<p>Each poller uses the <code>Recreate</code> strategy, so the old pod stops before the new one starts and a poller is never running
+twice, which would duplicate metrics. Expect a short gap in metrics when a poller restarts.</p>
+<h3 id="update-the-harvest-image">Update the Harvest image<a class="headerlink" href="#update-the-harvest-image" title="Permanent link">&para;</a></h3>
+<p>By default the chart runs the Harvest release in its <code>appVersion</code>, and the pods stay on that version until you upgrade
+to a newer chart. To run another image with the same chart, set its tag. Release tags end in <code>-1</code>, for example
+<code>26.08.0-1</code>:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>harvest<span class="w"> </span>oci://ghcr.io/netapp/charts/harvest<span class="w"> </span>--version<span class="w"> </span><span class="m">26</span>.11.0<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>image.tag<span class="o">=</span>&lt;release-tag&gt;
+</code></pre></div>
+<p>To see the image the pods run:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>-o<span class="w"> </span><span class="s1">'custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image,IMAGEID:.status.containerStatuses[0].imageID'</span>
+</code></pre></div>
+<p>If you use a moving tag (<code>latest</code> or <code>nightly</code>), add <code>--set image.pullPolicy=Always</code> as well. The pods then pull the tag
+every time they start, so they can run different versions. To move all of them to the newest image, restart the pods:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/instance<span class="o">=</span>harvest
+</code></pre></div>
+<p>To go back to the chart's version, run <code>helm upgrade</code> without the <code>--set image.*</code> flags.</p>
+<h3 id="roll-back">Roll back<a class="headerlink" href="#roll-back" title="Permanent link">&para;</a></h3>
+<p>To roll back to the previous revision, or to one from <code>helm history</code>:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>rollback<span class="w"> </span>harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest
+helm<span class="w"> </span>rollback<span class="w"> </span>harvest<span class="w"> </span><span class="m">1</span><span class="w"> </span>--namespace<span class="w"> </span>harvest
+</code></pre></div>
+<p>A rollback restores your values, including the image tag. The exception is a moving tag such as <code>latest</code> or <code>nightly</code>: a
+rollback keeps the tag but not the image behind it. To run an older version, run <code>helm upgrade</code> with that release's
+<code>--version</code>.</p>
+<h2 id="argo-cd">Argo CD<a class="headerlink" href="#argo-cd" title="Permanent link">&para;</a></h2>
+<p>Argo CD can install the chart straight from the registry. Register the registry once as an OCI Helm repository:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">netapp-charts</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">argocd</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">argocd.argoproj.io/secret-type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">repository</span>
+<span class="nt">stringData</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">helm</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">netapp-charts</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/netapp/charts</span>
+<span class="w">  </span><span class="nt">enableOCI</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
+</code></pre></div>
+<p>Then create an Application for Harvest. Put the contents of your <code>values.yaml</code> under <code>values</code>. The pods read their
+passwords from Secrets, so first create the <code>harvest</code> namespace and the Secrets as in the <a href="#quick-start">quick start</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">argoproj.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Application</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">argocd</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">source</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">repoURL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/netapp/charts</span>
+<span class="w">    </span><span class="nt">chart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">    </span><span class="nt">targetRevision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">26.11.0</span><span class="w">             </span><span class="c1"># &lt;====== the Harvest release to run</span>
+<span class="w">    </span><span class="nt">helm</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">releaseName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">      </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">harvestConfig:</span>
+<span class="w">          </span><span class="no">Pollers:</span>
+<span class="w">            </span><span class="no">cluster-a:</span>
+<span class="w">              </span><span class="no">...</span>
+<span class="w">  </span><span class="nt">destination</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://kubernetes.default.svc</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+</code></pre></div>
+<p>To upgrade Harvest, change <code>targetRevision</code> to the newer release.</p>
+<h2 id="install-from-source">Install from source<a class="headerlink" href="#install-from-source" title="Permanent link">&para;</a></h2>
+<p>Release candidates and nightly builds do not publish a chart. To try one, or to change the chart, install it from the
+Harvest repository. <code>main</code> has the newest chart. Use it with the <code>nightly</code> image, and pull the image every time a pod
+starts:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/NetApp/harvest.git
+<span class="nb">cd</span><span class="w"> </span>harvest
+helm<span class="w"> </span>install<span class="w"> </span>harvest<span class="w"> </span>./deploy/helm/harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>--values<span class="w"> </span>values.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>image.tag<span class="o">=</span>nightly<span class="w"> </span>--set<span class="w"> </span>image.pullPolicy<span class="o">=</span>Always
+</code></pre></div>
+<p>The chart on <code>main</code> can change before the next release, so use a published chart for production. To start from the
+chart of a release instead, clone its tag, for example <code>--branch v26.11.0</code>, and leave out both <code>--set</code> flags. The
+chart at a release tag runs that release's image.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<p>Start with the pods and their logs. Harvest logs to the container's standard error.</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>harvest
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/name<span class="o">=</span>harvest
+kubectl<span class="w"> </span>logs<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>deploy/harvest-harvest-poller-cluster-a
+</code></pre></div>
+<p>The image is a distroless <code>debug</code> image, so there is a shell if you need one:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>--namespace<span class="w"> </span>harvest<span class="w"> </span>deploy/harvest-harvest-poller-cluster-a<span class="w"> </span>--<span class="w"> </span>sh
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause and fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>helm install</code> fails with <code>invalid Kubernetes name</code></td>
+<td>A poller name makes the object name longer than 63 characters. Shorten the name or set <code>fullnameOverride</code></td>
+</tr>
+<tr>
+<td><code>helm install</code> fails with <code>both map to the Kubernetes name</code></td>
+<td>Two poller names only differ by case or punctuation, rename one</td>
+</tr>
+<tr>
+<td><code>helm install</code> fails with <code>invalid prom_port</code></td>
+<td><code>prom_port</code> is not a number from 1 to 65535</td>
+</tr>
+<tr>
+<td><code>helm install</code> cannot pull the chart: <code>unauthorized</code> or <code>denied</code></td>
+<td>The chart is public, so this is usually an old ghcr.io login. Run <code>helm registry logout ghcr.io</code> and try again. Check the chart version with <code>helm show chart</code></td>
+</tr>
+<tr>
+<td>Pod <code>CrashLoopBackOff</code>, log shows an authentication error</td>
+<td>Wrong user or password, or the Secret or key does not exist. Check <code>kubectl describe pod</code> for <code>secret ... not found</code></td>
+</tr>
+<tr>
+<td>Pod running, log shows connection timeouts to the system</td>
+<td>The pod cannot reach the management address. Test from the namespace with <code>kubectl run -it --rm curl --image=curlimages/curl -- curl -vk https://&lt;addr&gt;</code>; check NetworkPolicies and egress proxies</td>
+</tr>
+<tr>
+<td>Pod <code>ImagePullBackOff</code> or <code>ErrImagePull</code></td>
+<td>The tag does not exist (release tags end in <code>-1</code>, for example <code>26.11.0-1</code>), or the registry needs <code>image.pullSecrets</code>. Check <code>kubectl describe pod</code></td>
+</tr>
+<tr>
+<td>Pod is <code>Running</code> but not <code>Ready</code></td>
+<td>The metrics port is not open yet. The startup probe allows about a minute; look at the poller log for errors</td>
+</tr>
+<tr>
+<td>TLS errors such as <code>x509: certificate signed by unknown authority</code></td>
+<td>Mount your CA bundle and set <code>ca_cert</code>, or set <code>use_insecure_tls: true</code> under <code>harvestConfig.Defaults</code> as in the quick start</td>
+</tr>
+<tr>
+<td>Poller is <code>UP</code> in Kubernetes but there is no Prometheus target</td>
+<td>Prometheus does not select the PodMonitor. Compare <code>kubectl get podmonitor -n harvest --show-labels</code> with the Prometheus <code>podMonitorSelector</code></td>
+</tr>
+<tr>
+<td><code>up</code> is <code>1</code> but <code>count({datacenter="DC-01"})</code> returns nothing</td>
+<td>The poller is scraped but has not collected data yet, or cannot reach the system. Wait a minute, then look at the poller log for errors</td>
+</tr>
+<tr>
+<td>Admin service discovery: <code>/api/v1/sd</code> returns <code>[]</code></td>
+<td><code>heart_beat_url</code> is missing or wrong, or the poller cannot reach the admin Service. Look for <code>Failed connecting to admin node</code> in the poller log</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uninstall">Uninstall<a class="headerlink" href="#uninstall" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>harvest<span class="w"> </span>--namespace<span class="w"> </span>harvest
+kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>harvest
+</code></pre></div>
+<p>This deletes the pods, ConfigMaps, PodMonitors and the admin resources. Deleting the namespace also deletes the Secrets
+you created in it.</p>
+<p>If you installed Prometheus above and no longer need it:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>kube-prometheus-stack<span class="w"> </span>--namespace<span class="w"> </span>monitoring
+kubectl<span class="w"> </span>delete<span class="w"> </span>namespace<span class="w"> </span>monitoring
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; NetApp
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/blob/main/SUPPORT.md#getting-help" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NetApp/harvest/discussions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+        <script src="../../javascripts/open-dashboards.js"></script>
+      
+    
+  </body>
+</html>
