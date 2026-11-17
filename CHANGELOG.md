@@ -9,7 +9,10 @@
 
 - :rocket: **E-Series enhancements** — login banner support and NTP/DNS server details collection
 
-- :medal_sports: **StatPerf collector improvement** — Parse wrapped array counter names, Match array counters to their base elements, Limit collected array elements
+- :medal_sports: **StatPerf collector improvement**:
+  - Added support for array performance metrics whose names span multiple lines in the output.
+  - Added support for accurate reporting of array performance metrics calculated against a related array metric.
+  - Added the ability to limit array performance metrics to the elements you choose, reducing the number of metrics exported.
 
 - :lock: **Prometheus exporter mTLS support** — the exporter can now accept mutual TLS configuration and its settings are documented for secure scrape setups. Doc: https://netapp.github.io/harvest/26.11/prometheus-exporter/#prometheus-exporter-and-mutual-tls
 
@@ -21,11 +24,9 @@
 
 - Added a Helm deployment guide and clarified Prometheus exporter mTLS settings. ([#4506](https://github.com/NetApp/harvest/pull/4506), [#4556](https://github.com/NetApp/harvest/pull/4556))
 
-- Documented E-Series MEL alert rules and runbooks, and explained why the `StatPerf wafl_flexlog` template remains disabled. ([#4498](https://github.com/NetApp/harvest/pull/4498), [#4514](https://github.com/NetApp/harvest/pull/4514), [#4534](https://github.com/NetApp/harvest/pull/4534))
+- Documented E-Series MEL alert rules and runbooks. ([#4498](https://github.com/NetApp/harvest/pull/4498), [#4514](https://github.com/NetApp/harvest/pull/4514))
 
 - Documented StorageGRID token behavior. ([#4538](https://github.com/NetApp/harvest/pull/4538))
-
-- Documented why the StatPerf `wafl_flexlog` template is disabled [#4534](https://github.com/NetApp/harvest/pull/4534)
 
 ## Breaking Changes & Deprecations
 
