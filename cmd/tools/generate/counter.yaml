@@ -2836,3 +2836,39 @@ counters:
 
   - Name: iscsi_lif_write_data
     Description: Performance metric for ISCSI LIF write I/O operations in bytes per second.
+
+  - Name: web_node_http_port
+    Description: HTTP port of the web services on the node.
+
+  - Name: web_node_https_port
+    Description: HTTPS port of the web services on the node.
+
+  - Name: web_cluster_csrf_token_concurrent_limit
+    Description: Maximum number of concurrent CSRF tokens.
+
+  - Name: web_cluster_csrf_token_idle_timeout
+    Description: Time for which an unused CSRF token is retained, in seconds.
+
+  - Name: web_cluster_csrf_token_max_timeout
+    Description: Maximum time a CSRF token is retained, regardless of usage, in seconds.
+
+  - Name: web_cluster_hsts_max_age
+    Description: HTTP Strict Transport Security (HSTS) max-age value in seconds. Available in ONTAP 9.17 and later.
+
+  - Name: web_cluster_http_port
+    Description: HTTP port for cluster-level web services.
+
+  - Name: web_cluster_https_port
+    Description: HTTPS port for cluster-level web services.
+
+  - Name: domain_tunnel_labels
+    Description: The SVM configured as the Active Directory proxy (domain tunnel) for cluster authentication. Not exported when no AD proxy is configured.
+
+  - Name: firewall_labels
+    Description: Indicates whether the firewall service is enabled on each node. Beginning with ONTAP 9.10.1, the ports the firewall allows are set by LIF service policies, not by this setting.
+
+  - Name: web_cluster_labels
+    Description: Configuration of the cluster-level web services. The hsts_enabled label is empty before ONTAP 9.17.
+
+  - Name: web_node_labels
+    Description: Status and configuration of the web services on each node. The lif_service_policy_enforced label requires ONTAP 9.15.1 or later.

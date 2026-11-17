@@ -1,0 +1,19 @@
+name:             WebNode
+query:            api/private/cli/system/services/web/node
+object:           web_node
+
+counters:
+  - ^^node          => node
+  - ^external       => external
+  - ^http_enabled   => http_enabled
+  - ^status         => status
+  - http_port       => http_port
+  - https_port      => https_port
+
+export_options:
+  instance_keys:
+    - node
+  instance_labels:
+    - external
+    - http_enabled
+    - status

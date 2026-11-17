@@ -21,9 +21,11 @@ objects:
   ClusterSchedule:             clusterschedule.yaml
   ClusterSoftware:             clustersoftware.yaml
   Disk:                        disk.yaml
+#  DomainTunnel:                domain_tunnel.yaml
   EmsDestination:              ems_destination.yaml
   EthernetSwitchPort:          ethernet_switch_port.yaml
 #  ExportRule:                  exports.yaml
+  Firewall:                    firewall.yaml
   FlexCache:                   flexcache.yaml
   FCP:                         fcp.yaml
   FRU:                         fru.yaml
@@ -74,3 +76,5 @@ objects:
 #  VolumeAnalytics:             volume_analytics.yaml
   VolumeSnaplock:              volume_snaplock.yaml
   Vscan:                       vscan.yaml
+  WebCluster:                  web_cluster.yaml
+  WebNode:                     web_node.yaml

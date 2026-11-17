@@ -450,8 +450,11 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	r.Logger.Debug("Fetching data", slog.String("href", r.Prop.Href))
 	startTime := time.Now()
 	if err := rest.FetchAllStream(r.Client, &r.RequestMetadata, r.Prop.Href, processBatch); err != nil {
-		_, err2 := r.handleError(err)
-		return nil, err2
+		// handleError returns nil when the error means there is nothing to collect, e.g., the feature is not
+		// configured. That is not a poll failure, so fall through to remove old instances and export an empty matrix.
+		if _, err2 := r.handleError(err); err2 != nil {
+			return nil, err2
+		}
 	}
 	apiD += time.Since(startTime)
 
@@ -801,6 +804,11 @@ func (r *Rest) GetRestData(href string, headers ...map[string]string) ([]gjson.R
 }
 
 func (r *Rest) handleError(err error) ([]gjson.Result, error) {
+	if errs.IsRestErr(err, errs.EntryNotExist) {
+		// Some APIs return "entry doesn't exist" instead of an empty collection when the feature is not configured,
+		// e.g., security/authentication/cluster/ad-proxy. Treat it as no records.
+		return nil, nil
+	}
 	if errs.IsRestErr(err, errs.MetroClusterNotConfigured) {
 		// MetroCluster is not configured, return ErrMetroClusterNotConfigured
 		return nil, errors.Join(errs.ErrAPIRequestRejected, errs.New(errs.ErrMetroClusterNotConfigured, err.Error()))

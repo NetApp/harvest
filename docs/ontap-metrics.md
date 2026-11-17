@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Oct-22
+Creation Date : 2026-Nov-17
 ONTAP Version: 9.16.1
 ```
 
@@ -2640,6 +2640,16 @@ Number of disk write operations initiated each second for storing data or metada
 
 
 
+### domain_tunnel_labels
+
+The SVM configured as the Active Directory proxy (domain tunnel) for cluster authentication. Not exported when no AD proxy is configured.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/security/authentication/cluster/ad-proxy` | `Harvest generated` | conf/rest/9.12.0/domain_tunnel.yaml |
+
+
+
 ### ems_destination_labels
 
 This metric provides information about EmsDestination
@@ -4550,6 +4560,24 @@ The `fcvi_soft_reset_count` metric is visualized in the following Grafana dashbo
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: MetroCluster | MetroCluster FCVI | timeseries | [Soft  Reset Count](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=112) |
+///
+
+
+
+### firewall_labels
+
+Indicates whether the firewall service is enabled on each node. Beginning with ONTAP 9.10.1, the ports the firewall allows are set by LIF service policies, not by this setting.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/system/services/firewall` | `Harvest generated` | conf/rest/9.12.0/firewall.yaml |
+
+The `firewall_labels` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Web Services and Firewall | table | [Web Services and Firewall](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=230) |
 ///
 
 
@@ -24799,6 +24827,122 @@ The `wafl_total_cp_util` metric is visualized in the following Grafana dashboard
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Node | Backend | timeseries | [System Utilization](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=41) |
+///
+
+
+
+### web_cluster_csrf_token_concurrent_limit
+
+Maximum number of concurrent CSRF tokens.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/web` | `csrf.token.concurrent_limit` | conf/rest/9.12.0/web_cluster.yaml |
+
+
+
+### web_cluster_csrf_token_idle_timeout
+
+Time for which an unused CSRF token is retained, in seconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/web` | `csrf.token.idle_timeout` | conf/rest/9.12.0/web_cluster.yaml |
+
+
+
+### web_cluster_csrf_token_max_timeout
+
+Maximum time a CSRF token is retained, regardless of usage, in seconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/web` | `csrf.token.max_timeout` | conf/rest/9.12.0/web_cluster.yaml |
+
+
+
+### web_cluster_hsts_max_age
+
+HTTP Strict Transport Security (HSTS) max-age value in seconds. Available in ONTAP 9.17 and later.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/web` | `hsts.max_age` | conf/rest/9.12.0/web_cluster.yaml |
+
+
+
+### web_cluster_http_port
+
+HTTP port for cluster-level web services.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/web` | `http_port` | conf/rest/9.12.0/web_cluster.yaml |
+
+
+
+### web_cluster_https_port
+
+HTTPS port for cluster-level web services.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/web` | `https_port` | conf/rest/9.12.0/web_cluster.yaml |
+
+
+
+### web_cluster_labels
+
+Configuration of the cluster-level web services. The hsts_enabled label is empty before ONTAP 9.17.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/web` | `Harvest generated` | conf/rest/9.12.0/web_cluster.yaml |
+
+The `web_cluster_labels` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Web Services and Firewall | table | [Web Services and Firewall](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=230) |
+///
+
+
+
+### web_node_http_port
+
+HTTP port of the web services on the node.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/system/services/web/node` | `http_port` | conf/rest/9.15.0/web_node.yaml |
+
+
+
+### web_node_https_port
+
+HTTPS port of the web services on the node.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/system/services/web/node` | `https_port` | conf/rest/9.15.0/web_node.yaml |
+
+
+
+### web_node_labels
+
+Status and configuration of the web services on each node. The lif_service_policy_enforced label requires ONTAP 9.15.1 or later.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/system/services/web/node` | `Harvest generated` | conf/rest/9.15.0/web_node.yaml |
+
+The `web_node_labels` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Web Services and Firewall | table | [Web Services and Firewall](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=230) |
 ///
 
 
