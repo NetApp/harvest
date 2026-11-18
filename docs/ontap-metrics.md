@@ -24837,7 +24837,7 @@ Maximum number of concurrent CSRF tokens.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/web` | `csrf.token.concurrent_limit` | conf/rest/9.12.0/web_cluster.yaml |
+| REST | `api/cluster/web` | `csrf.token.concurrent_limit` | conf/rest/9.17.0/web_cluster.yaml |
 
 
 
@@ -24847,7 +24847,7 @@ Time for which an unused CSRF token is retained, in seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/web` | `csrf.token.idle_timeout` | conf/rest/9.12.0/web_cluster.yaml |
+| REST | `api/cluster/web` | `csrf.token.idle_timeout` | conf/rest/9.17.0/web_cluster.yaml |
 
 
 
@@ -24857,7 +24857,7 @@ Maximum time a CSRF token is retained, regardless of usage, in seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/web` | `csrf.token.max_timeout` | conf/rest/9.12.0/web_cluster.yaml |
+| REST | `api/cluster/web` | `csrf.token.max_timeout` | conf/rest/9.17.0/web_cluster.yaml |
 
 
 
@@ -24867,7 +24867,7 @@ HTTP Strict Transport Security (HSTS) max-age value in seconds. Available in ONT
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/web` | `hsts.max_age` | conf/rest/9.12.0/web_cluster.yaml |
+| REST | `api/cluster/web` | `hsts.max_age` | conf/rest/9.17.0/web_cluster.yaml |
 
 
 
@@ -24877,7 +24877,7 @@ HTTP port for cluster-level web services.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/web` | `http_port` | conf/rest/9.12.0/web_cluster.yaml |
+| REST | `api/cluster/web` | `http_port` | conf/rest/9.17.0/web_cluster.yaml |
 
 
 
@@ -24887,7 +24887,7 @@ HTTPS port for cluster-level web services.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/web` | `https_port` | conf/rest/9.12.0/web_cluster.yaml |
+| REST | `api/cluster/web` | `https_port` | conf/rest/9.17.0/web_cluster.yaml |
 
 
 
@@ -24897,7 +24897,7 @@ Configuration of the cluster-level web services. The hsts_enabled label is empty
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/web` | `Harvest generated` | conf/rest/9.12.0/web_cluster.yaml |
+| REST | `api/cluster/web` | `Harvest generated` | conf/rest/9.17.0/web_cluster.yaml |
 
 The `web_cluster_labels` metric is visualized in the following Grafana dashboards:
     

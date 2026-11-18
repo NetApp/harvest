@@ -34,6 +34,7 @@ var zapiCounterMap = map[string]struct{}{
 	"aggr_object_store_physical_used":        {},
 	"cluster_schedule_labels":                {},
 	"cluster_tags":                           {},
+	"firewall_labels":                        {},
 	"fpolicy_svm_failedop_notifications":     {},
 	"fru_status":                             {},
 	"igroup_labels":                          {},
@@ -57,6 +58,8 @@ var zapiCounterMap = map[string]struct{}{
 	"volume_num_compress_attempts":           {},
 	"volume_num_compress_fail":               {},
 	"volume_snaplock_labels":                 {},
+	"web_cluster_labels":                     {},
+	"web_node_labels":                        {},
 	// sar is experiencing high api time for ZapiPerf. The u2 cluster does not have fabricpool added for the collection of these counters. Remove the following once sar is capable of running ZapiPerf.
 	"volume_performance_tier_footprint":         {},
 	"volume_performance_tier_footprint_percent": {},
