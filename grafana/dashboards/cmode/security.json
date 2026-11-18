@@ -5515,7 +5515,7 @@
                           "from": 1,
                           "result": {
                             "index": 1,
-                            "text": "❌   Disabled on one or more nodes"
+                            "text": "❌   Disabled"
                           },
                           "to": 9999
                         },
@@ -5562,7 +5562,7 @@
                           "from": 1,
                           "result": {
                             "index": 2,
-                            "text": "❌   Not enforced on one or more nodes"
+                            "text": "❌   Not enforced"
                           },
                           "to": 9999
                         },
@@ -5625,7 +5625,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count by (datacenter, cluster) (\n      web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lif_service_policy_enforced=\"false\"}\n    )\n  or\n      count by (datacenter, cluster) (\n        web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lif_service_policy_enforced!=\"\"}\n      )\n    *\n      0\nor\n  count by (datacenter, cluster) (web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) * -1",
+              "expr": "count by (datacenter, cluster) (\n      web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lif_service_policy_enforced=\"false\"}\n    )\n  or\n      count by (datacenter, cluster) (\n        web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lif_service_policy_enforced!=\"\"}\n      )\n    *\n      0\nor\n  group by (datacenter, cluster) (web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) * -1",
               "format": "table",
               "hide": false,
               "instant": true,
