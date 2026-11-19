@@ -16133,6 +16133,439 @@ Minimum throughput defined by this policy. It is specified in terms of Mbps. 0 m
 
 
 
+### qos_queue_cpu_dblade_background_service_time
+
+The average CPU Dblade background service time per operation. This is the CPU service time for background operations done for this workload in the Dblade. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. The WAFL_CP workload performs disk write operations. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. The BACKGROUND_DELETE workload performs block deletions on disks. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. The RA_STRIPE_X workload performs read-ahead operations to improve disk read performance. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `cpu_dblade_background_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> array<br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `cpu_dblade_background_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+
+
+### qos_queue_cpu_dblade_residence_time
+
+The average CPU Dblade residence time per operation. This is the CPU service time plus the wait time for operations done for this workload in the Dblade. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `cpu_dblade_residence_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `cpu_dblade_residence_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_cpu_dblade_residence_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from backend](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=258) |
+///
+
+
+
+### qos_queue_cpu_dblade_util_service_time
+
+The average CPU Dblade utilization service time per operation. This is the CPU service time for operations done for this workload in the Dblade. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `cpu_dblade_util_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `cpu_dblade_util_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+
+
+### qos_queue_cpu_nblade_residence_time
+
+The average CPU Nblade residence time per operation. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `cpu_nblade_residence_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `cpu_nblade_residence_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_cpu_nblade_residence_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from frontend](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=257) |
+///
+
+
+
+### qos_queue_cpu_nblade_util_service_time
+
+The average CPU Nblade util service time per operation. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `cpu_nblade_util_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `cpu_nblade_util_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+
+
+### qos_queue_delay_avscan_wait_time
+
+The average op wait time per operation due to AntiVirus Scan. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_avscan_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_avscan_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_avscan_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from avscan](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=271) |
+///
+
+
+
+### qos_queue_delay_cloud_io_wait_time
+
+The average time spent per operation doing I/O in object store (Cloud).
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_cloud_io_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_cloud_io_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_cloud_io_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from cloud](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=267) |
+///
+
+
+
+### qos_queue_delay_cluster_interconnect_wait_time
+
+The average Cluster interconnect wait time per operation. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_cluster_interconnect_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_cluster_interconnect_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_cluster_interconnect_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from cluster](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=259) |
+///
+
+
+
+### qos_queue_delay_cop_num_wait
+
+This captures the number of times, ops are suspended/ delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work, aggregated cluster-wide. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded. Unlike the other dblade-origin counters in this object, this counter already has its own native visit count and is carried over unchanged as the base counter for delay_cop_wait_time below.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_cop_num_wait`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_cop_num_wait`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_cop_num_wait` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+///
+
+
+
+### qos_queue_delay_cop_wait_time
+
+This captures the average delay in ops which are suspended/delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_cop_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> delay_cop_num_wait | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_cop_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delay_cop_num_wait | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_cop_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from cop](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=272) |
+///
+
+
+
+### qos_queue_delay_disk_io_wait_time
+
+The average disk IO wait time per operation. This is the time spent waiting for a read from disk to complete for this workload. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_disk_io_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_disk_io_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_disk_io_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from disk](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=261) |
+///
+
+
+
+### qos_queue_delay_flexcache_ral_wait_time
+
+The average time spent per operation in RAL fetching from the remote volume for flexcache.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_flexcache_ral_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_flexcache_ral_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_flexcache_ral_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from flexcache_ral](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=269) |
+///
+
+
+
+### qos_queue_delay_flexcache_spinhi_wait_time
+
+The average time spent per operation in spinhi performing the remote op for flexcache.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_flexcache_spinhi_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_flexcache_spinhi_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_flexcache_spinhi_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from flexcache_spinhi](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=270) |
+///
+
+
+
+### qos_queue_delay_network_wait_time
+
+The average Network wait time per operation. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_network_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_network_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_network_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from network](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=262) |
+///
+
+
+
+### qos_queue_delay_nvlog_transfer_wait_time
+
+The average NVLog transfer wait time per operation. This is the time spent waiting for a dma transfer to local nvram and remote nvram for writes. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_nvlog_transfer_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_nvlog_transfer_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_nvlog_transfer_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from nvlog](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=263) |
+///
+
+
+
+### qos_queue_delay_qos_limit_wait_time
+
+The average QoS Limit wait time per operation. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_qos_limit_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_qos_limit_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_qos_limit_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from QoS throttle](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=265) |
+///
+
+
+
+### qos_queue_delay_qos_min_throughput_wait_time
+
+The average QoS wait time per operation for requests that were throttled so that some other workload could achieve its minimum throughput. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_qos_min_throughput_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_qos_min_throughput_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_qos_min_throughput_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from qos_min](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=266) |
+///
+
+
+
+### qos_queue_delay_sync_repl_wait_time
+
+The average time spent per operation in the secondary path for sync replication.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_sync_repl_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_sync_repl_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_sync_repl_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from sync_repl](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=268) |
+///
+
+
+
+### qos_queue_delay_wafl_response_wait_time
+
+The average time spent per operation in the WAFL Response queue.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_wafl_response_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_wafl_response_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_wafl_response_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from WAFL response](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=273) |
+///
+
+
+
+### qos_queue_delay_wafl_susp_cp_wait_time
+
+The average WAFL suspended cp wait time per operation. This is the time spent in WAFL waiting for a CP to complete for this workload. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_wafl_susp_cp_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_wafl_susp_cp_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_wafl_susp_cp_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from cp](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=260) |
+///
+
+
+
+### qos_queue_delay_wafl_susp_other_wait_time
+
+The average WAFL suspended other wait time per operation. This is the time spent in WAFL waiting for other suspend reasons to complete for this workload.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `delay_wafl_susp_other_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `delay_wafl_susp_other_wait_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_delay_wafl_susp_other_wait_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+| ONTAP: Workload | Latency Breakdown | timeseries | [Top $TopResources Workloads by Latency from WAFL suspend](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=264) |
+///
+
+
+
+### qos_queue_disk_hdd_background_service_time
+
+The average Disk HDD background service time per operation. This is the amount of time HDDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `disk_hdd_background_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> array<br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `disk_hdd_background_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+
+
+### qos_queue_disk_ssd_background_service_time
+
+The average disk SSD background service time per operation. This is the amount of time SSDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `disk_ssd_background_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> array<br><span class="key">Base:</span> iops_total | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `disk_ssd_background_service_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> iops_total | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+
+
+### qos_queue_iops_total
+
+This is a convenience counter: the scalar sum of iops[read] + iops[write] + iops[other]. It exists solely to serve as the base counter (denominator) for the scalar (and 4-element background-service-time) averaged counters below, none of which have a per-op-type breakdown of their own. iops itself is a 3-element array and cannot be used directly as a base counter for a scalar or differently-shaped average - only total_latency, which shares iops's exact 3-element shape, can divide against iops element-by-element. Typed CM_CNT_DELTA so clients can cook this counter themselves if they wish. A base counter's own declared type has no effect on the AVERAGE division, which always operates on raw sample deltas regardless of it.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| StatPerf | `workload_queue_combined` | `iops_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/statperf/9.20.1/workload_queue_combined.yaml |
+| ZapiPerf | `perf-object-get-instances workload_queue_combined` | `iops_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml |
+
+The `qos_queue_iops_total` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Latency Breakdown | timeseries | [Latency by Resources](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=256) |
+///
+
+
+
 ### qos_read_data
 
 This is the amount of data read in bytes per second from the filer by the workload.
