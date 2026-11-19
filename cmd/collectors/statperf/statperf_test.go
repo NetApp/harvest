@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
@@ -169,7 +170,7 @@ func TestStatPerf_pollData(t *testing.T) {
 			instances, err := getDataJSON(tt.pollInstance)
 			assert.Nil(t, err)
 
-			_, err = s.pollInstance(s.Matrix[s.Object], instances, 0)
+			_, err = s.pollInstance(s.Matrix[s.Object], instances, nil, 0)
 			assert.Nil(t, err)
 
 			data, err := getDataJSON(tt.pollDataPath1)
@@ -293,7 +294,7 @@ func pollFlexlog(t *testing.T, s *StatPerf) *matrix.Matrix {
 
 	instances, err := getDataJSON("testdata/flexlog/instances.txt")
 	assert.Nil(t, err)
-	_, err = s.pollInstance(s.Matrix[s.Object], instances, 0)
+	_, err = s.pollInstance(s.Matrix[s.Object], instances, nil, 0)
 	assert.Nil(t, err)
 
 	var got map[string]*matrix.Matrix
@@ -639,4 +640,152 @@ func TestParseRows_MultiLineInstanceUUID(t *testing.T) {
 	assert.Equal(t, groups[1]["instance_uuid"], "sa-tme-flexpod-a800-rdma-02:kernel:NVM Mirror")
 	assert.Equal(t, groups[1]["node_name"], "sa-tme-flexpod-a800-rdma-02")
 	assert.Equal(t, groups[1]["write_throughput"], "629627001678")
+}
+
+func loadQosWorkloads(t *testing.T, path string) map[string]gjson.Result {
+	t.Helper()
+	content, err := os.ReadFile(path)
+	assert.Nil(t, err)
+	workloads := make(map[string]gjson.Result)
+	for line := range strings.SplitSeq(strings.TrimSpace(string(content)), "\n") {
+		r := gjson.Parse(line)
+		workloads[r.Get("uuid").ClonedString()] = r
+	}
+	return workloads
+}
+
+const (
+	wqUserspaceUUID = "8ab02089-df7c-11f1-8f93-005056bd11ba"
+	wqRootVolUUID   = "94929e78-df7d-11f1-8f93-005056bd11ba"
+	// _USERSPACE_APPS iops_total delta between the two data fixtures, which are 61 seconds apart (about 511 IOPS)
+	wqUserspaceIopsDelta = 128727953 - 128696761
+)
+
+// pollWorkloadQueueInstances runs the counter and instance polls on the workload_queue_combined
+// fixtures, captured from an ONTAP 9.21.1 cluster.
+func pollWorkloadQueueInstances(t *testing.T, latencyIoReqd int) *StatPerf {
+	t.Helper()
+	s := newStatPerf("workload_queue_combined", "workload_queue_combined.yaml")
+	s.perfProp.latencyIoReqd = latencyIoReqd
+
+	counters, err := getDataJSON("testdata/workload_queue/counters.txt")
+	assert.Nil(t, err)
+	assert.Nil(t, s.pollCounter(counters, 0))
+
+	instances, err := getDataJSON("testdata/workload_queue/instances.txt")
+	assert.Nil(t, err)
+	qos := loadQosWorkloads(t, "testdata/workload_queue/qos_workloads.json")
+	_, err = s.pollInstance(s.Matrix[s.Object], instances, qos, 0)
+	assert.Nil(t, err)
+	return s
+}
+
+// cookWorkloadQueueData runs both data fixtures and returns the cooked matrix of the second poll.
+func cookWorkloadQueueData(t *testing.T, s *StatPerf) *matrix.Matrix {
+	t.Helper()
+	data1, err := getDataJSON("testdata/workload_queue/data_1.txt")
+	assert.Nil(t, err)
+	_, _, err = processAndCookCounters(s, data1, s.Matrix[s.Object])
+	assert.Nil(t, err)
+
+	data2, err := getDataJSON("testdata/workload_queue/data_2.txt")
+	assert.Nil(t, err)
+	got, _, err := processAndCookCounters(s, data2, s.Matrix[s.Object])
+	assert.Nil(t, err)
+	return got["workload_queue_combined"]
+}
+
+// _WAFL_SCAN is in the perf catalog fixture but missing from the QoS workloads, so it is not collected.
+func TestStatPerf_WorkloadQueueCombined(t *testing.T) {
+	s := pollWorkloadQueueInstances(t, collectors.DefaultLatencyIOReqd)
+
+	// the instance poll keeps only instances with a QoS workload, and data is requested for those
+	polled := s.Matrix[s.Object]
+	assert.Equal(t, len(polled.GetInstances()), 2)
+	assert.Equal(t, s.instanceNames.Size(), 2)
+	assert.False(t, s.instanceNames.Has("_WAFL_SCAN"))
+
+	root := polled.GetInstance(wqRootVolUUID)
+	assert.NotNil(t, root)
+	assert.Equal(t, root.GetLabels(), map[string]string{
+		"class":        "autovolume",
+		"policy_group": "User-Best-Effort",
+		"svm":          "vs0",
+		"volume":       "root_vs0",
+		"wid":          "1541",
+		"workload":     "root_vs0-wid1541",
+	})
+
+	m := cookWorkloadQueueData(t, s)
+	userspace := m.GetInstance(wqUserspaceUUID)
+	assert.NotNil(t, userspace)
+	assert.Equal(t, userspace.GetLabel("workload"), "_USERSPACE_APPS")
+	assert.Equal(t, userspace.GetLabel("policy_group"), "_System-Work")
+	assert.Equal(t, userspace.GetLabel("class"), "system_defined")
+
+	// average counters are divided by the iops_total delta; about 511 IOPS passes the default latency_io_reqd
+	tests := []struct {
+		key  string
+		want float64
+	}{
+		{key: "cpu_dblade_residence_time", want: float64(3531648002-3530941633) / wqUserspaceIopsDelta},
+		{key: "cpu_dblade_background_service_time#direct", want: float64(1468431175-1468115456) / wqUserspaceIopsDelta},
+	}
+	for _, tt := range tests {
+		metric := m.GetMetric(tt.key)
+		assert.NotNil(t, metric)
+		v, ok := metric.GetValueFloat64(userspace)
+		assert.True(t, ok)
+		if math.Abs(v-tt.want) > 1e-9 {
+			t.Errorf("%s got=%v want=%v", tt.key, v, tt.want)
+		}
+	}
+
+	// the base counters are overridden to rate, so dashboards can weight the averages, which still
+	// divide by their deltas above
+	for _, key := range []string{"iops_total", "delay_cop_num_wait"} {
+		base := m.GetMetric(key)
+		if base == nil {
+			t.Fatalf("metric %s missing", key)
+		}
+		assert.True(t, base.IsExportable())
+		assert.Equal(t, base.GetProperty(), "rate")
+	}
+	v, ok := m.GetMetric("iops_total").GetValueFloat64(userspace)
+	assert.True(t, ok)
+	if want := float64(wqUserspaceIopsDelta) / 61; math.Abs(v-want) > 1e-9 {
+		t.Errorf("iops_total got=%v want=%v", v, want)
+	}
+}
+
+// Averages over iops_total are latencies, so latency_io_reqd zeroes them for workloads with too few IOPS.
+func TestStatPerf_WorkloadQueueCombinedLatencyThreshold(t *testing.T) {
+	// _USERSPACE_APPS has about 511 IOPS, below a 1000 IOPS threshold
+	m := cookWorkloadQueueData(t, pollWorkloadQueueInstances(t, 1000))
+	userspace := m.GetInstance(wqUserspaceUUID)
+	assert.NotNil(t, userspace)
+
+	for _, key := range []string{"cpu_dblade_residence_time", "cpu_dblade_background_service_time#direct"} {
+		v, ok := m.GetMetric(key).GetValueFloat64(userspace)
+		assert.True(t, ok)
+		assert.Equal(t, v, float64(0))
+	}
+}
+
+func TestQosWorkloadsByUUID_SkipsConstituents(t *testing.T) {
+	records := []gjson.Result{
+		gjson.Parse(`{"uuid":"b6494479-e417-11f1-bd31-005056ace728","name":"sti84_fg_0__0001-wid66187","wid":66187,"volume":"sti84_fg_0__0001"}`),
+		gjson.Parse(`{"uuid":"94929e78-df7d-11f1-8f93-005056bd11ba","name":"root_vs0-wid1541","wid":1541,"volume":"root_vs0"}`),
+		gjson.Parse(`{"uuid":"8ab02089-df7c-11f1-8f93-005056bd11ba","name":"_USERSPACE_APPS","wid":14}`),
+	}
+	s := newStatPerf("workload_queue_combined", "workload_queue_combined.yaml")
+	assert.True(t, s.perfProp.disableConstituents)
+
+	got := s.qosWorkloadsByUUID(records)
+	assert.Equal(t, len(got), 2)
+	_, hasConstituent := got["b6494479-e417-11f1-bd31-005056ace728"]
+	assert.False(t, hasConstituent)
+
+	s.perfProp.disableConstituents = false
+	assert.Equal(t, len(s.qosWorkloadsByUUID(records)), 3)
 }

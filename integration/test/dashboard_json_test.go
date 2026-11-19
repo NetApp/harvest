@@ -118,6 +118,7 @@ var excludeCounters = []string{
 	"ontaps3_svm_",
 	"path_",
 	"poller",
+	"qos_queue_",
 	"qos_workload_min_throughput_iops",
 	"qtree_cifs_",
 	"qtree_internal_",

@@ -73,6 +73,9 @@ type perfProp struct {
 	isCacheEmpty  bool
 	counterInfo   map[string]*counter
 	latencyIoReqd int
+	qosLabels     map[string]string // qos_labels: api/storage/qos/workloads field -> exported label
+	// skip FlexGroup constituent workloads (counters: refine: with_constituents: false)
+	disableConstituents bool
 }
 
 func init() {
@@ -122,6 +125,10 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 	s.arrayLabels = s.loadArrayLabels()
 	s.batchSize = s.LoadParam("batch_size", defaultBatchSize)
 
+	if err := s.initQOS(); err != nil {
+		return err
+	}
+
 	if err := s.InitMatrix(); err != nil {
 		return err
 	}
@@ -134,6 +141,38 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 		slog.String("timeout", s.Client.GetTimeout().String()),
 	)
 
+	return nil
+}
+
+// isWorkloadObject reports whether query is a QoS workload object. Its instances are joined with
+// api/storage/qos/workloads, which supplies the svm, volume, and policy labels.
+func isWorkloadObject(query string) bool {
+	return query == collectors.ObjWorkloadQueue
+}
+
+func (s *StatPerf) initQOS() error {
+	if !isWorkloadObject(s.Prop.Query) {
+		return nil
+	}
+	qosLabels := s.Params.GetChildS("qos_labels")
+	if qosLabels == nil {
+		return errs.New(errs.ErrMissingParam, "qos_labels")
+	}
+	s.perfProp.qosLabels = make(map[string]string)
+	for _, label := range qosLabels.GetAllChildContentS() {
+		display := strings.ReplaceAll(label, "-", "_")
+		before, after, found := strings.Cut(label, "=>")
+		if found {
+			label = strings.TrimSpace(before)
+			display = strings.TrimSpace(after)
+		}
+		s.perfProp.qosLabels[label] = display
+	}
+	if counters := s.Params.GetChildS("counters"); counters != nil {
+		if refine := counters.GetChildS("refine"); refine != nil {
+			s.perfProp.disableConstituents = refine.GetChildContentS("with_constituents") == "false"
+		}
+	}
 	return nil
 }
 
@@ -1023,7 +1062,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		// special case for latency counter: apply minimum number of iops as threshold
 		if property == "average" || property == "percent" {
 
-			if strings.HasSuffix(metric.GetName(), "latency") {
+			if collectors.UsesLatencyThreshold(s.Prop.Query, metric.GetName(), denominator) {
 				skips, err = curMat.DivideWithThreshold(key, denominator, s.perfProp.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, s.Logger)
 			} else {
 				skips, err = curMat.Divide(key, denominator)
@@ -1166,10 +1205,61 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	return s.pollInstance(s.Matrix[s.Object], records, time.Since(apiT))
+	var qosWorkloads map[string]gjson.Result
+	if isWorkloadObject(s.Prop.Query) {
+		if qosWorkloads, err = s.fetchQosWorkloads(); err != nil {
+			return nil, err
+		}
+	}
+
+	return s.pollInstance(s.Matrix[s.Object], records, qosWorkloads, time.Since(apiT))
 }
 
-func (s *StatPerf) pollInstance(mat *matrix.Matrix, records []gjson.Result, apiD time.Duration) (map[string]*matrix.Matrix, error) {
+// fetchQosWorkloads returns the volume-level QoS workloads keyed by uuid, which matches the
+// instance UUID of workload perf objects.
+func (s *StatPerf) fetchQosWorkloads() (map[string]gjson.Result, error) {
+	// Request every field: ONTAP omits svm and volume when they are requested as svm.name or volume alone.
+	href := rest.NewHrefBuilder().
+		APIPath(collectors.QosWorkloadQuery).
+		Fields([]string{"*"}).
+		Filter(collectors.VolumeLevelWorkloadFilter()).
+		MaxRecords(s.BatchSize).
+		ReturnTimeout(s.Prop.ReturnTimeOut).
+		Build()
+
+	records, err := rest.FetchAll(s.Client, &s.RequestMetadata, href)
+	if err != nil {
+		return nil, fmt.Errorf("fetch %s: %w", collectors.QosWorkloadQuery, err)
+	}
+	return s.qosWorkloadsByUUID(records), nil
+}
+
+// qosWorkloadsByUUID keys the QoS workload records by uuid, skipping FlexGroup constituents
+// when with_constituents is false.
+func (s *StatPerf) qosWorkloadsByUUID(records []gjson.Result) map[string]gjson.Result {
+	workloads := make(map[string]gjson.Result, len(records))
+	for _, r := range records {
+		if s.perfProp.disableConstituents && collectors.ConstituentRegex.MatchString(r.Get("volume").ClonedString()) {
+			continue
+		}
+		if uuid := r.Get("uuid").ClonedString(); uuid != "" {
+			workloads[uuid] = r
+		}
+	}
+	return workloads
+}
+
+func (s *StatPerf) setQosLabels(qos gjson.Result, instance *matrix.Instance) {
+	for label, display := range s.perfProp.qosLabels {
+		if value := qos.Get(label); value.Exists() {
+			instance.SetLabel(display, value.ClonedString())
+		}
+	}
+}
+
+// pollInstance rebuilds the instance cache from the catalog records. When qosWorkloads is not nil,
+// only instances with a matching QoS workload are kept, and they are labeled from it.
+func (s *StatPerf) pollInstance(mat *matrix.Matrix, records []gjson.Result, qosWorkloads map[string]gjson.Result, apiD time.Duration) (map[string]*matrix.Matrix, error) {
 	var (
 		err                              error
 		oldInstances                     *set.Set
@@ -1199,23 +1289,30 @@ func (s *StatPerf) pollInstance(mat *matrix.Matrix, records []gjson.Result, apiD
 			)
 
 			count++
+			var qos gjson.Result
+			if qosWorkloads != nil {
+				var ok bool
+				if qos, ok = qosWorkloads[instance.InstanceUUID]; !ok {
+					continue
+				}
+			}
 			instanceKey = s.BuildInstanceKey(instance, instanceKeys)
 			if instanceKey == "" {
 				s.Logger.Error("empty instance key")
 				continue
 			}
-			if oldInstances.Has(instanceKey) {
+			inst := mat.GetInstance(instanceKey)
+			if inst != nil {
 				// instance already in cache
 				oldInstances.Remove(instanceKey)
-				s.instanceNames.Add(instance.Instance)
-			} else {
-				if _, err := mat.NewInstance(instanceKey); err != nil {
-					s.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
-				} else {
-					s.instanceNames.Add(instance.Instance)
-				}
+			} else if inst, err = mat.NewInstance(instanceKey); err != nil {
+				s.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
+				continue
 			}
-
+			s.instanceNames.Add(instance.Instance)
+			if qosWorkloads != nil {
+				s.setQosLabels(qos, inst)
+			}
 		}
 	}
 

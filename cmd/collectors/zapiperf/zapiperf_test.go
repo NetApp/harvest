@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -13,6 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
+	"math"
 	"os"
 	"testing"
 )
@@ -351,4 +353,142 @@ func TestPollInstanceNoInstances(t *testing.T) {
 
 	assert.ErrorIs(t, err, errs.ErrNoInstance)
 	assert.Equal(t, len(z.Matrix[z.Object].GetInstances()), 0)
+}
+
+// newWorkloadZapiPerf returns a ZapiPerf for a workload template. In test mode the Zapi initializer
+// loads the template without setting Query, which selects the workload handling.
+func newWorkloadZapiPerf(object, path string) *ZapiPerf {
+	z := NewZapiPerf(object, path)
+	z.Query = z.Params.GetChildContentS("query")
+	z.instanceKeys = []string{z.Params.GetChildContentS("instance_key")}
+	return z
+}
+
+// workload_queue_combined instances and labels must match CmPerf and StatPerf, which read
+// api/storage/qos/workloads. The fixtures come from an ONTAP 9.21.1 cluster, plus a qtree workload.
+func TestWorkloadQueueInstancesMatchRest(t *testing.T) {
+	z := newWorkloadZapiPerf("WorkloadQueue", "workload_queue_combined.yaml")
+	assert.Equal(t, z.instanceKeys, []string{"uuid"})
+
+	z.testFilePath = "testdata/workloadQueue/pollCounter.xml"
+	_, err := z.PollCounter()
+	assert.Nil(t, err)
+
+	z.testFilePath = "testdata/workloadQueue/pollInstance.xml"
+	_, err = z.PollInstance()
+	assert.Nil(t, err)
+
+	mat := z.Matrix[z.Object]
+	// q1-wid48042 is a qtree workload, which is not volume-level
+	assert.Equal(t, len(mat.GetInstances()), 3)
+	assert.Nil(t, mat.GetInstance("281b4f44-dfbc-11f1-929c-005056a70d2d"))
+
+	tests := []struct {
+		uuid string
+		want map[string]string
+	}{
+		// system_defined and preset workloads report the admin SVM in ZAPI but no SVM in REST
+		{uuid: "2b14acd7-dfbb-11f1-929c-005056a70d2c", want: map[string]string{
+			"class": "system_defined", "policy_group": "_System-Best-Effort", "wid": "1", "workload": "System-Default",
+		}},
+		{uuid: "2b17f860-dfbb-11f1-929c-005056a70d2c", want: map[string]string{
+			"class": "preset", "policy_group": "User-Best-Effort", "wid": "2", "workload": "User-Default",
+		}},
+		{uuid: "281b4f44-dfbc-11f1-929c-005056a70d2c", want: map[string]string{
+			"class": "autovolume", "policy_group": "User-Best-Effort", "svm": "vs0", "volume": "root_vs0", "wid": "48041", "workload": "root_vs0-wid48041",
+		}},
+	}
+	for _, tt := range tests {
+		instance := mat.GetInstance(tt.uuid)
+		assert.NotNil(t, instance)
+		assert.Equal(t, instance.GetLabels(), tt.want)
+	}
+}
+
+func TestUpdateWorkloadQuery(t *testing.T) {
+	tests := []struct {
+		object, template string
+		wantClass        string
+	}{
+		{object: "WorkloadQueue", template: "workload_queue_combined.yaml", wantClass: ""},
+		{object: "Workload", template: "workload.yaml", wantClass: objWorkloadClass},
+	}
+	for _, tt := range tests {
+		t.Run(tt.object, func(t *testing.T) {
+			z := newWorkloadZapiPerf(tt.object, tt.template)
+			query := node.NewS("qos-workload-info")
+			z.updateWorkloadQuery(query)
+			assert.Equal(t, query.GetChildContentS("workload-class"), tt.wantClass)
+			assert.Equal(t, query.GetChildS("workload-class") != nil, tt.wantClass != "")
+		})
+	}
+}
+
+// workload_queue_combined averages over iops_total are latencies, so latency_io_reqd zeroes them
+// for workloads with too few IOPS, as it does in CmPerf and StatPerf. ZapiPerf timestamps each poll
+// with the current time, so the cached timestamps are moved back 60s to give a known interval.
+func TestWorkloadQueueLatencyThreshold(t *testing.T) {
+	const (
+		busyUUID = "281b4f44-dfbc-11f1-929c-005056a70d2c" // 600 ops, 10 IOPS
+		idleUUID = "2b14acd7-dfbb-11f1-929c-005056a70d2c" // 2 ops, under 1 IOPS
+	)
+	z := newWorkloadZapiPerf("WorkloadQueue", "workload_queue_combined.yaml")
+	z.testFilePath = "testdata/workloadQueue/pollCounter.xml"
+	if _, err := z.PollCounter(); err != nil {
+		t.Fatalf("PollCounter: %v", err)
+	}
+	z.testFilePath = "testdata/workloadQueue/pollInstance.xml"
+	if _, err := z.PollInstance(); err != nil {
+		t.Fatalf("PollInstance: %v", err)
+	}
+	z.testFilePath = "testdata/workloadQueue/pollData1.xml"
+	if _, err := z.PollData(); err != nil {
+		t.Fatalf("first PollData: %v", err)
+	}
+
+	cache := z.Matrix[z.Object]
+	ts := cache.GetMetric(collectors.TimestampMetricName)
+	if ts == nil {
+		t.Fatal("timestamp metric missing from cache")
+	}
+	for _, instance := range cache.GetInstances() {
+		if v, ok := ts.GetValueFloat64(instance); ok {
+			ts.SetValueFloat64(instance, v-60)
+		}
+	}
+
+	z.testFilePath = "testdata/workloadQueue/pollData2.xml"
+	data, err := z.PollData()
+	if err != nil {
+		t.Fatalf("second PollData: %v", err)
+	}
+	m := data[z.Object]
+	busy, idle := m.GetInstance(busyUUID), m.GetInstance(idleUUID)
+	if busy == nil || idle == nil {
+		t.Fatalf("instances missing: busy=%v idle=%v", busy != nil, idle != nil)
+	}
+
+	for _, key := range []string{"cpu_dblade_residence_time", "cpu_dblade_background_service_time.direct"} {
+		metric := m.GetMetric(key)
+		if metric == nil {
+			t.Fatalf("metric %s missing", key)
+		}
+		got, ok := metric.GetValueFloat64(busy)
+		assert.True(t, ok)
+		assert.Equal(t, got, float64(90-30)/600)
+
+		// without the threshold, this would be (90-30)/2 = 30
+		got, ok = metric.GetValueFloat64(idle)
+		assert.True(t, ok)
+		assert.Equal(t, got, float64(0))
+	}
+
+	// iops_total is overridden to rate, but the averages above still divide by its delta
+	iops := m.GetMetric("iops_total")
+	assert.True(t, iops.IsExportable())
+	got, ok := iops.GetValueFloat64(busy)
+	assert.True(t, ok)
+	if math.Abs(got-10) > 0.1 {
+		t.Errorf("iops_total got=%v want=about 10", got)
+	}
 }

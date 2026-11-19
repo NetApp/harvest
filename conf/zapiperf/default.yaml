@@ -64,4 +64,5 @@ objects:
   VscanSVM:                 vscan_svm.yaml
 
   Workload:                 workload.yaml
+#  WorkloadQueue:            workload_queue_combined.yaml
   WorkloadVolume:           workload_volume.yaml

@@ -65,3 +65,23 @@ func TestEnsureTimestampMetricPreservesExistingMetric(t *testing.T) {
 	assert.Equal(t, mat.GetMetric(TimestampMetricName).GetProperty(), "delta")
 	assert.Equal(t, mat.GetMetric(TimestampMetricName).IsExportable(), true)
 }
+
+func TestUsesLatencyThreshold(t *testing.T) {
+	tests := []struct {
+		query, name, denominator string
+		want                     bool
+	}{
+		{query: "volume", name: "read_latency", denominator: "read_ops", want: true},
+		{query: "volume", name: "avg_latency", denominator: "total_ops", want: true},
+		{query: "workload_queue_combined", name: "cpu_dblade_residence_time", denominator: "iops_total", want: true},
+		{query: "workload_queue_combined", name: "disk_ssd_background_service_time#direct", denominator: "iops_total", want: true},
+		{query: "workload_queue_combined", name: "delay_cop_wait_time", denominator: "delay_cop_num_wait", want: false},
+		{query: "workload_queue_combined", name: "cache_miss_rate", denominator: "cache_miss_rate_base", want: false},
+		{query: "wafl", name: "cp_phase_times", denominator: "iops_total", want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.query+"/"+tt.name, func(t *testing.T) {
+			assert.Equal(t, UsesLatencyThreshold(tt.query, tt.name, tt.denominator), tt.want)
+		})
+	}
+}

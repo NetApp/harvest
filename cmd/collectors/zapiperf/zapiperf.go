@@ -68,11 +68,36 @@ const (
 	objWorkloadDetail       = "workload_detail"
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
-	objWorkloadClass        = "user_defined|system_defined"
-	objWorkloadVolumeClass  = "autovolume"
+	// workload_queue_combined reports volume-level workloads of every class, the same set CmPerf
+	// and StatPerf collect, so it has no default workload-class filter
+	objWorkloadQueue       = collectors.ObjWorkloadQueue
+	objWorkloadClass       = "user_defined|system_defined"
+	objWorkloadVolumeClass = "autovolume"
 )
 
 var workloadDetailMetrics = []string{"resource_latency"}
+
+// isWorkloadObject reports whether query is a QoS workload object, whose instances and labels
+// come from qos-workload-get-iter.
+func isWorkloadObject(query string) bool {
+	switch query {
+	case objWorkload, objWorkloadDetail, objWorkloadVolume, objWorkloadDetailVolume, objWorkloadQueue:
+		return true
+	}
+	return false
+}
+
+// isVolumeLevelWorkload reports whether a qos-workload-info record is attached to a whole volume,
+// not to a qtree, LUN, or file within it.
+func isVolumeLevelWorkload(qos *node.Node) bool {
+	return qos.GetChildContentS("qtree") == "" && qos.GetChildContentS("lun") == "" && qos.GetChildContentS("file") == ""
+}
+
+// hasNoStorageObject reports whether a workload class is one that is not attached to a storage
+// object. For these, ZAPI reports the admin SVM as the vserver while REST reports no SVM.
+func hasNoStorageObject(workloadClass string) bool {
+	return workloadClass == "system_defined" || workloadClass == "preset"
+}
 
 type ZapiPerf struct {
 	*zapi.Zapi              // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
@@ -303,12 +328,17 @@ func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
 	}
 	if workloadClass == "" {
 		var workloadClassQuery string
-		if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+		switch z.Query {
+		case objWorkloadVolume, objWorkloadDetailVolume:
 			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadVolumeClass)
-		} else {
+		case objWorkloadQueue:
+			workloadClassQuery = z.loadWorkloadClassQuery("")
+		default:
 			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadClass)
 		}
-		query.NewChildS("workload-class", workloadClassQuery)
+		if workloadClassQuery != "" {
+			query.NewChildS("workload-class", workloadClassQuery)
+		}
 	}
 	if isConstituent == "" {
 		if counters != nil {
@@ -848,7 +878,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// special case for latency counter: apply minimum number of iops as threshold
 		if property == "average" || property == "percent" {
 
-			if strings.HasSuffix(metric.GetName(), "latency") {
+			if collectors.UsesLatencyThreshold(z.Query, metric.GetName(), metric.GetComment()) {
 				skips, err = curMat.DivideWithThreshold(key, metric.GetComment(), z.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, z.Logger)
 			} else {
 				skips, err = curMat.Divide(key, metric.GetComment())
@@ -1240,7 +1270,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	collectors.EnsureTimestampMetric(mat, z.Logger)
 
 	// hack for workload objects, @TODO replace with a plugin
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+	if isWorkloadObject(z.Query) {
 
 		// for these two objects, we need to create latency/ops counters for each of the workload layers
 		// there original counters will be discarded
@@ -1584,7 +1614,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	// hack for workload objects: get instances from Zapi
 	switch {
-	case z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume:
+	case isWorkloadObject(z.Query):
 		request = node.NewXMLS("qos-workload-get-iter")
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
@@ -1682,6 +1712,11 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 		for _, i := range instances.GetChildren() {
 
+			// match CmPerf and StatPerf, which collect only volume-level workloads of this object
+			if z.Query == objWorkloadQueue && !isVolumeLevelWorkload(i) {
+				continue
+			}
+
 			key := z.buildKeyValue(i, keyAttrs)
 			if key == "" {
 				// instance key missing
@@ -1743,11 +1778,18 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 }
 
 func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance) {
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
-		for label, display := range z.qosLabels {
-			if value := qos.GetChildContentS(label); value != "" {
-				instance.SetLabel(display, value)
-			}
+	if !isWorkloadObject(z.Query) {
+		return
+	}
+	// workload_queue_combined labels match CmPerf and StatPerf, which read api/storage/qos/workloads:
+	// REST reports no SVM for workloads that are not attached to a storage object
+	skipVserver := z.Query == objWorkloadQueue && hasNoStorageObject(qos.GetChildContentS("workload-class"))
+	for label, display := range z.qosLabels {
+		if label == "vserver" && skipVserver {
+			continue
+		}
+		if value := qos.GetChildContentS(label); value != "" {
+			instance.SetLabel(display, value)
 		}
 	}
 }

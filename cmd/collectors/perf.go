@@ -5,11 +5,38 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
+	"regexp"
+	"strings"
 )
 
 const TimestampMetricName = "timestamp"
 
 const DefaultLatencyIOReqd = 5
+
+// ObjWorkloadQueue is the perf object that reports QoS queue delay, residence, and service times
+// per workload.
+const ObjWorkloadQueue = "workload_queue_combined"
+
+// QosWorkloadQuery lists QoS workloads with their svm, volume, and policy.
+const QosWorkloadQuery = "api/storage/qos/workloads"
+
+// ConstituentRegex matches FlexGroup constituent volume names, such as fg__0001.
+var ConstituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
+
+// VolumeLevelWorkloadFilter limits QosWorkloadQuery to workloads of every class that are attached
+// to a whole volume or to no storage object, not to a qtree, LUN, or file. CmPerf and StatPerf
+// collect these workloads for ObjWorkloadQueue.
+func VolumeLevelWorkloadFilter() []string {
+	return []string{"qtree=null", "lun=null", "file=null"}
+}
+
+// UsesLatencyThreshold reports whether an average or percent counter is a per-operation latency,
+// which latency_io_reqd zeroes when its instance has too few IOPS to give a meaningful average.
+// Besides counters named *latency, these are the ObjWorkloadQueue delay, residence, and service
+// times, which ONTAP averages over iops_total.
+func UsesLatencyThreshold(query string, name string, denominator string) bool {
+	return strings.HasSuffix(name, "latency") || (query == ObjWorkloadQueue && denominator == "iops_total")
+}
 
 // CounterOverride returns the configured property override for counter.
 func CounterOverride(params *node.Node, counter string) string {

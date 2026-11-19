@@ -31,7 +31,6 @@ import (
 	"log/slog"
 	"maps"
 	"path"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -46,12 +45,10 @@ const (
 )
 
 var (
-	constituentRegex      = regexp.MustCompile(`^(.*)__(\d{4})$`)
 	qosQuery              = "api/cluster/counter/tables/qos"
 	qosVolumeQuery        = "api/cluster/counter/tables/qos_volume"
 	qosDetailQuery        = "api/cluster/counter/tables/qos_detail"
 	qosDetailVolumeQuery  = "api/cluster/counter/tables/qos_detail_volume"
-	qosWorkloadQuery      = "api/storage/qos/workloads"
 	workloadDetailMetrics = []string{"resource_latency"}
 )
 
@@ -1515,7 +1512,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 		fields = "*"
-		dataQuery = qosWorkloadQuery
+		dataQuery = collectors.QosWorkloadQuery
 		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
 			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
 		} else {
@@ -1604,7 +1601,7 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 			// The API endpoint api/storage/qos/workloads lacks an is_constituent filter, unlike qos-workload-get-iter. As a result, we must perform client-side filtering.
 			// Although the api/private/cli/qos/workload endpoint includes this filter, it doesn't provide an option to fetch all records, both constituent and flexgroup types.
 			if r.perfProp.disableConstituents {
-				if constituentRegex.MatchString(instanceData.Get("volume").ClonedString()) {
+				if collectors.ConstituentRegex.MatchString(instanceData.Get("volume").ClonedString()) {
 					// skip constituent
 					continue
 				}

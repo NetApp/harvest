@@ -127,6 +127,11 @@ var legendName = regexp.MustCompile(`{{.*?}}`)
 var throughputPattern = regexp.MustCompile(`(throughput|read_data|write_data|total_data)`)
 var aggregationThroughputPattern = regexp.MustCompile(`(?i)(\w+)\(`)
 
+// notThroughput are latency metrics whose names match throughputPattern.
+var notThroughput = []string{
+	"qos_queue_delay_qos_min_throughput_wait_time",
+}
+
 func TestThroughput(t *testing.T) {
 	VisitDashboards(dashboards, func(path string, data []byte) {
 		checkThroughput(t, path, data)
@@ -143,6 +148,9 @@ func checkThroughput(t *testing.T, path string, data []byte) {
 		for _, targetN := range targetsSlice {
 			expr := targetN.Get("expr").ClonedString()
 			if !throughputPattern.MatchString(expr) {
+				continue
+			}
+			if slices.ContainsFunc(notThroughput, func(m string) bool { return strings.Contains(expr, m) }) {
 				continue
 			}
 			matches := aggregationThroughputPattern.FindStringSubmatch(expr)
