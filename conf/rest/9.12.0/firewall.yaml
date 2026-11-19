@@ -1,0 +1,13 @@
+name:             Firewall
+query:            api/private/cli/system/services/firewall
+object:           firewall
+
+counters:
+  - ^^node          => node
+  - ^enabled        => enabled
+
+export_options:
+  instance_keys:
+    - node
+  instance_labels:
+    - enabled

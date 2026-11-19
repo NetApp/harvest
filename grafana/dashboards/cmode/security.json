@@ -5336,6 +5336,356 @@
       ],
       "title": "SVM Compliance",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 229,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "❌ marks a setting that is less secure than the alternative. These checks are not in the ONTAP security hardening guide, so they do not count toward Cluster Compliant.\n\n|  Column  | Secure When  |\n|---|---|\n| `HTTP` | The cluster web service accepts only HTTPS |\n| `CSRF Protection` | Cross-site request forgery protection is enabled |\n| `HSTS` | HTTP Strict Transport Security is enabled. Requires ONTAP 9.17 or later |\n| `Firewall` | The firewall is enabled on every node |\n| `LIF Service Policy` | Web services on every node enforce the network interface service policy. Requires ONTAP 9.15.1 or later |\n\nNot Applicable means the cluster's ONTAP version does not have the setting. Not Collected means Harvest did not collect the WebCluster, Firewall, or WebNode object for that cluster.\n\nTo list the nodes behind a ❌, filter `firewall_labels` by `enabled=\"false\"` or `web_node_labels` by `lif_service_policy_enforced=\"false\"`.\n\nClusters running ONTAP 9.16.1 typically report LIF Service Policy as not enforced because that is the setting they ship with, so ❌ there usually means the default. Before you enable it (advanced privilege), make sure the service policy of every LIF that serves web traffic includes `management-https`.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "HTTP"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "Disabled"
+                          },
+                          "true": {
+                            "index": 1,
+                            "text": "❌   Enabled"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 2,
+                            "text": "Not Collected"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CSRF Protection"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "❌   Disabled"
+                          },
+                          "true": {
+                            "index": 1,
+                            "text": "Enabled"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 2,
+                            "text": "Not Collected"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "HSTS"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "❌   Disabled"
+                          },
+                          "true": {
+                            "index": 1,
+                            "text": "Enabled"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 2,
+                            "text": "Not Collected"
+                          }
+                        },
+                        "type": "special"
+                      },
+                      {
+                        "options": {
+                          "match": "empty",
+                          "result": {
+                            "index": 3,
+                            "text": "Not Applicable"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Firewall"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "index": 0,
+                            "text": "Enabled"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "from": 1,
+                          "result": {
+                            "index": 1,
+                            "text": "❌   Disabled"
+                          },
+                          "to": 9999
+                        },
+                        "type": "range"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 2,
+                            "text": "Not Collected"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "LIF Service Policy"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "-1": {
+                            "index": 0,
+                            "text": "Not Applicable"
+                          },
+                          "0": {
+                            "index": 1,
+                            "text": "Enforced"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "from": 1,
+                          "result": {
+                            "index": 2,
+                            "text": "❌   Not enforced"
+                          },
+                          "to": 9999
+                        },
+                        "type": "range"
+                      },
+                      {
+                        "options": {
+                          "match": "null",
+                          "result": {
+                            "index": 3,
+                            "text": "Not Collected"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 37
+          },
+          "id": 230,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "web_cluster_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count by (datacenter, cluster) (\n    firewall_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",enabled=\"false\"}\n  )\nor\n  count by (datacenter, cluster) (firewall_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) * 0",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "count by (datacenter, cluster) (\n      web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lif_service_policy_enforced=\"false\"}\n    )\n  or\n      count by (datacenter, cluster) (\n        web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lif_service_policy_enforced!=\"\"}\n      )\n    *\n      0\nor\n  group by (datacenter, cluster) (web_node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) * -1",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            }
+          ],
+          "title": "Web Services and Firewall",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "cluster",
+                    "http_enabled",
+                    "csrf_protection_enabled",
+                    "hsts_enabled",
+                    "Value #B",
+                    "Value #C"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #B": 5,
+                  "Value #C": 6,
+                  "cluster": 1,
+                  "csrf_protection_enabled": 3,
+                  "datacenter": 0,
+                  "hsts_enabled": 4,
+                  "http_enabled": 2
+                },
+                "renameByName": {
+                  "Value #B": "Firewall",
+                  "Value #C": "LIF Service Policy",
+                  "cluster": "Cluster",
+                  "csrf_protection_enabled": "CSRF Protection",
+                  "datacenter": "Datacenter",
+                  "hsts_enabled": "HSTS",
+                  "http_enabled": "HTTP"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Web Services and Firewall",
+      "type": "row"
     }
   ],
   "refresh": "",

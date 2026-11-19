@@ -167,6 +167,7 @@ var (
 		"cifs_session_idle_duration",
 		"cluster_software",
 		"cluster_space_available",
+		"domain_tunnel_labels",
 		"ems_events",
 		"ethernet_switch_port_",
 		"export_rule_labels",
@@ -213,6 +214,7 @@ var (
 		"volume_top_files",
 		"volume_top_users",
 		"vscan_",
+		"web_cluster_hsts_max_age",
 	}
 
 	excludeDocumentedZapiMetrics = []string{

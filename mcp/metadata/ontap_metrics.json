@@ -170,6 +170,7 @@
   "disk_user_write_chain": "Average number of blocks transferred in each user write operation",
   "disk_user_write_latency": "Average latency per block in microseconds for user write operations",
   "disk_user_writes": "Number of disk write operations initiated each second for storing data or metadata associated with user requests",
+  "domain_tunnel_labels": "The SVM configured as the Active Directory proxy (domain tunnel) for cluster authentication. Not exported when no AD proxy is configured.",
   "ems_destination_labels": "This metric provides information about EmsDestination",
   "ems_events": "Indicates EMS events that have occurred in the ONTAP as configured in the ems.yaml.",
   "environment_sensor_average_ambient_temperature": "Average temperature of all ambient sensors for node in Celsius.",
@@ -284,6 +285,7 @@
   "fcvi_rdma_write_ops": "Number of RDMA write I/Os issued per second.",
   "fcvi_rdma_write_throughput": "RDMA write throughput in bytes per second.",
   "fcvi_soft_reset_count": "Number of times soft reset of FCVI adapter got issued.",
+  "firewall_labels": "Indicates whether the firewall service is enabled on each node. Beginning with ONTAP 9.10.1, the ports the firewall allows are set by LIF service policies, not by this setting.",
   "flashcache_accesses": "External cache accesses per second",
   "flashcache_disk_reads_replaced": "Estimated number of disk reads per second replaced by cache",
   "flashcache_evicts": "Number of blocks evicted from the external cache to make room for new blocks",
@@ -1556,5 +1558,15 @@
   "wafl_reads_from_ssd": "WAFL reads from SSD.",
   "wafl_repl_msg_total": "Total number of replication WAFL messages per second.",
   "wafl_total_cp_msecs": "Milliseconds spent in Consistency Point (CP).",
-  "wafl_total_cp_util": "Percentage of time spent in a Consistency Point (CP)."
+  "wafl_total_cp_util": "Percentage of time spent in a Consistency Point (CP).",
+  "web_cluster_csrf_token_concurrent_limit": "Maximum number of concurrent CSRF tokens.",
+  "web_cluster_csrf_token_idle_timeout": "Time for which an unused CSRF token is retained, in seconds.",
+  "web_cluster_csrf_token_max_timeout": "Maximum time a CSRF token is retained, regardless of usage, in seconds.",
+  "web_cluster_hsts_max_age": "HTTP Strict Transport Security (HSTS) max-age value in seconds. Available in ONTAP 9.17 and later.",
+  "web_cluster_http_port": "HTTP port for cluster-level web services.",
+  "web_cluster_https_port": "HTTPS port for cluster-level web services.",
+  "web_cluster_labels": "Configuration of the cluster-level web services. The hsts_enabled label is empty before ONTAP 9.17.",
+  "web_node_http_port": "HTTP port of the web services on the node.",
+  "web_node_https_port": "HTTPS port of the web services on the node.",
+  "web_node_labels": "Status and configuration of the web services on each node. The lif_service_policy_enforced label requires ONTAP 9.15.1 or later."
 }

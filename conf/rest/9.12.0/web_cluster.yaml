@@ -1,0 +1,28 @@
+name:             WebCluster
+query:            api/cluster/web
+object:           web_cluster
+
+counters:
+  - ^certificate.name               => certificate
+  - ^client_enabled                 => client_enabled
+  - ^csrf.protection_enabled        => csrf_protection_enabled
+  - ^enabled                        => enabled
+  - ^http_enabled                   => http_enabled
+  - ^ocsp_enabled                   => ocsp_enabled
+  - ^state                          => state
+  - csrf.token.concurrent_limit     => csrf_token_concurrent_limit
+  - csrf.token.idle_timeout         => csrf_token_idle_timeout
+  - csrf.token.max_timeout          => csrf_token_max_timeout
+  - http_port                       => http_port
+  - https_port                      => https_port
+
+export_options:
+  instance_keys:
+    - state
+  instance_labels:
+    - certificate
+    - client_enabled
+    - csrf_protection_enabled
+    - enabled
+    - http_enabled
+    - ocsp_enabled

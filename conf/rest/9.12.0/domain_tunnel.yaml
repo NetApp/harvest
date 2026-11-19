@@ -1,0 +1,13 @@
+name:             DomainTunnel
+query:            api/security/authentication/cluster/ad-proxy
+object:           domain_tunnel
+
+counters:
+  - ^^svm.name      => svm
+  - ^svm.uuid       => uuid
+
+export_options:
+  instance_keys:
+    - svm
+  instance_labels:
+    - uuid

@@ -364,122 +364,7 @@ func (c *AbstractCollector) Start(
 			// poll returned error, try to understand what to do
 			switch {
 			case err != nil:
-				if !c.Schedule.IsStandBy() {
-					c.Logger.Debug(
-						"handling error during poll",
-						slogx.Err(err),
-						slog.String("task", task.Name),
-					)
-				}
-				switch {
-				// target system is unreachable
-				// enter standby mode and retry with some delay that will be increased if we fail again
-				case errors.Is(err, errs.ErrConnection):
-					if retryDelay < 1024 {
-						retryDelay *= 4
-					}
-					if !c.Schedule.IsStandBy() {
-						c.Logger.Warn("target unreachable, entering standby mode and retry",
-							slog.String("task", task.Name),
-							slog.Int("retryDelaySecs", retryDelay),
-						)
-					}
-					c.Logger.Debug(
-						"target unreachable, entering standby mode and retry",
-						slogx.Err(err),
-						slog.String("task", task.Name),
-						slog.Int("retryDelaySecs", retryDelay),
-					)
-					c.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
-					c.SetStatus(1, errs.ErrConnection.Error())
-
-				case errs.IsRestErr(err, errs.CMReject):
-					// Try again in 30 to 60 seconds
-					retryAfter := 30 + rand.Int63n(30) //nolint:gosec
-					c.Schedule.SetStandByMode(task, time.Duration(retryAfter)*time.Second)
-					c.SetStatus(1, err.Error())
-					c.Logger.Warn(
-						"CM reject, entering standby mode and retry",
-						slog.String("task", task.Name),
-						slog.Int64("retryAfterSecs", retryAfter),
-					)
-				// there are no instances to collect
-				case errors.Is(err, errs.ErrNoInstance):
-					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
-					c.SetStatus(1, errs.ErrNoInstance.Error())
-					c.Logger.Info("no instances, entering standby", slog.String("task", task.Name))
-				// no metrics available
-				case errors.Is(err, errs.ErrNoMetric):
-					c.SetStatus(1, errs.ErrNoMetric.Error())
-					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-					c.Logger.Info(
-						"no metrics of object on system, entering standby mode",
-						slog.String("task", task.Name),
-						slog.String("object", c.Object),
-					)
-				// Metro cluster is not configured, this is similar to no instance except with a larger delay.
-				// Logged at info on every retry: the collector counts as down in the poller's status, and
-				// without this line a log that starts after the first attempt never says which collector it is.
-				case errors.Is(err, errs.ErrMetroClusterNotConfigured):
-					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-					c.SetStatus(1, errs.ErrNoInstance.Error())
-					c.Logger.Info("MetroCluster is not configured, entering standby", slog.String("task", task.Name))
-
-				case errors.Is(err, errs.ErrMetroClusterCheckInProgress):
-					// MCC checks in ONTAP run automatically every 15 minutes.
-					// While the check is running, check status can't be collected via CLI or API.
-					// When this happens, reschedule the collector to run and suppress error logging since this is not
-					// an error. See https://github.com/NetApp/harvest/issues/4197 for details
-					c.Schedule.SetStandByModeMax(task, 10*time.Minute)
-					c.SetStatus(1, errs.ErrMetroClusterCheckInProgress.Error())
-
-				// Credentials were rejected, e.g., the password changed. Retrying at the normal poll interval
-				// produces many failed logins so back off and retry every 5 minutes.
-				case errors.Is(err, errs.ErrAuthFailed):
-					c.Schedule.SetStandByMode(task, 5*time.Minute)
-					c.SetStatus(1, errs.ErrAuthFailed.Error())
-					c.Logger.Error(
-						"auth failed, entering standby mode. Check the credentials for this poller",
-						slogx.Err(err),
-						slog.String("task", task.Name),
-					)
-
-				// not an error we are expecting, so enter failed or standby state
-				default:
-					switch {
-					case errors.Is(err, errs.ErrPermissionDenied):
-						standbyDelay := standByOnPermissionDenied(c.Schedule, task)
-						c.Logger.Error(
-							"Entering standby mode",
-							slogx.Err(err),
-							slog.String("task", task.Name),
-							slog.Int("retryDelaySecs", int(standbyDelay.Seconds())),
-						)
-					case errors.Is(err, errs.ErrAPIRequestRejected):
-						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-						// Log as info since these are not errors.
-						c.Logger.Info(
-							"Entering standby mode",
-							slogx.Err(err),
-							slog.String("task", task.Name),
-						)
-					default:
-						attrs := append([]any{
-							slogx.Err(err),
-							slog.String("task", task.Name),
-							slog.Int64("elapsedMs", taskTime.Milliseconds()),
-						}, pollErrorAttrs(err)...)
-						c.Logger.Error("poll failed", attrs...)
-					}
-
-					var herr errs.HarvestError
-					errMsg := err.Error()
-					if ok := errors.As(err, &herr); ok {
-						errMsg = herr.Inner.Error()
-					}
-
-					c.SetStatus(2, errMsg)
-				}
+				retryDelay = c.handlePollError(task, err, taskTime, retryDelay)
 				continue
 			case c.Schedule.IsStandBy():
 				c.Schedule.Recover()
@@ -733,6 +618,135 @@ func (c *AbstractCollector) GetStatus() (uint8, string, string) {
 
 // SetStatus sets the current state of the collector to one
 // of the values defined by CollectorStatus
+// handlePollError decides how to reschedule a task whose poll failed and sets the collector status.
+// It returns the updated retry delay, in seconds, used when the target is unreachable.
+func (c *AbstractCollector) handlePollError(task *schedule.Task, err error, taskTime time.Duration, retryDelay int) int {
+	if !c.Schedule.IsStandBy() {
+		c.Logger.Debug(
+			"handling error during poll",
+			slogx.Err(err),
+			slog.String("task", task.Name),
+		)
+	}
+	switch {
+	// target system is unreachable
+	// enter standby mode and retry with some delay that will be increased if we fail again
+	case errors.Is(err, errs.ErrConnection):
+		if retryDelay < 1024 {
+			retryDelay *= 4
+		}
+		if !c.Schedule.IsStandBy() {
+			c.Logger.Warn("target unreachable, entering standby mode and retry",
+				slog.String("task", task.Name),
+				slog.Int("retryDelaySecs", retryDelay),
+			)
+		}
+		c.Logger.Debug(
+			"target unreachable, entering standby mode and retry",
+			slogx.Err(err),
+			slog.String("task", task.Name),
+			slog.Int("retryDelaySecs", retryDelay),
+		)
+		c.Schedule.SetStandByMode(task, time.Duration(retryDelay)*time.Second)
+		c.SetStatus(1, errs.ErrConnection.Error())
+
+	case errs.IsRestErr(err, errs.CMReject):
+		// Try again in 30 to 60 seconds
+		retryAfter := 30 + rand.Int63n(30) //nolint:gosec
+		c.Schedule.SetStandByMode(task, time.Duration(retryAfter)*time.Second)
+		c.SetStatus(1, err.Error())
+		c.Logger.Warn(
+			"CM reject, entering standby mode and retry",
+			slog.String("task", task.Name),
+			slog.Int64("retryAfterSecs", retryAfter),
+		)
+	// there are no instances to collect
+	case errors.Is(err, errs.ErrNoInstance):
+		c.Schedule.SetStandByModeMax(task, 5*time.Minute)
+		c.SetStatus(1, errs.ErrNoInstance.Error())
+		c.Logger.Info("no instances, entering standby", slog.String("task", task.Name))
+	// no metrics available
+	case errors.Is(err, errs.ErrNoMetric):
+		c.SetStatus(1, errs.ErrNoMetric.Error())
+		c.Schedule.SetStandByModeMax(task, 1*time.Hour)
+		c.Logger.Info(
+			"no metrics of object on system, entering standby mode",
+			slog.String("task", task.Name),
+			slog.String("object", c.Object),
+		)
+	// Metro cluster is not configured, this is similar to no instance except with a larger delay.
+	// Logged at info on every retry: the collector counts as down in the poller's status, and
+	// without this line a log that starts after the first attempt never says which collector it is.
+	case errors.Is(err, errs.ErrMetroClusterNotConfigured):
+		c.Schedule.SetStandByModeMax(task, 1*time.Hour)
+		c.SetStatus(1, errs.ErrNoInstance.Error())
+		c.Logger.Info("MetroCluster is not configured, entering standby", slog.String("task", task.Name))
+
+	// The API does not exist on this ONTAP version, e.g., a template that falls back to an older cluster.
+	// This is not a collector failure, so stand by instead of entering the failed state.
+	case errs.IsRestErr(err, errs.APINotFound):
+		c.Schedule.SetStandByModeMax(task, 1*time.Hour)
+		c.SetStatus(1, errs.APINotFound.Name)
+		c.Logger.Info("API not found, entering standby", slogx.Err(err), slog.String("task", task.Name))
+
+	case errors.Is(err, errs.ErrMetroClusterCheckInProgress):
+		// MCC checks in ONTAP run automatically every 15 minutes.
+		// While the check is running, check status can't be collected via CLI or API.
+		// When this happens, reschedule the collector to run and suppress error logging since this is not
+		// an error. See https://github.com/NetApp/harvest/issues/4197 for details
+		c.Schedule.SetStandByModeMax(task, 10*time.Minute)
+		c.SetStatus(1, errs.ErrMetroClusterCheckInProgress.Error())
+
+	// Credentials were rejected, e.g., the password changed. Retrying at the normal poll interval
+	// produces many failed logins so back off and retry every 5 minutes.
+	case errors.Is(err, errs.ErrAuthFailed):
+		c.Schedule.SetStandByMode(task, 5*time.Minute)
+		c.SetStatus(1, errs.ErrAuthFailed.Error())
+		c.Logger.Error(
+			"auth failed, entering standby mode. Check the credentials for this poller",
+			slogx.Err(err),
+			slog.String("task", task.Name),
+		)
+
+	// not an error we are expecting, so enter failed or standby state
+	default:
+		switch {
+		case errors.Is(err, errs.ErrPermissionDenied):
+			standbyDelay := standByOnPermissionDenied(c.Schedule, task)
+			c.Logger.Error(
+				"Entering standby mode",
+				slogx.Err(err),
+				slog.String("task", task.Name),
+				slog.Int("retryDelaySecs", int(standbyDelay.Seconds())),
+			)
+		case errors.Is(err, errs.ErrAPIRequestRejected):
+			c.Schedule.SetStandByModeMax(task, 1*time.Hour)
+			// Log as info since these are not errors.
+			c.Logger.Info(
+				"Entering standby mode",
+				slogx.Err(err),
+				slog.String("task", task.Name),
+			)
+		default:
+			attrs := append([]any{
+				slogx.Err(err),
+				slog.String("task", task.Name),
+				slog.Int64("elapsedMs", taskTime.Milliseconds()),
+			}, pollErrorAttrs(err)...)
+			c.Logger.Error("poll failed", attrs...)
+		}
+
+		var herr errs.HarvestError
+		errMsg := err.Error()
+		if ok := errors.As(err, &herr); ok {
+			errMsg = herr.Inner.Error()
+		}
+
+		c.SetStatus(2, errMsg)
+	}
+	return retryDelay
+}
+
 func (c *AbstractCollector) SetStatus(status uint8, msg string) {
 	if status >= uint8(len(Status)) {
 		panic("invalid status code " + strconv.FormatUint(uint64(status), 10))

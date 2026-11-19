@@ -33,7 +33,9 @@ var replacer = strings.NewReplacer("{", "", "}", "", "^^", "", "^", "")
 
 // Skipping templates only for testing of counter validation
 // metrocluster_check - as it's error out for non-mcc clusters
+// domain_tunnel - returns "entry doesn't exist" when the cluster has no AD proxy configured
 var skipTemplates = map[string]bool{
+	"9.12.0/domain_tunnel.yaml":      true,
 	"9.12.0/metrocluster_check.yaml": true,
 }
 

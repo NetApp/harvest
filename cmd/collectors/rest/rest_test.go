@@ -2,16 +2,22 @@ package rest
 
 import (
 	"errors"
+	"fmt"
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slice"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"log/slog"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"slices"
 	"strings"
@@ -483,6 +489,87 @@ func TestHandleError(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestHandleErrorMissingAPIOrEntry covers GitHub issue #4559.
+// Unlike TestHandleError, the input is a plain ONTAP REST error that is not already wrapped in ErrAPIRequestRejected.
+func TestHandleErrorMissingAPIOrEntry(t *testing.T) {
+	r := &Rest{}
+
+	t.Run("entry doesn't exist means no records, not an error", func(t *testing.T) {
+		// e.g., security/authentication/cluster/ad-proxy when no AD proxy is configured
+		in := errs.NewRest().StatusCode(404).Message("entry doesn't exist").Code(errs.EntryNotExist.Code).Build()
+
+		got, err := r.handleError(in)
+
+		assert.Nil(t, got)
+		assert.Nil(t, err)
+	})
+
+	t.Run("API not found stays an error the collector can classify", func(t *testing.T) {
+		// e.g., cluster/web on ONTAP 9.9.1. The collector puts the task in standby when it finds APINotFound,
+		// so handleError must return an error that still wraps the ONTAP code.
+		in := errs.NewRest().StatusCode(404).Message("API not found").Code(errs.APINotFound.Code).Build()
+
+		got, err := r.handleError(in)
+
+		assert.Nil(t, got)
+		assert.NotNil(t, err)
+		assert.True(t, errs.IsRestErr(err, errs.APINotFound))
+	})
+}
+
+// newRestWithServer returns a DomainTunnel collector whose client talks to a test server that answers every
+// request with the given ONTAP REST error. It seeds one instance, as if an earlier poll had found an AD proxy.
+func newRestWithServer(t *testing.T, ontapErr errs.OntapRestCode) *Rest {
+	t.Helper()
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = fmt.Fprintf(w, `{"error":{"message":%q,"code":"%d"}}`, ontapErr.Name, ontapErr.Code)
+	}))
+	t.Cleanup(server.Close)
+
+	r := newRest("DomainTunnel", "domain_tunnel.yaml", "../../../conf")
+	insecure := true
+	poller := &conf.Poller{
+		Addr:           strings.TrimPrefix(server.URL, "https://"),
+		Username:       "test-user",
+		Password:       "test-password",
+		UseInsecureTLS: &insecure,
+	}
+	client, err := rest.New(poller, 5*time.Second, auth.NewCredentials(poller, slog.New(slog.DiscardHandler)))
+	assert.Nil(t, err)
+	r.Client = client
+
+	_, err = r.Matrix[r.Object].NewInstance("svm1")
+	assert.Nil(t, err)
+	return r
+}
+
+// TestPollDataEntryNotExist covers GitHub issue #4559: when the AD proxy is removed, ONTAP answers
+// "entry doesn't exist". The poll succeeds and drops the old instance so its labels are no longer exported.
+func TestPollDataEntryNotExist(t *testing.T) {
+	r := newRestWithServer(t, errs.EntryNotExist)
+
+	data, err := r.PollData()
+
+	assert.Nil(t, err)
+	assert.NotNil(t, data)
+	assert.Equal(t, len(r.Matrix[r.Object].GetInstances()), 0)
+	instances, _ := r.Metadata.GetMetric("instances").GetValueUint64(r.Metadata.GetInstance("data"))
+	assert.Equal(t, instances, uint64(0))
+}
+
+// Contrast with TestPollDataEntryNotExist: any other REST error fails the poll and keeps the old instances.
+func TestPollDataAPINotFoundKeepsInstances(t *testing.T) {
+	r := newRestWithServer(t, errs.APINotFound)
+
+	data, err := r.PollData()
+
+	assert.Nil(t, data)
+	assert.True(t, errs.IsRestErr(err, errs.APINotFound))
+	assert.Equal(t, len(r.Matrix[r.Object].GetInstances()), 1)
 }
 
 // TestHandleErrorPassesThroughPlainError pins that a transport-level error,
