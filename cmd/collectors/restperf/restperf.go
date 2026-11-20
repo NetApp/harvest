@@ -25,7 +25,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/template"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"iter"
 	"log/slog"
@@ -38,10 +37,8 @@ import (
 )
 
 const (
-	arrayKeyToken          = "#"
-	objWorkloadClass       = "user_defined|system_defined"
-	objWorkloadVolumeClass = "autovolume"
-	idBatchSize            = 100
+	arrayKeyToken = "#"
+	idBatchSize   = 100
 )
 
 var (
@@ -195,32 +192,6 @@ func (r *RestPerf) InitMatrix() error {
 	r.perfProp.isCacheEmpty = true
 	collectors.SetupPerfMatrix(r.Matrix[r.Object], r.Metadata, r.Params, r.Remote.Name, r.Prop.Object)
 	return nil
-}
-
-// load workload_class or use defaultValue
-func (r *RestPerf) loadWorkloadClassQuery(defaultValue string) string {
-
-	var x *node.Node
-
-	name := "workload_class"
-
-	if x = r.Params.GetChildS(name); x != nil {
-		v := x.GetAllChildContentS()
-		if len(v) == 0 {
-			r.Logger.Debug(
-				"",
-				slog.String("name", name),
-				slog.String("defaultValue", defaultValue),
-			)
-			return defaultValue
-		}
-		slices.Sort(v)
-		s := strings.Join(v, "|")
-		r.Logger.Debug("param", slog.String("name", name), slog.String("value", s))
-		return s
-	}
-	r.Logger.Debug("param default", slog.String("name", name), slog.String("defaultValue", defaultValue))
-	return defaultValue
 }
 
 func (r *RestPerf) PollCounter() (map[string]*matrix.Matrix, error) {
@@ -1514,9 +1485,9 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		fields = "*"
 		dataQuery = collectors.QosWorkloadQuery
 		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
-			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
+			filter = append(filter, "workload_class="+collectors.WorkloadClassQuery(r.Params, collectors.DefaultWorkloadVolumeClasses))
 		} else {
-			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadClass))
+			filter = append(filter, "workload_class="+collectors.WorkloadClassQuery(r.Params, collectors.DefaultWorkloadClasses))
 		}
 		filter = append(filter, r.Prop.Filter...)
 	}

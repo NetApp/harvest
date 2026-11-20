@@ -657,6 +657,8 @@ func loadQosWorkloads(t *testing.T, path string) map[string]gjson.Result {
 const (
 	wqUserspaceUUID = "8ab02089-df7c-11f1-8f93-005056bd11ba"
 	wqRootVolUUID   = "94929e78-df7d-11f1-8f93-005056bd11ba"
+	// _WAFL_SCAN is in the perf catalog and data fixtures but has no QoS workload
+	wqWaflScanUUID = "8ab1af67-df7c-11f1-8f93-005056bd11ba"
 	// _USERSPACE_APPS iops_total delta between the two data fixtures, which are 61 seconds apart (about 511 IOPS)
 	wqUserspaceIopsDelta = 128727953 - 128696761
 )
@@ -717,6 +719,11 @@ func TestStatPerf_WorkloadQueueCombined(t *testing.T) {
 	})
 
 	m := cookWorkloadQueueData(t, s)
+	// the data fixtures include _WAFL_SCAN, which must not be added without its QoS labels
+	assert.Equal(t, len(m.GetInstances()), 2)
+	assert.Nil(t, m.GetInstance(wqWaflScanUUID))
+	assert.Nil(t, s.Matrix[s.Object].GetInstance(wqWaflScanUUID))
+
 	userspace := m.GetInstance(wqUserspaceUUID)
 	assert.NotNil(t, userspace)
 	assert.Equal(t, userspace.GetLabel("workload"), "_USERSPACE_APPS")
@@ -788,4 +795,16 @@ func TestQosWorkloadsByUUID_SkipsConstituents(t *testing.T) {
 
 	s.perfProp.disableConstituents = false
 	assert.Equal(t, len(s.qosWorkloadsByUUID(records)), 3)
+}
+
+// The workload_class param narrows the QoS workloads, and so the instances, StatPerf collects.
+func TestQosWorkloadsHref(t *testing.T) {
+	const prefix = "api/storage/qos/workloads?return_records=true&fields=*&file=null&lun=null&qtree=null"
+	s := newStatPerf("workload_queue_combined", "workload_queue_combined.yaml")
+	assert.Equal(t, s.qosWorkloadsHref(), prefix+"&max_records=500")
+
+	wc := s.Params.NewChildS("workload_class", "")
+	wc.NewChildS("", "autovolume")
+	wc.NewChildS("", "user_defined")
+	assert.Equal(t, s.qosWorkloadsHref(), prefix+"&workload_class=autovolume|user_defined&max_records=500")
 }

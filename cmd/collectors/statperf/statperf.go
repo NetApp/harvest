@@ -743,6 +743,13 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 
 		instance = curMat.GetInstance(instanceKey)
 		if instance == nil {
+			if isWorkloadObject(s.Prop.Query) {
+				// Workload instances are created only by PollInstance, which labels them from their
+				// QoS workload. Creating one here would export it without those labels.
+				s.Logger.Debug("skip workload instance in PollData, defer to PollInstance",
+					slog.String("instanceKey", instanceKey))
+				return true
+			}
 			instance, err = curMat.NewInstance(instanceKey)
 			if err != nil {
 				s.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
@@ -1207,7 +1214,7 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	var qosWorkloads map[string]gjson.Result
 	if isWorkloadObject(s.Prop.Query) {
-		if qosWorkloads, err = s.fetchQosWorkloads(); err != nil {
+		if qosWorkloads, err = s.fetchQosWorkloads(headers); err != nil {
 			return nil, err
 		}
 	}
@@ -1217,21 +1224,26 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 // fetchQosWorkloads returns the volume-level QoS workloads keyed by uuid, which matches the
 // instance UUID of workload perf objects.
-func (s *StatPerf) fetchQosWorkloads() (map[string]gjson.Result, error) {
-	// Request every field: ONTAP omits svm and volume when they are requested as svm.name or volume alone.
-	href := rest.NewHrefBuilder().
-		APIPath(collectors.QosWorkloadQuery).
-		Fields([]string{"*"}).
-		Filter(collectors.VolumeLevelWorkloadFilter()).
-		MaxRecords(s.BatchSize).
-		ReturnTimeout(s.Prop.ReturnTimeOut).
-		Build()
-
-	records, err := rest.FetchAll(s.Client, &s.RequestMetadata, href)
+func (s *StatPerf) fetchQosWorkloads(headers map[string]string) (map[string]gjson.Result, error) {
+	records, err := rest.FetchAll(s.Client, &s.RequestMetadata, s.qosWorkloadsHref(), headers)
 	if err != nil {
 		return nil, fmt.Errorf("fetch %s: %w", collectors.QosWorkloadQuery, err)
 	}
 	return s.qosWorkloadsByUUID(records), nil
+}
+
+// qosWorkloadsHref lists volume-level QoS workloads of every class, or only of the classes in
+// the template's workload_class list. pollInstance drops instances with no matching workload,
+// so this filter also limits which instances StatPerf collects.
+func (s *StatPerf) qosWorkloadsHref() string {
+	// Request every field: ONTAP omits svm and volume when they are requested as svm.name or volume alone.
+	return rest.NewHrefBuilder().
+		APIPath(collectors.QosWorkloadQuery).
+		Fields([]string{"*"}).
+		Filter(collectors.WorkloadQueueFilter(s.Params)).
+		MaxRecords(s.BatchSize).
+		ReturnTimeout(s.Prop.ReturnTimeOut).
+		Build()
 }
 
 // qosWorkloadsByUUID keys the QoS workload records by uuid, skipping FlexGroup constituents

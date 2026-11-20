@@ -289,6 +289,26 @@ You can define multiple values within the filter array. These will be interprete
 
 Performance workload templates require a different syntax because instances are retrieved from the `qos-workload-get-iter` ZAPI instead of `perf-object-instance-list-info-iter`.
 
+By default, ZapiPerf collects these workload classes:
+
+| Template                       | Default workload classes                   |
+|--------------------------------|--------------------------------------------|
+| `workload.yaml`                | `user_defined`, `system_defined`, `preset` |
+| `workload_volume.yaml`         | `autovolume`                               |
+| `workload_queue_combined.yaml` | all classes, volume-level workloads only   |
+
+ONTAP workload classes include `user_defined`, `system_defined`, `preset`, and `autovolume`.
+The `preset` class includes ONTAP's built-in `User-Default` workload.
+To collect a different set of classes, add a `workload_class` list at the top level of the template:
+
+```yaml
+workload_class:
+  - user_defined
+  - preset
+```
+
+A `workload-class` entry under `filter` takes precedence over `workload_class`.
+
 The `qos-workload-get-iter` ZAPI supports filtering on the following fields:
 
 - workload-uuid

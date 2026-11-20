@@ -20,6 +20,13 @@ const ObjWorkloadQueue = "workload_queue_combined"
 // QosWorkloadQuery lists QoS workloads with their svm, volume, and policy.
 const QosWorkloadQuery = "api/storage/qos/workloads"
 
+// DefaultWorkloadClasses and DefaultWorkloadVolumeClasses are the workload classes that the
+// workload and workload_volume objects collect when a template has no workload_class list.
+const (
+	DefaultWorkloadClasses       = "user_defined|system_defined|preset"
+	DefaultWorkloadVolumeClasses = "autovolume"
+)
+
 // ConstituentRegex matches FlexGroup constituent volume names, such as fg__0001.
 var ConstituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
@@ -28,6 +35,33 @@ var ConstituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 // collect these workloads for ObjWorkloadQueue.
 func VolumeLevelWorkloadFilter() []string {
 	return []string{"qtree=null", "lun=null", "file=null"}
+}
+
+// WorkloadQueueFilter returns the QosWorkloadQuery filter for ObjWorkloadQueue: volume-level
+// workloads of every class, or only of the classes in the template's workload_class list.
+func WorkloadQueueFilter(params *node.Node) []string {
+	filter := VolumeLevelWorkloadFilter()
+	if classes := WorkloadClassQuery(params, ""); classes != "" {
+		filter = append(filter, "workload_class="+classes)
+	}
+	return filter
+}
+
+// WorkloadClassQuery returns the template's workload_class list joined with "|", or
+// defaultValue when the template does not set one.
+func WorkloadClassQuery(params *node.Node, defaultValue string) string {
+	if params == nil {
+		return defaultValue
+	}
+	x := params.GetChildS("workload_class")
+	if x == nil {
+		return defaultValue
+	}
+	classes := x.GetAllChildContentS()
+	if len(classes) == 0 {
+		return defaultValue
+	}
+	return strings.Join(classes, "|")
 }
 
 // UsesLatencyThreshold reports whether an average or percent counter is a per-operation latency,

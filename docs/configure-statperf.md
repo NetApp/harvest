@@ -118,6 +118,19 @@ counters:
      - vserver_name=osc
 ```
 
+### Workload Classes
+
+The `workload_queue_combined.yaml` template collects volume-level QoS workloads of every class.
+StatPerf labels these instances from the `api/storage/qos/workloads` Rest call and skips any instance with no matching workload.
+ONTAP workload classes include `user_defined`, `system_defined`, `preset`, and `autovolume`.
+To collect only some workload classes, add a `workload_class` list at the top level of the template:
+
+```yaml
+workload_class:
+  - user_defined
+  - autovolume
+```
+
 ### Array Labels
 
 Some array counters have thousands of elements. For example, each `wafl_flexlog` counter has one element per WAFL message type.

@@ -407,15 +407,26 @@ func TestWorkloadQueueInstancesMatchRest(t *testing.T) {
 
 func TestUpdateWorkloadQuery(t *testing.T) {
 	tests := []struct {
-		object, template string
-		wantClass        string
+		name, object, template string
+		classes                []string // workload_class template param; nil means unset
+		wantClass              string
 	}{
-		{object: "WorkloadQueue", template: "workload_queue_combined.yaml", wantClass: ""},
-		{object: "Workload", template: "workload.yaml", wantClass: objWorkloadClass},
+		{name: "queue default", object: "WorkloadQueue", template: "workload_queue_combined.yaml", wantClass: ""},
+		{name: "workload default", object: "Workload", template: "workload.yaml", wantClass: "user_defined|system_defined|preset"},
+		{name: "queue param", object: "WorkloadQueue", template: "workload_queue_combined.yaml",
+			classes: []string{"autovolume", "user_defined"}, wantClass: "autovolume|user_defined"},
+		{name: "workload param", object: "Workload", template: "workload.yaml",
+			classes: []string{"preset"}, wantClass: "preset"},
 	}
 	for _, tt := range tests {
-		t.Run(tt.object, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			z := newWorkloadZapiPerf(tt.object, tt.template)
+			if tt.classes != nil {
+				wc := z.Params.NewChildS("workload_class", "")
+				for _, c := range tt.classes {
+					wc.NewChildS("", c)
+				}
+			}
 			query := node.NewS("qos-workload-info")
 			z.updateWorkloadQuery(query)
 			assert.Equal(t, query.GetChildContentS("workload-class"), tt.wantClass)

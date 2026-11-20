@@ -21,6 +21,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
@@ -31,9 +32,7 @@ import (
 )
 
 const (
-	arrayKeyToken          = "#"
-	objWorkloadClass       = "user_defined|system_defined"
-	objWorkloadVolumeClass = "autovolume"
+	arrayKeyToken = "#"
 )
 
 // allowedSamplePeriods maps durations to the exact labels ONTAP's CM2 manifest accepts.
@@ -570,17 +569,20 @@ func isWorkloadObject(query string) bool {
 	return false
 }
 
-func workloadFilterFor(query string) []string {
+// workloadFilterFor returns the api/storage/qos/workloads filter for a workload query. A
+// workload_class list in the template params replaces the query's default classes, as it
+// does in ZapiPerf, RestPerf, and StatPerf.
+func workloadFilterFor(query string, params *node.Node) []string {
 	switch query {
 	case "workload_volume":
-		return []string{"workload_class=" + objWorkloadVolumeClass}
+		return []string{"workload_class=" + collectors.WorkloadClassQuery(params, collectors.DefaultWorkloadVolumeClasses)}
 	case collectors.ObjWorkloadQueue:
-		// Deliberately unconstrained by workload_class: this CM2 object reports queue counters
+		// By default unconstrained by workload_class: this CM2 object reports queue counters
 		// for workloads of every class. It is limited to volume-level workloads, matching the
 		// qos_labels and export_options in workload_queue_combined.yaml.
-		return collectors.VolumeLevelWorkloadFilter()
+		return collectors.WorkloadQueueFilter(params)
 	default:
-		return []string{"workload_class=" + objWorkloadClass}
+		return []string{"workload_class=" + collectors.WorkloadClassQuery(params, collectors.DefaultWorkloadClasses)}
 	}
 }
 
@@ -601,7 +603,7 @@ func (c *CmPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	href := rest.NewHrefBuilder().
 		APIPath(collectors.QosWorkloadQuery).
 		Fields([]string{"*"}).
-		Filter(workloadFilterFor(c.Prop.Query)).
+		Filter(workloadFilterFor(c.Prop.Query, c.Params)).
 		MaxRecords(c.BatchSize).
 		ReturnTimeout(c.Prop.ReturnTimeOut).
 		Build()

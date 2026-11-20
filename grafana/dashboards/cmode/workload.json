@@ -6524,8 +6524,13 @@
           },
           {
             "selected": false,
-            "text": "user_defined",
-            "value": "user_defined"
+            "text": "autovolume",
+            "value": "autovolume"
+          },
+          {
+            "selected": false,
+            "text": "preset",
+            "value": "preset"
           },
           {
             "selected": false,
@@ -6534,16 +6539,11 @@
           },
           {
             "selected": false,
-            "text": "autovolume",
-            "value": "autovolume"
-          },
-          {
-            "selected": false,
-            "text": "preset",
-            "value": "preset"
+            "text": "user_defined",
+            "value": "user_defined"
           }
         ],
-        "query": "user_defined,system_defined,autovolume,preset",
+        "query": "autovolume,preset,system_defined,user_defined",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"

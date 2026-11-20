@@ -3,6 +3,7 @@ package collectors
 import (
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"testing"
@@ -84,4 +85,33 @@ func TestUsesLatencyThreshold(t *testing.T) {
 			assert.Equal(t, UsesLatencyThreshold(tt.query, tt.name, tt.denominator), tt.want)
 		})
 	}
+}
+
+func TestWorkloadClassQuery(t *testing.T) {
+	tests := []struct {
+		name string
+		yaml string
+		want string
+	}{
+		{name: "unset", yaml: "query: workload\n", want: "default"},
+		{name: "empty list", yaml: "workload_class: []\n", want: "default"},
+		{name: "list", yaml: "workload_class:\n  - user_defined\n  - preset\n", want: "user_defined|preset"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			params, err := tree.LoadYaml([]byte(tt.yaml))
+			assert.Nil(t, err)
+			assert.Equal(t, WorkloadClassQuery(params, "default"), tt.want)
+		})
+	}
+	assert.Equal(t, WorkloadClassQuery(nil, "default"), "default")
+}
+
+func TestWorkloadQueueFilter(t *testing.T) {
+	assert.Equal(t, WorkloadQueueFilter(nil), []string{"qtree=null", "lun=null", "file=null"})
+
+	params, err := tree.LoadYaml([]byte("workload_class:\n  - autovolume\n  - user_defined\n"))
+	assert.Nil(t, err)
+	assert.Equal(t, WorkloadQueueFilter(params),
+		[]string{"qtree=null", "lun=null", "file=null", "workload_class=autovolume|user_defined"})
 }

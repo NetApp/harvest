@@ -70,9 +70,7 @@ const (
 	objWorkloadDetailVolume = "workload_detail_volume"
 	// workload_queue_combined reports volume-level workloads of every class, the same set CmPerf
 	// and StatPerf collect, so it has no default workload-class filter
-	objWorkloadQueue       = collectors.ObjWorkloadQueue
-	objWorkloadClass       = "user_defined|system_defined"
-	objWorkloadVolumeClass = "autovolume"
+	objWorkloadQueue = collectors.ObjWorkloadQueue
 )
 
 var workloadDetailMetrics = []string{"resource_latency"}
@@ -279,31 +277,6 @@ func (z *ZapiPerf) loadParamArray(name, defaultValue string) []string {
 	return []string{defaultValue}
 }
 
-// load workload_class or use defaultValue
-func (z *ZapiPerf) loadWorkloadClassQuery(defaultValue string) string {
-
-	var x *node.Node
-
-	name := "workload_class"
-
-	if x = z.Params.GetChildS(name); x != nil {
-		v := x.GetAllChildContentS()
-		if len(v) == 0 {
-			z.Logger.Debug(
-				"",
-				slog.String("name", name),
-				slog.String("defaultValue", defaultValue),
-			)
-			return defaultValue
-		}
-		s := strings.Join(v, "|")
-		z.Logger.Debug("param", slog.String("name", name), slog.String("value", s))
-		return s
-	}
-	z.Logger.Debug("param default", slog.String("name", name), slog.String("defaultValue", defaultValue))
-	return defaultValue
-}
-
 func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
 	// filter -> workload-class takes precedence over workload_class param at root level
 	// filter -> is-constituent takes precedence over refine -> with_constituents
@@ -330,11 +303,11 @@ func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
 		var workloadClassQuery string
 		switch z.Query {
 		case objWorkloadVolume, objWorkloadDetailVolume:
-			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadVolumeClass)
+			workloadClassQuery = collectors.WorkloadClassQuery(z.Params, collectors.DefaultWorkloadVolumeClasses)
 		case objWorkloadQueue:
-			workloadClassQuery = z.loadWorkloadClassQuery("")
+			workloadClassQuery = collectors.WorkloadClassQuery(z.Params, "")
 		default:
-			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadClass)
+			workloadClassQuery = collectors.WorkloadClassQuery(z.Params, collectors.DefaultWorkloadClasses)
 		}
 		if workloadClassQuery != "" {
 			query.NewChildS("workload-class", workloadClassQuery)
