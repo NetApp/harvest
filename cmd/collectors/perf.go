@@ -5,11 +5,72 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
+	"regexp"
+	"strings"
 )
 
 const TimestampMetricName = "timestamp"
 
 const DefaultLatencyIOReqd = 5
+
+// ObjWorkloadQueue is the perf object that reports QoS queue delay, residence, and service times
+// per workload.
+const ObjWorkloadQueue = "workload_queue_combined"
+
+// QosWorkloadQuery lists QoS workloads with their svm, volume, and policy.
+const QosWorkloadQuery = "api/storage/qos/workloads"
+
+// DefaultWorkloadClasses and DefaultWorkloadVolumeClasses are the workload classes that the
+// workload and workload_volume objects collect when a template has no workload_class list.
+const (
+	DefaultWorkloadClasses       = "user_defined|system_defined|preset"
+	DefaultWorkloadVolumeClasses = "autovolume"
+)
+
+// ConstituentRegex matches FlexGroup constituent volume names, such as fg__0001.
+var ConstituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
+
+// VolumeLevelWorkloadFilter limits QosWorkloadQuery to workloads of every class that are attached
+// to a whole volume or to no storage object, not to a qtree, LUN, or file. CmPerf and StatPerf
+// collect these workloads for ObjWorkloadQueue.
+func VolumeLevelWorkloadFilter() []string {
+	return []string{"qtree=null", "lun=null", "file=null"}
+}
+
+// WorkloadQueueFilter returns the QosWorkloadQuery filter for ObjWorkloadQueue: volume-level
+// workloads of every class, or only of the classes in the template's workload_class list.
+func WorkloadQueueFilter(params *node.Node) []string {
+	filter := VolumeLevelWorkloadFilter()
+	if classes := WorkloadClassQuery(params, ""); classes != "" {
+		filter = append(filter, "workload_class="+classes)
+	}
+	return filter
+}
+
+// WorkloadClassQuery returns the template's workload_class list joined with "|", or
+// defaultValue when the template does not set one.
+func WorkloadClassQuery(params *node.Node, defaultValue string) string {
+	if params == nil {
+		return defaultValue
+	}
+	x := params.GetChildS("workload_class")
+	if x == nil {
+		return defaultValue
+	}
+	classes := x.GetAllChildContentS()
+	if len(classes) == 0 {
+		return defaultValue
+	}
+	return strings.Join(classes, "|")
+}
+
+// UsesLatencyThreshold reports whether an average or percent counter is a per-operation latency,
+// which latency_io_reqd zeroes when its instance has too few IOPS to give a meaningful average.
+// Besides counters named *latency, these are the ObjWorkloadQueue delay, residence, and service
+// times, which ONTAP averages over iops_total.
+func UsesLatencyThreshold(query string, name string, denominator string) bool {
+	return strings.HasSuffix(name, "latency") || (query == ObjWorkloadQueue && denominator == "iops_total")
+}
 
 // CounterOverride returns the configured property override for counter.
 func CounterOverride(params *node.Node, counter string) string {

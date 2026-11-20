@@ -265,6 +265,17 @@ security login create -user-or-group-name harvest2 -application ssh -authenticat
 security login create -user-or-group-name harvest2 -application http -authentication-method cert -role harvest-rest-role
 ```
 
+##### QoS workload performance metrics {: .prominent-subsection}
+
+The StatPerf `WorkloadQueue` template, which is disabled by default, needs a REST read permission on the QoS workloads
+endpoint, so Harvest can look up the SVM, volume, and policy group of each workload. If you already created the full
+[REST least-privilege role](#rest-least-privilege-role), you already have this (`/api/storage/qos/workloads`) and can
+skip the command below. Otherwise, add just this permission to the REST role:
+
+```bash
+security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/qos/workloads
+```
+
 **Note:** StatPerf Collector is not supported for FSx systems.
 
 #### 7-Mode CLI

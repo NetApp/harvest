@@ -7,6 +7,7 @@ import (
 
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
 func TestCanonicalSamplePeriod(t *testing.T) {
@@ -70,18 +71,37 @@ func TestIsWorkloadObject(t *testing.T) {
 
 func TestWorkloadFilterFor(t *testing.T) {
 	tests := []struct {
-		query string
-		want  []string
+		name    string
+		query   string
+		classes []string // workload_class template param; nil means unset
+		want    []string
 	}{
-		{query: "workload", want: []string{"workload_class=" + objWorkloadClass}},
-		{query: "workload_volume", want: []string{"workload_class=" + objWorkloadVolumeClass}},
-		{query: "workload_queue_combined", want: []string{"qtree=null", "lun=null", "file=null"}},
-		{query: "unknown", want: []string{"workload_class=" + objWorkloadClass}},
+		{name: "workload default", query: "workload",
+			want: []string{"workload_class=user_defined|system_defined|preset"}},
+		{name: "workload_volume default", query: "workload_volume",
+			want: []string{"workload_class=autovolume"}},
+		{name: "workload_queue_combined default", query: "workload_queue_combined",
+			want: []string{"qtree=null", "lun=null", "file=null"}},
+		{name: "unknown default", query: "unknown",
+			want: []string{"workload_class=user_defined|system_defined|preset"}},
+		{name: "workload param", query: "workload", classes: []string{"user_defined", "preset"},
+			want: []string{"workload_class=user_defined|preset"}},
+		{name: "workload_volume param", query: "workload_volume", classes: []string{"user_defined"},
+			want: []string{"workload_class=user_defined"}},
+		{name: "workload_queue_combined param", query: "workload_queue_combined", classes: []string{"autovolume"},
+			want: []string{"qtree=null", "lun=null", "file=null", "workload_class=autovolume"}},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.query, func(t *testing.T) {
-			assert.Equal(t, workloadFilterFor(tt.query), tt.want)
+		t.Run(tt.name, func(t *testing.T) {
+			params := node.NewS("params")
+			if tt.classes != nil {
+				wc := params.NewChildS("workload_class", "")
+				for _, c := range tt.classes {
+					wc.NewChildS("", c)
+				}
+			}
+			assert.Equal(t, workloadFilterFor(tt.query, params), tt.want)
 		})
 	}
 }

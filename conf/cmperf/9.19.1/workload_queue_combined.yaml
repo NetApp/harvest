@@ -19,6 +19,7 @@ counters:
   - delay_avscan_wait_time
   - delay_cloud_io_wait_time
   - delay_cluster_interconnect_wait_time
+  - delay_cop_num_wait
   - delay_cop_wait_time
   - delay_disk_io_wait_time
   - delay_flexcache_ral_wait_time
@@ -33,18 +34,27 @@ counters:
   - delay_wafl_susp_other_wait_time
   - disk_hdd_background_service_time
   - disk_ssd_background_service_time
+  - iops_total
   - refine:
       - with_constituents: false   # true includes FlexGroup constituents
 
+# iops_total and delay_cop_num_wait are the base counters of the averages. Their rates weight
+# the averages in dashboards.
+override:
+  - delay_cop_num_wait: rate
+  - iops_total: rate
+
 qos_labels:
-  - svm.name     => svm
+  - svm.name       => svm
   - volume
-  - policy.name  => policy_group
+  - policy.name    => policy_group
   - wid
-  - name         => workload
+  - name           => workload
+  - workload_class => class
 
 export_options:
   instance_keys:
+    - class
     - policy_group
     - svm
     - volume

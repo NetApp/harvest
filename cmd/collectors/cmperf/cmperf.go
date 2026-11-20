@@ -21,24 +21,19 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
 )
 
 const (
-	arrayKeyToken          = "#"
-	qosWorkloadQuery       = "api/storage/qos/workloads"
-	objWorkloadClass       = "user_defined|system_defined"
-	objWorkloadVolumeClass = "autovolume"
+	arrayKeyToken = "#"
 )
-
-var constituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
 // allowedSamplePeriods maps durations to the exact labels ONTAP's CM2 manifest accepts.
 var allowedSamplePeriods = map[time.Duration]string{
@@ -455,7 +450,7 @@ func (c *CmPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (ma
 		// special case for latency counter: apply minimum number of iops as threshold
 		if property == "average" || property == "percent" {
 
-			if strings.HasSuffix(metric.GetName(), "latency") {
+			if collectors.UsesLatencyThreshold(c.Prop.Query, metric.GetName(), counter.denominator) {
 				skips, err = curMat.DivideWithThreshold(key, counter.denominator, c.perfProp.latencyIoReqd, cachedData, prevMat, collectors.TimestampMetricName, c.Logger)
 			} else {
 				skips, err = curMat.Divide(key, counter.denominator)
@@ -568,23 +563,26 @@ func (c *CmPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plug
 
 func isWorkloadObject(query string) bool {
 	switch query {
-	case "workload", "workload_volume", "workload_queue_combined":
+	case "workload", "workload_volume", collectors.ObjWorkloadQueue:
 		return true
 	}
 	return false
 }
 
-func workloadFilterFor(query string) []string {
+// workloadFilterFor returns the api/storage/qos/workloads filter for a workload query. A
+// workload_class list in the template params replaces the query's default classes, as it
+// does in ZapiPerf, RestPerf, and StatPerf.
+func workloadFilterFor(query string, params *node.Node) []string {
 	switch query {
 	case "workload_volume":
-		return []string{"workload_class=" + objWorkloadVolumeClass}
-	case "workload_queue_combined":
-		// Deliberately unconstrained by workload_class: this CM2 object reports queue counters
-		// for workloads of every class. qtree/lun/file=null keeps it to volume-level workloads,
-		// matching the qos_labels and export_options in workload_queue_combined.yaml.
-		return []string{"qtree=null", "lun=null", "file=null"}
+		return []string{"workload_class=" + collectors.WorkloadClassQuery(params, collectors.DefaultWorkloadVolumeClasses)}
+	case collectors.ObjWorkloadQueue:
+		// By default unconstrained by workload_class: this CM2 object reports queue counters
+		// for workloads of every class. It is limited to volume-level workloads, matching the
+		// qos_labels and export_options in workload_queue_combined.yaml.
+		return collectors.WorkloadQueueFilter(params)
 	default:
-		return []string{"workload_class=" + objWorkloadClass}
+		return []string{"workload_class=" + collectors.WorkloadClassQuery(params, collectors.DefaultWorkloadClasses)}
 	}
 }
 
@@ -603,9 +601,9 @@ func (c *CmPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	href := rest.NewHrefBuilder().
-		APIPath(qosWorkloadQuery).
+		APIPath(collectors.QosWorkloadQuery).
 		Fields([]string{"*"}).
-		Filter(workloadFilterFor(c.Prop.Query)).
+		Filter(workloadFilterFor(c.Prop.Query, c.Params)).
 		MaxRecords(c.BatchSize).
 		ReturnTimeout(c.Prop.ReturnTimeOut).
 		Build()
@@ -630,7 +628,7 @@ func (c *CmPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 		// Skip FlexGroup constituents if configured
 		if c.perfProp.disableConstituents {
-			if constituentRegex.MatchString(instanceData.Get("volume").ClonedString()) {
+			if collectors.ConstituentRegex.MatchString(instanceData.Get("volume").ClonedString()) {
 				continue
 			}
 		}
