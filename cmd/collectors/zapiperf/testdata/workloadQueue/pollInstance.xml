@@ -1,0 +1,9 @@
+<results status="passed">
+    <attributes-list>
+        <qos-workload-info><is-adaptive>false</is-adaptive><is-constituent>false</is-constituent><policy-group>_System-Best-Effort</policy-group><read-ahead>Default</read-ahead><vserver>sti46-vsim-ucs519c_cluster</vserver><wid>1</wid><workload-class>system_defined</workload-class><workload-name>System-Default</workload-name><workload-uuid>2b14acd7-dfbb-11f1-929c-005056a70d2c</workload-uuid></qos-workload-info>
+        <qos-workload-info><is-adaptive>false</is-adaptive><is-constituent>false</is-constituent><policy-group>User-Best-Effort</policy-group><read-ahead>Default</read-ahead><vserver>sti46-vsim-ucs519c_cluster</vserver><wid>2</wid><workload-class>preset</workload-class><workload-name>User-Default</workload-name><workload-uuid>2b17f860-dfbb-11f1-929c-005056a70d2c</workload-uuid></qos-workload-info>
+        <qos-workload-info><is-adaptive>false</is-adaptive><is-constituent>false</is-constituent><policy-group>User-Best-Effort</policy-group><read-ahead>Default</read-ahead><volume>root_vs0</volume><vserver>vs0</vserver><wid>48041</wid><workload-class>autovolume</workload-class><workload-name>root_vs0-wid48041</workload-name><workload-uuid>281b4f44-dfbc-11f1-929c-005056a70d2c</workload-uuid></qos-workload-info>
+        <qos-workload-info><is-adaptive>false</is-adaptive><is-constituent>false</is-constituent><policy-group>User-Best-Effort</policy-group><read-ahead>Default</read-ahead><qtree>q1</qtree><volume>root_vs0</volume><vserver>vs0</vserver><wid>48042</wid><workload-class>user_defined</workload-class><workload-name>q1-wid48042</workload-name><workload-uuid>281b4f44-dfbc-11f1-929c-005056a70d2d</workload-uuid></qos-workload-info>
+    </attributes-list>
+    <num-records>4</num-records>
+</results>

@@ -12,3 +12,4 @@ objects:
   SystemNode:               system_node.yaml
   NicCommon:                nic_common.yaml
   NvmMirror:                nvm_mirror.yaml
+#  WorkloadQueue:            workload_queue_combined.yaml

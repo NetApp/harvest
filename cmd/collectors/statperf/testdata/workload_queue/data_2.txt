@@ -1,0 +1,156 @@
+
+
+
+Object: workload_queue_combined
+Instance: _USERSPACE_APPS
+Start-time: 11/19/2026 07:54:54
+End-time: 11/19/2026 07:54:54
+Scope: sti245-vsim-ocvs026a_cluster
+Number of Constituents: 2 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    cpu_dblade_background_service_                                  -
+    time
+                              direct                       1468431175
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    cpu_dblade_residence_time                            3531648002us
+    cpu_dblade_util_service_time                         2079275709us
+    cpu_nblade_residence_time                                  1036us
+    cpu_nblade_util_service_time                                769us
+    delay_avscan_wait_time                                        0us
+    delay_cloud_io_wait_time                                      0us
+    delay_cluster_interconnect_wait_                     1773055415us
+    time
+    delay_cop_num_wait                                              0
+    delay_cop_wait_time                                           0us
+    delay_disk_io_wait_time                                 3251014us
+    delay_flexcache_ral_wait_time                                 0us
+    delay_flexcache_spinhi_wait_time                              0us
+    delay_network_wait_time                                       0us
+    delay_nvlog_transfer_wait_time                        796582281us
+    delay_qos_limit_wait_time                                     0us
+    delay_qos_min_throughput_wait_                                0us
+    time
+    delay_sync_repl_wait_time                                     0us
+    delay_wafl_response_wait_time                                 0us
+    delay_wafl_susp_cp_wait_time                            2147797us
+    delay_wafl_susp_other_wait_time                          194052us
+    disk_hdd_background_service_time                                -
+                              direct                          2043187
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    disk_ssd_background_service_time                                -
+                              direct                            13138
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    instance_name                                     _USERSPACE_APPS
+    instance_uuid                            8ab02089-df7c-11f1-8f93-
+                                                         005056bd11ba
+    iops_total                                              128727953
+
+Object: workload_queue_combined
+Instance: _WAFL_SCAN
+Start-time: 11/19/2026 07:54:54
+End-time: 11/19/2026 07:54:54
+Scope: sti245-vsim-ocvs026a_cluster
+Number of Constituents: 2 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    cpu_dblade_background_service_                                  -
+    time
+                              direct                          6209568
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    cpu_dblade_residence_time                               5602689us
+    cpu_dblade_util_service_time                            1435585us
+    cpu_nblade_residence_time                                     0us
+    cpu_nblade_util_service_time                                  0us
+    delay_avscan_wait_time                                        0us
+    delay_cloud_io_wait_time                                      0us
+    delay_cluster_interconnect_wait_                              0us
+    time
+    delay_cop_num_wait                                              0
+    delay_cop_wait_time                                           0us
+    delay_disk_io_wait_time                                   92063us
+    delay_flexcache_ral_wait_time                                 0us
+    delay_flexcache_spinhi_wait_time                              0us
+    delay_network_wait_time                                       0us
+    delay_nvlog_transfer_wait_time                                0us
+    delay_qos_limit_wait_time                                     0us
+    delay_qos_min_throughput_wait_                                0us
+    time
+    delay_sync_repl_wait_time                                     0us
+    delay_wafl_response_wait_time                                 0us
+    delay_wafl_susp_cp_wait_time                        13007076397us
+    delay_wafl_susp_other_wait_time                    173620571779us
+    disk_hdd_background_service_time                                -
+                              direct                           144396
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    disk_ssd_background_service_time                                -
+                              direct                             1330
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    instance_name                                          _WAFL_SCAN
+    instance_uuid                            8ab1af67-df7c-11f1-8f93-
+                                                         005056bd11ba
+    iops_total                                                  17092
+
+Object: workload_queue_combined
+Instance: root_vs0-wid1541
+Start-time: 11/19/2026 07:54:54
+End-time: 11/19/2026 07:54:54
+Scope: sti245-vsim-ocvs026a_cluster
+Number of Constituents: 2 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    cpu_dblade_background_service_                                  -
+    time
+                              direct                                0
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    cpu_dblade_residence_time                                     0us
+    cpu_dblade_util_service_time                                  0us
+    cpu_nblade_residence_time                                     0us
+    cpu_nblade_util_service_time                                  0us
+    delay_avscan_wait_time                                        0us
+    delay_cloud_io_wait_time                                      0us
+    delay_cluster_interconnect_wait_                              0us
+    time
+    delay_cop_num_wait                                              0
+    delay_cop_wait_time                                           0us
+    delay_disk_io_wait_time                                       0us
+    delay_flexcache_ral_wait_time                                 0us
+    delay_flexcache_spinhi_wait_time                              0us
+    delay_network_wait_time                                       0us
+    delay_nvlog_transfer_wait_time                                0us
+    delay_qos_limit_wait_time                                     0us
+    delay_qos_min_throughput_wait_                                0us
+    time
+    delay_sync_repl_wait_time                                     0us
+    delay_wafl_response_wait_time                                 0us
+    delay_wafl_susp_cp_wait_time                                  0us
+    delay_wafl_susp_other_wait_time                               0us
+    disk_hdd_background_service_time                                -
+                              direct                                0
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    disk_ssd_background_service_time                                -
+                              direct                                0
+                             wafl_cp                                0
+                   background_delete                                0
+                  readahead_x_stripe                                0
+    instance_name                                    root_vs0-wid1541
+    instance_uuid                            94929e78-df7d-11f1-8f93-
+                                                         005056bd11ba
+    iops_total                                                      0
+78 entries were displayed.

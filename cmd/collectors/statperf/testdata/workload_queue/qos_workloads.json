@@ -1,0 +1,2 @@
+{"uuid": "8ab02089-df7c-11f1-8f93-005056bd11ba", "name": "_USERSPACE_APPS", "workload_class": "system_defined", "wid": 14, "policy": {"uuid": "8a9faa63-df7c-11f1-8f93-005056bd11ba", "name": "_System-Work"}}
+{"uuid": "94929e78-df7d-11f1-8f93-005056bd11ba", "name": "root_vs0-wid1541", "workload_class": "autovolume", "wid": 1541, "policy": {"uuid": "8a9c0c02-df7c-11f1-8f93-005056bd11ba", "name": "User-Best-Effort"}, "svm": {"uuid": "9426b831-df7d-11f1-8f93-005056bd11ba", "name": "vs0"}, "volume": "root_vs0"}

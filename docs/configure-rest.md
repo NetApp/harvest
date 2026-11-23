@@ -446,6 +446,23 @@ counters:
 
 Performance workload templates require a different syntax because instances are retrieved from the `api/storage/qos/workloads` Rest call.
 
+By default, RestPerf collects these workload classes:
+
+| Template               | Default workload classes                   |
+|------------------------|--------------------------------------------|
+| `workload.yaml`        | `user_defined`, `system_defined`, `preset` |
+| `workload_volume.yaml` | `autovolume`                               |
+
+ONTAP workload classes include `user_defined`, `system_defined`, `preset`, and `autovolume`.
+The `preset` class includes ONTAP's built-in `User-Default` workload.
+To collect a different set of classes, add a `workload_class` list at the top level of the template:
+
+```yaml
+workload_class:
+  - user_defined
+  - preset
+```
+
 The `api/storage/qos/workloads` Rest supports filtering on the following fields:
 
 - name

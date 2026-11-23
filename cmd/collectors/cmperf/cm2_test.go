@@ -869,3 +869,82 @@ func TestPruneCmperfTempDir(t *testing.T) {
 		assert.False(t, kept["1000_volume.pb"])
 	})
 }
+
+// workload_queue_combined averages over iops_total are latencies, so latency_io_reqd zeroes them
+// for instances with too few IOPS. Other objects only apply it to counters named *latency.
+func TestCookCounters_WorkloadQueueLatencyThreshold(t *testing.T) {
+	tests := []struct {
+		query    string
+		wantIdle float64
+	}{
+		{query: "workload_queue_combined", wantIdle: 0},
+		{query: "wafl", wantIdle: 30}, // (90-30)/(62-60)
+	}
+	for _, tt := range tests {
+		t.Run(tt.query, func(t *testing.T) {
+			c := newTestCmPerf(t)
+			c.Prop.Query = tt.query
+			c.perfProp.latencyIoReqd = collectors.DefaultLatencyIOReqd
+			c.Metadata = matrix.New("test", "metadata", "metadata")
+			if _, err := c.Metadata.NewInstance("data"); err != nil {
+				t.Fatal(err)
+			}
+			_, _ = c.Metadata.NewMetricUint64("skips")
+			_, _ = c.Metadata.NewMetricUint64("numPartials")
+			_, _ = c.Metadata.NewMetricUint64("instances")
+			_, _ = c.Metadata.NewMetricInt64("calc_time")
+
+			c.Prop.Metrics["cpu_dblade_residence_time"] = &rest2.Metric{Label: "cpu_dblade_residence_time", Exportable: true}
+			c.Prop.Metrics["cpu_dblade_background_service_time"] = &rest2.Metric{Label: "cpu_dblade_background_service_time", Exportable: true}
+
+			schema := cmmetrics.ObjectSchema{CounterSchema: []cmmetrics.CounterSchema{
+				{Index: 1, Name: "cpu_dblade_residence_time", Type: cmmetrics.CookAverage, BaseIndex: 3, HasBaseIndex: true},
+				{Index: 2, Name: "cpu_dblade_background_service_time", Type: cmmetrics.CookAverage, BaseIndex: 3, HasBaseIndex: true, LabelsX: []string{"direct", "wafl_cp"}},
+				{Index: 3, Name: "iops_total", Type: cmmetrics.CookDelta},
+			}}
+
+			curMat := matrix.New("test", "test", "test")
+			prevMat := matrix.New("test", "test", "test")
+			c.buildCountersFromSchema(schema, curMat, prevMat)
+			tsMetric, err := curMat.NewMetricFloat64(collectors.TimestampMetricName)
+			assert.Nil(t, err)
+			tsMetric.SetProperty("raw")
+			prevTs, err := prevMat.NewMetricFloat64(collectors.TimestampMetricName)
+			assert.Nil(t, err)
+
+			// both instances are polled 60s apart: busy does 600 ops (10 IOPS), idle 2 ops (under 1 IOPS)
+			setInstance := func(name string, prevOps, curOps float64) *matrix.Instance {
+				inst, err := curMat.NewInstance(name)
+				assert.Nil(t, err)
+				prevInst, err := prevMat.NewInstance(name)
+				assert.Nil(t, err)
+				curMat.MustGetMetric("cpu_dblade_residence_time").SetValueFloat64(inst, 90)
+				prevMat.MustGetMetric("cpu_dblade_residence_time").SetValueFloat64(prevInst, 30)
+				c.populateArrayCounter(curMat, prevMat, inst, cmmetrics.CounterSchema{Name: "cpu_dblade_background_service_time", LabelsX: []string{"direct", "wafl_cp"}}, []uint64{90, 0})
+				prevMat.MustGetMetric("cpu_dblade_background_service_time#direct").SetValueFloat64(prevInst, 30)
+				prevMat.MustGetMetric("cpu_dblade_background_service_time#wafl_cp").SetValueFloat64(prevInst, 0)
+				curMat.MustGetMetric("iops_total").SetValueFloat64(inst, curOps)
+				prevMat.MustGetMetric("iops_total").SetValueFloat64(prevInst, prevOps)
+				tsMetric.SetValueFloat64(inst, 61)
+				prevTs.SetValueFloat64(prevInst, 1)
+				return inst
+			}
+			busy := setInstance("busy", 1000, 1600)
+			idle := setInstance("idle", 60, 62)
+
+			newData, err := c.cookCounters(curMat, prevMat)
+			assert.Nil(t, err)
+			m := newData[c.Object]
+
+			for _, key := range []string{"cpu_dblade_residence_time", "cpu_dblade_background_service_time#direct"} {
+				got, ok := m.GetMetric(key).GetValueFloat64(busy)
+				assert.True(t, ok)
+				assert.Equal(t, got, float64(60)/600)
+
+				got, ok = m.GetMetric(key).GetValueFloat64(idle)
+				assert.True(t, ok)
+				assert.Equal(t, got, tt.wantIdle)
+			}
+		})
+	}
+}

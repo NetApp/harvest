@@ -256,8 +256,9 @@ var (
 
 	// include StatPerf Templates
 	includeStatPerfTemplates = map[string]struct{}{
-		"flexcache.yaml":   {},
-		"system_node.yaml": {},
+		"flexcache.yaml":               {},
+		"system_node.yaml":             {},
+		"workload_queue_combined.yaml": {},
 	}
 
 	// Excludes these Rest gaps from logs
