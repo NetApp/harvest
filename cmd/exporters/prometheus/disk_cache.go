@@ -3,6 +3,7 @@ package prometheus
 import (
 	"bufio"
 	"context"
+	"github.com/netapp/harvest/v2/cmd/exporters"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
@@ -14,6 +15,8 @@ import (
 	"sync"
 	"time"
 )
+
+const tmpSuffix = ".tmp"
 
 // CacheStats holds statistics about cached metrics
 type CacheStats struct {
@@ -52,10 +55,6 @@ func (dc *diskCache) getOverview() (*CacheStats, error) {
 	}
 
 	return stats, nil
-}
-
-func (dc *diskCache) exportMetrics(key string, data [][]byte, metricNames *set.Set) {
-	dc.Put(key, data, metricNames)
 }
 
 func (dc *diskCache) streamMetrics(w http.ResponseWriter, _ map[string]struct{}, metrics [][]byte) (int, error) {
@@ -184,14 +183,44 @@ func (dc *diskCache) GetMetricCount() int {
 	return count
 }
 
-// Put stores metrics to disk and updates cache metadata.
-func (dc *diskCache) Put(key string, data [][]byte, metricNames *set.Set) {
+// put writes write's lines to a temp file without holding dc.mu, then renames it into place under dc.mu.
+// On failure the previous file is kept. write always runs, so callers get their stats.
+func (dc *diskCache) put(key string, write func(exporters.LineSink) *set.Set) {
+	filePath := dc.generateFilepath(key)
+	tmpPath := filePath + tmpSuffix
+	// no-op after a successful rename
+	defer func() { _ = os.Remove(tmpPath) }()
+
+	writer := dc.writerPool.Get().(*bufio.Writer)
+	defer dc.writerPool.Put(writer)
+
+	file, err := os.Create(tmpPath)
+	if err == nil {
+		defer file.Close()
+		writer.Reset(file)
+	} else {
+		writer.Reset(io.Discard)
+	}
+
+	sink := &lineWriter{w: writer}
+	metricNames := write(sink)
+
+	if err == nil {
+		// bufio.Writer keeps the first write error and returns it from Flush.
+		err = writer.Flush()
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}
+
 	dc.mu.Lock()
 	defer dc.mu.Unlock()
 
-	filePath := dc.generateFilepath(key)
-
-	if err := dc.writeToDisk(filePath, data); err != nil {
+	// Scrapes open cache files only while holding dc.mu, so no reader has filePath open here.
+	if err == nil {
+		err = os.Rename(tmpPath, filePath)
+	}
+	if err != nil {
 		dc.logger.Warn("failed to write cache file",
 			slogx.Err(err),
 			slog.String("key", key),
@@ -206,12 +235,26 @@ func (dc *diskCache) Put(key string, data [][]byte, metricNames *set.Set) {
 	} else {
 		dc.metricNames[key] = nil
 	}
-	dc.metricCounts[key] = len(data)
+	dc.metricCounts[key] = sink.lines
 
 	dc.logger.Debug("cached metrics to disk",
 		slog.String("key", key),
 		slog.String("file", filePath),
-		slog.Int("metrics_count", len(data)))
+		slog.Int("metrics_count", sink.lines))
+}
+
+// lineWriter is a LineSink that writes newline-terminated lines.
+type lineWriter struct {
+	w     *bufio.Writer
+	lines int
+}
+
+func (*lineWriter) Grow(int) {}
+
+func (l *lineWriter) Write(line []byte) {
+	l.lines++
+	_, _ = l.w.Write(line)
+	_ = l.w.WriteByte('\n')
 }
 
 // streamToWriter streams all non-expired cache files to the writer.
@@ -313,6 +356,10 @@ func (dc *diskCache) Clean() {
 	}
 
 	for _, entry := range entries {
+		// put writes temp files without holding dc.mu
+		if strings.HasSuffix(entry.Name(), tmpSuffix) {
+			continue
+		}
 		fullPath := filepath.Join(dc.baseDir, entry.Name())
 
 		if _, found := knownFiles[fullPath]; !found {
@@ -324,29 +371,6 @@ func (dc *diskCache) Clean() {
 func (dc *diskCache) generateFilepath(key string) string {
 	safeKey := dc.keyReplacer.Replace(key)
 	return filepath.Join(dc.baseDir, safeKey+".metrics")
-}
-
-func (dc *diskCache) writeToDisk(filePath string, data [][]byte) error {
-	file, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer dc.closeFile(file)
-
-	writer := dc.writerPool.Get().(*bufio.Writer)
-	writer.Reset(file)
-	defer dc.writerPool.Put(writer)
-
-	for _, line := range data {
-		if _, err := writer.Write(line); err != nil {
-			return err
-		}
-		if err := writer.WriteByte('\n'); err != nil {
-			return err
-		}
-	}
-
-	return writer.Flush()
 }
 
 // isExpired checks if a key is expired.

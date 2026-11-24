@@ -232,29 +232,29 @@ func (p *Prometheus) Init() error {
 func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	var (
-		metrics     [][]byte
-		stats       exporter.Stats
-		metricNames *set.Set
+		stats exporter.Stats
+		d     time.Duration
 	)
 
 	// lock the exporter, to prevent other collectors from writing to us
 	p.Lock()
 	defer p.Unlock()
 
-	// render metrics into Prometheus format
-	start := time.Now()
-	metrics, stats, metricNames = exporters.Render(data, p.addMetaTags, p.sortLabels, p.globalPrefix, p.Logger, "")
-
-	// fix render time for metadata
-	d := time.Since(start)
-
-	// store metrics in cache
 	key := data.UUID + "." + data.Object + "." + data.Identifier
+	start := time.Now()
 
-	p.aCache.exportMetrics(key, metrics, metricNames)
+	// render metrics into Prometheus format and store them in cache.
+	// With the disk cache, render time includes the buffered file writes.
+	p.aCache.put(key, func(sink exporters.LineSink) *set.Set {
+		renderStart := time.Now()
+		var metricNames *set.Set
+		stats, metricNames = exporters.RenderTo(data, p.addMetaTags, p.sortLabels, p.globalPrefix, p.Logger, "", sink)
+		d = time.Since(renderStart)
+		return metricNames
+	})
 
 	// update metadata
-	p.AddExportCount(uint64(len(metrics)))
+	p.AddExportCount(stats.MetricsExported)
 	p.Metadata.MustAddValueInt64("time", p.Metadata.MustGetInstance("render"), d.Microseconds())
 	p.Metadata.MustAddValueInt64("time", p.Metadata.MustGetInstance("export"), time.Since(start).Microseconds())
 

@@ -6,6 +6,7 @@ package prometheus
 
 import (
 	"bytes"
+	"github.com/netapp/harvest/v2/cmd/exporters"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
@@ -18,7 +19,7 @@ import (
 
 type cacher interface {
 	getOverview() (*CacheStats, error)
-	exportMetrics(key string, data [][]byte, names *set.Set)
+	put(key string, write func(exporters.LineSink) *set.Set)
 	streamMetrics(w http.ResponseWriter, seen map[string]struct{}, metrics [][]byte) (int, error)
 	isValid() bool
 }
@@ -84,8 +85,15 @@ func (c *memCache) getOverview() (*CacheStats, error) {
 	return stats, nil
 }
 
-func (c *memCache) exportMetrics(key string, data [][]byte, metricNames *set.Set) {
-	c.Put(key, data, metricNames)
+func (c *memCache) put(key string, write func(exporters.LineSink) *set.Set) {
+	var lines exporters.Lines
+	write(&lines)
+
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.data[key] = lines
+	c.timers[key] = time.Now()
 }
 
 func (c *memCache) streamMetrics(w http.ResponseWriter, tagsSeen map[string]struct{}, metrics [][]byte) (int, error) {
@@ -176,14 +184,6 @@ func newMemCache(l *slog.Logger, d time.Duration) *memCache {
 func (c *memCache) Get() map[string][][]byte {
 	c.Clean()
 	return c.data
-}
-
-func (c *memCache) Put(key string, data [][]byte, _ *set.Set) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	c.data[key] = data
-	c.timers[key] = time.Now()
 }
 
 func (c *memCache) Clean() {
