@@ -3172,6 +3172,32 @@ the missing data won't be exported.</p>
 </code></pre></div>
 <h3 id="workload-templates">Workload Templates<a class="headerlink" href="#workload-templates" title="Permanent link">&para;</a></h3>
 <p>Performance workload templates require a different syntax because instances are retrieved from the <code>api/storage/qos/workloads</code> Rest call.</p>
+<p>By default, RestPerf collects these workload classes:</p>
+<table>
+<thead>
+<tr>
+<th>Template</th>
+<th>Default workload classes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>workload.yaml</code></td>
+<td><code>user_defined</code>, <code>system_defined</code>, <code>preset</code></td>
+</tr>
+<tr>
+<td><code>workload_volume.yaml</code></td>
+<td><code>autovolume</code></td>
+</tr>
+</tbody>
+</table>
+<p>ONTAP workload classes include <code>user_defined</code>, <code>system_defined</code>, <code>preset</code>, and <code>autovolume</code>.
+The <code>preset</code> class includes ONTAP's built-in <code>User-Default</code> workload.
+To collect a different set of classes, add a <code>workload_class</code> list at the top level of the template:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">workload_class</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user_defined</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">preset</span>
+</code></pre></div>
 <p>The <code>api/storage/qos/workloads</code> Rest supports filtering on the following fields:</p>
 <ul>
 <li>name</li>

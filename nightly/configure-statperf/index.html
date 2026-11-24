@@ -1185,6 +1185,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#workload-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload Classes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#array-labels" class="md-nav__link">
     <span class="md-ellipsis">
       Array Labels
@@ -2211,6 +2220,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#workload-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload Classes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#array-labels" class="md-nav__link">
     <span class="md-ellipsis">
       Array Labels
@@ -2382,6 +2400,15 @@ please refer to the <a href="../configure-zapi/#metrics_1">ZapiPerf Metrics Docu
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">- filter</span><span class="p p-Indicator">:</span>
 <span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">instance_name=NS_svm_nvme|instance_name=*Test*</span>
 <span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vserver_name=osc</span>
+</code></pre></div>
+<h3 id="workload-classes">Workload Classes<a class="headerlink" href="#workload-classes" title="Permanent link">&para;</a></h3>
+<p>The <code>workload_queue_combined.yaml</code> template collects volume-level QoS workloads of every class.
+StatPerf labels these instances from the <code>api/storage/qos/workloads</code> Rest call and skips any instance with no matching workload.
+ONTAP workload classes include <code>user_defined</code>, <code>system_defined</code>, <code>preset</code>, and <code>autovolume</code>.
+To collect only some workload classes, add a <code>workload_class</code> list at the top level of the template:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">workload_class</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user_defined</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autovolume</span>
 </code></pre></div>
 <h3 id="array-labels">Array Labels<a class="headerlink" href="#array-labels" title="Permanent link">&para;</a></h3>
 <p>Some array counters have thousands of elements. For example, each <code>wafl_flexlog</code> counter has one element per WAFL message type.

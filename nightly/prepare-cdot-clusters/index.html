@@ -751,6 +751,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="StatPerf least-privilege role">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#qos-workload-performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      QoS workload performance metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2380,6 +2395,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="StatPerf least-privilege role">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#qos-workload-performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      QoS workload performance metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2786,6 +2816,13 @@ security<span class="w"> </span>login<span class="w"> </span>create<span class="
 <span class="c1"># If you also want to use certificate authentication for the StatPerf collector, run these commands as well</span>
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ssh<span class="w"> </span>-authentication-method<span class="w"> </span>publickey<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>cert<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role
+</code></pre></div>
+<h5 class="prominent-subsection" id="qos-workload-performance-metrics">QoS workload performance metrics<a class="headerlink" href="#qos-workload-performance-metrics" title="Permanent link">&para;</a></h5>
+<p>The StatPerf <code>WorkloadQueue</code> template, which is disabled by default, needs a REST read permission on the QoS workloads
+endpoint, so Harvest can look up the SVM, volume, and policy group of each workload. If you already created the full
+<a href="#rest-least-privilege-role">REST least-privilege role</a>, you already have this (<code>/api/storage/qos/workloads</code>) and can
+skip the command below. Otherwise, add just this permission to the REST role:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/qos/workloads
 </code></pre></div>
 <p><strong>Note:</strong> StatPerf Collector is not supported for FSx systems.</p>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
