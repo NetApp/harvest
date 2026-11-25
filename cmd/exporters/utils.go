@@ -122,8 +122,33 @@ func NormalizeHistogram(ontap string) string {
 // fcp_lif_read_ops{vserver="nas_svm",port_id="e02"} 771
 
 func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix string, logger *slog.Logger, timestamp string) ([][]byte, exporter.Stats, *set.Set) {
+	var lines Lines
+	stats, metricNames := RenderTo(data, addMetaTags, sortLabels, globalPrefix, logger, timestamp, &lines)
+	return lines, stats, metricNames
+}
+
+// LineSink receives rendered lines, without the trailing newline.
+// line is only valid until Write returns.
+type LineSink interface {
+	Grow(n int)
+	Write(line []byte)
+}
+
+// Lines is a LineSink that keeps a copy of each line.
+type Lines [][]byte
+
+func (l *Lines) Grow(n int) {
+	*l = slices.Grow(*l, n)
+}
+
+func (l *Lines) Write(line []byte) {
+	*l = append(*l, bytes.Clone(line))
+}
+
+// RenderTo is Render, but hands each line to sink instead of collecting them.
+func RenderTo(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix string, logger *slog.Logger, timestamp string, sink LineSink) (exporter.Stats, *set.Set) {
 	var (
-		rendered          [][]byte
+		linesRendered     uint64
 		tagged            *set.Set
 		labelsToInclude   []string
 		keysToInclude     []string
@@ -139,6 +164,18 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 	)
 
 	buf.Grow(4096)
+
+	emit := func(line []byte) {
+		linesRendered++
+		renderedBytes += uint64(len(line))
+		sink.Write(line)
+	}
+	emitString := func(line string) {
+		buf.Reset()
+		buf.WriteString(line)
+		emit(buf.Bytes())
+	}
+
 	globalLabels := make([]string, 0, len(data.GetGlobalLabels()))
 	normalizedLabels = make(map[string][]string)
 	metricNames := set.New()
@@ -206,7 +243,7 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 		numMetrics += exportableMetrics * 2 // for help and type
 	}
 
-	rendered = make([][]byte, 0, numMetrics)
+	sink.Grow(numMetrics)
 
 	for _, instance := range data.GetInstances() {
 
@@ -292,6 +329,13 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 					sort.Strings(allLabels)
 				}
 
+				prefixed := prefix + "_labels"
+				if tagged != nil && !tagged.Has(prefixed) {
+					tagged.Add(prefixed)
+					emitString("# HELP " + prefixed + " Pseudo-metric for " + data.Object + " labels")
+					emitString("# TYPE " + prefixed + " gauge")
+				}
+
 				buf.Reset()
 
 				buf.WriteString(prefix)
@@ -302,21 +346,7 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 					buf.WriteString(" ")
 					buf.WriteString(timestamp)
 				}
-
-				xbr := buf.Bytes()
-				labelData := make([]byte, len(xbr))
-				copy(labelData, xbr)
-
-				prefixed := prefix + "_labels"
-				if tagged != nil && !tagged.Has(prefixed) {
-					tagged.Add(prefixed)
-					help := "# HELP " + prefixed + " Pseudo-metric for " + data.Object + " labels"
-					typeT := "# TYPE " + prefixed + " gauge"
-					rendered = append(rendered, []byte(help), []byte(typeT))
-					renderedBytes += uint64(len(help)) + uint64(len(typeT))
-				}
-				rendered = append(rendered, labelData)
-				renderedBytes += uint64(len(labelData))
+				emit(buf.Bytes())
 			}
 		}
 
@@ -369,6 +399,13 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 						sort.Strings(metricLabels)
 					}
 
+					prefixedName := prefix + "_" + metric.GetName()
+					if tagged != nil && !tagged.Has(prefixedName) {
+						tagged.Add(prefixedName)
+						emitString("# HELP " + prefixedName + " Metric for " + data.Object)
+						emitString("# TYPE " + prefixedName + " gauge")
+					}
+
 					buf.Reset()
 					buf.WriteString(prefix)
 					buf.WriteString("_")
@@ -383,24 +420,16 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 						buf.WriteString(" ")
 						buf.WriteString(timestamp)
 					}
-
-					xbr := buf.Bytes()
-					metricLine := make([]byte, len(xbr))
-					copy(metricLine, xbr)
-
+					emit(buf.Bytes())
+					// scalar metric
+				} else {
 					prefixedName := prefix + "_" + metric.GetName()
 					if tagged != nil && !tagged.Has(prefixedName) {
 						tagged.Add(prefixedName)
-						help := "# HELP " + prefixedName + " Metric for " + data.Object
-						typeT := "# TYPE " + prefixedName + " gauge"
-						rendered = append(rendered, []byte(help), []byte(typeT))
-						renderedBytes += uint64(len(help)) + uint64(len(typeT))
+						emitString("# HELP " + prefixedName + " Metric for " + data.Object)
+						emitString("# TYPE " + prefixedName + " gauge")
 					}
 
-					rendered = append(rendered, metricLine)
-					renderedBytes += uint64(len(metricLine))
-					// scalar metric
-				} else {
 					buf.Reset()
 
 					if prefix == "" {
@@ -422,42 +451,7 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 						buf.WriteString(" ")
 						buf.WriteString(timestamp)
 					}
-					xbr := buf.Bytes()
-					scalarMetric := make([]byte, len(xbr))
-					copy(scalarMetric, xbr)
-
-					prefixedName := prefix + "_" + metric.GetName()
-					if tagged != nil && !tagged.Has(prefixedName) {
-						tagged.Add(prefixedName)
-
-						buf.Reset()
-						buf.WriteString("# HELP ")
-						buf.WriteString(prefixedName)
-						buf.WriteString(" Metric for ")
-						buf.WriteString(data.Object)
-
-						xbr := buf.Bytes()
-						helpB := make([]byte, len(xbr))
-						copy(helpB, xbr)
-
-						rendered = append(rendered, helpB)
-						renderedBytes += uint64(len(helpB))
-
-						buf.Reset()
-						buf.WriteString("# TYPE ")
-						buf.WriteString(prefixedName)
-						buf.WriteString(" gauge")
-
-						tbr := buf.Bytes()
-						typeB := make([]byte, len(tbr))
-						copy(typeB, tbr)
-
-						rendered = append(rendered, typeB)
-						renderedBytes += uint64(len(typeB))
-					}
-
-					rendered = append(rendered, scalarMetric)
-					renderedBytes += uint64(len(scalarMetric))
+					emit(buf.Bytes())
 				}
 			}
 		}
@@ -501,10 +495,8 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 			if tagged != nil && !tagged.Has(prefixedName) {
 				tagged.Add(prefix + "_" + metric.GetName())
 
-				help := "# HELP " + prefixedName + " Metric for " + data.Object
-				typeT := "# TYPE " + prefixedName + " histogram"
-				rendered = append(rendered, []byte(help), []byte(typeT))
-				renderedBytes += uint64(len(help)) + uint64(len(typeT))
+				emitString("# HELP " + prefixedName + " Metric for " + data.Object)
+				emitString("# TYPE " + prefixedName + " histogram")
 			}
 
 			normalizedNames, canNormalize := normalizedLabels[objectMetric]
@@ -531,25 +523,24 @@ func Render(data *matrix.Matrix, addMetaTags bool, sortLabels bool, globalPrefix
 						x += " " + timestamp
 					}
 				}
-				rendered = append(rendered, []byte(x))
-				renderedBytes += uint64(len(x))
+				emitString(x)
 			}
 			if canNormalize {
-				rendered = append(rendered, []byte(countMetric), []byte(sumMetric))
-				renderedBytes += uint64(len(countMetric)) + uint64(len(sumMetric))
+				emitString(countMetric)
+				emitString(sumMetric)
 			}
 		}
 	}
 
 	// Both memory and disk cache add a newline character after each metric line
-	// when serving via HTTP (see writeMetric() and writeToDisk())
-	renderedBytes += uint64(len(rendered)) // Add 1 byte per line for '\n'
+	// when serving via HTTP (see writeMetric() and lineWriter)
+	renderedBytes += linesRendered // Add 1 byte per line for '\n'
 
 	stats := exporter.Stats{
 		InstancesExported: instancesExported,
-		MetricsExported:   uint64(len(rendered)),
+		MetricsExported:   linesRendered,
 		RenderedBytes:     renderedBytes,
 	}
 
-	return rendered, stats, metricNames
+	return stats, metricNames
 }
