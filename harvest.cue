@@ -1,6 +1,6 @@
 package harvest
 
-Exporters: [Name=_]: #Prom | #Influx
+Exporters: [string]: #Prom | #Influx
 
 #ExporterDefs: string | #Prom | #Influx
 
@@ -80,10 +80,10 @@ label: [string]: string
 }
 
 #CollectorDef: {
-	[Name=_]: [...string]
+	[string]: [...string]
 }
 
-Pollers: [Name=_]: #Poller
+Pollers: [string]: #Poller
 
 #Poller: {
 	addr?:                     string
