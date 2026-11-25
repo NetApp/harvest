@@ -27,6 +27,9 @@ const (
 	// selector renders through model.Duration, and 888888s = 10d6h54m48s.
 	RangeReverseConstant     = "10d6h54m48s"
 	IntervalDurationConstant = "666666"
+	// GrafanaIntervalConstant stands in for $__interval; 555555s pretty-prints as 6d10h19m15s.
+	GrafanaIntervalConstant        = "555555"
+	GrafanaIntervalReverseConstant = "6d10h19m15s"
 )
 
 var cDotDashboards = []string{
@@ -77,6 +80,7 @@ func conventionDashboards() []string {
 var exceptionLegendMap = map[string][]string{
 	"cmode/metadata.json":                {"exporter", "target"},
 	"cmode/cluster.json":                 {"node"},
+	"cmode/ems.json":                     {"severity"},
 	"cmode/headroom.json":                {"node"},
 	"cmode/node.json":                    {"metric"},
 	"cmode/power.json":                   {"node"},
@@ -1139,6 +1143,7 @@ func ensureLookBack(text string) string {
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
 		"cmode/auditlog.json":           2,
+		"cmode/ems.json":                2,
 		"cmode/flexcache.json":          2,
 		"cmode/fsa.json":                2,
 		"cmode/health.json":             2,
@@ -1638,6 +1643,7 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 		to   string
 	}{
 		"cmode/auditlog.json": {"now-24h", "now"},
+		"cmode/ems.json":      {"now-24h", "now"},
 		"cmode/mav.json":      {"now-24h", "now"},
 		"eseries/mel.json":    {"now-24h", "now"},
 		"default":             {"now-3h", "now"},
@@ -2146,6 +2152,7 @@ func formatAll(t *testing.T, queries []string) map[string]string {
 func substituteGrafanaVars(query string) string {
 	query = strings.ReplaceAll(query, "$TopResources", TopResourceConstant)
 	query = strings.ReplaceAll(query, "$__range", RangeConstant)
+	query = strings.ReplaceAll(query, "$__interval", GrafanaIntervalConstant)
 	query = strings.ReplaceAll(query, "${Interval}", IntervalDurationConstant)
 	return query
 }
@@ -2161,6 +2168,7 @@ func restoreGrafanaVars(query string) string {
 
 	query = strings.ReplaceAll(query, TopResourceConstant, "$TopResources")
 	query = strings.ReplaceAll(query, RangeReverseConstant, "$__range")
+	query = strings.ReplaceAll(query, GrafanaIntervalReverseConstant, "$__interval")
 	query = strings.ReplaceAll(query, IntervalDurationConstant, "${Interval}")
 	return query
 }

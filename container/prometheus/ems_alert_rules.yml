@@ -819,6 +819,54 @@ groups:
           impact: "Capacity"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#fabricpool-space-usage-limit-nearly-reached"
 
+      - alert: FlexCache Origin Size Sync Failed
+        expr: last_over_time(ems_events{message="flexcache.origin.size.sync.failed.for.cache.cluster"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "FlexCache origin on node {{ $labels.node }} failed to sync the origin size property to cache cluster {{ $labels.cache_cluster_uuid }}."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#flexcache-origin-size-sync-failed"
+
+      - alert: FlexCache Revoke Failed
+        expr: last_over_time(ems_events{message="flexcache.revoke.csm.failure"}[5m]) == 1
+        labels:
+          severity: >
+            {{- if $labels.severity -}}
+            {{- if eq $labels.severity "alert" -}}
+            critical
+            {{- else if eq $labels.severity "error" -}}
+            warning
+            {{- else if eq $labels.severity "emergency" -}}
+            critical
+            {{- else if eq $labels.severity "notice" -}}
+            info
+            {{- else if eq $labels.severity "informational" -}}
+            info
+            {{- else -}}
+            {{ $labels.severity }}
+            {{- end -}}
+            {{- end -}}
+        annotations:
+          summary: "FlexCache origin on node {{ $labels.node }} failed to revoke cached data from a cache on cluster {{ $labels.cache_cluster_uuid }} (SVM {{ $labels.cache_svm_uuid }}, operation type {{ $labels.revoke_type }}) due to a CSM communication error."
+          impact: "Availability"
+          runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#flexcache-revoke-failed"
+
       - alert: Giveback of Storage Pool Failed
         expr: last_over_time(ems_events{message="gb.netra.ca.check.failed"}[4w]) == 1
         labels:

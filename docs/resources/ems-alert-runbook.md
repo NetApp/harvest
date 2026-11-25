@@ -161,6 +161,42 @@ This message occurs when an older Snapshot(tm) copy is deleted as part of a Snap
 
 You can ignore this message if there is no asynchronous relationship configured for the synchronous source volume. If there is an asynchronous relationship configured, then update the asynchronous relationship by using the "snapmirror update" command. The SnapMirror update operation will transfer the snapshots that will act as common snapshots between the synchronous and asynchronous destinations.
 
+### FlexCache Origin Size Sync Failed
+
+**Impact**: Availability
+
+**EMS Event**: `flexcache.origin.size.sync.failed.for.cache.cluster`
+
+This message occurs when a FlexCache origin fails to sync the origin size property to the FlexCache volumes on a cache cluster. The event reports the UUID of the cache cluster, and it is logged on the origin cluster.
+
+**Remediation**
+
+Perform the following corrective actions:
+
+1. Find the cache cluster name for the reported UUID by running "cluster peer show -fields cluster-uuid" on the origin cluster.
+2. Check the health of the cluster peer relationship with "cluster peer health show" and "cluster peer ping".
+3. Check that the intercluster LIFs on both clusters are up with "network interface show -role intercluster".
+4. If the event persists after the peer relationship is healthy, contact NetApp technical support.
+
+### FlexCache Revoke Failed
+
+**Impact**: Availability
+
+**EMS Event**: `flexcache.revoke.csm.failure`
+
+This message occurs when a FlexCache origin volume fails to revoke cached data from a FlexCache volume because of a cluster session manager (CSM) communication error. The origin uses revokes to tell a cache that its cached data or locks are no longer valid, for example after a write at the origin. When a revoke fails, the cache can serve stale data, or clients can wait while the origin retries. The event is logged on the origin node and reports the UUIDs of the cache cluster and SVM.
+
+The `revoke_type` label identifies the revoke operation: 0 (NONE), 1 (EVICT), 2 (QTREE_INVALIDATE), 3 (INVALIDATE), 4 (LMGR_DOWNGRADE).
+
+**Remediation**
+
+Perform the following corrective actions:
+
+1. Find the cache cluster name for the reported UUID by running "cluster peer show -fields cluster-uuid" on the origin cluster.
+2. Check whether the events come from a single origin node and target many cache clusters. That pattern points to the origin node's intercluster connectivity rather than a single cache.
+3. Check the health of the cluster peer relationship with "cluster peer health show" and "cluster peer ping", and check that the intercluster LIFs on the reporting node are up with "network interface show -role intercluster".
+4. If the event persists after the peer relationship is healthy, contact NetApp technical support.
+
 ### Giveback of Storage Pool Failed
 
 **Impact**: Availability
