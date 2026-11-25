@@ -122,7 +122,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<br>\n\nThis dashboard shows EMS events **Harvest collected while running**, within the time range selected at the top right (default: last 24 hours). Only the events listed in the [EMS collector template](https://netapp.github.io/harvest/latest/configure-ems/) are collected, and events that occurred before Harvest started polling a cluster are not shown.\n\nCounts are distinct events: repeat occurrences of the same event with the same labels count once. Use the **Message** filter to narrow all panels to specific events. Expand the rows below Highlights for details: **Events by Cluster** and **Events by Message** show counts per severity, and **EMS Events** lists one row per event, with a **Status** and a **Details** column showing the fields each event exports. Click a message in the table to open its description in the NetApp syslog translator. See the [EMS alert runbook](https://netapp.github.io/harvest/latest/resources/ems-alert-runbook/) for remediation steps of events that have alert rules.\n\nRequires the [EMS collector](https://netapp.github.io/harvest/latest/configure-ems/) to be enabled for the poller.",
+        "content": "<br>\n\nThis dashboard shows EMS events **Harvest collected while running**, within the time range selected at the top right (default: last 24 hours). Only the events listed in the [EMS collector template](https://netapp.github.io/harvest/latest/configure-ems/) are collected, and events that occurred before Harvest started polling a cluster are not shown.\n\nCounts are distinct events: repeat occurrences of the same event with the same labels count once. Use the **Message** filter to narrow all panels to specific events. Expand the rows below Highlights for details: **Events by Cluster** and **Events by Message** show counts per severity, and **EMS Events** lists one row per event, with a **Details** column showing the fields each event exports. Click a message in the table to open its description in the NetApp syslog translator. See the [EMS alert runbook](https://netapp.github.io/harvest/latest/resources/ems-alert-runbook/) for remediation steps of events that have alert rules.\n\nRequires the [EMS collector](https://netapp.github.io/harvest/latest/configure-ems/) to be enabled for the poller.",
         "mode": "markdown"
       },
       "pluginVersion": "12.3.2",
@@ -596,7 +596,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "When EMS events were raised, by severity. Each event is counted once, in the interval where it was first seen, so the legend totals match the severity tiles. An event raised just before the time range starts is counted in the tiles but not in the first bar.",
+      "description": "When EMS events were raised, by severity. Each bar counts the events raised in that interval. An event that recurs with the same labels is counted each time it recurs here, but only once in the tiles, so the legend totals can be higher than the tiles. An event raised just before the time range starts is counted in the tiles but not in the first bar.",
       "fieldConfig": {
         "defaults": {
           "color": {
