@@ -146,7 +146,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Distinct EMS events raised by the selected clusters over the dashboard time range, across the emergency, alert, error, notice and informational severities, so the severity tiles add up to this total. Repeat occurrences of the same event with the same labels count once. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+      "description": "Distinct EMS events raised by the selected clusters over the dashboard time range, across the emergency, alert, error, notice and informational severities, so the severity tiles add up to this total. Repeat occurrences of the same event with the same labels count once.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -221,7 +221,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Distinct EMS events with severity emergency over the dashboard time range. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+      "description": "Distinct EMS events with severity emergency over the dashboard time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -296,7 +296,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Distinct EMS events with severity alert over the dashboard time range. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+      "description": "Distinct EMS events with severity alert over the dashboard time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -371,7 +371,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Distinct EMS events with severity error over the dashboard time range. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+      "description": "Distinct EMS events with severity error over the dashboard time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -446,7 +446,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Distinct EMS events with severity notice over the dashboard time range. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+      "description": "Distinct EMS events with severity notice over the dashboard time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -521,7 +521,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Distinct EMS events with severity informational over the dashboard time range. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+      "description": "Distinct EMS events with severity informational over the dashboard time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -596,7 +596,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "When EMS events were raised, by severity. Each bar counts the distinct events raised during that interval; the legend shows the total per severity. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+      "description": "When EMS events were raised, by severity. Each event is counted once, in the interval where it was first seen, so the legend totals match the severity tiles. An event raised just before the time range starts is counted in the tiles but not in the first bar.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -757,7 +757,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": false,
-          "expr": "count by (severity) (\n              max_over_time(\n                ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",message=~\"$Message\",severity=~\"emergency|alert|error|notice|informational\"}[$__interval]\n              )\n            ==\n              1\n          )\n        or\n          label_replace(vector(0), \"severity\", \"emergency\", \"\", \"\")\n      or\n        label_replace(vector(0), \"severity\", \"alert\", \"\", \"\")\n    or\n      label_replace(vector(0), \"severity\", \"error\", \"\", \"\")\n  or\n    label_replace(vector(0), \"severity\", \"notice\", \"\", \"\")\nor\n  label_replace(vector(0), \"severity\", \"informational\", \"\", \"\")",
+          "expr": "count by (severity) (\n              (\n                  max_over_time(\n                    ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",message=~\"$Message\",severity=~\"emergency|alert|error|notice|informational\"}[$__interval]\n                  )\n                ==\n                  1\n              )\n            unless\n              (\n                  max_over_time(\n                    ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",message=~\"$Message\",severity=~\"emergency|alert|error|notice|informational\"}[$__interval] offset $__interval\n                  )\n                ==\n                  1\n              )\n          )\n        or\n          label_replace(vector(0), \"severity\", \"emergency\", \"\", \"\")\n      or\n        label_replace(vector(0), \"severity\", \"alert\", \"\", \"\")\n    or\n      label_replace(vector(0), \"severity\", \"error\", \"\", \"\")\n  or\n    label_replace(vector(0), \"severity\", \"notice\", \"\", \"\")\nor\n  label_replace(vector(0), \"severity\", \"informational\", \"\", \"\")",
           "instant": false,
           "interval": "3m",
           "legendFormat": "{{severity}}",
@@ -783,7 +783,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "Distinct EMS events raised per datacenter and cluster over the dashboard time range, with one column per severity. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+          "description": "Distinct EMS events raised per datacenter and cluster over the dashboard time range, with one column per severity.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1091,7 +1091,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "Distinct EMS events raised per message over the dashboard time range. Click a message to open its description in the NetApp syslog translator. Resolutions of bookend events (for example LUN.online resolving LUN.offline) are not counted.",
+          "description": "Distinct EMS events raised per message over the dashboard time range. Click a message to open its description in the NetApp syslog translator.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1214,7 +1214,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "EMS events reported by the selected clusters over the dashboard time range. Each row is one distinct event.\n\nAn event raised before the selected time range and resolved within it shows as a Resolved row here, but is not counted in the tiles or summary tables, which count only events raised in the range.\n\n#### Panel Columns:\n\n- **Datacenter**: Datacenter of the cluster, as configured in `harvest.yml`.\n- **Cluster**: The cluster that logged the event.\n- **Node**: The node that logged the event.\n- **Message**: The EMS message name. Click it to open its description in the NetApp syslog translator.\n- **Severity**: The EMS severity (emergency, alert, error, notice, informational).\n- **Status**: Raised, or Resolved once the resolving event arrived or Harvest auto-resolved the event after its `resolve_after` time. Only bookend events (for example LUN.offline) are ever resolved; one-off events stay Raised.\n- **Details**: The event-specific fields exported for this event in the EMS collector template, for example `cache_cluster_uuid`, `cache_svm_uuid` and `revoke_type` for `flexcache.revoke.csm.failure`. Empty when the event exports no extra fields.\n",
+          "description": "EMS events raised by the selected clusters in the dashboard time range. Each row is one distinct event.\n\n#### Panel Columns:\n\n- **Datacenter**: Datacenter of the cluster, as configured in `harvest.yml`.\n- **Cluster**: The cluster that logged the event.\n- **Node**: The node that logged the event.\n- **Message**: The EMS message name. Click it to open its description in the NetApp syslog translator.\n- **Severity**: The EMS severity (emergency, alert, error, notice, informational).\n- **Details**: The event-specific fields exported for this event in the EMS collector template, for example `cache_cluster_uuid`, `cache_svm_uuid` and `revoke_type` for `flexcache.revoke.csm.failure`. Empty when the event exports no extra fields.\n",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1336,44 +1336,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Status"
-                },
-                "properties": [
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "0": {
-                            "color": "green",
-                            "index": 1,
-                            "text": "Resolved"
-                          },
-                          "1": {
-                            "color": "orange",
-                            "index": 0,
-                            "text": "Raised"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-text"
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 100
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "Severity"
                 },
                 "properties": [
@@ -1404,7 +1366,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "exemplar": false,
-              "expr": "min without (autoresolved, instance, job, node_uuid, cluster_uuid) (\n  last_over_time(\n    ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",message=~\"$Message\"}[$__range]\n  )\n)",
+              "expr": "max without (autoresolved, instance, job, node_uuid, cluster_uuid) (\n    max_over_time(\n      ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",message=~\"$Message\"}[$__range]\n    )\n  )\n==\n  1",
               "format": "time_series",
               "instant": true,
               "interval": "",
@@ -1459,19 +1421,18 @@
               "id": "organize",
               "options": {
                 "excludeByName": {
-                  "Field": true
+                  "Field": true,
+                  "Last *": true
                 },
                 "indexByName": {
-                  "Last *": 5,
                   "cluster": 1,
                   "datacenter": 0,
-                  "details": 6,
+                  "details": 5,
                   "message": 3,
                   "node": 2,
                   "severity": 4
                 },
                 "renameByName": {
-                  "Last *": "Status",
                   "cluster": "Cluster",
                   "datacenter": "Datacenter",
                   "details": "Details",
