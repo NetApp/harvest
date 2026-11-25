@@ -269,9 +269,10 @@ func getEmsLabels(path string) map[string][]string {
 		return nil
 	}
 
+	defaultLabels := parseEmsLabels(data.GetChildS("exports"))
 	for _, e := range data.GetChildS("events").GetChildren() {
 		emsNames = append(emsNames, e.GetChildContentS("name"))
-		labels = append(labels, parseEmsLabels(e.GetChildS("exports")))
+		labels = append(labels, strings.Trim(defaultLabels+","+parseEmsLabels(e.GetChildS("exports")), ","))
 	}
 
 	for i := range emsNames {

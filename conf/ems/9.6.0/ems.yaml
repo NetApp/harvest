@@ -318,6 +318,16 @@ events:
       - parameters.licensed_capacity => licensed_capacity
       - parameters.used_capacity     => used_capacity
 
+  - name: flexcache.origin.size.sync.failed.for.cache.cluster
+    exports:
+      - parameters.cacheClusterUuid => cache_cluster_uuid
+
+  - name: flexcache.revoke.csm.failure
+    exports:
+      - parameters.constituentClusterUuid => cache_cluster_uuid
+      - parameters.constituentVserverUuid => cache_svm_uuid
+      - parameters.revokeClientType       => revoke_type
+
   - name: gb.netra.ca.check.failed
     exports:
       - parameters.aggr_uuid => aggr_uuid

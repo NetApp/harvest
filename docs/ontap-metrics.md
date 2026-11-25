@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Nov-17
+Creation Date : 2026-Nov-25
 ONTAP Version: 9.16.1
 ```
 
@@ -2683,6 +2683,16 @@ The `ems_events` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Datacenter | Issues | table | [Active Emergency EMS](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=625) |
+| ONTAP: EMS Events | Highlights | stat | [Distinct Events](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=4) |
+| ONTAP: EMS Events | Highlights | stat | [Emergency](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=5) |
+| ONTAP: EMS Events | Highlights | stat | [Alert](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=6) |
+| ONTAP: EMS Events | Highlights | stat | [Error](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=7) |
+| ONTAP: EMS Events | Highlights | stat | [Notice](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=8) |
+| ONTAP: EMS Events | Highlights | stat | [Informational](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=9) |
+| ONTAP: EMS Events | Highlights | timeseries | [Event Timeline](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=10) |
+| ONTAP: EMS Events | Events by Cluster | table | [Events by Cluster](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=11) |
+| ONTAP: EMS Events | Events by Message | table | [Events by Message](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=12) |
+| ONTAP: EMS Events | EMS Events | table | [EMS Events (${__from:date:YYYY-MM-DD HH:mm} to ${__to:date:YYYY-MM-DD HH:mm})](/d/cdot-ems/ontap3a-ems events?orgId=1&viewPanel=13) |
 ///
 
 
