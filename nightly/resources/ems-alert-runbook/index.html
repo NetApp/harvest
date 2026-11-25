@@ -1760,6 +1760,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#flexcache-origin-size-sync-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      FlexCache Origin Size Sync Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flexcache-revoke-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      FlexCache Revoke Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#giveback-of-storage-pool-failed" class="md-nav__link">
     <span class="md-ellipsis">
       Giveback of Storage Pool Failed
@@ -2954,6 +2972,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#flexcache-origin-size-sync-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      FlexCache Origin Size Sync Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flexcache-revoke-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      FlexCache Revoke Failed
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#giveback-of-storage-pool-failed" class="md-nav__link">
     <span class="md-ellipsis">
       Giveback of Storage Pool Failed
@@ -3736,6 +3772,31 @@ statistics show -object fcp_port -counter threshold_full -instance port.portname
 <p>This message occurs when an older Snapshot(tm) copy is deleted as part of a SnapMirror® Synchronous resynchronize or update (common Snapshot copy) operation, which could lead to a "no common Snapshot scenario" between the synchronous and asynchronous disaster recovery (DR) copies that share the same source volume. If there is no common Snapshot copy between the synchronous and asynchronous DR copies, then a re-baseline will need to be performed during a disaster recovery.</p>
 <p><strong>Remediation</strong></p>
 <p>You can ignore this message if there is no asynchronous relationship configured for the synchronous source volume. If there is an asynchronous relationship configured, then update the asynchronous relationship by using the "snapmirror update" command. The SnapMirror update operation will transfer the snapshots that will act as common snapshots between the synchronous and asynchronous destinations.</p>
+<h3 id="flexcache-origin-size-sync-failed">FlexCache Origin Size Sync Failed<a class="headerlink" href="#flexcache-origin-size-sync-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>flexcache.origin.size.sync.failed.for.cache.cluster</code></p>
+<p>This message occurs when a FlexCache origin fails to sync the origin size property to the FlexCache volumes on a cache cluster. The event reports the UUID of the cache cluster, and it is logged on the origin cluster.</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Find the cache cluster name for the reported UUID by running "cluster peer show -fields cluster-uuid" on the origin cluster.</li>
+<li>Check the health of the cluster peer relationship with "cluster peer health show" and "cluster peer ping".</li>
+<li>Check that the intercluster LIFs on both clusters are up with "network interface show -role intercluster".</li>
+<li>If the event persists after the peer relationship is healthy, contact NetApp technical support.</li>
+</ol>
+<h3 id="flexcache-revoke-failed">FlexCache Revoke Failed<a class="headerlink" href="#flexcache-revoke-failed" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>flexcache.revoke.csm.failure</code></p>
+<p>This message occurs when a FlexCache origin volume fails to revoke cached data from a FlexCache volume because of a cluster session manager (CSM) communication error. The origin uses revokes to tell a cache that its cached data or locks are no longer valid, for example after a write at the origin. When a revoke fails, the cache can serve stale data, or clients can wait while the origin retries. The event is logged on the origin node and reports the UUIDs of the cache cluster and SVM.</p>
+<p>The <code>revoke_type</code> label identifies the revoke operation: 0 (NONE), 1 (EVICT), 2 (QTREE_INVALIDATE), 3 (INVALIDATE), 4 (LMGR_DOWNGRADE).</p>
+<p><strong>Remediation</strong></p>
+<p>Perform the following corrective actions:</p>
+<ol>
+<li>Find the cache cluster name for the reported UUID by running "cluster peer show -fields cluster-uuid" on the origin cluster.</li>
+<li>Check whether the events come from a single origin node and target many cache clusters. That pattern points to the origin node's intercluster connectivity rather than a single cache.</li>
+<li>Check the health of the cluster peer relationship with "cluster peer health show" and "cluster peer ping", and check that the intercluster LIFs on the reporting node are up with "network interface show -role intercluster".</li>
+<li>If the event persists after the peer relationship is healthy, contact NetApp technical support.</li>
+</ol>
 <h3 id="giveback-of-storage-pool-failed">Giveback of Storage Pool Failed<a class="headerlink" href="#giveback-of-storage-pool-failed" title="Permanent link">&para;</a></h3>
 <p><strong>Impact</strong>: Availability</p>
 <p><strong>EMS Event</strong>: <code>gb.netra.ca.check.failed</code></p>
