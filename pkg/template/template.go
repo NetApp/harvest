@@ -59,8 +59,9 @@ func SplitMetricRename(rawName string) (string, string) {
 	return name, display
 }
 
+var metricTypeRegex = regexp.MustCompile(`(.*)\((.*?)\)`)
+
 func ParseMetricType(metricName string) (string, string) {
-	metricTypeRegex := regexp.MustCompile(`(.*)\((.*?)\)`)
 	match := metricTypeRegex.FindAllStringSubmatch(metricName, -1)
 	if match != nil {
 		// For last_transfer_duration(duration), name would have 'last_transfer_duration' and metricType would have 'duration'.

@@ -317,13 +317,14 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	curMat = prevMat.CloneForCollection()
 	curMat.Reset()
 
+	seen := set.New()
 	processBatch := func(perfRecords []gjson.Result, timestamp int64) error {
 		if len(perfRecords) == 0 {
 			return nil
 		}
 
 		// Process the current batch of records
-		count, np, batchParseD := kp.processPerfRecords(perfRecords, curMat, oldInstances, timestamp)
+		count, np, batchParseD := kp.processPerfRecords(perfRecords, curMat, oldInstances, seen, timestamp)
 		numPartials += np
 		metricCount += count
 		parseD += batchParseD
@@ -340,9 +341,10 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// Process endpoints after all batches have been processed
-	eCount, endpointAPID := kp.ProcessEndPoints(curMat, kp.ProcessEndPoint, oldInstances)
+	eCount, endpointAPID, endpointParseD := kp.ProcessEndPoints(curMat, kp.ProcessEndPoint, oldInstances)
 	metricCount += eCount
 	apiD += endpointAPID
+	parseD += endpointParseD
 
 	// Remove old instances that are not found in new instances
 	for key := range oldInstances.Iter() {
@@ -363,7 +365,7 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	return kp.cookCounters(curMat, prevMat)
 }
 
-func (kp *KeyPerf) processPerfRecords(perfRecords []gjson.Result, curMat *matrix.Matrix, oldInstances *set.Set, timestamp int64) (uint64, uint64, time.Duration) {
+func (kp *KeyPerf) processPerfRecords(perfRecords []gjson.Result, curMat *matrix.Matrix, oldInstances *set.Set, seen *set.Set, timestamp int64) (uint64, uint64, time.Duration) {
 	var (
 		count       uint64
 		parseD      time.Duration
@@ -371,7 +373,7 @@ func (kp *KeyPerf) processPerfRecords(perfRecords []gjson.Result, curMat *matrix
 	)
 	startTime := time.Now()
 
-	count, numPartials = kp.HandleResults(curMat, perfRecords, kp.Prop, false, oldInstances, timestamp)
+	count, numPartials = kp.HandleResults(curMat, perfRecords, kp.Prop, false, oldInstances, seen, timestamp)
 
 	parseD = time.Since(startTime)
 	return count, numPartials, parseD

@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 
 	benchRest = newRest("Volume", "volume.yaml", "testdata/conf")
 	fullPollData = collectors.JSONToGson("testdata/volume-1.json.gz", true)
-	_, _ = benchRest.pollData(fullPollData, set.New())
+	_, _ = benchRest.pollData(fullPollData, set.New(), nil)
 
 	os.Exit(m.Run())
 }
@@ -49,7 +49,7 @@ func BenchmarkRestPerf_PollData(b *testing.B) {
 
 	for b.Loop() {
 		now = now.Add(time.Minute * 15)
-		_, _ = benchRest.pollData(fullPollData, set.New())
+		_, _ = benchRest.pollData(fullPollData, set.New(), nil)
 	}
 }
 
@@ -66,7 +66,7 @@ func Test_pollDataVolume(t *testing.T) {
 			name:          "sar",
 			pollDataPath1: "testdata/volume-1.json.gz",
 			numInstances:  185,
-			numMetrics:    6916,
+			numMetrics:    8748,
 		},
 	}
 	for _, tt := range tests {
@@ -75,11 +75,11 @@ func Test_pollDataVolume(t *testing.T) {
 			r := newRest("Volume", "volume.yaml", "testdata/conf")
 			pollData := collectors.JSONToGson(tt.pollDataPath1, true)
 
-			mcount, parseD := r.pollData(pollData, set.New())
-			mecount, apiD := r.ProcessEndPoints(r.Matrix[r.Object], volumeEndpoints, set.New())
+			mcount, parseD := r.pollData(pollData, set.New(), nil)
+			mecount, apiD, endpointParseD := r.ProcessEndPoints(r.Matrix[r.Object], volumeEndpoints, set.New())
 
 			metricCount := mcount + mecount
-			r.postPollData(apiD, parseD, metricCount, set.New())
+			r.postPollData(apiD, parseD+endpointParseD, metricCount, set.New())
 			m := r.Matrix["Volume"]
 
 			assert.Equal(t, tt.numInstances, len(m.GetInstances()))
@@ -91,10 +91,306 @@ func Test_pollDataVolume(t *testing.T) {
 	}
 }
 
-func volumeEndpoints(e *EndPoint) ([]gjson.Result, time.Duration, error) {
-	path := "testdata/" + strings.ReplaceAll(e.Prop.Query, "/", "-") + ".json.gz"
-	gson := collectors.JSONToGson(path, true)
-	return gson, 0, nil
+func volumeEndpoints(e *EndPoint, processBatch func([]gjson.Result, int64) error) error {
+	return pagedVolumeEndpoints(0)(e, processBatch)
+}
+
+// pagedVolumeEndpoints serves the volume endpoint testdata in pages of pageSize records, or as one page when pageSize is 0.
+func pagedVolumeEndpoints(pageSize int) func(*EndPoint, func([]gjson.Result, int64) error) error {
+	return func(e *EndPoint, processBatch func([]gjson.Result, int64) error) error {
+		path := "testdata/" + strings.ReplaceAll(e.Prop.Query, "/", "-") + ".json.gz"
+		records := collectors.JSONToGson(path, true)
+		if len(records) == 0 {
+			return errs.New(errs.ErrNoInstance, "no instances found")
+		}
+		size := pageSize
+		if size == 0 {
+			size = len(records)
+		}
+		for page := range slices.Chunk(records, size) {
+			if err := processBatch(page, time.Now().Unix()); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+}
+
+func TestProcessEndPointsPagedMatchesSinglePage(t *testing.T) {
+	pollData := collectors.JSONToGson("testdata/volume-1.json.gz", true)
+
+	single := newRest("Volume", "volume.yaml", "testdata/conf")
+	_, _ = single.pollData(pollData, set.New(), nil)
+	singleCount, _, _ := single.ProcessEndPoints(single.Matrix[single.Object], pagedVolumeEndpoints(0), set.New())
+
+	paged := newRest("Volume", "volume.yaml", "testdata/conf")
+	_, _ = paged.pollData(pollData, set.New(), nil)
+	pagedCount, _, _ := paged.ProcessEndPoints(paged.Matrix[paged.Object], pagedVolumeEndpoints(7), set.New())
+
+	assert.Equal(t, pagedCount, singleCount)
+
+	want := single.Matrix[single.Object]
+	got := paged.Matrix[paged.Object]
+	assert.Equal(t, len(got.GetInstances()), len(want.GetInstances()))
+	assert.Equal(t, len(got.GetMetrics()), len(want.GetMetrics()))
+	for key, wantInstance := range want.GetInstances() {
+		gotInstance := got.GetInstance(key)
+		assert.NotNil(t, gotInstance)
+		assert.Equal(t, cmp.Diff(gotInstance.GetLabels(), wantInstance.GetLabels()), "")
+		for name, wantMetric := range want.GetMetrics() {
+			wantValue, wantOk := wantMetric.GetValueFloat64(wantInstance)
+			gotValue, gotOk := got.GetMetric(name).GetValueFloat64(gotInstance)
+			assert.Equal(t, gotOk, wantOk)
+			assert.Equal(t, gotValue, wantValue)
+		}
+	}
+}
+
+func TestProcessEndPointsCountsEveryEndpoint(t *testing.T) {
+	pollData := collectors.JSONToGson("testdata/volume-1.json.gz", true)
+	r := newRest("Volume", "volume.yaml", "testdata/conf")
+	_, _ = r.pollData(pollData, set.New(), nil)
+	assert.True(t, len(r.Endpoints) > 1)
+
+	var perEndpoint uint64
+	endpoints := r.Endpoints
+	for _, e := range endpoints {
+		r.Endpoints = []*EndPoint{e}
+		c, _, _ := r.ProcessEndPoints(r.Matrix[r.Object], volumeEndpoints, set.New())
+		perEndpoint += c
+	}
+	r.Endpoints = endpoints
+
+	total, _, parseD := r.ProcessEndPoints(r.Matrix[r.Object], volumeEndpoints, set.New())
+	assert.Equal(t, total, perEndpoint)
+	assert.True(t, parseD > 0)
+}
+
+func TestProcessEndPointsErrors(t *testing.T) {
+	pollData := collectors.JSONToGson("testdata/volume-1.json.gz", true)
+	r := newRest("Volume", "volume.yaml", "testdata/conf")
+	_, _ = r.pollData(pollData, set.New(), nil)
+	assert.True(t, len(r.Endpoints) > 1)
+
+	var logs strings.Builder
+	r.Logger = slog.New(slog.NewTextHandler(&logs, &slog.HandlerOptions{Level: slog.LevelDebug}))
+
+	failing := r.Endpoints[0]
+	empty := r.Endpoints[1]
+	endpointFunc := func(e *EndPoint, processBatch func([]gjson.Result, int64) error) error {
+		switch e {
+		case failing:
+			return errors.New("connection refused")
+		case empty:
+			return errs.New(errs.ErrNoInstance, "no instances found")
+		}
+		return volumeEndpoints(e, processBatch)
+	}
+
+	count, _, _ := r.ProcessEndPoints(r.Matrix[r.Object], endpointFunc, set.New())
+
+	var others uint64
+	for _, e := range r.Endpoints[2:] {
+		others += newEndpointCount(t, pollData, e)
+	}
+	assert.Equal(t, count, others)
+	assert.True(t, strings.Contains(logs.String(), `level=ERROR msg="failed to fetch endpoint"`))
+	assert.True(t, strings.Contains(logs.String(), "connection refused"))
+	assert.True(t, strings.Contains(logs.String(), `level=DEBUG msg="no instances on cluster"`))
+}
+
+// newEndpointCount returns the metric count of one endpoint on a fresh Volume collector.
+func newEndpointCount(t *testing.T, pollData []gjson.Result, e *EndPoint) uint64 {
+	t.Helper()
+	r := newRest("Volume", "volume.yaml", "testdata/conf")
+	_, _ = r.pollData(pollData, set.New(), nil)
+	for _, re := range r.Endpoints {
+		if re.Prop.Query == e.Prop.Query {
+			r.Endpoints = []*EndPoint{re}
+			count, _, _ := r.ProcessEndPoints(r.Matrix[r.Object], volumeEndpoints, set.New())
+			return count
+		}
+	}
+	t.Fatalf("endpoint %s not found", e.Prop.Query)
+	return 0
+}
+
+func TestProcessEndPointsLogsDuplicatesAcrossPages(t *testing.T) {
+	pollData := collectors.JSONToGson("testdata/volume-1.json.gz", true)
+	r := newRest("Volume", "volume.yaml", "testdata/conf")
+	_, _ = r.pollData(pollData, set.New(), nil)
+	r.Endpoints = r.Endpoints[:1]
+
+	var logs strings.Builder
+	r.Logger = slog.New(slog.NewTextHandler(&logs, nil))
+
+	endpointFunc := func(e *EndPoint, processBatch func([]gjson.Result, int64) error) error {
+		path := "testdata/" + strings.ReplaceAll(e.Prop.Query, "/", "-") + ".json.gz"
+		rec := collectors.JSONToGson(path, true)[0]
+		for range 2 { // same record on two pages
+			if err := processBatch([]gjson.Result{rec}, time.Now().Unix()); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	_, _, _ = r.ProcessEndPoints(r.Matrix[r.Object], endpointFunc, set.New())
+	assert.True(t, strings.Contains(logs.String(), "instKey is not unique"))
+}
+
+func TestPollDataLogsDuplicatesAcrossPages(t *testing.T) {
+	pollData := collectors.JSONToGson("testdata/volume-1.json.gz", true)
+	page := pollData[:1]
+
+	t.Run("one seen set across pages finds the duplicate", func(t *testing.T) {
+		r := newRest("Volume", "volume.yaml", "testdata/conf")
+		var logs strings.Builder
+		r.Logger = slog.New(slog.NewTextHandler(&logs, nil))
+
+		seen := set.New()
+		_, _ = r.pollData(page, set.New(), seen)
+		_, _ = r.pollData(page, set.New(), seen)
+		assert.True(t, strings.Contains(logs.String(), "instKey is not unique"))
+	})
+
+	t.Run("nil seen checks one page only", func(t *testing.T) {
+		r := newRest("Volume", "volume.yaml", "testdata/conf")
+		var logs strings.Builder
+		r.Logger = slog.New(slog.NewTextHandler(&logs, nil))
+
+		_, _ = r.pollData(page, set.New(), nil)
+		_, _ = r.pollData(page, set.New(), nil)
+		assert.False(t, strings.Contains(logs.String(), "instKey is not unique"))
+	})
+}
+
+func TestPollDataLogsDuplicateAcrossServerPages(t *testing.T) {
+	r := newRestWithHandler(t, func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		record := `{"name":"vol1","svm":{"name":"svm1"},"state":"online"}`
+		if req.URL.Query().Get("page") == "2" {
+			_, _ = fmt.Fprintf(w, `{"records":[%s],"num_records":1}`, record)
+			return
+		}
+		_, _ = fmt.Fprintf(w, `{"records":[%s],"num_records":1,"_links":{"next":{"href":"/api/storage/volumes?page=2"}}}`, record)
+	})
+	var logs strings.Builder
+	r.Logger = slog.New(slog.NewTextHandler(&logs, nil))
+	r.Prop.Href = "api/storage/volumes"
+	r.Endpoints = nil
+
+	_, err := r.PollData()
+
+	assert.Nil(t, err)
+	assert.Equal(t, len(r.Matrix[r.Object].GetInstances()), 1)
+	assert.Equal(t, strings.Count(logs.String(), "instKey is not unique"), 1)
+}
+
+func TestProcessEndPointsEntryNotExistIsNoInstances(t *testing.T) {
+	r := newRestWithHandler(t, func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = fmt.Fprintf(w, `{"error":{"message":%q,"code":"%d"}}`, errs.EntryNotExist.Name, errs.EntryNotExist.Code)
+	})
+	var logs strings.Builder
+	r.Logger = slog.New(slog.NewTextHandler(&logs, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	r.Endpoints = []*EndPoint{{Prop: &prop{Query: "api/security/authentication/cluster/ad-proxy", Href: "api/security/authentication/cluster/ad-proxy"}}}
+
+	count, _, _ := r.ProcessEndPoints(r.Matrix[r.Object], r.ProcessEndPoint, set.New())
+
+	assert.Equal(t, count, uint64(0))
+	assert.True(t, strings.Contains(logs.String(), `level=DEBUG msg="no instances on cluster"`))
+	assert.False(t, strings.Contains(logs.String(), "failed to fetch endpoint"))
+}
+
+// newRestWithHandler returns a Volume collector whose client talks to a test server using handler.
+func newRestWithHandler(t *testing.T, handler http.HandlerFunc) *Rest {
+	t.Helper()
+	server := httptest.NewTLSServer(handler)
+	t.Cleanup(server.Close)
+
+	r := newRest("Volume", "volume.yaml", "testdata/conf")
+	insecure := true
+	poller := &conf.Poller{
+		Addr:           strings.TrimPrefix(server.URL, "https://"),
+		Username:       "test-user",
+		Password:       "test-password",
+		UseInsecureTLS: &insecure,
+	}
+	client, err := rest.New(poller, 5*time.Second, auth.NewCredentials(poller, slog.New(slog.DiscardHandler)))
+	assert.Nil(t, err)
+	r.Client = client
+	return r
+}
+
+func TestProcessEndPointStreamsPages(t *testing.T) {
+	pages := map[string]string{
+		"/api/storage/volumes": `{"records":[{"uuid":"a"},{"uuid":"b"}],"num_records":2,"_links":{"next":{"href":"/api/storage/volumes?page=2"}}}`,
+		"page=2":               `{"records":[{"uuid":"c"}],"num_records":1}`,
+	}
+	r := newRestWithHandler(t, func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if req.URL.RawQuery == "page=2" {
+			_, _ = w.Write([]byte(pages["page=2"]))
+			return
+		}
+		_, _ = w.Write([]byte(pages["/api/storage/volumes"]))
+	})
+
+	var got [][]string
+	e := &EndPoint{Prop: &prop{Href: "api/storage/volumes"}}
+	err := r.ProcessEndPoint(e, func(records []gjson.Result, _ int64) error {
+		uuids := make([]string, 0, len(records))
+		for _, rec := range records {
+			uuids = append(uuids, rec.Get("uuid").String())
+		}
+		got = append(got, uuids)
+		return nil
+	})
+
+	assert.Nil(t, err)
+	assert.Equal(t, cmp.Diff(got, [][]string{{"a", "b"}, {"c"}}), "")
+}
+
+func TestProcessEndPointErrors(t *testing.T) {
+	noBatch := func([]gjson.Result, int64) error {
+		t.Fatal("processBatch must not be called")
+		return nil
+	}
+
+	t.Run("empty href is a config error", func(t *testing.T) {
+		r := newRest("Volume", "volume.yaml", "testdata/conf")
+		err := r.ProcessEndPoint(&EndPoint{Prop: &prop{}}, noBatch)
+		assert.ErrorIs(t, err, errs.ErrConfig)
+	})
+
+	t.Run("no records is ErrNoInstance", func(t *testing.T) {
+		r := newRestWithHandler(t, func(w http.ResponseWriter, _ *http.Request) {
+			_, _ = w.Write([]byte(`{"records":[],"num_records":0}`))
+		})
+		err := r.ProcessEndPoint(&EndPoint{Prop: &prop{Href: "api/storage/volumes"}}, noBatch)
+		assert.ErrorIs(t, err, errs.ErrNoInstance)
+	})
+
+	t.Run("entry doesn't exist means no records", func(t *testing.T) {
+		r := newRestWithHandler(t, func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = fmt.Fprintf(w, `{"error":{"message":%q,"code":"%d"}}`, errs.EntryNotExist.Name, errs.EntryNotExist.Code)
+		})
+		err := r.ProcessEndPoint(&EndPoint{Prop: &prop{Href: "api/storage/volumes"}}, noBatch)
+		assert.ErrorIs(t, err, errs.ErrNoInstance)
+	})
+
+	t.Run("other REST errors are fetch failures", func(t *testing.T) {
+		r := newRestWithHandler(t, func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = fmt.Fprintf(w, `{"error":{"message":%q,"code":"%d"}}`, errs.APINotFound.Name, errs.APINotFound.Code)
+		})
+		err := r.ProcessEndPoint(&EndPoint{Prop: &prop{Href: "api/storage/volumes"}}, noBatch)
+		assert.NotNil(t, err)
+		assert.True(t, errs.IsRestErr(err, errs.APINotFound))
+		assert.True(t, strings.Contains(err.Error(), "failed to fetch data"))
+	})
 }
 
 func newRest(object string, path string, confPath string) *Rest {
