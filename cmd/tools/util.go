@@ -20,6 +20,7 @@ import (
 	template3 "github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	harvestversion "github.com/netapp/harvest/v2/pkg/version"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
@@ -225,6 +226,7 @@ var (
 		"fpolicy_svm_failedop_notifications",
 		"netstat_",
 		"nvm_mirror_",
+		"qos_queue_",
 		"quota_disk_used_pct_threshold",
 		"snapshot_volume_newest_create_time",
 		"snapshot_volume_oldest_create_time",
@@ -259,6 +261,11 @@ var (
 		"flexcache.yaml":               {},
 		"system_node.yaml":             {},
 		"workload_queue_combined.yaml": {},
+	}
+
+	// versionGatedPerfObjects maps perf objects to the first ONTAP version that has them
+	versionGatedPerfObjects = map[string]string{
+		"workload_queue_combined": "9.20",
 	}
 
 	// Excludes these Rest gaps from logs
@@ -331,8 +338,8 @@ func BuildMetrics(dir, configPath, pollerName string, opts *Options, metricsPane
 	)
 
 	if opts == nil {
-		restCounters := ProcessRestCounters(dir, nil, metricsPanelMap)
-		zapiCounters := ProcessZapiCounters(dir, nil, metricsPanelMap)
+		restCounters := ProcessRestCounters(dir, nil, "", metricsPanelMap)
+		zapiCounters := ProcessZapiCounters(dir, nil, "", metricsPanelMap)
 		counters := MergeCounters(restCounters, zapiCounters)
 		counters = ProcessExternalCounters(dir, counters, metricsPanelMap)
 		return counters, conf.Remote{}
@@ -370,8 +377,8 @@ func BuildMetrics(dir, configPath, pollerName string, opts *Options, metricsPane
 	}
 
 	swaggerBytes = readSwaggerJSON(opts)
-	restCounters := ProcessRestCounters(dir, restClient, metricsPanelMap)
-	zapiCounters := ProcessZapiCounters(dir, zapiClient, metricsPanelMap)
+	restCounters := ProcessRestCounters(dir, restClient, remote.Version, metricsPanelMap)
+	zapiCounters := ProcessZapiCounters(dir, zapiClient, remote.Version, metricsPanelMap)
 	counters := MergeCounters(restCounters, zapiCounters)
 	counters = ProcessExternalCounters(dir, counters, metricsPanelMap)
 
@@ -458,7 +465,7 @@ func GenerateCounters(dir string, counters map[string]Counter, collectorName str
 }
 
 // ProcessRestCounters parse rest and restperf templates
-func ProcessRestCounters(dir string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
+func ProcessRestCounters(dir string, client *rest.Client, clusterVersion string, metricsPanelMap map[string]PanelData) map[string]Counter {
 
 	restPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "restperf"), client, func(path string, client *rest.Client) map[string]Counter {
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
@@ -480,7 +487,7 @@ func ProcessRestCounters(dir string, client *rest.Client, metricsPanelMap map[st
 
 	statPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "statperf"), client, func(path string, client *rest.Client) map[string]Counter {
 		if _, ok := includeStatPerfTemplates[filepath.Base(path)]; ok {
-			return processStatPerfCounters(path, client, metricsPanelMap)
+			return processStatPerfCounters(path, client, clusterVersion, metricsPanelMap)
 		}
 		return nil
 	})
@@ -517,7 +524,7 @@ func ProcessRestCounters(dir string, client *rest.Client, metricsPanelMap map[st
 }
 
 // ProcessZapiCounters parse zapi and zapiperf templates
-func ProcessZapiCounters(dir string, client *zapi.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
+func ProcessZapiCounters(dir string, client *zapi.Client, clusterVersion string, metricsPanelMap map[string]PanelData) map[string]Counter {
 	zapiCounters := visitZapiTemplates(filepath.Join(dir, "conf", "zapi", "cdot"), client, func(path string, client *zapi.Client) map[string]Counter { // revive:disable-line:unused-parameter
 		return processZapiConfigCounters(path, metricsPanelMap)
 	})
@@ -525,7 +532,7 @@ func ProcessZapiCounters(dir string, client *zapi.Client, metricsPanelMap map[st
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
 			return nil
 		}
-		return processZAPIPerfCounters(path, client, metricsPanelMap)
+		return processZAPIPerfCounters(path, client, clusterVersion, metricsPanelMap)
 	})
 
 	maps.Copy(zapiCounters, zapiPerfCounters)
@@ -964,7 +971,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 }
 
 // processZAPIPerfCounters process ZapiPerf counters
-func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
+func processZAPIPerfCounters(path string, client *zapi.Client, clusterVersion string, metricsPanelMap map[string]PanelData) map[string]Counter {
 	var (
 		counters                = make(map[string]Counter)
 		request, response       *node.Node
@@ -1008,7 +1015,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap m
 		}
 
 		if response, err = client.Invoke(""); err != nil {
-			fmt.Printf("error while invoking api %+v\n", err)
+			handlePerfLookupFailure(model.Query, path, clusterVersion, err)
 			return nil
 		}
 		// fetch counter elements
@@ -1441,7 +1448,25 @@ func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap m
 	return counters
 }
 
-func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
+var exitFn = os.Exit
+
+// handlePerfLookupFailure warns when a version-gated object is missing because the cluster is too old,
+// and exits when it should exist, since counter.yaml would otherwise hide the failure.
+func handlePerfLookupFailure(query, path, clusterVersion string, err error) {
+	minVersion, gated := versionGatedPerfObjects[query]
+	if !gated {
+		fmt.Printf("error while invoking api %+v\n", err)
+		return
+	}
+	if ok, verErr := harvestversion.AtLeast(clusterVersion, minVersion); verErr == nil && !ok {
+		fmt.Printf("warning: %s requires ONTAP %s+, cluster is %s. Using counter.yaml for %s\n", query, minVersion, clusterVersion, path)
+		return
+	}
+	fmt.Printf("error: %s lookup failed on ONTAP %q for %s: %v\n", query, clusterVersion, path, err)
+	exitFn(1)
+}
+
+func processStatPerfCounters(path string, client *rest.Client, clusterVersion string, metricsPanelMap map[string]PanelData) map[string]Counter {
 	var (
 		records    []gjson.Result
 		counters   = make(map[string]Counter)
@@ -1511,7 +1536,11 @@ func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap m
 		}
 		records, err = rest.FetchPost(client, nil, "api/private/cli", cliCommand)
 		if err != nil {
-			fmt.Printf("error while invoking api %+v\n", err)
+			handlePerfLookupFailure(model.Query, path, clusterVersion, err)
+			return nil
+		}
+		if len(records) == 0 {
+			fmt.Printf("no data found for query %s template %s\n", model.Query, path)
 			return nil
 		}
 		firstRecord := records[0]

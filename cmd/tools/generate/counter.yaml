@@ -1489,6 +1489,415 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
 
+  - Name: qos_queue_cpu_dblade_background_service_time
+    Description: "Only available in ONTAP 9.20 and later. The average CPU Dblade background service time per operation. This is the CPU service time for background operations done for this workload in the Dblade. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. The WAFL_CP workload performs disk write operations. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. The BACKGROUND_DELETE workload performs block deletions on disks. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. The RA_STRIPE_X workload performs read-ahead operations to improve disk read performance. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: cpu_dblade_background_service_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: array
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: cpu_dblade_background_service_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_cpu_dblade_residence_time
+    Description: "Only available in ONTAP 9.20 and later. The average CPU Dblade residence time per operation. This is the CPU service time plus the wait time for operations done for this workload in the Dblade. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: cpu_dblade_residence_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: cpu_dblade_residence_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_cpu_dblade_util_service_time
+    Description: "Only available in ONTAP 9.20 and later. The average CPU Dblade utilization service time per operation. This is the CPU service time for operations done for this workload in the Dblade. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: cpu_dblade_util_service_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: cpu_dblade_util_service_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_cpu_nblade_residence_time
+    Description: "Only available in ONTAP 9.20 and later. The average CPU Nblade residence time per operation. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: cpu_nblade_residence_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: cpu_nblade_residence_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_cpu_nblade_util_service_time
+    Description: "Only available in ONTAP 9.20 and later. The average CPU Nblade util service time per operation. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: cpu_nblade_util_service_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: cpu_nblade_util_service_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_avscan_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average op wait time per operation due to AntiVirus Scan. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_avscan_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_avscan_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_cloud_io_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average time spent per operation doing I/O in object store (Cloud)."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_cloud_io_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_cloud_io_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_cluster_interconnect_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average Cluster interconnect wait time per operation. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_cluster_interconnect_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_cluster_interconnect_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_cop_num_wait
+    Description: "Only available in ONTAP 9.20 and later. This captures the number of times, ops are suspended/ delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work, aggregated cluster-wide. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded. Unlike the other dblade-origin counters in this object, this counter already has its own native visit count and is carried over unchanged as the base counter for delay_cop_wait_time below."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_cop_num_wait
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: none
+        Type: rate
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_cop_num_wait
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: none
+        Type: rate
+
+  - Name: qos_queue_delay_cop_wait_time
+    Description: "Only available in ONTAP 9.20 and later. This captures the average delay in ops which are suspended/delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_cop_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: delay_cop_num_wait
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_cop_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: delay_cop_num_wait
+
+  - Name: qos_queue_delay_disk_io_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average disk IO wait time per operation. This is the time spent waiting for a read from disk to complete for this workload. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_disk_io_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_disk_io_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_flexcache_ral_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average time spent per operation in RAL fetching from the remote volume for flexcache."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_flexcache_ral_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_flexcache_ral_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_flexcache_spinhi_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average time spent per operation in spinhi performing the remote op for flexcache."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_flexcache_spinhi_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_flexcache_spinhi_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_network_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average Network wait time per operation. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_network_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_network_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_nvlog_transfer_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average NVLog transfer wait time per operation. This is the time spent waiting for a dma transfer to local nvram and remote nvram for writes. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_nvlog_transfer_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_nvlog_transfer_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_qos_limit_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average QoS Limit wait time per operation. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_qos_limit_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_qos_limit_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_qos_min_throughput_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average QoS wait time per operation for requests that were throttled so that some other workload could achieve its minimum throughput. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_qos_min_throughput_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_qos_min_throughput_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_sync_repl_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average time spent per operation in the secondary path for sync replication."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_sync_repl_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_sync_repl_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_wafl_response_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average time spent per operation in the WAFL Response queue."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_wafl_response_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_wafl_response_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_wafl_susp_cp_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average WAFL suspended cp wait time per operation. This is the time spent in WAFL waiting for a CP to complete for this workload. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_wafl_susp_cp_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_wafl_susp_cp_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_delay_wafl_susp_other_wait_time
+    Description: "Only available in ONTAP 9.20 and later. The average WAFL suspended other wait time per operation. This is the time spent in WAFL waiting for other suspend reasons to complete for this workload."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: delay_wafl_susp_other_wait_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: delay_wafl_susp_other_wait_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_disk_hdd_background_service_time
+    Description: "Only available in ONTAP 9.20 and later. The average Disk HDD background service time per operation. This is the amount of time HDDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: disk_hdd_background_service_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: array
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: disk_hdd_background_service_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_disk_ssd_background_service_time
+    Description: "Only available in ONTAP 9.20 and later. The average disk SSD background service time per operation. This is the amount of time SSDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: disk_ssd_background_service_time
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: array
+        BaseCounter: iops_total
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: disk_ssd_background_service_time
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: microsec
+        Type: average,no-zero-values
+        BaseCounter: iops_total
+
+  - Name: qos_queue_iops_total
+    Description: "Only available in ONTAP 9.20 and later. This is a convenience counter: the scalar sum of iops[read] + iops[write] + iops[other]. It exists solely to serve as the base counter (denominator) for the scalar (and 4-element background-service-time) averaged counters below, none of which have a per-op-type breakdown of their own. iops itself is a 3-element array and cannot be used directly as a base counter for a scalar or differently-shaped average - only total_latency, which shares iops's exact 3-element shape, can divide against iops element-by-element. Typed CM_CNT_DELTA so clients can cook this counter themselves if they wish. A base counter's own declared type has no effect on the AVERAGE division, which always operates on raw sample deltas regardless of it."
+    APIs:
+      - API: StatPerf
+        Endpoint: workload_queue_combined
+        ONTAPCounter: iops_total
+        Template: conf/statperf/9.20.1/workload_queue_combined.yaml
+        Unit: none
+        Type: rate
+      - API: ZapiPerf
+        Endpoint: perf-object-get-instances workload_queue_combined
+        ONTAPCounter: iops_total
+        Template: conf/zapiperf/cdot/9.20.1/workload_queue_combined.yaml
+        Unit: none
+        Type: rate
+
   - Name: shelf_fan_rpm
     Description: Fan Rotation Per Minute.
     APIs:
