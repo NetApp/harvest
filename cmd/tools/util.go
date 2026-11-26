@@ -226,6 +226,7 @@ var (
 		"fpolicy_svm_failedop_notifications",
 		"netstat_",
 		"nvm_mirror_",
+		"qos_queue_",
 		"quota_disk_used_pct_threshold",
 		"snapshot_volume_newest_create_time",
 		"snapshot_volume_oldest_create_time",
