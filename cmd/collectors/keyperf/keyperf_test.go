@@ -6,6 +6,8 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	collector2 "github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -13,7 +15,11 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"log/slog"
+	"net/http"
+	"net/http/httptest"
 	"sort"
+	"strings"
 	"testing"
 	"time"
 )
@@ -166,7 +172,7 @@ func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 func processAndCookCounters(kp *KeyPerf, pollData []gjson.Result, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
 	curMat := prevMat.CloneForCollection()
 	curMat.Reset()
-	metricCount, _, _ := kp.processPerfRecords(pollData, curMat, set.New(), time.Now().UnixNano()/collector2.BILLION)
+	metricCount, _, _ := kp.processPerfRecords(pollData, curMat, set.New(), nil, time.Now().UnixNano()/collector2.BILLION)
 	got, err := kp.cookCounters(curMat, prevMat)
 	return got, metricCount, err
 }
@@ -257,6 +263,36 @@ func TestKeyPerf_pollData(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPollDataLogsDuplicateAcrossServerPages(t *testing.T) {
+	conf.TestLoadHarvestConfig("testdata/config.yml")
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		record := `{"name":"vol1","svm":{"name":"svm1"},"statistics":{"timestamp":"2025-01-01T00:00:00Z","iops_raw":{"read":1}}}`
+		if req.URL.Query().Get("page") == "2" {
+			_, _ = fmt.Fprintf(w, `{"records":[%s],"num_records":1}`, record)
+			return
+		}
+		_, _ = fmt.Fprintf(w, `{"records":[%s],"num_records":1,"_links":{"next":{"href":"/api/storage/volumes?page=2"}}}`, record)
+	}))
+	t.Cleanup(server.Close)
+
+	kp := newKeyPerf("Volume", "volume.yaml")
+	insecure := true
+	poller := &conf.Poller{Addr: strings.TrimPrefix(server.URL, "https://"), Username: "u", Password: "p", UseInsecureTLS: &insecure}
+	client, err := rest.New(poller, 5*time.Second, auth.NewCredentials(poller, slog.New(slog.DiscardHandler)))
+	assert.Nil(t, err)
+	kp.Client = client
+	var logs strings.Builder
+	kp.Logger = slog.New(slog.NewTextHandler(&logs, nil))
+	kp.Endpoints = nil
+	kp.Prop.Href = "api/storage/volumes"
+
+	_, err = kp.PollData()
+
+	assert.Nil(t, err)
+	assert.Equal(t, strings.Count(logs.String(), "instKey is not unique"), 1)
 }
 
 func newKeyPerf(object string, path string) *KeyPerf {

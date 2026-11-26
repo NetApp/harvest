@@ -434,13 +434,14 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		oldInstances.Add(key)
 	}
 
+	seen := set.New()
 	processBatch := func(records []gjson.Result, _ int64) error {
 		if len(records) == 0 {
 			return nil
 		}
 
 		// Process the current batch of records
-		count, batchParseD := r.pollData(records, oldInstances)
+		count, batchParseD := r.pollData(records, oldInstances, seen)
 		metricCount += count
 		parseD += batchParseD
 		apiD -= batchParseD
@@ -459,9 +460,10 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 	apiD += time.Since(startTime)
 
 	// Process endpoints after all batches have been processed
-	eCount, endpointAPID := r.ProcessEndPoints(r.Matrix[r.Object], r.ProcessEndPoint, oldInstances)
+	eCount, endpointAPID, endpointParseD := r.ProcessEndPoints(r.Matrix[r.Object], r.ProcessEndPoint, oldInstances)
 	metricCount += eCount
 	apiD += endpointAPID
+	parseD += endpointParseD
 
 	r.postPollData(apiD, parseD, metricCount, oldInstances)
 	return r.Matrix, nil
@@ -486,7 +488,7 @@ func (r *Rest) postPollData(apiD time.Duration, parseD time.Duration, metricCoun
 	r.AddCollectCount(metricCount)
 }
 
-func (r *Rest) pollData(records []gjson.Result, oldInstances *set.Set) (uint64, time.Duration) {
+func (r *Rest) pollData(records []gjson.Result, oldInstances *set.Set, seen *set.Set) (uint64, time.Duration) {
 
 	var (
 		count  uint64
@@ -496,51 +498,64 @@ func (r *Rest) pollData(records []gjson.Result, oldInstances *set.Set) (uint64, 
 	startTime := time.Now()
 	mat := r.Matrix[r.Object]
 
-	count, _ = r.HandleResults(mat, records, r.Prop, false, oldInstances, time.Now().UnixNano()/collector2.BILLION)
+	count, _ = r.HandleResults(mat, records, r.Prop, false, oldInstances, seen, time.Now().UnixNano()/collector2.BILLION)
 	parseD = time.Since(startTime)
 
 	return count, parseD
 }
 
-func (r *Rest) ProcessEndPoint(e *EndPoint) ([]gjson.Result, time.Duration, error) {
-	now := time.Now()
-	data, err := r.GetRestData(e.Prop.Href)
-	if err != nil {
-		return nil, 0, err
+// ProcessEndPoint fetches the endpoint one page at a time and passes each page to processBatch,
+// so only one page is held in memory. It returns errs.ErrNoInstance when the endpoint has no records.
+func (r *Rest) ProcessEndPoint(e *EndPoint, processBatch func([]gjson.Result, int64) error) error {
+	r.Logger.Debug("Fetching data", slog.String("href", e.Prop.Href))
+	if e.Prop.Href == "" {
+		return errs.New(errs.ErrConfig, "empty url")
 	}
-	return data, time.Since(now), nil
+
+	err := rest.FetchAllStream(r.Client, &r.RequestMetadata, e.Prop.Href, processBatch)
+	if err == nil || errors.Is(err, errs.ErrNoInstance) {
+		return err
+	}
+	if errs.IsRestErr(err, errs.EntryNotExist) {
+		return errs.New(errs.ErrNoInstance, err.Error())
+	}
+	_, err = r.handleError(err)
+	return err
 }
 
-func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoint) ([]gjson.Result, time.Duration, error), oldInstances *set.Set) (uint64, time.Duration) {
+func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoint, processBatch func([]gjson.Result, int64) error) error, oldInstances *set.Set) (uint64, time.Duration, time.Duration) {
 	var (
-		err       error
-		count     uint64
-		totalAPID time.Duration
+		count       uint64
+		totalAPID   time.Duration
+		totalParseD time.Duration
 	)
 
 	for _, endpoint := range r.Endpoints {
-		var (
-			records []gjson.Result
-			apiD    time.Duration
-		)
-
-		records, apiD, err = endpointFunc(endpoint)
-		totalAPID += apiD
-
-		if err != nil {
-			r.Logger.Error("failed to fetch endpoint", slogx.Err(err), slog.String("api", endpoint.Prop.Query))
-			continue
-		}
-
-		if len(records) == 0 {
-			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.Prop.Query))
-			continue
-		}
+		var parseD time.Duration
 		isImmutable := !endpoint.instanceAdd
-		count, _ = r.HandleResults(mat, records, endpoint.Prop, isImmutable, oldInstances, time.Now().UnixNano()/collector2.BILLION)
+		seen := set.New()
+
+		processBatch := func(records []gjson.Result, timestamp int64) error {
+			startTime := time.Now()
+			c, _ := r.HandleResults(mat, records, endpoint.Prop, isImmutable, oldInstances, seen, timestamp)
+			count += c
+			parseD += time.Since(startTime)
+			return nil
+		}
+
+		startTime := time.Now()
+		err := endpointFunc(endpoint, processBatch)
+		totalAPID += time.Since(startTime) - parseD
+		totalParseD += parseD
+
+		if errors.Is(err, errs.ErrNoInstance) {
+			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.Prop.Query))
+		} else if err != nil {
+			r.Logger.Error("failed to fetch endpoint", slogx.Err(err), slog.String("api", endpoint.Prop.Query))
+		}
 	}
 
-	return count, totalAPID
+	return count, totalAPID, totalParseD
 }
 
 func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
@@ -626,14 +641,18 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 // isEndPoint would be true only for the endpoint call, and it can't create/delete instance.
-func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isImmutable bool, oldInstances *set.Set, timestamp int64) (uint64, uint64) {
+// seen holds the instance keys already processed by this fetch (the main object or one endpoint), so duplicates
+// are found across pages. A nil seen checks for duplicates within result only.
+func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isImmutable bool, oldInstances *set.Set, seen *set.Set, timestamp int64) (uint64, uint64) {
 	var (
 		err         error
 		count       uint64
 		numPartials uint64
 	)
 
-	currentInstances := set.New()
+	if seen == nil {
+		seen = set.New()
+	}
 
 	for _, instanceData := range result {
 		var (
@@ -678,10 +697,10 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 
 		instance.SetExportable(true)
 
-		if currentInstances.Has(instKey) {
+		if seen.Has(instKey) {
 			r.Logger.Error("This instance is already processed. instKey is not unique", slog.String("instKey", instKey))
 		} else {
-			currentInstances.Add(instKey)
+			seen.Add(instKey)
 		}
 		// clear all instance labels as there are some fields which may be missing between polls
 		// Don't remove instance labels when endpoints are being processed because endpoints uses parent instance only.

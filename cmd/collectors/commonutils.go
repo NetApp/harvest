@@ -539,11 +539,10 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 	return nil
 }
 
-func HandleDuration(value string) float64 {
-	// Example: duration: PT8H35M42S
-	timeDurationRegex := `^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:.\d+)?)S)?$`
+// Example: duration: PT8H35M42S
+var regexTimeDuration = regexp.MustCompile(`^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:.\d+)?)S)?$`)
 
-	regexTimeDuration := regexp.MustCompile(timeDurationRegex)
+func HandleDuration(value string) float64 {
 	if match := regexTimeDuration.MatchString(value); match {
 		// example: PT8H35M42S   ==>  30942
 		matches := regexTimeDuration.FindStringSubmatch(value)
