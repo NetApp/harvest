@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Nov-25
+Creation Date : 2026-Nov-26
 ONTAP Version: 9.16.1
 ```
 
@@ -16145,7 +16145,7 @@ Minimum throughput defined by this policy. It is specified in terms of Mbps. 0 m
 
 ### qos_queue_cpu_dblade_background_service_time
 
-The average CPU Dblade background service time per operation. This is the CPU service time for background operations done for this workload in the Dblade. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. The WAFL_CP workload performs disk write operations. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. The BACKGROUND_DELETE workload performs block deletions on disks. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. The RA_STRIPE_X workload performs read-ahead operations to improve disk read performance. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average CPU Dblade background service time per operation. This is the CPU service time for background operations done for this workload in the Dblade. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. The WAFL_CP workload performs disk write operations. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. The BACKGROUND_DELETE workload performs block deletions on disks. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. The RA_STRIPE_X workload performs read-ahead operations to improve disk read performance. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16156,7 +16156,7 @@ The average CPU Dblade background service time per operation. This is the CPU se
 
 ### qos_queue_cpu_dblade_residence_time
 
-The average CPU Dblade residence time per operation. This is the CPU service time plus the wait time for operations done for this workload in the Dblade. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average CPU Dblade residence time per operation. This is the CPU service time plus the wait time for operations done for this workload in the Dblade. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16176,7 +16176,7 @@ The `qos_queue_cpu_dblade_residence_time` metric is visualized in the following 
 
 ### qos_queue_cpu_dblade_util_service_time
 
-The average CPU Dblade utilization service time per operation. This is the CPU service time for operations done for this workload in the Dblade. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average CPU Dblade utilization service time per operation. This is the CPU service time for operations done for this workload in the Dblade. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16187,7 +16187,7 @@ The average CPU Dblade utilization service time per operation. This is the CPU s
 
 ### qos_queue_cpu_nblade_residence_time
 
-The average CPU Nblade residence time per operation. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average CPU Nblade residence time per operation. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16207,7 +16207,7 @@ The `qos_queue_cpu_nblade_residence_time` metric is visualized in the following 
 
 ### qos_queue_cpu_nblade_util_service_time
 
-The average CPU Nblade util service time per operation. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average CPU Nblade util service time per operation. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16218,7 +16218,7 @@ The average CPU Nblade util service time per operation. Units are microseconds.
 
 ### qos_queue_delay_avscan_wait_time
 
-The average op wait time per operation due to AntiVirus Scan. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average op wait time per operation due to AntiVirus Scan. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16238,7 +16238,7 @@ The `qos_queue_delay_avscan_wait_time` metric is visualized in the following Gra
 
 ### qos_queue_delay_cloud_io_wait_time
 
-The average time spent per operation doing I/O in object store (Cloud).
+Only available in ONTAP 9.20 and later. The average time spent per operation doing I/O in object store (Cloud).
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16258,7 +16258,7 @@ The `qos_queue_delay_cloud_io_wait_time` metric is visualized in the following G
 
 ### qos_queue_delay_cluster_interconnect_wait_time
 
-The average Cluster interconnect wait time per operation. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average Cluster interconnect wait time per operation. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16278,7 +16278,7 @@ The `qos_queue_delay_cluster_interconnect_wait_time` metric is visualized in the
 
 ### qos_queue_delay_cop_num_wait
 
-This captures the number of times, ops are suspended/ delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work, aggregated cluster-wide. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded. Unlike the other dblade-origin counters in this object, this counter already has its own native visit count and is carried over unchanged as the base counter for delay_cop_wait_time below.
+Only available in ONTAP 9.20 and later. This captures the number of times, ops are suspended/ delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work, aggregated cluster-wide. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded. Unlike the other dblade-origin counters in this object, this counter already has its own native visit count and is carried over unchanged as the base counter for delay_cop_wait_time below.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16297,7 +16297,7 @@ The `qos_queue_delay_cop_num_wait` metric is visualized in the following Grafana
 
 ### qos_queue_delay_cop_wait_time
 
-This captures the average delay in ops which are suspended/delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded.
+Only available in ONTAP 9.20 and later. This captures the average delay in ops which are suspended/delayed as COP (Container OverProvisioning) subsystem makes the volume ready for accepting work. This can be either introduced as the volume is transitioned from COP passive state to active state. Or, it can be introduced when a volume is explicit restrained to be dirtied in the next CP (Consistency Point), which might be already overloaded.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16317,7 +16317,7 @@ The `qos_queue_delay_cop_wait_time` metric is visualized in the following Grafan
 
 ### qos_queue_delay_disk_io_wait_time
 
-The average disk IO wait time per operation. This is the time spent waiting for a read from disk to complete for this workload. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average disk IO wait time per operation. This is the time spent waiting for a read from disk to complete for this workload. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16337,7 +16337,7 @@ The `qos_queue_delay_disk_io_wait_time` metric is visualized in the following Gr
 
 ### qos_queue_delay_flexcache_ral_wait_time
 
-The average time spent per operation in RAL fetching from the remote volume for flexcache.
+Only available in ONTAP 9.20 and later. The average time spent per operation in RAL fetching from the remote volume for flexcache.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16357,7 +16357,7 @@ The `qos_queue_delay_flexcache_ral_wait_time` metric is visualized in the follow
 
 ### qos_queue_delay_flexcache_spinhi_wait_time
 
-The average time spent per operation in spinhi performing the remote op for flexcache.
+Only available in ONTAP 9.20 and later. The average time spent per operation in spinhi performing the remote op for flexcache.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16377,7 +16377,7 @@ The `qos_queue_delay_flexcache_spinhi_wait_time` metric is visualized in the fol
 
 ### qos_queue_delay_network_wait_time
 
-The average Network wait time per operation. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average Network wait time per operation. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16397,7 +16397,7 @@ The `qos_queue_delay_network_wait_time` metric is visualized in the following Gr
 
 ### qos_queue_delay_nvlog_transfer_wait_time
 
-The average NVLog transfer wait time per operation. This is the time spent waiting for a dma transfer to local nvram and remote nvram for writes. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average NVLog transfer wait time per operation. This is the time spent waiting for a dma transfer to local nvram and remote nvram for writes. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16417,7 +16417,7 @@ The `qos_queue_delay_nvlog_transfer_wait_time` metric is visualized in the follo
 
 ### qos_queue_delay_qos_limit_wait_time
 
-The average QoS Limit wait time per operation. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average QoS Limit wait time per operation. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16437,7 +16437,7 @@ The `qos_queue_delay_qos_limit_wait_time` metric is visualized in the following 
 
 ### qos_queue_delay_qos_min_throughput_wait_time
 
-The average QoS wait time per operation for requests that were throttled so that some other workload could achieve its minimum throughput. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average QoS wait time per operation for requests that were throttled so that some other workload could achieve its minimum throughput. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16457,7 +16457,7 @@ The `qos_queue_delay_qos_min_throughput_wait_time` metric is visualized in the f
 
 ### qos_queue_delay_sync_repl_wait_time
 
-The average time spent per operation in the secondary path for sync replication.
+Only available in ONTAP 9.20 and later. The average time spent per operation in the secondary path for sync replication.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16477,7 +16477,7 @@ The `qos_queue_delay_sync_repl_wait_time` metric is visualized in the following 
 
 ### qos_queue_delay_wafl_response_wait_time
 
-The average time spent per operation in the WAFL Response queue.
+Only available in ONTAP 9.20 and later. The average time spent per operation in the WAFL Response queue.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16497,7 +16497,7 @@ The `qos_queue_delay_wafl_response_wait_time` metric is visualized in the follow
 
 ### qos_queue_delay_wafl_susp_cp_wait_time
 
-The average WAFL suspended cp wait time per operation. This is the time spent in WAFL waiting for a CP to complete for this workload. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average WAFL suspended cp wait time per operation. This is the time spent in WAFL waiting for a CP to complete for this workload. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16517,7 +16517,7 @@ The `qos_queue_delay_wafl_susp_cp_wait_time` metric is visualized in the followi
 
 ### qos_queue_delay_wafl_susp_other_wait_time
 
-The average WAFL suspended other wait time per operation. This is the time spent in WAFL waiting for other suspend reasons to complete for this workload.
+Only available in ONTAP 9.20 and later. The average WAFL suspended other wait time per operation. This is the time spent in WAFL waiting for other suspend reasons to complete for this workload.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16537,7 +16537,7 @@ The `qos_queue_delay_wafl_susp_other_wait_time` metric is visualized in the foll
 
 ### qos_queue_disk_hdd_background_service_time
 
-The average Disk HDD background service time per operation. This is the amount of time HDDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average Disk HDD background service time per operation. This is the amount of time HDDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16548,7 +16548,7 @@ The average Disk HDD background service time per operation. This is the amount o
 
 ### qos_queue_disk_ssd_background_service_time
 
-The average disk SSD background service time per operation. This is the amount of time SSDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds.
+Only available in ONTAP 9.20 and later. The average disk SSD background service time per operation. This is the amount of time SSDs spend servicing requests by this workload. Direct represents service time directly tallied for the workload. Wafl_cp represents service time contributed by the WAFL_CP workload on behalf of this workload. Background_delete represents service time contributed by the BACKGROUND_DELETE workload on behalf of this workload. Readahead_x_stripe represents service time contributed by the RA_STRIPE_X workload on behalf of this workload. Units are microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16559,7 +16559,7 @@ The average disk SSD background service time per operation. This is the amount o
 
 ### qos_queue_iops_total
 
-This is a convenience counter: the scalar sum of iops[read] + iops[write] + iops[other]. It exists solely to serve as the base counter (denominator) for the scalar (and 4-element background-service-time) averaged counters below, none of which have a per-op-type breakdown of their own. iops itself is a 3-element array and cannot be used directly as a base counter for a scalar or differently-shaped average - only total_latency, which shares iops's exact 3-element shape, can divide against iops element-by-element. Typed CM_CNT_DELTA so clients can cook this counter themselves if they wish. A base counter's own declared type has no effect on the AVERAGE division, which always operates on raw sample deltas regardless of it.
+Only available in ONTAP 9.20 and later. This is a convenience counter: the scalar sum of iops[read] + iops[write] + iops[other]. It exists solely to serve as the base counter (denominator) for the scalar (and 4-element background-service-time) averaged counters below, none of which have a per-op-type breakdown of their own. iops itself is a 3-element array and cannot be used directly as a base counter for a scalar or differently-shaped average - only total_latency, which shares iops's exact 3-element shape, can divide against iops element-by-element. Typed CM_CNT_DELTA so clients can cook this counter themselves if they wish. A base counter's own declared type has no effect on the AVERAGE division, which always operates on raw sample deltas regardless of it.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
