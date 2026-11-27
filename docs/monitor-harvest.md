@@ -24,7 +24,7 @@ Here's a high-level summary of the metadata metrics Harvest publishes with detai
 | metadata_collector_poll_time   | amount of time it took for the poll to finish                                                                                                                                                                 | microseconds |
 | metadata_collector_task_time   | amount of time it took for each collector's subtasks to complete                                                                                                                                              | microseconds |
 | metadata_component_count       | number of metrics collected for each object                                                                                                                                                                   | scalar       |
-| metadata_component_status      | status of the collector - 0 means running, 1 means standby, 2 means failed                                                                                                                                    | enum         |
+| metadata_component_status      | status of the collector - 0 means running, 1 means standby, 2 means failed. Standby needs no action; failed needs action. See below.                                                                          | enum         |
 | metadata_exporter_count        | number of metrics and labels exported                                                                                                                                                                         | scalar       |
 | metadata_exporter_time         | amount of time it took to render, export, and serve exported data                                                                                                                                             | microseconds |
 | metadata_target_goroutines     | number of goroutines that exist within the poller                                                                                                                                                             | scalar       |
@@ -58,6 +58,17 @@ metadata_component_status{name="Zapi", reason="no instances",target="ClusterPeer
 metadata_component_status{name="Zapi", reason="no instances",target="SecurityAuditDestination",type="collector",version="23.04.1417"} 1
 metadata_component_status{name="Zapi", reason="no instances",target="SnapMirror",type="collector",version="23.04.1417"} 1
 ```
+
+The `metadata_component_status` value and the `reason` label together tell you what the collector is doing:
+
+- `0` (running): the last poll succeeded.
+- `1` (standby): Harvest paused the collector and will retry later. No action is needed. Examples:
+  - `reason="no instances"`: the object exists, but there are no instances to collect.
+  - `reason="API request rejected"`: ONTAP rejected the request, for example for an object this cluster doesn't have.
+  - `reason="MetroCluster is not configured in cluster"`: MetroCluster is not set up on this cluster.
+- `2` (failed): action is needed, or the poll failed for an unexpected reason. Examples:
+  - `reason="auth failed"`: the credentials for this poller were rejected.
+  - `reason="Permission denied"`: the ONTAP role for this poller doesn't have the required privilege.
 
 The log files for the poller show a similar story. The poller starts with 22 collectors, but drops to 19 after three of the collectors go to standby because there are no instances to collect. 
 

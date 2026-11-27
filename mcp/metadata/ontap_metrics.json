@@ -475,7 +475,7 @@
   "metadata_collector_skips": "number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.",
   "metadata_collector_task_time": "amount of time it took for each collector's subtasks to complete",
   "metadata_component_count": "number of metrics collected for each object",
-  "metadata_component_status": "status of the collector - 0 means running, 1 means standby, 2 means failed",
+  "metadata_component_status": "status of the collector - 0 means running, 1 means standby, 2 means failed. Standby means Harvest paused the collector and will retry later, and no action is needed, e.g., no instances, API request rejected, or MetroCluster not configured. Failed means action is needed, e.g., auth failed or permission denied, or the poll failed with an unexpected error. The reason label explains the status.",
   "metadata_exporter_count": "number of metrics and labels exported",
   "metadata_exporter_time": "amount of time it took to render, export, and serve exported data",
   "metadata_target_goroutines": "number of goroutines that exist within the poller",
