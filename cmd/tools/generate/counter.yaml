@@ -441,8 +441,12 @@ counters:
         Unit: scalar
 
   - Name: metadata_component_status
-    Description: status of the collector - 0 means running, 1 means standby, 2 means
-      failed
+    Description: status of the collector - 0 means running, 1 means standby,
+      2 means failed. Standby means Harvest paused the collector and will retry
+      later, and no action is needed, e.g., no instances, API request rejected,
+      or MetroCluster not configured. Failed means action is needed, e.g., auth
+      failed or permission denied, or the poll failed with an unexpected error.
+      The reason label explains the status.
     APIs:
       - API: REST
         Endpoint: NA

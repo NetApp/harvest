@@ -7783,7 +7783,7 @@ The `metadata_component_count` metric is visualized in the following Grafana das
 
 ### metadata_component_status
 
-status of the collector - 0 means running, 1 means standby, 2 means failed
+status of the collector - 0 means running, 1 means standby, 2 means failed. Standby means Harvest paused the collector and will retry later, and no action is needed, e.g., no instances, API request rejected, or MetroCluster not configured. Failed means action is needed, e.g., auth failed or permission denied, or the poll failed with an unexpected error. The reason label explains the status.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

@@ -679,7 +679,7 @@ func (c *AbstractCollector) handlePollError(task *schedule.Task, err error, task
 	// without this line a log that starts after the first attempt never says which collector it is.
 	case errors.Is(err, errs.ErrMetroClusterNotConfigured):
 		c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-		c.SetStatus(1, errs.ErrNoInstance.Error())
+		c.SetStatus(1, errs.ErrMetroClusterNotConfigured.Error())
 		c.Logger.Info("MetroCluster is not configured, entering standby", slog.String("task", task.Name))
 
 	// The API does not exist on this ONTAP version, e.g., a template that falls back to an older cluster.
@@ -699,42 +699,47 @@ func (c *AbstractCollector) handlePollError(task *schedule.Task, err error, task
 
 	// Credentials were rejected, e.g., the password changed. Retrying at the normal poll interval
 	// produces many failed logins so back off and retry every 5 minutes.
+	// Reported as failed because the user must fix the credentials.
 	case errors.Is(err, errs.ErrAuthFailed):
 		c.Schedule.SetStandByMode(task, 5*time.Minute)
-		c.SetStatus(1, errs.ErrAuthFailed.Error())
+		c.SetStatus(2, errs.ErrAuthFailed.Error())
 		c.Logger.Error(
 			"auth failed, entering standby mode. Check the credentials for this poller",
 			slogx.Err(err),
 			slog.String("task", task.Name),
 		)
 
-	// not an error we are expecting, so enter failed or standby state
+	// Missing ONTAP role or privilege. The user must fix the role, so report failed.
+	// Must stay above ErrAPIRequestRejected so a permission error is never treated as a benign rejection.
+	case errors.Is(err, errs.ErrPermissionDenied):
+		standbyDelay := standByOnPermissionDenied(c.Schedule, task)
+		c.SetStatus(2, errs.ErrPermissionDenied.Error())
+		c.Logger.Error(
+			"permission denied, entering standby mode. Check the role for this poller",
+			slogx.Err(err),
+			slog.String("task", task.Name),
+			slog.Int("retryDelaySecs", int(standbyDelay.Seconds())),
+		)
+
+	// ONTAP rejected the request, e.g., an object this cluster does not have, such as fcvi without
+	// MetroCluster FC. There is nothing for the user to fix, so stand by and back off.
+	case errors.Is(err, errs.ErrAPIRequestRejected):
+		c.Schedule.SetStandByModeMax(task, 1*time.Hour)
+		c.SetStatus(1, errs.ErrAPIRequestRejected.Error())
+		c.Logger.Info(
+			"API request rejected, entering standby",
+			slogx.Err(err),
+			slog.String("task", task.Name),
+		)
+
+	// Unknown error: report failed and retry at the normal interval.
 	default:
-		switch {
-		case errors.Is(err, errs.ErrPermissionDenied):
-			standbyDelay := standByOnPermissionDenied(c.Schedule, task)
-			c.Logger.Error(
-				"Entering standby mode",
-				slogx.Err(err),
-				slog.String("task", task.Name),
-				slog.Int("retryDelaySecs", int(standbyDelay.Seconds())),
-			)
-		case errors.Is(err, errs.ErrAPIRequestRejected):
-			c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-			// Log as info since these are not errors.
-			c.Logger.Info(
-				"Entering standby mode",
-				slogx.Err(err),
-				slog.String("task", task.Name),
-			)
-		default:
-			attrs := append([]any{
-				slogx.Err(err),
-				slog.String("task", task.Name),
-				slog.Int64("elapsedMs", taskTime.Milliseconds()),
-			}, pollErrorAttrs(err)...)
-			c.Logger.Error("poll failed", attrs...)
-		}
+		attrs := append([]any{
+			slogx.Err(err),
+			slog.String("task", task.Name),
+			slog.Int64("elapsedMs", taskTime.Milliseconds()),
+		}, pollErrorAttrs(err)...)
+		c.Logger.Error("poll failed", attrs...)
 
 		var herr errs.HarvestError
 		errMsg := err.Error()
